@@ -1,0 +1,884 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		028D457D12A21D083864BE5A /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B495C18D5B849C35BC4219 /* CalendarView.swift */; };
+		03D603D7CC26320C54E13AA5 /* RepositoryProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711F26231B66EF38E063AF00 /* RepositoryProtocols.swift */; };
+		084FF27582A91546541989CF /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AA8484EC2670204C2CC384 /* TodayView.swift */; };
+		0FABFE32BCCFAB30921D6866 /* CloudSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18B66DC9613CE12BB3339B2A /* CloudSyncService.swift */; };
+		112879AFECE4D7FECCE7AE3B /* HomeLayoutPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82AF957D3DDAE2173C203F26 /* HomeLayoutPreview.swift */; };
+		21429CD101E67FBB4CA85894 /* VisualFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86FF52B5E848D3F96E5E5DB3 /* VisualFlowTests.swift */; };
+		24F60D2E0FC7573332A0B2B4 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = E545C4BEB2C69DF46A2A1B99 /* AppEnvironment.swift */; };
+		2567A3B7592EFBF563DFC85B /* RoomLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABA3BA192FC49040A1C0FD89 /* RoomLayout.swift */; };
+		32ED6F3589C2C7ADFC51E9CA /* BackupCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAC52613164D3C16FBA81E6 /* BackupCodec.swift */; };
+		34F043390AB67E2A408E8B5E /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3068B15D7E5F4D76EAD9419B /* MoreView.swift */; };
+		38B8F0D30910A08F239F2628 /* QuickAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EB50C659A2C85951F884BE9 /* QuickAddView.swift */; };
+		46588355EBE95EC07EE735C9 /* HouseholdRulesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E24E64D2FD739C12599915DB /* HouseholdRulesTests.swift */; };
+		492D99A5888EC982BBAEF368 /* OrbitingHomePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F25F716FF36ECF0B57F3211 /* OrbitingHomePreview.swift */; };
+		4FD479FD06D5243C8841F51D /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ADF75FCE825963446D8EBF /* AppRootView.swift */; };
+		5CE9EC87924F9B632FF4E74C /* LocalStoreConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AC97FE46236E6CC68E1B6B /* LocalStoreConfiguration.swift */; };
+		68A7D9A8A7DBC0AB2AE0B81A /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AFC392E6BC44514B5A6EEF2 /* AppTheme.swift */; };
+		6BE8361D893DF25CCBFFF8CD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09AFD675B6E1484A4F1001B7 /* Assets.xcassets */; };
+		7BFE746505CBFF3B61AA734D /* BackupTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1854C57CE3F1B90A6BCB5BB2 /* BackupTests.swift */; };
+		8068605C24D2AD8987191829 /* RootTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F19B3BC86B6F988E1A64ED /* RootTabView.swift */; };
+		85934B60F67EB76C1AE0B414 /* CloudKitSyncCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69D6DE9A633A79F22C0FB52F /* CloudKitSyncCoordinator.swift */; };
+		88934CAEB7BE0EB7DE1BE412 /* LocalRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8FB9894FC038F1B9B5E3B8E6 /* LocalRepositoryTests.swift */; };
+		89C35CBF3EAE21310F6D2AF6 /* HomeModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4ED9DD1C020225326829AF4 /* HomeModels.swift */; };
+		9F6D0F3B90F64E1BCD8DF715 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C61B6A20E71850AE714BE90 /* OnboardingView.swift */; };
+		9F950591BE94C57E03F0BD9F /* HouseholdModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA2A2058A6B317D5FE3A8C0F /* HouseholdModels.swift */; };
+		A214B7AF59F931815D3721AF /* BackupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4614CAB1BEA0E9C4CEB52619 /* BackupView.swift */; };
+		A7463B98B8292D1578B90C83 /* LunaHearthApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 556159AB7BE03D38DE46D7F7 /* LunaHearthApp.swift */; };
+		A9B527C3D6D6A3CC16ADB14D /* CalendarIntegrationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77B2B25C21EED0104007BBEA /* CalendarIntegrationService.swift */; };
+		ABBCA5F264AC36A8172E147E /* EntryDraftMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9355F07F2B131A4EF30284 /* EntryDraftMapping.swift */; };
+		AC153DB9C64A906BCE620431 /* HouseholdRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714ABA35B1BFA3729BEE68DC /* HouseholdRules.swift */; };
+		B0C37F79FEE9A44AA8105997 /* CloudKitBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6AE3E56E55884D4698462C /* CloudKitBackupService.swift */; };
+		B382C11F92E6E59F46DC37DC /* ListsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 310A83244A5C8BB5D5B78466 /* ListsView.swift */; };
+		BD3888448401951E2045B94C /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98C4F40166D6C632BC04072 /* SmokeTests.swift */; };
+		C674FCB526C4EF086C840DD8 /* LocalHouseholdRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5DBBE760D1402CF1509B2B2 /* LocalHouseholdRepository.swift */; };
+		C72390AE061EFAC962F1E02A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71818E0DAF86BD299DDCCE1A /* HomeView.swift */; };
+		D3DDF237A2E8584B4EE75A9D /* HouseholdBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5398A726F91728A5850361A /* HouseholdBackup.swift */; };
+		D57B70BE97CCA74B711ECBCF /* DocumentStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739AFCFA57BA1D3321A7153D /* DocumentStorageService.swift */; };
+		D8A8B411AD7CF6651A923C07 /* HomeLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28021456D9AA2DC73B82E9A4 /* HomeLayoutView.swift */; };
+		DA8447B35D0206E7EE0E620A /* PlanningModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EA514CA22E8A6622CDA822 /* PlanningModels.swift */; };
+		DB60F67F2597910D9749C28E /* RoomLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F45EE4E245357E78E8C7534 /* RoomLayoutTests.swift */; };
+		DD786493CC19B04F02BD04C1 /* HouseholdIntelligenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E68F125D1E493F6F88FBF4 /* HouseholdIntelligenceService.swift */; };
+		E517493323E2B95883E0D8BA /* EntryActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DDD638309049575F48328B /* EntryActions.swift */; };
+		EF8FB64039C6C81B37A3BC3A /* InteractiveFloorPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = A506ED8C7A5524DE05A28783 /* InteractiveFloorPlan.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1BD77E98C58105A4B6EEB011 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F21FD1C81D7542759559F798 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 94737C25A61647DB1454D72D;
+			remoteInfo = LunaHearth;
+		};
+		31FE3BE3BBEE77C8CA6C988D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F21FD1C81D7542759559F798 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 94737C25A61647DB1454D72D;
+			remoteInfo = LunaHearth;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		09AFD675B6E1484A4F1001B7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		0B21FA71EC7D0800691F1255 /* LunaHearthUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LunaHearthUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		11F19B3BC86B6F988E1A64ED /* RootTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootTabView.swift; sourceTree = "<group>"; };
+		1854C57CE3F1B90A6BCB5BB2 /* BackupTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupTests.swift; sourceTree = "<group>"; };
+		18B66DC9613CE12BB3339B2A /* CloudSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncService.swift; sourceTree = "<group>"; };
+		20DCDB93D86989A3A80C31D5 /* LunaHearthTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LunaHearthTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		28021456D9AA2DC73B82E9A4 /* HomeLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLayoutView.swift; sourceTree = "<group>"; };
+		3068B15D7E5F4D76EAD9419B /* MoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreView.swift; sourceTree = "<group>"; };
+		310A83244A5C8BB5D5B78466 /* ListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsView.swift; sourceTree = "<group>"; };
+		3FAC52613164D3C16FBA81E6 /* BackupCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupCodec.swift; sourceTree = "<group>"; };
+		40B495C18D5B849C35BC4219 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		40EA514CA22E8A6622CDA822 /* PlanningModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanningModels.swift; sourceTree = "<group>"; };
+		4614CAB1BEA0E9C4CEB52619 /* BackupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupView.swift; sourceTree = "<group>"; };
+		4C6CF4502C93FF346C70A21E /* LunaHearth.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = LunaHearth.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		556159AB7BE03D38DE46D7F7 /* LunaHearthApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunaHearthApp.swift; sourceTree = "<group>"; };
+		5AFC392E6BC44514B5A6EEF2 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
+		5D9355F07F2B131A4EF30284 /* EntryDraftMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDraftMapping.swift; sourceTree = "<group>"; };
+		69D6DE9A633A79F22C0FB52F /* CloudKitSyncCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitSyncCoordinator.swift; sourceTree = "<group>"; };
+		711F26231B66EF38E063AF00 /* RepositoryProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryProtocols.swift; sourceTree = "<group>"; };
+		714ABA35B1BFA3729BEE68DC /* HouseholdRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdRules.swift; sourceTree = "<group>"; };
+		71818E0DAF86BD299DDCCE1A /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		739AFCFA57BA1D3321A7153D /* DocumentStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentStorageService.swift; sourceTree = "<group>"; };
+		7448A44B0C1D674C3468B421 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		77502634208392EC0B4B1F5D /* LunaHearth.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LunaHearth.entitlements; sourceTree = "<group>"; };
+		77B2B25C21EED0104007BBEA /* CalendarIntegrationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarIntegrationService.swift; sourceTree = "<group>"; };
+		7F45EE4E245357E78E8C7534 /* RoomLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomLayoutTests.swift; sourceTree = "<group>"; };
+		82AF957D3DDAE2173C203F26 /* HomeLayoutPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLayoutPreview.swift; sourceTree = "<group>"; };
+		86FF52B5E848D3F96E5E5DB3 /* VisualFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualFlowTests.swift; sourceTree = "<group>"; };
+		8C61B6A20E71850AE714BE90 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		8EB50C659A2C85951F884BE9 /* QuickAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuickAddView.swift; sourceTree = "<group>"; };
+		8FB9894FC038F1B9B5E3B8E6 /* LocalRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalRepositoryTests.swift; sourceTree = "<group>"; };
+		90AC97FE46236E6CC68E1B6B /* LocalStoreConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStoreConfiguration.swift; sourceTree = "<group>"; };
+		99AA8484EC2670204C2CC384 /* TodayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayView.swift; sourceTree = "<group>"; };
+		9F25F716FF36ECF0B57F3211 /* OrbitingHomePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbitingHomePreview.swift; sourceTree = "<group>"; };
+		A506ED8C7A5524DE05A28783 /* InteractiveFloorPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveFloorPlan.swift; sourceTree = "<group>"; };
+		AA2A2058A6B317D5FE3A8C0F /* HouseholdModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdModels.swift; sourceTree = "<group>"; };
+		ABA3BA192FC49040A1C0FD89 /* RoomLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomLayout.swift; sourceTree = "<group>"; };
+		B4ED9DD1C020225326829AF4 /* HomeModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeModels.swift; sourceTree = "<group>"; };
+		B6E68F125D1E493F6F88FBF4 /* HouseholdIntelligenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdIntelligenceService.swift; sourceTree = "<group>"; };
+		D5398A726F91728A5850361A /* HouseholdBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdBackup.swift; sourceTree = "<group>"; };
+		D98C4F40166D6C632BC04072 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
+		DD6AE3E56E55884D4698462C /* CloudKitBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitBackupService.swift; sourceTree = "<group>"; };
+		E24E64D2FD739C12599915DB /* HouseholdRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdRulesTests.swift; sourceTree = "<group>"; };
+		E545C4BEB2C69DF46A2A1B99 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
+		E5DBBE760D1402CF1509B2B2 /* LocalHouseholdRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalHouseholdRepository.swift; sourceTree = "<group>"; };
+		E6DDD638309049575F48328B /* EntryActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryActions.swift; sourceTree = "<group>"; };
+		F1ADF75FCE825963446D8EBF /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0C0C16E31B7F9FD1CB8DD083 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4C6CF4502C93FF346C70A21E /* LunaHearth.app */,
+				20DCDB93D86989A3A80C31D5 /* LunaHearthTests.xctest */,
+				0B21FA71EC7D0800691F1255 /* LunaHearthUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		0EE89BF0CE5CFD77D628D61F /* Local */ = {
+			isa = PBXGroup;
+			children = (
+				E5DBBE760D1402CF1509B2B2 /* LocalHouseholdRepository.swift */,
+				90AC97FE46236E6CC68E1B6B /* LocalStoreConfiguration.swift */,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		12393DBF89860F63A6180938 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				8B828512638469F43221E7AE /* Backup */,
+				C69602ACEDA0204AC2A047AF /* Calendar */,
+				193C6FF3C25175A25B199B4D /* Home */,
+				384EB2B50C130A0AC578A9C9 /* Lists */,
+				A0F6F6DDB31720581F08C722 /* More */,
+				A1118014824EF613807F44F5 /* Onboarding */,
+				FE460FEBDE3F0FE5ACE545DD /* QuickAdd */,
+				61FFEE7BDB1504F5003CB48E /* Today */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		18C7E069F4B6B16FE90C21C1 /* Backup */ = {
+			isa = PBXGroup;
+			children = (
+				D5398A726F91728A5850361A /* HouseholdBackup.swift */,
+			);
+			path = Backup;
+			sourceTree = "<group>";
+		};
+		193C6FF3C25175A25B199B4D /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				82AF957D3DDAE2173C203F26 /* HomeLayoutPreview.swift */,
+				28021456D9AA2DC73B82E9A4 /* HomeLayoutView.swift */,
+				71818E0DAF86BD299DDCCE1A /* HomeView.swift */,
+				A506ED8C7A5524DE05A28783 /* InteractiveFloorPlan.swift */,
+				9F25F716FF36ECF0B57F3211 /* OrbitingHomePreview.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		1F7542900D6B81139ECBE768 /* Infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				E545C4BEB2C69DF46A2A1B99 /* AppEnvironment.swift */,
+			);
+			path = Infrastructure;
+			sourceTree = "<group>";
+		};
+		2592FB3C0D33CB07E7C11828 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				77B2B25C21EED0104007BBEA /* CalendarIntegrationService.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		384EB2B50C130A0AC578A9C9 /* Lists */ = {
+			isa = PBXGroup;
+			children = (
+				310A83244A5C8BB5D5B78466 /* ListsView.swift */,
+			);
+			path = Lists;
+			sourceTree = "<group>";
+		};
+		3F41CAFAEAF9374EF957E883 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				18C7E069F4B6B16FE90C21C1 /* Backup */,
+				6311ED698F78F85314E6008B /* Models */,
+				A88AE2AEE8E5D7CD9FBE61CC /* Repositories */,
+				6B3DC82930C694AD6545DDE6 /* UseCases */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		4CE0A1412D7DAA6593E95DF1 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				F1ADF75FCE825963446D8EBF /* AppRootView.swift */,
+				556159AB7BE03D38DE46D7F7 /* LunaHearthApp.swift */,
+				11F19B3BC86B6F988E1A64ED /* RootTabView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		526824C39CADF3FC0D2770DF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				09AFD675B6E1484A4F1001B7 /* Assets.xcassets */,
+				7448A44B0C1D674C3468B421 /* Info.plist */,
+				77502634208392EC0B4B1F5D /* LunaHearth.entitlements */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		573B1ACCCB607D881E389B93 /* CloudKit */ = {
+			isa = PBXGroup;
+			children = (
+				3FAC52613164D3C16FBA81E6 /* BackupCodec.swift */,
+				DD6AE3E56E55884D4698462C /* CloudKitBackupService.swift */,
+				69D6DE9A633A79F22C0FB52F /* CloudKitSyncCoordinator.swift */,
+				18B66DC9613CE12BB3339B2A /* CloudSyncService.swift */,
+			);
+			path = CloudKit;
+			sourceTree = "<group>";
+		};
+		6008A7043166C2CB4329102F /* Documents */ = {
+			isa = PBXGroup;
+			children = (
+				739AFCFA57BA1D3321A7153D /* DocumentStorageService.swift */,
+			);
+			path = Documents;
+			sourceTree = "<group>";
+		};
+		61FFEE7BDB1504F5003CB48E /* Today */ = {
+			isa = PBXGroup;
+			children = (
+				99AA8484EC2670204C2CC384 /* TodayView.swift */,
+			);
+			path = Today;
+			sourceTree = "<group>";
+		};
+		6311ED698F78F85314E6008B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B4ED9DD1C020225326829AF4 /* HomeModels.swift */,
+				AA2A2058A6B317D5FE3A8C0F /* HouseholdModels.swift */,
+				40EA514CA22E8A6622CDA822 /* PlanningModels.swift */,
+				ABA3BA192FC49040A1C0FD89 /* RoomLayout.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6371D6CECDF2D8AB709124BC /* LunaHearth */ = {
+			isa = PBXGroup;
+			children = (
+				4CE0A1412D7DAA6593E95DF1 /* App */,
+				94ECF1005D7E52FD65EC9525 /* Core */,
+				E195EA76D02378177FD34D44 /* Data */,
+				3F41CAFAEAF9374EF957E883 /* Domain */,
+				12393DBF89860F63A6180938 /* Features */,
+				526824C39CADF3FC0D2770DF /* Resources */,
+				6E090B757AB7775D1EC10821 /* Services */,
+			);
+			path = LunaHearth;
+			sourceTree = "<group>";
+		};
+		6B3DC82930C694AD6545DDE6 /* UseCases */ = {
+			isa = PBXGroup;
+			children = (
+				714ABA35B1BFA3729BEE68DC /* HouseholdRules.swift */,
+			);
+			path = UseCases;
+			sourceTree = "<group>";
+		};
+		6E090B757AB7775D1EC10821 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				E4584618314C986CB06CDE15 /* AI */,
+				2592FB3C0D33CB07E7C11828 /* Calendar */,
+				6008A7043166C2CB4329102F /* Documents */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		80643B95EC828ABB959CDDA4 = {
+			isa = PBXGroup;
+			children = (
+				6371D6CECDF2D8AB709124BC /* LunaHearth */,
+				EA856952196620A47B98879A /* LunaHearthTests */,
+				A96F9ADB4B733F7DFB97EFCE /* LunaHearthUITests */,
+				0C0C16E31B7F9FD1CB8DD083 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		8B828512638469F43221E7AE /* Backup */ = {
+			isa = PBXGroup;
+			children = (
+				4614CAB1BEA0E9C4CEB52619 /* BackupView.swift */,
+			);
+			path = Backup;
+			sourceTree = "<group>";
+		};
+		94ECF1005D7E52FD65EC9525 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				C318161BB3024AA4863A1149 /* DesignSystem */,
+				1F7542900D6B81139ECBE768 /* Infrastructure */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		A0F6F6DDB31720581F08C722 /* More */ = {
+			isa = PBXGroup;
+			children = (
+				3068B15D7E5F4D76EAD9419B /* MoreView.swift */,
+			);
+			path = More;
+			sourceTree = "<group>";
+		};
+		A1118014824EF613807F44F5 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				8C61B6A20E71850AE714BE90 /* OnboardingView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		A88AE2AEE8E5D7CD9FBE61CC /* Repositories */ = {
+			isa = PBXGroup;
+			children = (
+				711F26231B66EF38E063AF00 /* RepositoryProtocols.swift */,
+			);
+			path = Repositories;
+			sourceTree = "<group>";
+		};
+		A96F9ADB4B733F7DFB97EFCE /* LunaHearthUITests */ = {
+			isa = PBXGroup;
+			children = (
+				86FF52B5E848D3F96E5E5DB3 /* VisualFlowTests.swift */,
+			);
+			path = LunaHearthUITests;
+			sourceTree = "<group>";
+		};
+		C318161BB3024AA4863A1149 /* DesignSystem */ = {
+			isa = PBXGroup;
+			children = (
+				5AFC392E6BC44514B5A6EEF2 /* AppTheme.swift */,
+			);
+			path = DesignSystem;
+			sourceTree = "<group>";
+		};
+		C69602ACEDA0204AC2A047AF /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				40B495C18D5B849C35BC4219 /* CalendarView.swift */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		E195EA76D02378177FD34D44 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				573B1ACCCB607D881E389B93 /* CloudKit */,
+				0EE89BF0CE5CFD77D628D61F /* Local */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		E4584618314C986CB06CDE15 /* AI */ = {
+			isa = PBXGroup;
+			children = (
+				B6E68F125D1E493F6F88FBF4 /* HouseholdIntelligenceService.swift */,
+			);
+			path = AI;
+			sourceTree = "<group>";
+		};
+		EA856952196620A47B98879A /* LunaHearthTests */ = {
+			isa = PBXGroup;
+			children = (
+				1854C57CE3F1B90A6BCB5BB2 /* BackupTests.swift */,
+				E24E64D2FD739C12599915DB /* HouseholdRulesTests.swift */,
+				8FB9894FC038F1B9B5E3B8E6 /* LocalRepositoryTests.swift */,
+				7F45EE4E245357E78E8C7534 /* RoomLayoutTests.swift */,
+				D98C4F40166D6C632BC04072 /* SmokeTests.swift */,
+			);
+			path = LunaHearthTests;
+			sourceTree = "<group>";
+		};
+		FE460FEBDE3F0FE5ACE545DD /* QuickAdd */ = {
+			isa = PBXGroup;
+			children = (
+				E6DDD638309049575F48328B /* EntryActions.swift */,
+				5D9355F07F2B131A4EF30284 /* EntryDraftMapping.swift */,
+				8EB50C659A2C85951F884BE9 /* QuickAddView.swift */,
+			);
+			path = QuickAdd;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		94737C25A61647DB1454D72D /* LunaHearth */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FC3955DC4DF43E2932B23CAA /* Build configuration list for PBXNativeTarget "LunaHearth" */;
+			buildPhases = (
+				B8DB9E5323F5E4B1E381D527 /* Sources */,
+				7B65C8C144D12C998B660BE7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LunaHearth;
+			packageProductDependencies = (
+			);
+			productName = LunaHearth;
+			productReference = 4C6CF4502C93FF346C70A21E /* LunaHearth.app */;
+			productType = "com.apple.product-type.application";
+		};
+		C85AF0767F867099ED8F7C1A /* LunaHearthTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 171B40C63CEFFF1D53AC5046 /* Build configuration list for PBXNativeTarget "LunaHearthTests" */;
+			buildPhases = (
+				9043CF5414A33E3C4AC57E2D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9340BE58D496D81E3F9B08E3 /* PBXTargetDependency */,
+			);
+			name = LunaHearthTests;
+			packageProductDependencies = (
+			);
+			productName = LunaHearthTests;
+			productReference = 20DCDB93D86989A3A80C31D5 /* LunaHearthTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		CA2B4BD1AC3F5F02AD28865D /* LunaHearthUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A6101467DE2298797EE2645 /* Build configuration list for PBXNativeTarget "LunaHearthUITests" */;
+			buildPhases = (
+				AEBBFE9111500CBF5455419A /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				020071816C808B296E5E64A3 /* PBXTargetDependency */,
+			);
+			name = LunaHearthUITests;
+			packageProductDependencies = (
+			);
+			productName = LunaHearthUITests;
+			productReference = 0B21FA71EC7D0800691F1255 /* LunaHearthUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F21FD1C81D7542759559F798 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					94737C25A61647DB1454D72D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					C85AF0767F867099ED8F7C1A = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+					};
+					CA2B4BD1AC3F5F02AD28865D = {
+						DevelopmentTeam = "";
+						ProvisioningStyle = Automatic;
+						TestTargetID = 94737C25A61647DB1454D72D;
+					};
+				};
+			};
+			buildConfigurationList = 58E904C02BEE62409B07B2C3 /* Build configuration list for PBXProject "LunaHearth" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 80643B95EC828ABB959CDDA4;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 0C0C16E31B7F9FD1CB8DD083 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				94737C25A61647DB1454D72D /* LunaHearth */,
+				C85AF0767F867099ED8F7C1A /* LunaHearthTests */,
+				CA2B4BD1AC3F5F02AD28865D /* LunaHearthUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7B65C8C144D12C998B660BE7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6BE8361D893DF25CCBFFF8CD /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9043CF5414A33E3C4AC57E2D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7BFE746505CBFF3B61AA734D /* BackupTests.swift in Sources */,
+				46588355EBE95EC07EE735C9 /* HouseholdRulesTests.swift in Sources */,
+				88934CAEB7BE0EB7DE1BE412 /* LocalRepositoryTests.swift in Sources */,
+				DB60F67F2597910D9749C28E /* RoomLayoutTests.swift in Sources */,
+				BD3888448401951E2045B94C /* SmokeTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AEBBFE9111500CBF5455419A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21429CD101E67FBB4CA85894 /* VisualFlowTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B8DB9E5323F5E4B1E381D527 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				24F60D2E0FC7573332A0B2B4 /* AppEnvironment.swift in Sources */,
+				4FD479FD06D5243C8841F51D /* AppRootView.swift in Sources */,
+				68A7D9A8A7DBC0AB2AE0B81A /* AppTheme.swift in Sources */,
+				32ED6F3589C2C7ADFC51E9CA /* BackupCodec.swift in Sources */,
+				A214B7AF59F931815D3721AF /* BackupView.swift in Sources */,
+				A9B527C3D6D6A3CC16ADB14D /* CalendarIntegrationService.swift in Sources */,
+				028D457D12A21D083864BE5A /* CalendarView.swift in Sources */,
+				B0C37F79FEE9A44AA8105997 /* CloudKitBackupService.swift in Sources */,
+				85934B60F67EB76C1AE0B414 /* CloudKitSyncCoordinator.swift in Sources */,
+				0FABFE32BCCFAB30921D6866 /* CloudSyncService.swift in Sources */,
+				D57B70BE97CCA74B711ECBCF /* DocumentStorageService.swift in Sources */,
+				E517493323E2B95883E0D8BA /* EntryActions.swift in Sources */,
+				ABBCA5F264AC36A8172E147E /* EntryDraftMapping.swift in Sources */,
+				112879AFECE4D7FECCE7AE3B /* HomeLayoutPreview.swift in Sources */,
+				D8A8B411AD7CF6651A923C07 /* HomeLayoutView.swift in Sources */,
+				89C35CBF3EAE21310F6D2AF6 /* HomeModels.swift in Sources */,
+				C72390AE061EFAC962F1E02A /* HomeView.swift in Sources */,
+				D3DDF237A2E8584B4EE75A9D /* HouseholdBackup.swift in Sources */,
+				DD786493CC19B04F02BD04C1 /* HouseholdIntelligenceService.swift in Sources */,
+				9F950591BE94C57E03F0BD9F /* HouseholdModels.swift in Sources */,
+				AC153DB9C64A906BCE620431 /* HouseholdRules.swift in Sources */,
+				EF8FB64039C6C81B37A3BC3A /* InteractiveFloorPlan.swift in Sources */,
+				B382C11F92E6E59F46DC37DC /* ListsView.swift in Sources */,
+				C674FCB526C4EF086C840DD8 /* LocalHouseholdRepository.swift in Sources */,
+				5CE9EC87924F9B632FF4E74C /* LocalStoreConfiguration.swift in Sources */,
+				A7463B98B8292D1578B90C83 /* LunaHearthApp.swift in Sources */,
+				34F043390AB67E2A408E8B5E /* MoreView.swift in Sources */,
+				9F6D0F3B90F64E1BCD8DF715 /* OnboardingView.swift in Sources */,
+				492D99A5888EC982BBAEF368 /* OrbitingHomePreview.swift in Sources */,
+				DA8447B35D0206E7EE0E620A /* PlanningModels.swift in Sources */,
+				38B8F0D30910A08F239F2628 /* QuickAddView.swift in Sources */,
+				03D603D7CC26320C54E13AA5 /* RepositoryProtocols.swift in Sources */,
+				2567A3B7592EFBF563DFC85B /* RoomLayout.swift in Sources */,
+				8068605C24D2AD8987191829 /* RootTabView.swift in Sources */,
+				084FF27582A91546541989CF /* TodayView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		020071816C808B296E5E64A3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 94737C25A61647DB1454D72D /* LunaHearth */;
+			targetProxy = 1BD77E98C58105A4B6EEB011 /* PBXContainerItemProxy */;
+		};
+		9340BE58D496D81E3F9B08E3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 94737C25A61647DB1454D72D /* LunaHearth */;
+			targetProxy = 31FE3BE3BBEE77C8CA6C988D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2020420C1C050BE7B70311F7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LunaHearth.app/LunaHearth";
+			};
+			name = Release;
+		};
+		223CC756C8C76C769C57BB23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = LunaHearth/Resources/LunaHearth.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LunaHearth/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth;
+				PRODUCT_NAME = LunaHearth;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		22D0618D326AC572561ADACA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		3856C6155275A5B5879BFAB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LunaHearth;
+			};
+			name = Debug;
+		};
+		5BA61C489EC7D4B8AE7F8566 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		8D75489399DADD0C8C2A1A16 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/LunaHearth.app/LunaHearth";
+			};
+			name = Debug;
+		};
+		AED6C93CDF3F49A0B02C59A2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = LunaHearth/Resources/LunaHearth.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = LunaHearth/Resources/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth;
+				PRODUCT_NAME = LunaHearth;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		D0E46478CA4C6BE20B8D81BC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = LunaHearth;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		171B40C63CEFFF1D53AC5046 /* Build configuration list for PBXNativeTarget "LunaHearthTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D75489399DADD0C8C2A1A16 /* Debug */,
+				2020420C1C050BE7B70311F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		58E904C02BEE62409B07B2C3 /* Build configuration list for PBXProject "LunaHearth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				22D0618D326AC572561ADACA /* Debug */,
+				5BA61C489EC7D4B8AE7F8566 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		6A6101467DE2298797EE2645 /* Build configuration list for PBXNativeTarget "LunaHearthUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3856C6155275A5B5879BFAB9 /* Debug */,
+				D0E46478CA4C6BE20B8D81BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FC3955DC4DF43E2932B23CAA /* Build configuration list for PBXNativeTarget "LunaHearth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AED6C93CDF3F49A0B02C59A2 /* Debug */,
+				223CC756C8C76C769C57BB23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F21FD1C81D7542759559F798 /* Project object */;
+}

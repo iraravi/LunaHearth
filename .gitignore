@@ -1,0 +1,11 @@
+.DS_Store
+DerivedData/
+.build/
+.swiftpm/
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.xcscmblueprint
+.env
+.env.*
+!.env.example

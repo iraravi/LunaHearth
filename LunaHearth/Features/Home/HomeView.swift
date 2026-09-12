@@ -1,0 +1,323 @@
+import SwiftUI
+
+struct HomeView: View {
+    @Environment(LocalHouseholdRepository.self) private var repository
+    @State private var selectedRoomID: UUID?
+    @State private var adding: EntryKind?
+    @State private var parentID: UUID?
+    @State private var search = ""
+    @State private var editingFloor: EntryDraft?
+
+    private var matchingAssets: [HomeAsset] {
+        repository.assets.filter { search.isEmpty || $0.name.localizedStandardContains(search) ||
+            ($0.modelNumber ?? "").localizedStandardContains(search) || ($0.serialNumber ?? "").localizedStandardContains(search) }
+    }
+
+    var body: some View {
+        NavigationSplitView {
+            List(selection: $selectedRoomID) {
+                Section {
+                    ScreenIntro(eyebrow: repository.household?.name ?? "Your home",
+                                title: "Rooms & belongings.", subtitle: "Add a room, then the things inside.")
+                    HStack {
+                        Label("\(repository.rooms.count) rooms", systemImage: "door.left.hand.open")
+                        Spacer()
+                        Label("\(repository.assets.count) items", systemImage: "shippingbox")
+                    }.font(.subheadline).foregroundStyle(AppTheme.muted)
+                }.listRowBackground(Color.clear)
+                Section("Start here") {
+                    Button { add(.room, parent: repository.floors.count == 1 ? repository.floors.first?.id : nil) } label: {
+                        HomeActionRow(title: "Add a room", detail: "Kitchen, bedroom, living room…", symbol: "door.left.hand.open")
+                    }.accessibilityIdentifier("home.addRoom")
+                    Button { add(.asset, parent: repository.rooms.count == 1 ? repository.rooms.first?.id : nil) } label: {
+                        HomeActionRow(title: "Add an item", detail: "Appliances, furniture, and belongings", symbol: "shippingbox.fill")
+                    }.accessibilityIdentifier("home.addItem")
+                }
+                if repository.rooms.isEmpty {
+                    Section("Your rooms") {
+                        Text("Start with a room. Open it to add items and keep their warranties and maintenance together.")
+                            .foregroundStyle(AppTheme.muted)
+                    }
+                }
+                ForEach(repository.floors) { floor in
+                    Section(floor.name) {
+                        roomRows(repository.rooms.filter { $0.floorID == floor.id })
+                        Button("Add room to \(floor.name)", systemImage: "plus") { add(.room, parent: floor.id) }
+                    }
+                }
+                if repository.rooms.contains(where: { $0.floorID == nil }) {
+                    Section(repository.floors.isEmpty ? "Your rooms" : "Rooms without a floor") {
+                        roomRows(repository.rooms.filter { $0.floorID == nil })
+                    }
+                }
+                Section {
+                    Button("Add a floor", systemImage: "square.3.layers.3d") { add(.floor) }
+                        .accessibilityIdentifier("home.addFloor")
+                } footer: { Text("Use floors to group rooms in a larger home.") }
+                Section("All items") {
+                    if matchingAssets.isEmpty {
+                        Text(search.isEmpty ? "Your items will appear here and in their room." : "No matching items.")
+                            .foregroundStyle(AppTheme.muted)
+                    }
+                    ForEach(matchingAssets) { asset in
+                        NavigationLink { AssetDetailView(asset: asset) } label: {
+                            HStack(spacing: 14) {
+                                HearthIcon(symbol: (AssetCategory(rawValue: asset.categoryRawValue) ?? .other).symbol)
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(asset.name).font(.headline).foregroundStyle(AppTheme.ink)
+                                    Text(repository.rooms.first(where: { $0.id == asset.roomID })?.name ?? "Choose a room")
+                                        .font(.subheadline).foregroundStyle(AppTheme.muted)
+                                }
+                            }.padding(.vertical, 4)
+                        }.accessibilityIdentifier("home.item.\(asset.id)")
+                    }
+                }
+                Section("Layout & care") {
+                    NavigationLink { HomeLayoutView() } label: {
+                        HomeActionRow(title: "Arrange rooms in 2D / 3D", detail: "Set sizes and move rooms on your floor plan", symbol: "square.3.layers.3d")
+                    }.accessibilityIdentifier("home.layout")
+                    NavigationLink("View maintenance & warranty alerts") { HomeAlertsView() }
+                }
+            }
+            .hearthList()
+            .searchable(text: $search, prompt: "Find a room or item")
+            .navigationTitle("Home").navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                Menu {
+                    Button("Add Room", systemImage: "door.left.hand.open") { add(.room) }
+                    Button("Add Item", systemImage: "shippingbox") { add(.asset) }
+                    Button("Add Floor", systemImage: "square.3.layers.3d") { add(.floor) }
+                    ForEach(repository.floors) { floor in
+                        Button("Edit \(floor.name)") { editingFloor = .editing(floor) }
+                    }
+                } label: { Label("Add to Home", systemImage: "plus") }.accessibilityIdentifier("home.add")
+            }
+        } detail: {
+            NavigationStack {
+                if let room = repository.rooms.first(where: { $0.id == selectedRoomID }) {
+                    RoomDetailView(room: room)
+                } else {
+                    ContentUnavailableView("Choose a room", systemImage: "door.left.hand.open",
+                                           description: Text("Open a room to add items and see their warranties and maintenance."))
+                }
+            }
+        }
+        .sheet(item: $adding) { QuickAddView(kind: $0, parentID: parentID, fixedKind: true) }
+        .sheet(item: $editingFloor) { QuickAddView(draft: $0) }
+    }
+
+    private func add(_ kind: EntryKind, parent: UUID? = nil) {
+        parentID = parent
+        adding = kind
+    }
+
+    @ViewBuilder private func roomRows(_ rooms: [Room]) -> some View {
+        ForEach(rooms.filter { search.isEmpty || $0.name.localizedStandardContains(search) }) { room in
+            NavigationLink(value: room.id) {
+                HStack(spacing: 14) {
+                    HearthIcon(symbol: "door.left.hand.open")
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(room.name).font(.headline).foregroundStyle(AppTheme.ink)
+                        let count = repository.assets.filter { $0.roomID == room.id }.count
+                        Text(count == 0 ? "Open to add your first item" : "\(count) items · Open to view")
+                            .font(.subheadline).foregroundStyle(AppTheme.muted)
+                    }
+                }.padding(.vertical, 5)
+            }.accessibilityIdentifier("home.room.\(room.id)")
+        }
+    }
+}
+
+private struct HomeActionRow: View {
+    let title: String
+    let detail: String
+    let symbol: String
+    var body: some View {
+        HStack(spacing: 14) {
+            HearthIcon(symbol: symbol)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(.headline).foregroundStyle(AppTheme.ink)
+                Text(detail).font(.subheadline).foregroundStyle(AppTheme.muted)
+            }
+            Spacer(minLength: 0)
+        }.padding(.vertical, 6)
+    }
+}
+
+struct RoomDetailView: View {
+    @Environment(LocalHouseholdRepository.self) private var repository
+    let room: Room
+    @State private var adding = false
+    @State private var editing = false
+    @State private var editingLayout = false
+    private var assets: [HomeAsset] { repository.assets.filter { $0.roomID == room.id } }
+
+    var body: some View {
+        List {
+            Section {
+                ScreenIntro(eyebrow: repository.floors.first(where: { $0.id == room.floorID })?.name ?? "Your home",
+                            title: room.name, subtitle: "\(assets.count) items in this room")
+                Button { adding = true } label: {
+                    Label("Add an item to \(room.name)", systemImage: "plus.circle.fill")
+                        .font(.headline).frame(maxWidth: .infinity, minHeight: 48, alignment: .leading)
+                }.accessibilityIdentifier("room.addItem")
+            }.listRowBackground(Color.clear)
+            Section("Items in \(room.name)") {
+                if assets.isEmpty {
+                    Text("Add a fridge, sofa, lamp, or anything else in this room. You can then track its warranty and maintenance.")
+                        .foregroundStyle(AppTheme.muted)
+                }
+                ForEach(assets) { asset in
+                    NavigationLink { AssetDetailView(asset: asset) } label: {
+                        HStack(spacing: 14) {
+                            HearthIcon(symbol: (AssetCategory(rawValue: asset.categoryRawValue) ?? .other).symbol)
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(asset.name).font(.headline).foregroundStyle(AppTheme.ink)
+                                Text("Details · Warranty · Maintenance").font(.caption).foregroundStyle(AppTheme.muted)
+                            }
+                        }.padding(.vertical, 5)
+                    }.accessibilityIdentifier("room.item.\(asset.id)")
+                }
+            }
+            Section("Room settings") {
+                Button("Edit name or floor", systemImage: "pencil") { editing = true }
+                Button(room.footprint == nil ? "Create a 2D / 3D layout" : "Edit room layout", systemImage: "square.3.layers.3d") { editingLayout = true }
+            }
+        }.hearthList().navigationTitle(room.name).navigationBarTitleDisplayMode(.inline)
+            .toolbar { Button("Add Item", systemImage: "plus") { adding = true } }
+            .sheet(isPresented: $editingLayout) { RoomLayoutEditor(roomID: room.id, floorID: room.floorID) }
+            .sheet(isPresented: $editing) { QuickAddView(draft: .editing(room)) }
+            .sheet(isPresented: $adding) { QuickAddView(kind: .asset, parentID: room.id, fixedKind: true) }
+    }
+}
+
+struct AssetDetailView: View {
+    @Environment(LocalHouseholdRepository.self) private var repository
+    let asset: HomeAsset
+    @State private var adding: EntryKind?
+    @State private var revealSerial = false
+    @State private var editing = false
+    @State private var error: String?
+    var body: some View {
+        List {
+            Section {
+                HStack(alignment: .top, spacing: 16) {
+                    HearthIcon(symbol: (AssetCategory(rawValue: asset.categoryRawValue) ?? .other).symbol)
+                    ScreenIntro(eyebrow: asset.categoryRawValue, title: asset.name,
+                                subtitle: "Item details and upcoming maintenance.")
+                }.padding(.vertical, 8)
+            }.listRowBackground(Color.clear)
+            Section("Overview") {
+                LabeledContent("Category", value: asset.categoryRawValue.capitalized)
+                if let manufacturer = asset.manufacturer, !manufacturer.isEmpty { LabeledContent("Manufacturer", value: manufacturer) }
+                if let model = asset.modelNumber, !model.isEmpty { LabeledContent("Model", value: model) }
+                if let serial = asset.serialNumber, !serial.isEmpty {
+                    Button(revealSerial ? "Serial: \(serial)" : "Reveal serial number") { revealSerial.toggle() }
+                }
+                Picker("Room", selection: Binding(get: { asset.roomID }, set: { id in
+                    do { try repository.move(asset, to: id) } catch { self.error = userFacingError(error) }
+                })) {
+                    Text("Unassigned").tag(nil as UUID?)
+                    ForEach(repository.rooms) { Text($0.name).tag(Optional($0.id)) }
+                }
+                if let notes = asset.notes, !notes.isEmpty { Text(notes) }
+            }
+            Section("Warranties") {
+                ForEach(repository.warranties.filter { $0.assetID == asset.id }) { warranty in
+                    VStack(alignment: .leading) {
+                        Text(warranty.provider ?? "Warranty").font(.headline)
+                        if let date = warranty.endDate {
+                            Text("\(date < Calendar.current.startOfDay(for: .now) ? "Expired" : "Ends") \(date.formatted(date: .abbreviated, time: .omitted))").foregroundStyle(.secondary)
+                        } else { Text("No expiration recorded").foregroundStyle(.secondary) }
+                        if let notes = warranty.notes, !notes.isEmpty { Text(notes).font(.subheadline) }
+                    }.entryActions(.editing(warranty))
+                }
+                Button("Add Warranty", systemImage: "plus") { adding = .warranty }.accessibilityIdentifier("item.addWarranty")
+            }
+            Section("Maintenance") {
+                ForEach(repository.maintenance.filter { $0.assetID == asset.id }) { plan in
+                    NavigationLink(plan.title) { MaintenanceDetailView(plan: plan) }
+                }
+                Button("Add Maintenance", systemImage: "plus") { adding = .maintenance }.accessibilityIdentifier("item.addMaintenance")
+            }
+        }
+        .hearthList()
+        .navigationTitle(asset.name).navigationBarTitleDisplayMode(.inline)
+        .toolbar { Button("Edit Item") { editing = true } }
+        .sheet(isPresented: $editing) { QuickAddView(draft: .editing(asset)) }
+        .sheet(item: $adding) { QuickAddView(kind: $0, parentID: asset.id, fixedKind: true) }
+        .saveError($error)
+    }
+}
+
+struct HomeAlertsView: View {
+    @Environment(LocalHouseholdRepository.self) private var repository
+    var body: some View {
+        List {
+            Section("Maintenance") {
+                if repository.maintenance.isEmpty { Text("Add a maintenance plan from a home item's detail page.").foregroundStyle(.secondary) }
+                ForEach(repository.maintenance) { plan in
+                    NavigationLink { MaintenanceDetailView(plan: plan) } label: {
+                        VStack(alignment: .leading) {
+                            Text(plan.title)
+                            if let date = plan.nextDueAt { Text("Due \(date.formatted(date: .abbreviated, time: .omitted))").font(.caption).foregroundStyle(.secondary) }
+                        }
+                    }
+                }
+            }
+            Section("Warranties") {
+                if repository.warranties.isEmpty { Text("Add a warranty from a home item's detail page.").foregroundStyle(.secondary) }
+                ForEach(repository.warranties) { warranty in
+                    VStack(alignment: .leading) {
+                        Text(repository.assetName(warranty.assetID))
+                        Text(warranty.provider ?? "Warranty").font(.subheadline)
+                        if let end = warranty.endDate { Text("Ends \(end.formatted(date: .abbreviated, time: .omitted))").font(.caption).foregroundStyle(.secondary) }
+                    }
+                }
+            }
+        }.hearthList().navigationTitle("Home Alerts")
+    }
+}
+
+struct MaintenanceDetailView: View {
+    @Environment(LocalHouseholdRepository.self) private var repository
+    let plan: MaintenancePlan
+    @State private var error: String?
+    @State private var confirming = false
+    @State private var editing = false
+    var body: some View {
+        List {
+            Section {
+                LabeledContent("Item", value: repository.assetName(plan.assetID))
+                if let due = plan.nextDueAt { LabeledContent("Next due", value: due.formatted(date: .abbreviated, time: .omitted)).accessibilityElement(children: .combine).accessibilityIdentifier("maintenance.nextDue") }
+                if let interval = plan.intervalDays { Text("Repeats \(interval) days after completion") }
+                if let last = plan.lastCompletedAt { LabeledContent("Last completed", value: last.formatted(date: .abbreviated, time: .shortened)) }
+            }
+            Section {
+                Button("Mark Completed", systemImage: "checkmark.circle") { confirming = true }
+                    .disabled(plan.lastCompletedAt != nil && plan.nextDueAt == nil)
+                    .accessibilityIdentifier("maintenance.complete")
+                if let shopping = plan.shoppingItemTemplate, !shopping.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    let alreadyAdded = repository.groceries.contains { !$0.isCompleted && $0.relatedAssetID == plan.assetID && $0.name == shopping.trimmingCharacters(in: .whitespacesAndNewlines) }
+                    Button(alreadyAdded ? "Replacement is on your grocery list" : "Add replacement to groceries", systemImage: "cart.badge.plus") {
+                        do { try repository.addReplacementToShopping(plan) } catch { self.error = userFacingError(error) }
+                    }.disabled(alreadyAdded)
+                    Text(shopping).font(.subheadline).foregroundStyle(.secondary)
+                }
+            }
+            Section("Service history") {
+                let entries = repository.history.filter { $0.planID == plan.id }
+                if entries.isEmpty { Text("Completions will appear here.").foregroundStyle(.secondary) }
+                ForEach(entries) { entry in Label(entry.completedAt.formatted(date: .abbreviated, time: .shortened), systemImage: "checkmark") }
+            }
+        }.hearthList().navigationTitle(plan.title)
+            .toolbar { Button("Edit") { editing = true } }
+            .sheet(isPresented: $editing) { QuickAddView(draft: .editing(plan)) }
+            .confirmationDialog("Record this maintenance as completed now?", isPresented: $confirming, titleVisibility: .visible) {
+                Button("Record Completion") {
+                    do { try repository.completeMaintenance(plan) } catch { self.error = userFacingError(error) }
+                }
+            }
+            .saveError($error)
+    }
+}

@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LunaHearth · Home walkthrough</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f6f6f6;color:#111;font:16px/1.5 -apple-system,BlinkMacSystemFont,sans-serif}main{max-width:1180px;margin:auto;padding:48px 24px}h1{font-size:clamp(32px,5vw,58px);line-height:1.08;letter-spacing:-.04em;margin:12px 0 22px}h2{font-size:22px;line-height:1.25;margin:10px 0}p{max-width:740px;color:#555}small{font-weight:600;color:#555}nav{display:flex;gap:18px;flex-wrap:wrap;margin:22px 0}a{color:#111;text-underline-offset:4px}.notice{background:#fff;padding:18px 22px;border-left:4px solid #2469d8;margin:28px 0}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px}article{min-width:0}article img{width:100%;height:auto;display:block;border:1px solid #ddd;border-radius:18px;background:#fff}article p{font-size:14px;margin-top:8px;min-height:64px}.step{display:inline-block;background:#e4edff;color:#205abb;border-radius:30px;padding:4px 12px;font-size:13px;font-weight:700}footer{border-top:1px solid #ddd;margin-top:40px;padding-top:20px;color:#555}
+</style>
+<main>
+<small>LUNAHEARTH · NATIVE iOS APP</small>
+<h1>A home, from setup<br>to everyday care.</h1>
+<p>Create a room, add the things inside, and keep their details together. Black-and-white controls, colorful accents, and an offline local store.</p>
+<nav><a href="index.html">All app screens</a><a href="home-layout.html">Room layout screens</a><a href="interactive-layout.html">Separate browser layout demo</a></nav>
+<div class="notice"><strong>These are native simulator screenshots.</strong> The pictures are not interactive controls. Use the LunaHearth app in Simulator for the complete flow. CloudKit backup requires an Apple team and provisioned container; live iCloud upload has not been verified here.</div>
+<div class="grid">
+<article><span class="step">01 · Set up</span><h2>Make yourself at home</h2><p>Name your home and optionally choose a first room. Create my home stays visible and takes you straight to Home.</p><img src="24-Home-Setup.png" alt="Home setup with first room choice and a fixed Create my home button"></article>
+<article><span class="step">02 · Organize</span><h2>A clear place to start</h2><p>Add a room or an item from Home. Floors are optional, and rooms can be created without a scan.</p><img src="19-Home-Start.png" alt="Home with Add a room and Add an item actions"></article>
+<article><span class="step">03 · Open a room</span><h2>Everything belongs somewhere</h2><p>The room shows a direct add-item action. The item's room is already chosen when the form opens.</p><img src="20-Room-Add-Item.png" alt="Kitchen with Add an item to Kitchen action"></article>
+<article><span class="step">04 · Add an item</span><h2>Keep the useful details</h2><p>Add a name, category and manufacturer. The form makes its destination clear.</p><img src="21-Add-Item-To-Room.png" alt="Fridge item form with Kitchen selected"></article>
+<article><span class="step">05 · Add care</span><h2>Coverage and maintenance</h2><p>Warranties and maintenance belong to the item. Moving an item preserves those links.</p><img src="22-Item-Warranty-Maintenance.png" alt="Fridge detail with warranty and maintenance"></article>
+<article><span class="step">06 · Follow through</span><h2>Complete, then plan ahead</h2><p>Record service history, reschedule repeating care and add a replacement to groceries with one action.</p><img src="23-Home-Care-Completed.png" alt="Completed maintenance with next due date and replacement grocery status"></article>
+<article><span class="step">07 · Arrange</span><h2>Build a measured layout</h2><p>Save room sizes, drag rooms in 2D, and rotate or tilt the 3D view in the native app.</p><img src="18-Home-Rotated.png" alt="Rotated 3D room layout"></article>
+<article><span class="step">08 · Optional backup</span><h2>A private copy in iCloud</h2><p>Manually back up to your Apple Account. A new installation can review and restore it. Automatic sync and family sharing are not enabled.</p><img src="25-iCloud-Backup.png" alt="Private iCloud backup screen"></article>
+</div>
+<footer>Local household data remains available offline. Document and room-scan files are not supported by this backup version. See docs/CLOUDKIT_SETUP.md for live cloud configuration.</footer>
+</main>
+</html>

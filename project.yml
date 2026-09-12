@@ -1,0 +1,56 @@
+name: LunaHearth
+options:
+  bundleIdPrefix: com.neuralluna
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: 6.0
+    SWIFT_STRICT_CONCURRENCY: complete
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 0.1.0
+targets:
+  LunaHearth:
+    type: application
+    platform: iOS
+    sources:
+      - path: LunaHearth
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth
+        INFOPLIST_FILE: LunaHearth/Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: LunaHearth/Resources/LunaHearth.entitlements
+        PRODUCT_NAME: LunaHearth
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        GENERATE_INFOPLIST_FILE: NO
+    dependencies: []
+    scheme:
+      testTargets:
+        - LunaHearthTests
+        - LunaHearthUITests
+  LunaHearthTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: LunaHearthTests
+    dependencies:
+      - target: LunaHearth
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth.tests
+        GENERATE_INFOPLIST_FILE: YES
+  LunaHearthUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: LunaHearthUITests
+    dependencies:
+      - target: LunaHearth
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth.uitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: LunaHearth
