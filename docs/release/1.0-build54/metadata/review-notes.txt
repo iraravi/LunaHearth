@@ -1,0 +1,12 @@
+LunaHearth has no app login. Sign-in required should be OFF.
+
+To review offline: launch, create a home with a name, then open Home > Pantry or Shopping and add an item. Only its name is required. Home also provides Meals, Expenses and Rooms. Today and Calendar are primary tabs. More contains optional Apple connections, family sharing, AI status and data controls.
+
+Shopping: tap an unbought item and choose to add it to inventory or mark it bought without stocking it. When matching inventory exists, review the available restock/pack choice.
+Receipts: Home > Expenses or Pantry > Scan receipt. Select a photo or enter details manually, then review extracted names, amounts and proposed stock changes before saving.
+AI: Apple Foundation Models are used only on supported devices/OS with Apple Intelligence available. Manual entry and deterministic fallback workflows remain available. Photo image inference requires iOS 27 with vision-capable on-device models; older supported systems use readable product-label OCR/manual entry. Do not assume the simulator demonstrates generative inference.
+Apple Calendar/Reminders: permissions are requested when connecting. Core app use does not require these permissions.
+iCloud: optional private storage and Apple-managed household sharing. Review collaboration with two different iCloud accounts if needed; no LunaHearth credentials exist. Cloud storage must be available. Local app use is possible without iCloud.
+Room scanning: optional supported hardware feature, with manual rooms available.
+
+Review contact: must be confirmed in App Store Connect. Do not publish personal test account details from development logs.

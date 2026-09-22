@@ -1,10 +1,11 @@
 import SwiftUI
 
 enum RootTab: Hashable {
-    case today, calendar, home, lists, more
+    case today, calendar, home, more
 }
 
 struct RootTabView: View {
+    @State private var canvas = FeatureCanvasCoordinator()
     @State private var selection: RootTab
 
     init(initialTab: RootTab = .today) { _selection = State(initialValue: initialTab) }
@@ -20,16 +21,17 @@ struct RootTabView: View {
                 .tag(RootTab.calendar)
 
             HomeView()
+                .environment(\.featureCanvasScope, .home)
                 .tabItem { Label("Home", systemImage: "house") }
                 .tag(RootTab.home)
-
-            ListsView()
-                .tabItem { Label("Lists", systemImage: "checklist") }
-                .tag(RootTab.lists)
 
             MoreView()
                 .tabItem { Label("More", systemImage: "ellipsis.circle") }
                 .tag(RootTab.more)
         }
+        .tint(AppTheme.accent)
+        .hearthNavigationMaterial(AppTheme.canvas, for: .tabBar)
+        .environment(\.featureCanvasCoordinator, canvas)
+        .background((selection == .home ? canvas.color(for: .home) : AppTheme.canvas).ignoresSafeArea())
     }
 }

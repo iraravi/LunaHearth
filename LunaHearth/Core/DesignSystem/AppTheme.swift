@@ -7,9 +7,17 @@ enum AppTheme {
     static let muted = Color("HearthMuted")
     static let accent = Color("HearthAccent")
     static let secondarySurface = Color("HearthSecondary")
-    static let cardCornerRadius: CGFloat = 16
+    static let cardCornerRadius: CGFloat = 18
     static let sectionSpacing: CGFloat = 16
     static let contentPadding: CGFloat = 20
+    static let displayTitle = Font.system(.largeTitle, design: .serif, weight: .regular)
+    static let sectionTitle = Font.system(.title2, design: .serif, weight: .regular)
+    static let sage = Color("IllustrationGreen")
+    static let clay = Color("IllustrationOrange")
+    static let slate = Color("IllustrationBlue")
+    static let plum = Color("IllustrationPurple")
+    static let rose = Color("IllustrationCoral")
+    static let ochre = Color("HearthOchre")
 }
 
 /// Decorative category accents; navigation and primary actions stay black and white.
@@ -150,16 +158,17 @@ struct SummaryMetric: View {
 }
 
 private struct HearthListStyle: ViewModifier {
+    var canvas: Color = AppTheme.canvas
     func body(content: Content) -> some View {
         content.scrollContentBackground(.hidden)
-            .background(AppTheme.canvas)
+            .background(canvas)
             .listRowSeparatorTint(AppTheme.ink.opacity(0.12))
             .tint(AppTheme.accent)
     }
 }
 
 extension View {
-    func hearthList() -> some View { modifier(HearthListStyle()) }
+    func hearthList(canvas: Color = AppTheme.canvas) -> some View { modifier(HearthListStyle(canvas: canvas)) }
 }
 
 extension AssetCategory {
@@ -175,5 +184,55 @@ extension AssetCategory {
         case .safety: "checkmark.shield"
         case .other: "shippingbox"
         }
+    }
+}
+
+/// Visible boundaries strengthen with the system's Increase Contrast setting.
+private struct HearthCardOutline: ViewModifier {
+    @Environment(\.colorSchemeContrast) private var contrast
+    let color: Color
+    let radius: CGFloat
+    func body(content: Content) -> some View {
+        content.overlay {
+            RoundedRectangle(cornerRadius: radius)
+                .strokeBorder(color.opacity(contrast == .increased ? 0.6 : 0.12), lineWidth: contrast == .increased ? 2 : 1)
+                .allowsHitTesting(false).accessibilityHidden(true)
+        }
+    }
+}
+
+extension View {
+    func hearthCardOutline(_ color: Color, radius: CGFloat = 18) -> some View {
+        modifier(HearthCardOutline(color: color, radius: radius))
+    }
+}
+
+/// Shared editorial hierarchy; imagery yields to large accessibility text.
+struct HearthEditorialHeader: View {
+    let eyebrow: String
+    let title: String
+    let subtitle: String
+    var artwork: String?
+    @Environment(\.dynamicTypeSize) private var textSize
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    var body: some View {
+        VStack(alignment: .leading, spacing: 20) {
+            HStack(spacing: 24) {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(eyebrow.uppercased()).font(.caption2.weight(.medium)).tracking(1.8)
+                        .foregroundStyle(AppTheme.muted)
+                    Text(title).font(AppTheme.displayTitle).foregroundStyle(AppTheme.ink)
+                        .fixedSize(horizontal: false, vertical: true).accessibilityAddTraits(.isHeader)
+                    Text(subtitle).font(.subheadline).foregroundStyle(AppTheme.muted)
+                        .fixedSize(horizontal: false, vertical: true)
+                }.frame(maxWidth: .infinity, alignment: .leading)
+                if let artwork, !textSize.isAccessibilitySize {
+                    Image(artwork).resizable().scaledToFill()
+                        .frame(width: sizeClass == .regular ? 220 : 112, height: 144)
+                        .clipped().clipShape(RoundedRectangle(cornerRadius: 12)).accessibilityHidden(true)
+                }
+            }
+            Divider().overlay(AppTheme.ink.opacity(0.05))
+        }.padding(.vertical, 4)
     }
 }

@@ -1,0 +1,5 @@
+Build 48 brings a simpler four-tab layout: Today, Calendar, Home and More. Open Shopping, Pantry, Meals and Reminders from Home. More and its settings screens have clearer cards and improved large-text layouts.
+
+Please test your connected household flow: assign shopping, mark a purchase, check pantry quantities, then scan the receipt. If it matches a purchase already recorded, select that purchase so the expense is added without stocking it twice. Check meal planning, monthly expenses, family sharing and optional Apple Calendar connections on iPhone and iPad.
+
+Update both household devices to this build before testing together. Please report any missing data, duplicate stock, navigation problems or sync errors with the steps that led to them.

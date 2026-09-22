@@ -27,6 +27,7 @@ struct HouseholdBackup: Codable, Sendable {
 }
 
 protocol HouseholdBackupService: Sendable {
+    func deleteBackups() async throws
     func upload(_ backup: HouseholdBackup) async throws
     func download() async throws -> HouseholdBackup
 }

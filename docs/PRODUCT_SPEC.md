@@ -1,5 +1,9 @@
 # Product Specification — LunaHearth
 
+> Current foundation (ADR-012): local household reminders, shopping, schedules and home records support optional private CloudKit sync and CKShare invitations. Foreground changes sync automatically; live two-account device acceptance is still a release check. Apple Reminders is a separate optional connection. Setup no longer asks for a room. Earlier Apple-only/manual-backup-only implementation notes below are historical. See [ADR-012](ADR/012-live-private-household-sharing.md).
+
+
+
 ## 1. Executive summary
 
 LunaHearth is a **private household operating system** for Apple devices. It helps a household coordinate people and time while also maintaining a structured digital representation of the physical home.
@@ -246,3 +250,15 @@ LunaHearth’s strategic wedge:
 **Calendar + household operations + structured home memory + maintenance + local privacy.**
 
 The app should feel like one connected system, not six mini apps inside a tab bar.
+
+## Selected Apple lists — September 2026 update
+
+ADR-010 supersedes earlier local shopping/task entry behavior. Shopping and Reminders each connect to one user-selected Apple Reminders list. Setup states that Apple Reminders is the source of truth, offers standard-list creation or existing-list browsing, and confirms the destination. Only that list's items appear and receive new writes. Shopping includes undated items; Reminders offers All, Today/overdue and Upcoming. Existing local items remain recoverable without automatic migration. List sharing instructions are available in-app; invitations and participant management happen in Apple Reminders because the public API does not expose those operations.
+
+### Personal assigned shopping (ADR-016)
+
+Today → For you shows open groceries assigned to the member selected on this device, including exact item count, quantities, store and Now/Later grouping. Completion updates the same household grocery record. Optional generic assignment alerts use private/shared iCloud background change hints; delays and missed delivery remain possible. The shopping brief is on-device only with a deterministic fallback. This is an in-app Today feature, not an iOS Home Screen widget.
+
+### Groceries at home (ADR-017)
+
+Home includes a separate grocery inventory with optional quantity, pack, store, location and calendar-only dates. South Indian, Indian and Everyday starter ideas can be tailored with on-device AI; users select what they own before saving. Shopping completion explicitly distinguishes stock for home from purchases kept elsewhere. Used-up inventory can return to shopping without guessing a reorder quantity. Coral/peach inventory visuals are distinct from shopping's green palette; no root tab or account is added.

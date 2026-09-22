@@ -1,0 +1,137 @@
+{
+  "version": "1.0",
+  "build": 54,
+  "note": "Source guardrails postdate build 54 archive; see LEGAL_REVIEW.md.",
+  "files": [
+    {
+      "path": "ExportOptions.plist",
+      "bytes": 461,
+      "sha256": "75870df42d557e9a0de41e19767a0300a115ffc91d0ba734fb2d309754a335a2"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2860,
+      "sha256": "678237d1d1e64757cfb46f7348b6cc8e6d6042915124baaec9bd1da8f9cc7b44"
+    },
+    {
+      "path": "app-icon-1024.png",
+      "bytes": 36174,
+      "sha256": "02ee043111f6b874666165e20827be729d9bb6c7ad9f23da5f3637580c822852"
+    },
+    {
+      "path": "index.html",
+      "bytes": 3108,
+      "sha256": "832d277b6d591a062dda3cc9db85baee7fadcfe5453b1c32ba9e8cc2536491d6"
+    },
+    {
+      "path": "metadata/en-US.json",
+      "bytes": 2879,
+      "sha256": "3026de3af54b21b6698d40e4b01b8d51e9d051e829f7f7e04286bb0b8e39c553"
+    },
+    {
+      "path": "metadata/listing-copy.txt",
+      "bytes": 2394,
+      "sha256": "01aa3a1b353201ef06c06212c2b1bfa508e363c3c88a1d50a2d5a2a1939cda64"
+    },
+    {
+      "path": "metadata/privacy-and-age-rating-review.md",
+      "bytes": 1964,
+      "sha256": "208202e1c79b07e0390b2ad1306816656606c1b0cfe28ac49a205586f155b189"
+    },
+    {
+      "path": "metadata/review-notes.txt",
+      "bytes": 1664,
+      "sha256": "c32bba58265c35397129a81c58a3bc8d1170a01b577584d30de71bfe6e0b6764"
+    },
+    {
+      "path": "screenshots/ipad-13/Store-01-Today.png",
+      "bytes": 875493,
+      "sha256": "12631b40ab4e19f90fad8f37b3931203921264dd9b7d0d75e8e2a79f8d052e10"
+    },
+    {
+      "path": "screenshots/ipad-13/Store-02-Home.png",
+      "bytes": 1872525,
+      "sha256": "7fb46960497e001e201d4b86db08531500a66a19bacc2ede21a138a6fd1d06eb"
+    },
+    {
+      "path": "screenshots/ipad-13/Store-03-Shopping.png",
+      "bytes": 478400,
+      "sha256": "6ae590391a3a8b094b1adbecf7c72177ac9e6b038a24dafba74acd7134ded278"
+    },
+    {
+      "path": "screenshots/ipad-13/Store-04-Pantry.png",
+      "bytes": 535774,
+      "sha256": "727b46fbcc6a9e5a9991df9730ee47261385ea7476210f36e6d0b6ac028447a2"
+    },
+    {
+      "path": "screenshots/ipad-13/Store-05-Calendar.png",
+      "bytes": 248203,
+      "sha256": "e3a4fc3f538cf91120a9f7c36dbc4d895e0b312050900cc2ea3957328dde4ed7"
+    },
+    {
+      "path": "screenshots/ipad-13/Store-06-Expenses.png",
+      "bytes": 830167,
+      "sha256": "8f6053e87592e53f444c3b57ff500c22e246640f4ea0a378e207bb35c28eba8d"
+    },
+    {
+      "path": "screenshots/iphone-6.9/Store-01-Today.png",
+      "bytes": 643789,
+      "sha256": "0c1508b9557ccc36f79b18703b8efd03fa2e72dacff80def3496d5160863b850"
+    },
+    {
+      "path": "screenshots/iphone-6.9/Store-02-Home.png",
+      "bytes": 1379341,
+      "sha256": "78ebef5f4914166f95d350ce10e2c77944c618f68b648781980897a9b9dcbfc9"
+    },
+    {
+      "path": "screenshots/iphone-6.9/Store-03-Shopping.png",
+      "bytes": 656677,
+      "sha256": "3898565573e401c91c5d1ad1028966c9b96a9b2dfa6a439ab3639a0662571b86"
+    },
+    {
+      "path": "screenshots/iphone-6.9/Store-04-Pantry.png",
+      "bytes": 621357,
+      "sha256": "0d808f85e6722cd1e813c80d284bce029f9e2fb4a964e485fa72e539d6003ecc"
+    },
+    {
+      "path": "screenshots/iphone-6.9/Store-05-Calendar.png",
+      "bytes": 290268,
+      "sha256": "99eb1057d17471260b8a98c3b9c08947fa3080d85859a38b4cc4826a1ef15a14"
+    },
+    {
+      "path": "screenshots/iphone-6.9/Store-06-Expenses.png",
+      "bytes": 764332,
+      "sha256": "21a1e6073484658915cc6de5532d9a36162df1f85cc033b164e1d211532c4641"
+    },
+    {
+      "path": "validation/AUDIT.md",
+      "bytes": 3793,
+      "sha256": "a1973fea936a521b7825794e9a4a401cfb3a84e89edbc7d645cd2243a05439f9"
+    },
+    {
+      "path": "validation/LEGAL_REVIEW.md",
+      "bytes": 7082,
+      "sha256": "fcc76e818b3e87d260790b2fa6c59ad381bcd1bdff64d85611462630f1cdd94e"
+    },
+    {
+      "path": "validation/meal-safety-notice.png",
+      "bytes": 849388,
+      "sha256": "ace6ac0018c645cf8dd85ee00985daecc580e0ca6f127027b0550d89a6a3d711"
+    },
+    {
+      "path": "validation/screenshots.json",
+      "bytes": 3381,
+      "sha256": "5ed27954c37cb63b88aa8d7b54101850998aea98017567906d789f3fa7ae5e62"
+    },
+    {
+      "path": "website/privacy.html",
+      "bytes": 4115,
+      "sha256": "301e24dd14d3dccdff42fe9daefee1ba00cff9e119c6f2fdfd4aff0525baa8f6"
+    },
+    {
+      "path": "website/support.html",
+      "bytes": 2704,
+      "sha256": "8758697ef3cb8f856de27d4ffcc7b6e25667f04823057719b0aac52746c8c4da"
+    }
+  ]
+}

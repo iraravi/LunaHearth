@@ -1,5 +1,9 @@
 # Privacy & Security Design
 
+> Current foundation (ADR-012): local household reminders, shopping, schedules and home records support optional private CloudKit sync and CKShare invitations. Foreground changes sync automatically; live two-account device acceptance is still a release check. Apple Reminders is a separate optional connection. Setup no longer asks for a room. Earlier Apple-only/manual-backup-only implementation notes below are historical. See [ADR-012](ADR/012-live-private-household-sharing.md).
+
+
+
 ## 1. Threat/privacy posture
 
 LunaHearth contains potentially sensitive household information: names, schedules, home contents, serial numbers, receipts, warranties, and documents. The primary risk reduction strategy is to avoid collecting that data into NeuralLuna infrastructure at all.
@@ -153,3 +157,25 @@ Before each release:
 - export/delete tested
 - screenshots/demo data contain no real household data
 - privacy policy matches exact code paths
+
+## Apple connections update
+
+Calendar and Reminders are now optional explicit connections, with individual source selection and device-only preferences. External events/reminders are kept out of household storage and CloudKit backups. Reviewed exports and selected-reminder completion can write through Apple's system accounts; the destination's existing sharing rules apply. Notes/Mail/other sharing uses the user-completed system share sheet. No third-party SDK, login, telemetry or automatic message sending is introduced. See ADR-007 for permission, stale-read and deep-link protections.
+
+### Apple-only reminders (ADR-009)
+
+New reminder entry now writes solely to the explicitly selected Apple Reminders list. LunaHearth does not persist a duplicate or enqueue a household delivery job. The former task-copy worker is stopped. Existing local tasks are preserved in a labeled recovery section and can still exist in historical backups. Standard-list creation requires a reviewed destination account, derived from an existing writable list. EventKit/provider availability determines reminder availability; failed writes leave the editor open and never fall back to household storage. This supersedes earlier manual-copy and automatic-copy reminder behavior.
+
+### Selected shopping lists and sharing setup (ADR-010)
+
+New shopping entries, including maintenance replacement drafts and quantity notes, now write directly to the selected Apple list. Only list identifiers/preferences persist in LunaHearth. Existing local groceries remain preserved for recovery. The sharing guide names the selected destination but sends no invitations; users must complete invitation sharing in Apple Reminders. Its Apple Support link contains no household content. No new network adapter or private API was added.
+
+Shopping ideas: explicit requests use Apple’s on-device SystemLanguageModel when available. Context is limited to the request, current shopping names and optional checked-item names. No names of people, notes, documents or stores are sent to the model. No cloud AI transport is configured. Suggestions are transient until reviewed and added, after which they follow normal local storage and optional household iCloud sync.
+
+### Household stores
+
+User-entered store names and optional branches are saved locally and included in
+user-enabled private household sync and backups. Household share participants can
+read them under the existing sharing permissions. There is no public store upload,
+location permission, business-directory API, or AI processing of store names.
+The bundled chain-name catalog works offline. See ADR-014.

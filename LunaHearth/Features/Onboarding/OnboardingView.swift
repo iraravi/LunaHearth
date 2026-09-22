@@ -1,123 +1,144 @@
 import SwiftUI
 
-private struct MemberDraft: Identifiable {
-    let id = UUID()
-    var name = ""
-    var role: MemberRole = .adult
-}
-
+/// Home creation stays separate from profiles, room setup and iCloud sharing.
 struct OnboardingView: View {
     var onCreated: () -> Void = {}
+    var isTour = false
     @Environment(LocalHouseholdRepository.self) private var repository
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var started = false
-    @State private var name = "Our Home"
-    @State private var owner = ""
-    @State private var firstRoom = ""
-    @State private var people: [MemberDraft] = []
+    @State private var privacyExpanded = false
+    @State private var name = ""
     @State private var error: String?
+    @FocusState private var focusedSetupField: String?
 
     var body: some View {
         NavigationStack {
-            Group {
-                if started {
-                    Form {
-                        Section("Name your home") {
-                            TextField("Household name", text: $name).accessibilityIdentifier("setup.householdName")
-                            TextField("Your display name (optional)", text: $owner)
-                        }
-                        Section {
-                            Picker("First room", selection: $firstRoom) {
-                                Text("Add rooms later").tag("")
-                                ForEach(["Kitchen", "Living room", "Bedroom", "Office"], id: \.self) { Text($0).tag($0) }
-                            }.accessibilityIdentifier("setup.firstRoom")
-                        } header: { Text("Start with a room") } footer: {
-                            Text("You can add an item as soon as your home is ready.")
-                        }
-                        Section {
-                            DisclosureGroup("Add household members") {
-                            ForEach($people) { $person in
-                                VStack(alignment: .leading) {
-                                    TextField("Display name", text: $person.name)
-                                    Picker("Profile", selection: $person.role) {
-                                        Text("Adult").tag(MemberRole.adult)
-                                        Text("Child").tag(MemberRole.child)
-                                    }
-                                    Button("Remove person", role: .destructive) { people.removeAll { $0.id == person.id } }
-                                }
-                            }
-                            Button("Add a person", systemImage: "person.badge.plus") { people.append(MemberDraft()) }
-                            }
-                        } header: { Text("People · optional") } footer: {
-                            Text("Profiles help assign events and chores. They are not accounts. You can add people later.")
-                        }
-                    }
-                    .hearthList()
-                    .safeAreaInset(edge: .bottom) {
-                        VStack(spacing: 8) {
-                            Button(action: create) {
-                                HStack { Text("Create my home"); Spacer(); Image(systemName: "arrow.right") }
-                                    .font(.headline).padding(.vertical, 6)
-                            }.buttonStyle(.borderedProminent).controlSize(.large)
-                                .accessibilityIdentifier("setup.create")
-                                .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                            Text("Saved on this device. iCloud backup is optional.")
-                                .font(.caption).foregroundStyle(AppTheme.muted)
-                        }.padding().frame(maxWidth: 600).frame(maxWidth: .infinity).background(AppTheme.canvas)
-                    }
-                    .navigationTitle("Set up your home").navigationBarTitleDisplayMode(.inline)
-                    .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Back") { started = false } } }
-                } else {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 24) {
-                            HStack(spacing: 10) {
-                                HearthIcon(symbol: "house.and.flag")
-                                Text("LunaHearth").font(.system(.title3, design: .default, weight: .bold)).foregroundStyle(AppTheme.ink)
-                            }
-                            HearthArtwork(name: "HearthHome", height: 220)
-                            Text("Home life.\nHandled.")
-                                .font(.system(.largeTitle, design: .default, weight: .bold)).foregroundStyle(AppTheme.ink)
-                            Text("One app for your family, your schedule, and your home.")
-                                .font(.title3).foregroundStyle(AppTheme.muted)
-                            VStack(alignment: .leading, spacing: 16) {
-                                welcomePoint("Make plans together", detail: "Family events, tasks, and little reminders.", symbol: "calendar")
-                                welcomePoint("Keep track of your home", detail: "Rooms, belongings, and the details that matter.", symbol: "house")
-                                welcomePoint("Works offline", detail: "Works offline. No account needed.", symbol: "iphone")
-                            }.padding(.vertical, 8)
-
-                        }.padding(24).frame(maxWidth: 600, alignment: .leading).frame(maxWidth: .infinity)
-                    }.background(AppTheme.canvas)
-                        .safeAreaInset(edge: .bottom) {
-                            VStack(spacing: 10) {
-                                Button { started = true } label: {
-                                    HStack { Text("Get Started"); Spacer(); Image(systemName: "arrow.right") }
-                                        .font(.headline).padding(.vertical, 8)
-                                }.buttonStyle(.borderedProminent).controlSize(.large)
-                                    .accessibilityIdentifier("setup.start")
-                                NavigationLink("Restore from iCloud") { BackupView(onRestore: onCreated) }
-                                    .accessibilityIdentifier("setup.restore")
-                                Text("Stored on this device · No account needed")
-                                    .font(.caption).foregroundStyle(AppTheme.muted)
-                            }.padding(.horizontal, 24).padding(.vertical, 12)
-                                .frame(maxWidth: 600).frame(maxWidth: .infinity).background(AppTheme.canvas)
-                        }
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    if started { setup } else { welcome }
                 }
+                .padding(24).frame(maxWidth: 700, alignment: .leading).frame(maxWidth: .infinity)
+            }
+            .background(WelcomeStyle.canvas).foregroundStyle(WelcomeStyle.ink).tint(WelcomeStyle.ink)
+            .scrollDismissesKeyboard(.interactively)
+            .safeAreaInset(edge: .bottom) { bottomBar }
+            .navigationTitle(isTour ? (started ? "Setup preview" : "Welcome") : (started ? "Make yourself at home" : ""))
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { focusedSetupField = nil }.accessibilityIdentifier("setup.keyboardDone")
+                }
+                if started { ToolbarItem(placement: .cancellationAction) { Button("Back") { started = false } } }
+                if isTour { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
             }
             .saveError($error)
+        }.tint(WelcomeStyle.ink)
+    }
+
+    private var welcome: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            Text("LUNAHEARTH").font(.caption.weight(.medium)).tracking(3).foregroundStyle(WelcomeStyle.muted)
+            if !typeSize.isAccessibilitySize { WelcomePhotograph(name: "WelcomeResidence", height: 220) }
+            Text("Make yourself at home.").font(WelcomeStyle.heading).fixedSize(horizontal: false, vertical: true)
+            Text("One private place for your day, your people and everything at home.")
+                .font(.body).foregroundStyle(WelcomeStyle.muted).lineSpacing(3)
+            Divider()
+            HStack(alignment: .top, spacing: 14) {
+                Image(systemName: "house").font(.title3.weight(.light)).accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: 5) {
+                    Text("Start with a name").font(.headline)
+                    Text("No rooms, lists or accounts to set up first. Add the details whenever you’re ready.")
+                        .font(.subheadline).foregroundStyle(WelcomeStyle.muted)
+                }
+            }
+            privacy
         }
     }
 
-    private func welcomePoint(_ title: String, detail: String, symbol: String) -> some View {
-        HStack(alignment: .top, spacing: 14) {
-            HearthIcon(symbol: symbol)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(AppTheme.ink)
-                Text(detail).font(.caption).foregroundStyle(AppTheme.muted)
+    private var setup: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            if !typeSize.isAccessibilitySize { WelcomePhotograph(name: "WelcomeResidence", height: 150) }
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Step 1 of \(1 + HomeSetupStep.allCases.count) · Your home").font(.caption.weight(.medium)).foregroundStyle(WelcomeStyle.muted)
+                ProgressView(value: 1, total: Double(1 + HomeSetupStep.allCases.count))
+                    .tint(WelcomeStyle.accent).accessibilityLabel("Setup, step 1 of \(1 + HomeSetupStep.allCases.count)")
+            }.accessibilityIdentifier("setup.progress")
+            Text("A name that feels like home.").font(WelcomeStyle.heading).fixedSize(horizontal: false, vertical: true)
+            Text("Everything else can come later.").foregroundStyle(WelcomeStyle.muted)
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Home name").font(.subheadline.weight(.medium))
+                setupField("e.g. Our Home", text: $name, identifier: "setup.householdName")
+                Text("You can add rooms and invite people after setup.")
+                    .font(.footnote).foregroundStyle(WelcomeStyle.muted)
+            }
+            privacy
+        }
+    }
+
+    private var privacy: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Divider()
+            Text("Saved on this device. iCloud is optional.").font(.subheadline).foregroundStyle(WelcomeStyle.muted)
+            DisclosureGroup("Your privacy", isExpanded: $privacyExpanded) {
+                VStack(alignment: .leading, spacing: 16) {
+                    privacyRow("No app account", detail: "Your home works offline. Plans, lists and details save on this device.", symbol: "iphone")
+                    privacyRow("Sharing is your choice", detail: "Enable iCloud sync or join a shared home only when you choose.", symbol: "icloud")
+                    privacyRow("Optional on-device AI", detail: "Apple’s AI can help when available. You review suggestions before saving; no cloud AI service is used.", symbol: "sparkles")
+                }.padding(.top, 14)
+            }.font(.subheadline).padding(.vertical, 4)
+        }.accessibilityIdentifier("setup.privacy")
+    }
+
+    private func privacyRow(_ title: String, detail: String, symbol: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: symbol).foregroundStyle(WelcomeStyle.accent).frame(width: 24).accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: 5) {
+                Text(title).font(.subheadline.weight(.medium))
+                Text(detail).font(.footnote).foregroundStyle(WelcomeStyle.muted)
             }.fixedSize(horizontal: false, vertical: true)
         }
     }
 
+    private var bottomBar: some View {
+        VStack(spacing: 10) {
+            if isTour {
+                Button(started ? "Back to introduction" : "Preview setup") { started.toggle() }
+                    .buttonStyle(.borderedProminent).controlSize(.regular).accessibilityIdentifier("setup.preview")
+                Button("Back to my home") { dismiss() }
+                Text("Preview only · Your existing home is unchanged").font(.caption).foregroundStyle(WelcomeStyle.muted)
+            } else {
+                Button { if started { create() } else { started = true } } label: {
+                    Text(started ? "Create my home" : "Get Started").font(.subheadline.weight(.medium)).padding(.horizontal, 24).padding(.vertical, 3).frame(minHeight: 28)
+                }.buttonStyle(.borderedProminent).controlSize(.regular).buttonBorderShape(.capsule)
+                    .accessibilityIdentifier(started ? "setup.create" : "setup.start")
+                    .disabled(started && name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                if !started {
+                    NavigationLink("Join an existing home") { JoinExistingHomeView() }.frame(minHeight: 44).accessibilityIdentifier("setup.join")
+                    NavigationLink("Restore from iCloud") { BackupView(onRestore: onCreated) }.frame(minHeight: 44).accessibilityIdentifier("setup.restore")
+                }
+                Text("Private by default · No account needed").font(.caption).foregroundStyle(WelcomeStyle.muted)
+            }
+        }.padding(.horizontal, 24).padding(.vertical, 12).frame(maxWidth: 700).frame(maxWidth: .infinity).background(WelcomeStyle.canvas)
+    }
+
+    private func setupField(_ placeholder: String, text: Binding<String>, identifier: String) -> some View {
+        TextField(placeholder, text: text)
+            .font(.body).textInputAutocapitalization(.words)
+            .focused($focusedSetupField, equals: identifier).submitLabel(.done)
+            .onSubmit { focusedSetupField = nil }
+            .padding(14).frame(minHeight: 52)
+            .background(WelcomeStyle.surface, in: RoundedRectangle(cornerRadius: 12))
+            .overlay { RoundedRectangle(cornerRadius: 12).strokeBorder(WelcomeStyle.muted.opacity(0.5), lineWidth: 1) }
+            .accessibilityIdentifier(identifier)
+    }
+
     private func create() {
-        do { try repository.createHousehold(name: name, owner: owner, members: people.map { ($0.name, $0.role) }, firstRoom: firstRoom.isEmpty ? nil : firstRoom); onCreated() }
-        catch { self.error = userFacingError(error) }
+        do {
+            try repository.createHousehold(name: name, owner: "", members: [], firstRoom: nil)
+            onCreated()
+        } catch { self.error = userFacingError(error) }
     }
 }

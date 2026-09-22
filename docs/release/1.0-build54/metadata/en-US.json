@@ -1,0 +1,19 @@
+{
+  "name": "LunaHearth",
+  "subtitle": "Your household, connected",
+  "promotional_text": "Bring your pantry, shopping, meals, calendar and home records together. Start on your device and choose whether to share your home with iCloud.",
+  "keywords": "family,organizer,pantry,grocery,shopping,meal,planner,calendar,receipt,inventory,home,reminder",
+  "description": "A little order. More room for living.\n\nLunaHearth brings everyday household planning into one place on iPhone and iPad.\n\nYOUR DAY, IN FOCUS\nSee household appointments, reminders, shopping and pantry items that need attention.\n\nA CONNECTED KITCHEN\nKeep a shopping list with stores, quantities and assigned buyers. When you buy something, choose whether to stock your pantry. Track amounts, low stock and the expiry dates you enter.\n\nRECEIPTS AND SPENDING\nScan a receipt, review the extracted details and record a purchase. Keep monthly expense totals alongside your household records.\n\nPLAN WHAT TO COOK\nExplore pantry-based meal ideas and review a weekly meal plan. Add missing ingredients to shopping and check what is already on your list.\n\nYOUR HOME, ORGANIZED\nKeep rooms, belongings, maintenance and warranty details together. Start manually and explore optional room-layout tools when useful.\n\nOPTIONAL APPLE CONNECTIONS\nShare your home through iCloud. Choose which appointments to send to Apple Calendar, and connect selected Apple Reminders lists if you want to.\n\nLOCAL FIRST\nCore household records work offline without a LunaHearth login. On-device intelligence is an optional enhancement; availability depends on the device, OS and Apple Intelligence settings. Review extracted receipt and photo details before saving. Pantry photo recognition uses supported on-device image capabilities, with readable-label scanning and manual entry as fallbacks.\n\niCloud sharing needs compatible Apple accounts and available iCloud storage. Expiry dates are user-entered records, not a food-safety assessment.\n\nMeal and AI suggestions can be incomplete or incorrect. Check ingredient labels, allergens and preparation instructions. The app does not assess food safety or provide medical or dietary advice. Expense totals reflect the records you save; verify them against original receipts. Sync and notifications may be delayed.",
+  "whats_new": "Initial public release: household planning, shopping, pantry, meals, receipt review, expenses and optional Apple integrations.",
+  "primary_category_proposal": "Lifestyle",
+  "secondary_category_proposal": "Productivity",
+  "support_url": null,
+  "privacy_policy_url": null,
+  "marketing_url": null,
+  "copyright": "PENDING: confirm legal rights holder and year",
+  "release_mode_recommendation": "Manual release after review",
+  "sign_in_required": false,
+  "localization": "en-US",
+  "version_candidate": "1.0",
+  "build_candidate": "54"
+}

@@ -9,3 +9,12 @@ xcuserdata/
 .env
 .env.*
 !.env.example
+
+# Local distribution products, test results, and signing credentials
+*.xcarchive/
+*.xcresult/
+*.ipa
+*.dSYM/
+*.p8
+*.p12
+*.mobileprovision

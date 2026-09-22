@@ -1,0 +1,122 @@
+[
+  {
+    "file": "screenshots/ipad-13/Store-01-Today.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "12631b40ab4e19f90fad8f37b3931203921264dd9b7d0d75e8e2a79f8d052e10",
+    "source_result": "/tmp/Luna54FinalCaptures/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-02-Home.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "7fb46960497e001e201d4b86db08531500a66a19bacc2ede21a138a6fd1d06eb",
+    "source_result": "/tmp/Luna54FinalCaptures/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-03-Shopping.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "6ae590391a3a8b094b1adbecf7c72177ac9e6b038a24dafba74acd7134ded278",
+    "source_result": "/tmp/Luna54FinalCaptures/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-04-Pantry.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "727b46fbcc6a9e5a9991df9730ee47261385ea7476210f36e6d0b6ac028447a2",
+    "source_result": "/tmp/Luna54FinalCaptures/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-05-Calendar.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "e3a4fc3f538cf91120a9f7c36dbc4d895e0b312050900cc2ea3957328dde4ed7",
+    "source_result": "/tmp/Luna54FinalCaptures/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-06-Expenses.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "8f6053e87592e53f444c3b57ff500c22e246640f4ea0a378e207bb35c28eba8d",
+    "source_result": "/tmp/Luna54FinalCaptures/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-01-Today.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "0c1508b9557ccc36f79b18703b8efd03fa2e72dacff80def3496d5160863b850",
+    "source_result": "/tmp/Luna54FinalCaptures/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-02-Home.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "78ebef5f4914166f95d350ce10e2c77944c618f68b648781980897a9b9dcbfc9",
+    "source_result": "/tmp/Luna54FinalCaptures/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-03-Shopping.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "3898565573e401c91c5d1ad1028966c9b96a9b2dfa6a439ab3639a0662571b86",
+    "source_result": "/tmp/Luna54FinalCaptures/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-04-Pantry.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "0d808f85e6722cd1e813c80d284bce029f9e2fb4a964e485fa72e539d6003ecc",
+    "source_result": "/tmp/Luna54FinalCaptures/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-05-Calendar.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "99eb1057d17471260b8a98c3b9c08947fa3080d85859a38b4cc4826a1ef15a14",
+    "source_result": "/tmp/Luna54FinalCaptures/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-06-Expenses.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "21a1e6073484658915cc6de5532d9a36162df1f85cc033b164e1d211532c4641",
+    "source_result": "/tmp/Luna54FinalCaptures/phone.xcresult",
+    "sample_data": true
+  }
+]

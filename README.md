@@ -1,5 +1,9 @@
 # LunaHearth
 
+> Current foundation (ADR-012): local household reminders, shopping, schedules and home records support optional private CloudKit sync and CKShare invitations. Foreground changes sync automatically; live two-account device acceptance is still a release check. Apple Reminders is a separate optional connection. Setup no longer asks for a room. Earlier Apple-only/manual-backup-only implementation notes below are historical. See [ADR-012](docs/ADR/012-live-private-household-sharing.md).
+
+
+
 **LunaHearth** is a private, local-first family and home operating system by **NeuralLuna**.
 
 The product combines the parts of everyday household life that are normally scattered across Calendar, Reminders, notes, shopping apps, warranty folders, home inventory tools, and paper receipts:
@@ -135,7 +139,7 @@ Run the app by opening `LunaHearth.xcodeproj`, choosing an iPhone simulator, and
 
 The script discovers an available iPhone simulator. Override `DEVELOPER_DIR`, `SIMULATOR_ID`, or `DERIVED_DATA_PATH` if needed. `make build` and `make test` use the same discovery.
 
-This is an initial local build, not the complete release roadmap. Remaining work includes document import/preview and OCR, optional EventKit integration, CloudKit sharing, task recurrence/routines, room ordering, purchase-price entry, archive/recovery workflows, accessibility/device QA, widgets, and App Intents. Private iCloud backup/restore has explicit controls; other optional integrations remain unavailable. Live cloud validation still requires signed, provisioned devices.
+This is an initial local build, not the complete release roadmap. Remaining work includes document import/preview and OCR, CloudKit sharing, task recurrence/routines, room ordering, purchase-price entry, archive/recovery workflows, accessibility/device QA, widgets, and App Intents. Private iCloud backup/restore, selected Calendar/Reminders connections, and Notes sharing have explicit controls. Additional Apple services remain future work. The user confirmed live iCloud backup; Calendar/Reminders permissions and account behavior require device verification.
 
 See [implementation review and build notes](docs/IMPLEMENTATION_REVIEW.md) and [CODEX_TASKS.md](CODEX_TASKS.md).
 
@@ -164,3 +168,19 @@ Room dragging is available in **Home → Arrange rooms in 2D / 3D → 2D Plan**,
 Setup can create a household and first room together, then opens Home directly. Home offers visible Add a room and Add an item actions; each room leads to its items, warranties, maintenance and replacement groceries. [See the Home walkthrough](docs/HOME_FLOW.md).
 
 More → iCloud backup saves a manual private snapshot to the user's Apple Account after confirmation. Welcome → Restore from iCloud reviews and restores a backup into an empty local store. It preserves room geometry, item/care links and planning records. Automatic synchronization, CKShare collaboration and document/scan-file backup are not implemented. [Privacy and transport decision](docs/adr/006-private-cloudkit-backup.md).
+
+
+### Calendar, Reminders and Notes
+
+Open **More → Connections** to choose individual Apple calendars (Hidden / Busy only / Event titles) and reminder lists. Calendar shows selected events without copying them into household storage. Lists → Apple Reminders can update selected reminders in their original lists.
+
+Household event details can add a reviewed copy through Apple's Calendar editor. Enable **Sync new tasks** and choose a destination in Connections to automatically send new task titles, due days and completion to Apple Reminders. Subsequent LunaHearth edits update those reminders; Apple edits do not return to the app. Existing tasks can still send a separate copy from their context menu. Event/task details and Connections offer sharing to Notes or other installed apps through Apple's share sheet. No Notes-library synchronization or automatic message sending is included. [Connection guide](docs/APPLE_CONNECTIONS.md).
+
+
+### Apple-only reminder update
+
+ADR-009 supersedes earlier reminder copy/sync behavior. Lists → Reminders now offers existing-list browsing, standard LunaHearth list creation, direct Apple-only entry and completion. Quick Add uses the selected Apple list; the former automatic delivery worker is stopped. Older household tasks remain in a labeled recovery section without automatic migration. See docs/APPLE_CONNECTIONS.md.
+
+### Selected Apple lists and setup
+
+Shopping and Reminders now each use a chosen Apple Reminders list. Setup offers a dedicated LunaHearth list or an existing list and explains Apple-owned storage. Quick Add and maintenance replacement shopping write to that selected list. The in-app sharing guide explains how to invite collaborators in Apple Reminders; direct invitations are not exposed by EventKit. See docs/ADR/010-selected-apple-shopping-and-list-setup.md and docs/APPLE_CONNECTIONS.md.

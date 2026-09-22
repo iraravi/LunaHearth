@@ -32,7 +32,7 @@ struct InteractiveFloorPlan: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                .background(Color(red: 0.96, green: 0.97, blue: 0.99))
+                .background(AppTheme.secondarySurface)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .overlay(alignment: .bottomTrailing) {
                     Button("Fit rooms") {

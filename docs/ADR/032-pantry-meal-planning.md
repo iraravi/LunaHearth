@@ -1,0 +1,13 @@
+# ADR 032 — Real pantry meal ideas and daily planning reminder
+
+User approved a separate meal ideas screen with immediate pantry-based suggestions and a 5 PM planning reminder. Lists → Meal ideas, Home → Meal ideas and Today → Plan meals open the real household workflow; the isolated demo remains separate.
+
+InventoryItem is read locally. Used-up packs and packs with recorded expiry before the selected civil day are excluded; missing expiry does not imply freshness. Low stock remains eligible with explicit amount-check copy. Suggestions list ingredients and deterministic missing-item matches, never decrement stock. Users review a normal MealPlanEntry draft before saving through the existing repository and optional private/shared CloudKit path. No schema change.
+
+On-device Foundation Models receives at most 80 ingredient names of 80 characters, no identity, amounts, receipts or unrelated content. Structured ideas are bounded and must overlap pantry ingredients. Generation never persists; cancellation, household changes and pantry changes invalidate results. Built-in pantry-ranked meal ideas preserve offline and unsupported-device use and are labelled separately from AI. No cloud AI or dietary/safety claims; these are ideas, not full recipes.
+
+A device-local optional repeating calendar notification fires at 17:00 local time. Permission is requested only when the user enables it. Denied permission is explained; disabling removes pending/delivered notices. Tapping routes to Meal ideas. Notification content contains no household data. It prompts user-triggered generation, not background AI. The preference is per device, not household-shared. OS notification settings/Focus control delivery. The current screen defaults to tomorrow and offers another day. Review and save are explicit; missing ingredients are shown for review, not automatically added to shopping.
+
+Build 32 asks for a cooking style before generation. A native dropdown offers 18 broad/regional styles, including Any style, Indian, South Indian and North Indian. The device remembers the selection in local preferences; it is not an inferred identity or a shared household setting. Style filters the built-in library as well as guiding on-device generation. Empty matches remain explicit rather than silently switching cuisines.
+
+An optional multiline context box accepts up to 400 characters for cooking preferences such as time, spice or servings. Only this bounded text and pantry names enter the on-device request. Context changes cancel/invalidate results. Built-in fallback explicitly says extra notes were not applied; it must not imply dietary restrictions were enforced. No additional schema, cloud data or network model access.

@@ -247,3 +247,27 @@ Avoid:
 - copying competitor visual systems
 
 Use SF Symbols where appropriate and respect system appearance/accessibility.
+
+## Home organization — build 21
+
+Home now groups food links under Groceries, saved rooms and the optional Floor plan under Rooms, the expandable item index under Belongings, and warranties/maintenance under Home care. Add a room is a single inline action; floor creation and floor renaming live in the Home settings menu. Open a room to add its belongings. The floor plan remains the existing 2D/3D editor, rather than a separate competing setup flow.
+
+The iPad keeps the room master/detail layout with a graphical introduction before a selection. Pantry and shopping still propagate their peach and green canvases across the split view. Native lists, wrapping text, labeled controls and 44-point add targets retain accessibility and compact-width support.
+
+Affected entities: presentation of existing floors, rooms, assets and inventory only. No schema, ownership, notification, sync or permission changes. All navigation and room/item creation retain their existing local/offline behavior.
+
+## Receipt entry — build 23
+
+Shopping and Groceries at home have a labeled Scan receipt toolbar action beside Add item. Choose photos or scan a document, review compact selectable item rows, expand Quantity & matches when needed, then Add the selected items. Receipt source text and rescan controls collapse after recognition to keep the proposed purchases in view. Excluded rows save nothing; turning off Add to home inventory records a purchase kept elsewhere. Existing inventory clears Low stock and retains amount/expiry; new items receive confirmed quantities. Success reports the import count. Recognition errors allow retry and readable text with no detected items supports adding missed lines.
+
+## Expenses under Home — build 24
+
+Home places Expenses near groceries. Its lavender canvas follows the iPad sidebar and detail. The monthly dashboard leads with spending, followed by a six-month chart, category breakdown and purchase/refund history. Month and currency controls scope all report totals; history search/category filters do not alter the complete exported month. Scan receipt and Add expense stay in the toolbar. Edit/delete opens from a purchase row; deletion requires confirmation. No sixth root tab is added.
+
+### Calendar board update — build 41
+User-selected visual direction replaces the expansive month-sidebar layout with side-by-side member panels, with morning/afternoon/evening sections and explicit member labels. Date selection is available in the header on all sizes; the month picker expands on demand. Compact layouts stack panels, and member selectors isolate one person. Existing event detail, editing, optional Apple Calendar connection, and export remain available.
+
+### Family week — build 44
+Calendar → Family week and Today → Family week combine existing appointments, due tasks and meals. Wide windows show scrolling day columns; compact/large-text views show a selected day with date buttons and optional swipe. The person filter retains unassigned household plans and shared meals. Plan our week opens dinner suggestions with optional reviewed prep tasks; Review meal ingredients uses the existing shopping review. The full breakfast/lunch/dinner planner remains reachable. See ADR 038.
+
+Build 45: Plan our week now offers Breakfast, Lunch and Dinner switches, initially all on. Generate is unavailable if all are off. Reviewed output can contain up to 21 meals; existing occupied slots remain unchanged. Dinner prep remains separately optional.

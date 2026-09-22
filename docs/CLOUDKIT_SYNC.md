@@ -214,3 +214,65 @@ Normal unit tests should use CloudKit mapping/merge fakes and not require iCloud
 ## Implemented first step: private manual backups
 
 See [ADR-006](adr/006-private-cloudkit-backup.md). More → iCloud backup explicitly uploads a private snapshot; welcome → Restore from iCloud downloads, previews and restores into an empty local store. This transport is separate from the live collaboration design above. No automatic sync, CKShare, outbox or participant flow is enabled. Local-only hard deletions are compatible with complete snapshot replacement, but remain unsuitable for incremental collaboration.
+
+## Implemented live transport — September 12, 2026
+
+ADR-012 adds explicit private/shared zone sync, private CKShare invitations, scene-based acceptance, household switching, persistent per-record baselines/tombstones, incremental change tokens, optimistic writes, conflict review, and visible recovery/read-only states. Local updates trigger sync after a debounce; foreground polling runs every 20 seconds with failure backoff. Manual backup remains separate. No background push service is enabled. The existing design above describes the broader destination; physical two-account acceptance, tombstone compaction and large-file support remain release work.
+
+## Private cloud deletion
+
+ADR-013 adds separate owner-only synced-home deletion and manual-backup deletion controls in More. Both require destructive confirmation and preserve local household records. Household sync pauses durably before deletion and remains paused on failure; only an acknowledged deletion clears its local sync metadata. Participants cannot erase the owner’s cloud zone. Remote local copies and Apple Reminders are not erased.
+
+## Private shopping stores (ADR-014)
+
+Reusable ShoppingStore entities use the existing LHHouseholdEntity payload mapper
+and owner-private/participant-shared zones. GroceryItem.storeID links are validated
+against the household graph. No public store collection or new cloud field/type.
+All participants must update because older builds reject the new entity kind.
+Private backup snapshots also include stores independently of shopping items.
+
+ADR-015 adds optional amount/unit/civil shopping-date values to the existing grocery
+payload. No CloudKit type/key changes. Duplicate-item warnings use the locally
+available household list; offline concurrent additions are not globally locked.
+
+## Personal shopping change alerts (ADR-016)
+
+Opt-in assignment notifications add private/shared CKDatabaseSubscription background hints for the active home. They reuse the existing sync engine and never publish shopping data to the public database. Delivery is best effort; foreground refresh remains necessary after missed pushes. Each device selects its household member explicitly. Physical two-account APNs validation remains pending; see ADR-016 for privacy and lifecycle limits.
+
+## Inventory transport (ADR-017)
+
+InventoryItem joins the existing LHHouseholdEntity record kinds, including backup restore and tombstones. Same-purchase IDs are deterministic across devices; changes still use three-way conflict handling. Shopping completion and inventory are atomic locally, while remote transport can temporarily deliver only part of a batch before retry. Old clients reject unsupported inventory kinds without wiping their local copy; update all household devices before using inventory with sharing. The production record type is unchanged; no public database is used.
+
+## Inventory low-stock metadata (ADR-020)
+
+The optional isLowStock flag is included in the existing InventoryItem entity payload and private/shared sync path. Legacy payloads omit it and decode as nil. Fake-server tests cover propagation; live two-account delivery remains unverified. No new CloudKit record type/key. Existing file-attachment and household-envelope limits remain documented in ADR-020.
+
+ADR-022 adds separate opt-in task assignment alerts through the same existing private/shared database subscription. Task UUID baselines are device-local and independent from shopping. No record type or schema change. Physical cross-account notification validation remains required.
+
+ADR-023 adds invitation-first root presentation, cold/warm delegate coverage,
+visible empty-device errors, and an explicit onboarding entry for resolving a
+pasted iCloud invitation or finding an already joined home. No schema change.
+Pending invitations are not enumerated by opening the app normally.
+
+ADR-024 adds owner-named invitations and automatic device-profile linking. Names
+upload before a recipient is added to the private CKShare. No schema or public
+storage change. Direct Apple sharing remains available for access management.
+
+Native invitations and automatic account-linked profiles follow ADR 026. Profile creation uses the verified current device account after writable sync/import, not pre-invitation email discovery. The owner names profiles in Family; stable member IDs preserve assignments across devices and renames.
+
+Build 27 adds PurchaseEntry to explicit household record mapping and sharing. Historical links may point to deleted records; snapshots survive. Both participants must use a build supporting PurchaseEntry. No automatic SwiftData mirroring is enabled. See ADR 030.
+
+Build 33 adds optional meal recipe/servings/completion attributes and a preparation task meal reference to existing record payloads. Upgrade participating devices together so older editors do not erase unknown fields. Cooking writes a local transaction, then ordinary record synchronization; simultaneous offline stock edits still follow existing per-record conflict handling rather than a distributed stock ledger. See ADR 033.
+
+### Weekly meals (build 38)
+Build 38 adds optional per-serving recipe quantities to existing meal payloads. Existing private/shared sync carries accepted plans and shopping changes. Upgrade shared devices together; older clients may drop the new field on edit. See ADR 035.
+
+### Appointment metadata (build 42)
+FamilyEvent payloads carry optional appointmentKind and reminderMinutes through BackupCodec. Absent legacy values become nil; invalid incoming presentation kinds/offsets fall back to nil. Each repeated occurrence has its own locally generated UUID and standard conflict/tombstone behavior. Device notification authorization/recipient settings are not cloud records. New appointment alerts reconcile after sync; remote changes are only reflected after the receiving device fetches them. Older clients may omit the new metadata when editing, so upgrade sharing devices together.
+
+### Optional Apple Calendar delivery (build 43)
+CalendarDeliveryLink is strictly device-local and excluded from BackupCodec. Shared appointment edits can update an already opted-in link after this device receives them; receiving an event never opts it into Apple Calendar. Remote source deletion stops updates and exposes local review of any remaining Apple copy. One exporting device per destination Apple calendar is recommended; independent devices cannot coordinate EventKit writes while offline. Apple Calendar account sync runs separately from LunaHearth CloudKit sync.
+
+Build 46 restock arithmetic uses existing inventory/grocery/purchase records and existing sync mapping, with no new zone/schema/permission. Sequential local purchases add known compatible quantities; simultaneous offline writes still use the existing per-record conflict model and are not a distributed additive stock ledger. Historical purchase replay markers remain in use. See ADR 039.
+
+Build 47 includes optional PurchaseEntry.receiptLineKey in the existing payload, without new CloudKit record keys/types. Upgrade household devices together. Simulated two-repository tests verify offline receipt linking and replay protection; simultaneous quantity edits pause for explicit conflict review rather than automatic addition. These tests do not verify live CloudKit or APNs delivery.

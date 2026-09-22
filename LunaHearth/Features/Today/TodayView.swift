@@ -2,135 +2,135 @@ import SwiftUI
 
 struct TodayView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
-    @Environment(\.horizontalSizeClass) private var sizeClass
+    @Environment(PersonalShopping.self) private var personal
+    @Environment(\.dynamicTypeSize) private var typeSize
     @AppStorage("warranty.horizon") private var warrantyHorizon = 30
     @State private var adding = false
-    @State private var addKind: EntryKind = .task
 
     var body: some View {
         NavigationStack {
-            TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                dashboard(at: timeline.date)
+            GeometryReader { geometry in
+                TimelineView(.periodic(from: .now, by: 60)) { timeline in
+                    dashboard(at: timeline.date, wide: geometry.size.width >= 850 && !typeSize.isAccessibilitySize)
+                }
             }
-            .background(AppTheme.canvas)
-            .navigationTitle("Today")
-            .navigationBarTitleDisplayMode(.inline)
+            .background(TodayTheme.canvas).foregroundStyle(TodayTheme.ink).tint(TodayTheme.accent)
+            .navigationTitle("Today").navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Label(repository.household?.name ?? "Your household", systemImage: "house.fill")
-                        .font(.caption.weight(.medium)).foregroundStyle(AppTheme.accent)
-                }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Quick Add", systemImage: "plus") { addKind = .task; adding = true }.accessibilityIdentifier("today.quickAdd")
+                    Button("Quick Add", systemImage: "plus") { adding = true }
+                        .accessibilityIdentifier("today.quickAdd")
                 }
             }
-            .sheet(isPresented: $adding) { QuickAddView(kind: addKind) }
+            .sheet(isPresented: $adding) { QuickAddView(kind: .task) }
         }
     }
 
-    private func dashboard(at now: Date) -> some View {
+    private func dashboard(at now: Date, wide: Bool) -> some View {
         let events = repository.events(on: now)
-        let tasks = repository.dueTasks(on: now)
+        let dueTasks = repository.dueTasks(on: now)
         let plans = repository.maintenance.filter {
             guard let due = $0.nextDueAt, let horizon = Calendar.current.date(byAdding: .day, value: 7, to: now) else { return false }
             return due <= horizon
-        }
+        }.sorted { ($0.nextDueAt ?? .distantFuture) < ($1.nextDueAt ?? .distantFuture) }
         let warranties = repository.warranties.filter {
             guard let end = $0.endDate, let horizon = Calendar.current.date(byAdding: .day, value: warrantyHorizon, to: now) else { return false }
             return end >= Calendar.current.startOfDay(for: now) && end <= horizon
-        }
-        let columns = Array(repeating: GridItem(.flexible(), alignment: .top), count: sizeClass == .regular ? 2 : 1)
+        }.sorted { ($0.endDate ?? .distantFuture) < ($1.endDate ?? .distantFuture) }
+        let attention = TodayAttentionData(repository: repository, personal: personal, now: now)
+        let day = HouseholdDay(now).key
+        let facts = TodayBriefFacts(shoppingNeededNow: attention.shopping.count,
+                                   shoppingOverdue: attention.shopping.filter { TodayAttentionRules.isOverdue($0, today: day) }.count,
+                                   pantryDatesToCheck: attention.dates.count,
+                                   pantryPastExpiry: attention.dates.filter { InventoryRules.expiryState($0.expiryDay, today: day) == .past }.count,
+                                   lowStockIngredients: attention.restock.count, eventsToday: events.count,
+                                   remindersDue: dueTasks.count, homeCareAlerts: plans.count + warranties.count)
         return ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                ScreenIntro(eyebrow: now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()),
-                            title: "Your day, at a glance.",
-                            subtitle: "Plans, priorities, and everything at home.")
-                Button {
-                    addKind = .task
-                    adding = true
-                } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "plus.circle.fill").font(.title2).dynamicTypeSize(.large).accessibilityHidden(true)
-                        Text("Quick Add").font(.headline).frame(maxWidth: .infinity, alignment: .leading)
-                        Spacer(minLength: 4)
-                        Image(systemName: "arrow.right").dynamicTypeSize(.large).accessibilityHidden(true)
-                    }.foregroundStyle(AppTheme.canvas).padding(18)
-                        .frame(maxWidth: .infinity, minHeight: 56)
-                        .background(AppTheme.ink, in: RoundedRectangle(cornerRadius: 14))
-                }.buttonStyle(.plain).accessibilityIdentifier("today.primaryAdd")
-                ViewThatFits(in: .horizontal) {
-                    HStack(spacing: 10) { metrics(events: events.count, tasks: tasks.count) }
-                    VStack(spacing: 10) { metrics(events: events.count, tasks: tasks.count) }
-                }
-                LazyVGrid(columns: columns, alignment: .leading, spacing: 20) {
-                    DashboardCard("Your schedule", symbol: "calendar", detail: "Family events") {
-                        if events.isEmpty {
-                            GentleEmptyState(title: "No events today", message: "Add an event to keep your household up to date.", symbol: "sun.horizon")
-                        }
+            VStack(alignment: .leading, spacing: 20) {
+                TodayHero(now: now, household: repository.household?.name ?? "Your home", wide: wide)
+                TodayPriorities(now: now, wide: wide)
+                TodayBriefCard(facts: facts)
+                    .id("\(repository.household?.id.uuidString ?? "none")|\(repository.household.flatMap { personal.memberID($0.id) }?.uuidString ?? "all")|\(day)")
+                Text("Your household today").font(.title3.bold()).padding(.top, 4)
+                TodayAlignedCards(columns: wide ? 2 : 1) {
+                    TodayCard {
+                        TodayIllustratedHeading(title: "Schedule", detail: "\(events.count) events today", art: "EditorialPlanning")
+                        if events.isEmpty { quiet("No events saved for today.") }
                         ForEach(events.prefix(3)) { event in
-                            NavigationLink { EventDetailView(event: event) } label: { EventRow(event: event) }
-                                .buttonStyle(.plain)
+                            NavigationLink { EventDetailView(event: event) } label: { EventRow(event: event) }.buttonStyle(.plain)
                         }
-                        Divider()
-                        NavigationLink { CalendarAgendaView() } label: { SectionLink(title: "Open calendar") }
+                        Spacer(minLength: 0)
+                        NavigationLink { CalendarAgendaView() } label: { link("Open calendar") }
                     }
-                    DashboardCard("Tasks & chores", symbol: "checklist", detail: "Due & overdue tasks") {
-                        if tasks.isEmpty {
-                            GentleEmptyState(title: "Nothing due today", message: "View your tasks or add something new.", symbol: "checkmark.circle")
-                        }
-                        ForEach(tasks.prefix(5)) { TaskRow(task: $0) }
-                        Divider()
-                        NavigationLink { PlanningListView(kind: .task) } label: { SectionLink(title: "All tasks & chores") }
+                    TodayCard {
+                        TodayIllustratedHeading(title: "Reminders", detail: "\(dueTasks.count) need attention", art: "EditorialPlanning")
+                        if dueTasks.isEmpty { quiet("No reminders due or overdue.") }
+                        ForEach(dueTasks.prefix(3)) { TaskRow(task: $0) }
+                        Spacer(minLength: 0)
+                        NavigationLink { PlanningListView(kind: .task) } label: { link("All reminders & chores") }
                     }
-                    DashboardCard("Home care", symbol: "house", detail: "Maintenance & warranties") {
-                        HearthArtwork(name: "HearthHome", height: 110)
-                        if plans.isEmpty && warranties.isEmpty {
-                            GentleEmptyState(title: "No upcoming home alerts", message: "Track maintenance and warranty dates for your belongings.", symbol: "house")
-                        }
+                    TodayCard {
+                        TodayIllustratedHeading(title: "Home care", detail: "\(plans.count + warranties.count) upcoming alerts", art: "WelcomeResidence")
+                        if plans.isEmpty && warranties.isEmpty { quiet("No upcoming maintenance or warranty alerts.") }
                         ForEach(plans.prefix(3)) { plan in
                             NavigationLink { MaintenanceDetailView(plan: plan) } label: {
                                 VStack(alignment: .leading, spacing: 5) {
-                                    Label(plan.title, systemImage: "wrench.and.screwdriver").font(.subheadline.weight(.medium))
-                                    if let due = plan.nextDueAt { Text("\(repository.assetName(plan.assetID)) · Due \(due.formatted(date: .abbreviated, time: .omitted))").font(.caption).foregroundStyle(AppTheme.muted) }
+                                    Text(plan.title).font(.subheadline.weight(.semibold))
+                                    if let due = plan.nextDueAt {
+                                        Text("\(repository.assetName(plan.assetID)) · Due \(due.formatted(date: .abbreviated, time: .omitted))")
+                                            .font(.caption).foregroundStyle(TodayTheme.muted)
+                                    }
                                 }.frame(maxWidth: .infinity, alignment: .leading)
                             }.buttonStyle(.plain)
                         }
-                        ForEach(warranties.prefix(3)) { warranty in
+                        ForEach(warranties.prefix(2)) { warranty in
                             VStack(alignment: .leading, spacing: 5) {
-                                Label(repository.assetName(warranty.assetID), systemImage: "exclamationmark.triangle").font(.subheadline.weight(.medium))
-                                if let end = warranty.endDate { Text("Warranty ends \(end.formatted(date: .abbreviated, time: .omitted))").font(.caption).foregroundStyle(AppTheme.muted) }
+                                Label(repository.assetName(warranty.assetID), systemImage: "clock.badge.exclamationmark").font(.subheadline.weight(.medium))
+                                if let end = warranty.endDate { Text("Warranty ends \(end.formatted(date: .abbreviated, time: .omitted))").font(.caption).foregroundStyle(TodayTheme.muted) }
                             }
                         }
-                        Divider()
-                        NavigationLink { HomeAlertsView() } label: { SectionLink(title: "See home care") }
+                        Spacer(minLength: 0)
+                        NavigationLink { HomeAlertsView() } label: { link("See home care") }
                     }
-                    DashboardCard("Meals & shopping", symbol: "fork.knife", detail: "Meals & shopping") {
-                        HearthArtwork(name: "HearthTable", height: 120)
-                        ForEach(repository.meals(on: now)) { meal in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(meal.mealType.uppercased()).font(.caption.weight(.semibold)).foregroundStyle(AppTheme.accent)
-                                Text(meal.title).font(.headline)
+                    TodayCard {
+                        TodayIllustratedHeading(title: "At the table", detail: "Meals & preparation", art: "WelcomeTable")
+                        if repository.meals(on: now).isEmpty { quiet("A little space for your next meal plan.") }
+                        ForEach(repository.meals(on: now).prefix(3)) { meal in
+                            NavigationLink { MealCookingView(meal: meal) } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(meal.cookedAt == nil ? meal.mealType : "Cooked").font(.caption.weight(.medium)).foregroundStyle(TodayTheme.muted)
+                                    Text(meal.title).font(.subheadline.weight(.semibold))
+                                    if let prep = repository.tasks.filter({ $0.mealID == meal.id && !$0.isCompleted }).sorted(by: { ($0.dueAt ?? .distantFuture) < ($1.dueAt ?? .distantFuture) }).first { Text("Next: \(prep.title)").font(.caption) }
+                                }
                             }
                         }
-                        if repository.meals(on: now).isEmpty {
-                            NavigationLink { PlanningListView(kind: .meal) } label: { SectionLink(title: "Plan a meal") }
+                        if let tomorrow = Calendar.current.date(byAdding: .day, value: 1, to: now) {
+                            let tomorrowMeals = repository.meals(on: tomorrow).filter { $0.cookedAt == nil }
+                            let prepTasks = repository.tasks.filter { task in !task.isCompleted && tomorrowMeals.contains { $0.id == task.mealID } }
+                            if !prepTasks.isEmpty { Text("Prep for tomorrow").font(.subheadline.weight(.semibold)) }
+                            ForEach(prepTasks.prefix(3)) { task in
+                                if let meal = tomorrowMeals.first(where: { $0.id == task.mealID }) {
+                                    NavigationLink { MealCookingView(meal: meal) } label: {
+                                        Label(task.title, systemImage: "bell").font(.subheadline).frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                                    }
+                                }
+                            }
                         }
-                        NavigationLink { PlanningListView(kind: .grocery) } label: {
-                            SectionLink(title: "Shopping · \(repository.groceries.filter { !$0.isCompleted }.count) open items")
-                        }
+                        Spacer(minLength: 0)
+                        NavigationLink { FamilyWeekView() } label: { link("Family week") }
+                        NavigationLink { MealIdeasView() } label: { link("Get meal ideas") }
                     }
                 }
-                Label("Stored on this device", systemImage: "internaldrive")
-                    .font(.caption).foregroundStyle(AppTheme.muted)
-                    .frame(maxWidth: .infinity).padding(.vertical, 8)
-            }
-            .padding(20).frame(maxWidth: 1000).frame(maxWidth: .infinity)
-        }
+            }.padding(20).frame(maxWidth: wide ? 1120 : 700).frame(maxWidth: .infinity)
+                .padding(.bottom, 12)
+        }.id(repository.household?.id)
     }
 
-    @ViewBuilder private func metrics(events: Int, tasks: Int) -> some View {
-        SummaryMetric(count: events, title: "Events today", symbol: "calendar")
-        SummaryMetric(count: tasks, title: "Tasks due", symbol: "checklist")
-        SummaryMetric(count: repository.groceries.filter { !$0.isCompleted }.count, title: "To pick up", symbol: "basket")
+    private func quiet(_ text: String) -> some View {
+        Text(text).font(.subheadline).foregroundStyle(TodayTheme.muted).fixedSize(horizontal: false, vertical: true)
+    }
+    private func link(_ title: String) -> some View {
+        HStack { Text(title).multilineTextAlignment(.leading); Spacer(); Image(systemName: "arrow.right").accessibilityHidden(true) }
+            .font(.subheadline.weight(.semibold)).foregroundStyle(TodayTheme.accent).frame(minHeight: 44).contentShape(Rectangle())
     }
 }

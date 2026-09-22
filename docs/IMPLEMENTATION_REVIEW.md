@@ -1,6 +1,10 @@
 # Implementation review — September 11, 2026
 
-Current September 12 update: Home now has contextual room/item creation and setup can create a first room atomically. Optional **manual private CloudKit backup/restore** is implemented; live cloud verification still requires team/container provisioning. Earlier sections describe prior milestones. See [ADR-006](adr/006-private-cloudkit-backup.md), [Home flow](HOME_FLOW.md), and [CloudKit setup](CLOUDKIT_SETUP.md).
+> Current foundation (ADR-012): local household reminders, shopping, schedules and home records support optional private CloudKit sync and CKShare invitations. Foreground changes sync automatically; live two-account device acceptance is still a release check. Apple Reminders is a separate optional connection. Setup no longer asks for a room. Earlier Apple-only/manual-backup-only implementation notes below are historical. See [ADR-012](ADR/012-live-private-household-sharing.md).
+
+
+
+Current September 12 update: Home now has contextual room/item creation and setup can create a first room atomically. Optional **manual private CloudKit backup/restore** is implemented; the selected signing team is now configured and a signed iPhone build passes. Live backup/restore remains a separate device check. Earlier sections describe prior milestones. See [ADR-006](adr/006-private-cloudkit-backup.md), [Home flow](HOME_FLOW.md), and [CloudKit setup](CLOUDKIT_SETUP.md).
 
 ## Review findings addressed
 
@@ -105,3 +109,83 @@ Orbit validation: XcodeGen generation, simulator build, 24 unit tests, and all 4
 Home now emphasizes rooms and belongings, with explicit create actions and contextual room/item lists. Room details prioritize adding and viewing items; layout and room editing live under Room settings. Contextual create/edit sheets keep their entry type fixed, display the selected room for new items, and retain all existing validation and save-error behavior. Item details expose explicit warranty and maintenance actions.
 
 Affected entities: existing HomeFloor, Room, HomeAsset, Warranty, MaintenancePlan/History, and replacement GroceryItem links. No schema changes or new external access. Everything uses the existing offline repository; no permissions are requested. The full UI flow covers household setup → floor → room → item → warranty → recurring maintenance → completion → replacement groceries. A fresh-repository integration test verifies the hierarchy and care links survive reload after an item moves rooms. Existing drag/orbit UI coverage remains in the normal suite.
+
+
+## Setup and private CloudKit backup — September 12
+
+Setup now offers an optional first room and collapsed optional member entry, keeps Create my home fixed at the bottom, and opens Home after successful creation or restore. Quick Add provides a focused Done keyboard action and scrolling dismissal. The Home flow explicitly links rooms, items, warranties, recurring maintenance and replacement groceries.
+
+Private backup uses the domain service protocol, versioned per-entity values, bounded CloudKit batches, immutable snapshot zones and a change-tag-protected publication manifest. Restore validates the entire graph before one local transaction and refuses to overwrite an existing home. Account, staging and partial failures preserve the local store. See ADR-006 for the privacy review, snapshot limits and file exclusions. Background sync and CKShare collaboration are not implemented.
+
+Validation: XcodeGen generation and simulator build passed. All 31 Swift Testing tests and all 6 UI flows passed across `/tmp/LunaHearthHomeFocused.xcresult` (31 unit + Home E2E and setup/cloud unavailable flows) and `/tmp/LunaHearthHomeAppearance.xcresult` (the remaining 4 UI flows). This includes full room/item/care creation, recurring completion, replacement groceries, separate-store backup restore, malformed backup rejection, dark mode, large text, 2D dragging and 3D orbit. Final captures are linked from `docs/visual-review/home-flow.html`.
+
+The user then selected an Apple signing team. It is preserved in project.yml; the signed iPhone build and CloudKit entitlement/profile checks succeeded. Live upload/restore and production schema deployment are not established by simulator tests or code signing.
+
+Physical-device follow-up: the final Development-environment build installed and launched successfully on the connected iPhone 16 Pro Max. No household backup was sent automatically; the user can initiate the explicit backup action in More. Device build log: `/tmp/luna-device-cloud-final.log`.
+
+
+## Apple service connections
+
+The user confirmed that live CloudKit backup works. The next pass adds selective EventKit calendar overlays, connected reminder lists with explicit completion, reviewed Calendar/Reminders exports, task deep links, and sharing to Notes/other installed apps. Local household storage/schema and its backup scope remain unchanged. Private external events/reminders are transient presentation data, with per-device opt-in and source preferences. No Calendar or Reminders authorization is requested at launch. See ADR-007 and APPLE_CONNECTIONS.md.
+
+Apple connections validation: simulator build, all 38 Swift Testing tests, and all 7 UI flows passed across `/tmp/LunaHearthAppleConnections.xcresult` and the final unit/Calendar/Connections rerun `/tmp/LunaHearthAppleFinal.xcresult`. The signed device build also passed (`/tmp/luna-apple-device.log`). Simulator UI tests intentionally avoid live EventKit authorization; permission grants, real source selection, provider sync, and Notes destination availability still require user/device checks. Screens 26–27 show the actual app connections and note-sharing draft.
+
+## Automatic task delivery to Apple Reminders — September 12, 2026
+
+Implemented the requested opt-in LunaHearth → Apple Reminders path (ADR-008). New tasks save locally with durable delivery links; title/due/completion updates reuse the Apple record. Connections exposes destination selection, enable/pause, pending/error status and explicit retry. Task details expose status and unlink. Existing tasks remain local unless manually copied. No Apple → household reverse sync or external deletion is implemented.
+
+Validation: XcodeGen generation and simulator build succeeded. `/tmp/LunaHearthReminderSync.xcresult` passed 46 unit tests and all seven existing UI flows. `/tmp/LunaHearthReminderFinal.xcresult` passed all 47 unit tests including additive on-disk migration plus the new automatic-reminders UI flow using an isolated test provider. Thus 47 unit tests and eight distinct UI flows passed across the final validation runs. Xcode reported a non-fatal simulator diagnostics collection failure after the last tests; the result bundle and command report TEST SUCCEEDED. No live EventKit permission or account propagation was exercised by automated tests.
+
+The signed device build succeeded and was installed on the connected iPhone. Automatic launch was blocked because the phone was locked. Unlock/open LunaHearth, connect Reminders, select a writable destination and enable Sync new tasks for live account acceptance. Existing live CloudKit backup remains user-confirmed; its payload format and operation were not changed.
+
+
+### Apple-only reminder update
+
+ADR-009 supersedes earlier reminder copy/sync behavior. Lists → Reminders now offers existing-list browsing, standard LunaHearth list creation, direct Apple-only entry and completion. Quick Add uses the selected Apple list; the former automatic delivery worker is stopped. Older household tasks remain in a labeled recovery section without automatic migration. See docs/APPLE_CONNECTIONS.md.
+
+Validation: simulator build passed; 48 unit tests and all 8 UI tests passed. Final unit rerun passed; the expanded create-standard-list/direct-create/completion UI test passed after correcting its accessibility selector. Signed device build and install passed. Latest automatic launch was blocked by the phone being locked. Live EventKit account/list creation and provider propagation remain device acceptance checks.
+
+### Selected Apple list setup and shopping
+
+Implemented ADR-010: separate remembered Shopping/Reminders destinations; explicit create-standard-list or browse-and-confirm setup; source-of-truth messaging; selected-list-only new writes; Apple-backed quantity notes and maintenance replacement drafts; due filters; and an in-app sharing guide. Existing local tasks/groceries remain recoverable. EventKit has no public list invitation API, so invitations are completed in Apple Reminders.
+
+Validation: xcodegen generation, simulator build, 50 unit tests, and all 9 UI flows passed in /tmp/LunaListSetup20260912.xcresult. The final selected-destination safeguards, dashboard isolation and URL routing passed the 50-unit-test rerun plus both Apple-list UI flows in /tmp/LunaListSetupFinal20260912.xcresult. Setup, sharing and shopping captures were visually reviewed. Signed iPhone build, installation and launch succeeded. Live iCloud list creation and participant invitation/propagation remain device acceptance checks.
+
+
+## Private home foundation and live sharing — September 12, 2026
+
+ADR-011/012 replace the historical Apple-only primary lists and manual-backup-only sharing design. Setup now asks only for the home name in an outlined input. People, personal/family choices and rooms are omitted; rooms are added through Home and profiles/sharing through More. The colorful welcome and room photography use original generated assets documented in visual-review/setup-artwork.md. More also provides a non-destructive setup preview.
+
+Primary tasks, groceries and maintenance replacement items save locally and participate in optional private CloudKit household synchronization. Apple Reminders remains a separate optional connection. Explicit custom-zone CKShare invitations, independent-home joining/switching, foreground delivery, durable offline edits, tombstones, conflict review, account binding and read-only/revocation recovery are implemented. Canonical payload equality prevents server timestamp rounding from causing repeated uploads. No public database, app account, automatic upload at setup or network AI was added. Document/scan file synchronization and background push delivery remain unsupported.
+
+The full preceding run passed 62 unit tests and all 11 UI flows in /tmp/LunaLiveSetup20260912.xcresult. Final home-name-only verification and timestamp regression results follow below. A real invitation between two different Apple Accounts remains unverified; automated synchronization tests use two repositories and a fake server.
+
+Final validation: XcodeGen generation and simulator build passed. /tmp/LunaHomeOnlyVerified20260912.xcresult passed all 63 unit tests and four focused UI flows covering the simplified setup, offline shopping, safe setup preview, sharing unavailable, light/dark appearance and large text. The signed device build passed and the updated app was installed and launched on Ravi’s iPhone without resetting app data.
+
+## Private cloud deletion and shopping responsibility — September 12, 2026
+
+ADR-013 adds separately confirmed owner-only cloud-home deletion and manual-backup deletion, preserving local household content. Sync is paused durably before destructive network work and stays paused on errors. No deletion has been executed against the user’s live cloud data.
+
+Shopping adds a store name and household buyer alongside quantity, with Any store / Anyone defaults. Rows group by store, show the assigned buyer, and filter by buyer. Members remain managed in More → Family. Optional additive model/payload fields preserve old records and backup compatibility. Tests cover edits, missing legacy keys, reopened local stores, household reference validation and propagation between two fake-server clients. Receipts, categories and purchase accounting remain future work.
+
+Validation: 66 unit tests passed in /tmp/LunaShoppingFinal20260912.xcresult. The final shopping add/store/buyer/check-off UI flow passed in /tmp/LunaShoppingTapFinal20260912.xcresult after fixing full-row hit testing and dismissing the person-entry keyboard. Backup deletion confirmation/cancellation/unavailable-cloud and simple offline shopping passed in /tmp/LunaShoppingStores20260912.xcresult. Screens 41–42 were visually inspected. Signed iPhone build, upgrade installation and launch succeeded; live cloud deletion was not performed on the user’s data.
+
+## On-device shopping ideas — September 12, 2026
+
+Added Domain ShoppingSuggestionService and validation/fallback rules, a Foundation Models service explicitly using SystemLanguageModel.default, and a review sheet reached from Shopping. Generation is opt-in, local-only, availability-gated at iOS 26, bounded to short grocery context, and offers a clearly labeled non-AI fallback. The iOS 18 manual workflow remains intact. Review permits editing, selection and user-chosen store/buyer; one local transaction commits confirmed suggestions and rechecks duplicates/household references. No schema or networking change.
+
+Validation: simulator build and all 69 unit tests passed in /tmp/LunaShoppingAI20260912.xcresult. The UI review/cancel/add fallback flow passed, and its screenshot (43) was inspected. Signed device build, install and launch succeeded on Ravi’s iPhone. Actual on-device model generation/quality was not exercised by these simulator tests; the app checks availability at request time and shows an explicit fallback when unavailable.
+
+## Shopping form design refinement — September 12, 2026
+
+Dedicated shopping creation/editing now uses rounded cards, persistent field labels, outlined inputs, a blue basket accent and a fixed bottom save action. Item/quantity and optional store/buyer are visually separated. Standard Quick Add and optional Apple-list flows keep their existing behavior.
+
+Shopping ideas becomes a two-step flow: an illustrated request screen with prompt shortcuts and optional checked-history context, followed by compact editable selection cards and a shared pickup plan. Add remains anchored at the bottom; privacy detail is available in a disclosure. Cancel discards transient suggestions and Start over returns to the request. Existing domain validation, local-first saves and review requirements are unchanged.
+
+Validation: /tmp/LunaShoppingForms20260912.xcresult passed 69 unit tests and three UI flows (standard Quick Add, shopping store/buyer, AI review/cancel/add). /tmp/LunaShoppingFormsAccess20260912.xcresult passed the dark/large-text form check. The final permanent buyer-label refinement passed shopping E2E again in /tmp/LunaShoppingFormsFinal20260912.xcresult. Screens 41, 43–45 were visually inspected. Signed builds passed. The main redesign installed on Ravi’s iPhone; opening was blocked by its lock state. Installing the final two-label refinement was blocked twice by device connectivity/assertion unavailability, so the final source/simulator build is newer than the phone by that small refinement.
+
+## Shopping timing — September 12, 2026
+
+Manual shopping and AI review now offer a segmented Now / Later choice. The list shows a timing badge and All / Now / Later filters, together with the existing store grouping and buyer filter. Default Now means the next shop; Later means future shopping, without scheduling a notification. Local optional persistence and additive backup/sync mapping preserve timing across edits and devices. Existing items and older snapshots remain Now. No new permissions or networking are involved.
+
+Timing validation: XcodeGen generation, simulator build, 69 unit tests and both shopping manual/AI UI flows passed in /tmp/LunaShoppingWhen20260912.xcresult. Tests cover Later persistence through edit/reopen/restore, legacy snapshots defaulting to Now, fake-server Later→Now propagation and selected AI-batch timing. Signed iPhone build passed, but installation could not connect to Ravi’s iPhone. This timing build is not yet installed there.

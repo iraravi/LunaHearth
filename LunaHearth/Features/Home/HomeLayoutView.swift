@@ -32,11 +32,11 @@ struct HomeLayoutView: View {
                 if planned.isEmpty {
                     VStack(spacing: 18) {
                         Image(systemName: "square.3.layers.3d").font(.system(size: 64)).foregroundStyle(Color("IllustrationBlue"))
-                        Text("Start with one room").font(.title2.bold())
+                        Text("Start with one room").font(AppTheme.sectionTitle)
                         Text("Choose a room below or add a new one.\nYour layout takes shape as you go.")
                             .font(.subheadline).foregroundStyle(AppTheme.muted).multilineTextAlignment(.center)
                     }.frame(maxWidth: .infinity).padding(.vertical, 44)
-                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 24))
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
                 } else {
                     if is3D {
                         OrbitingHomePreview(rooms: planned, angle: $angle, elevation: $elevation).frame(height: 240)
@@ -69,7 +69,7 @@ struct HomeLayoutView: View {
                         .background(AppTheme.ink, in: RoundedRectangle(cornerRadius: 16))
                 }.accessibilityIdentifier("layout.addRoom")
                 if !rooms.isEmpty {
-                    Text("Rooms on this floor").font(.title2.bold())
+                    Text("Rooms on this floor").font(AppTheme.sectionTitle)
                     ForEach(rooms) { room in
                         Button { editing = RoomLayoutSelection(roomID: room.id) } label: {
                             HStack(spacing: 14) {

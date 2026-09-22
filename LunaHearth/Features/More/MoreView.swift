@@ -2,79 +2,270 @@ import SwiftUI
 
 struct MoreView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var showingHowItWorks = false
+
+    private var canvas: Color {
+        AppTheme.canvas
+    }
+    var body: some View {
+        NavigationStack {
+            GeometryReader { geometry in
+                let wide = geometry.size.width >= 820 && !typeSize.isAccessibilitySize
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
+                        hero(wide: wide)
+                        if wide {
+                            HStack(alignment: .top, spacing: 24) {
+                                VStack(spacing: 24) { household; connections }
+                                VStack(spacing: 24) { settings }
+                            }
+                        } else {
+                            household
+                            connections
+                            settings
+                        }
+                        Label("Your home. Your privacy.", systemImage: "lock")
+                            .font(.footnote).foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity).padding(.top, 4)
+                        Text("LunaHearth · NeuralLuna").font(.caption2).foregroundStyle(.secondary)
+                            .frame(maxWidth: .infinity)
+                    }.frame(maxWidth: 1060).padding(.horizontal, wide ? 32 : 20).padding(.vertical, 20)
+                        .frame(maxWidth: .infinity)
+                }.accessibilityIdentifier("more.content")
+            }.background(canvas).foregroundStyle(.primary).tint(.primary)
+                .navigationTitle("More").navigationBarTitleDisplayMode(.inline)
+                .sheet(isPresented: $showingHowItWorks) {
+                    HowItWorksView(hasHome: true, replay: true) { showingHowItWorks = false }
+                }
+        }
+    }
+
+    private func hero(wide: Bool) -> some View {
+        Group {
+            if typeSize.isAccessibilitySize {
+                introduction
+            } else {
+                HStack(spacing: 16) {
+                    introduction.frame(maxWidth: .infinity, alignment: .leading)
+                    Image("WelcomeResidence").resizable().scaledToFill()
+                        .frame(width: wide ? 220 : 84, height: wide ? 120 : 96)
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
+                        .accessibilityHidden(true)
+                }
+            }
+        }.padding(20)
+            .background(AppTheme.sage.opacity(colorScheme == .dark ? 0.13 : 0.065), in: RoundedRectangle(cornerRadius: 20))
+    }
+    private var introduction: some View {
+        VStack(alignment: .leading, spacing: 9) {
+            Text("YOUR HOUSEHOLD").font(.caption2.weight(.semibold)).tracking(1.5).foregroundStyle(.secondary)
+            Text(repository.household?.name ?? "Make yourself at home")
+                .font(AppTheme.sectionTitle).fixedSize(horizontal: false, vertical: true)
+            Text("People, settings & privacy.")
+                .font(.subheadline).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        }
+    }
+    private var household: some View {
+        MoreSection(title: "Your home") {
+            Button { showingHowItWorks = true } label: {
+                MoreDestinationRow(title: "How it works", detail: "Receipts, shopping, pantry & meals", symbol: "play.rectangle", accent: AppTheme.sage)
+            }.accessibilityIdentifier("more.howItWorks")
+            MoreDivider()
+            NavigationLink { FamilyView() } label: {
+                MoreDestinationRow(title: "Family", detail: "Invite someone · people & access", symbol: "person.2.fill", accent: AppTheme.slate)
+            }.accessibilityIdentifier("more.family")
+        }
+    }
+    private var connections: some View {
+        MoreSection(title: "Connected to Apple") {
+            NavigationLink { ConnectionsView() } label: {
+                MoreDestinationRow(title: "Apple connections", detail: "Reminders & Calendar", symbol: "app.connected.to.app.below.fill", accent: AppTheme.slate)
+            }.accessibilityIdentifier("more.connections")
+        }
+    }
+    private var settings: some View {
+        MoreSection(title: "Settings") {
+            NavigationLink { AIStatusView() } label: {
+                MoreDestinationRow(title: "AI Status", detail: "On-device model & photo recognition", symbol: "sparkles", accent: AppTheme.slate)
+            }.accessibilityIdentifier("more.aiStatus")
+            MoreDivider()
+            NavigationLink { MorePreferencesView() } label: {
+                MoreDestinationRow(title: "Preferences", detail: "Alerts & getting started", symbol: "slider.horizontal.3", accent: AppTheme.plum)
+            }.accessibilityIdentifier("more.preferences")
+            MoreDivider()
+            NavigationLink { MorePrivacyView() } label: {
+                MoreDestinationRow(title: "Privacy & data", detail: "iCloud sync, backups & storage", symbol: "hand.raised", accent: AppTheme.sage)
+            }.accessibilityIdentifier("more.privacy")
+        }
+    }
+
+}
+
+private struct MoreSection<Content: View>: View {
+    let title: String
+    @ViewBuilder var content: Content
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(title).font(.subheadline.weight(.semibold)).padding(.horizontal, 4)
+                .accessibilityAddTraits(.isHeader)
+            VStack(spacing: 0) { content }
+                .buttonStyle(.plain)
+                .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
+        }.frame(maxWidth: .infinity, alignment: .topLeading)
+    }
+}
+private struct MoreSymbol: View {
+    let symbol: String
+    let accent: Color
+    var body: some View {
+        Image(systemName: symbol).font(.system(size: 21, weight: .medium))
+            .foregroundStyle(accent).frame(width: 44, height: 44)
+            .background(accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 13))
+            .accessibilityHidden(true)
+    }
+}
+private struct MoreDestinationRow: View {
+    let title: String
+    let detail: String
+    let symbol: String
+    let accent: Color
+    var body: some View {
+        HStack(spacing: 14) {
+            MoreSymbol(symbol: symbol, accent: accent)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                Text(detail).font(.caption).foregroundStyle(.secondary)
+            }.fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 4)
+            Image(systemName: "chevron.right").font(.caption.weight(.semibold)).foregroundStyle(.tertiary).accessibilityHidden(true)
+        }.padding(16).frame(maxWidth: .infinity, minHeight: 60, alignment: .leading).contentShape(Rectangle())
+            .accessibilityElement(children: .combine)
+    }
+}
+private struct MoreDivider: View {
+    var body: some View { Divider().padding(.leading, 74).padding(.trailing, 16) }
+}
+private struct MorePreferencesView: View {
+    @Environment(LocalHouseholdRepository.self) private var repository
     @AppStorage("warranty.horizon") private var horizon = 30
+    @State private var showingTour = false
     @State private var confirmReset = false
     @State private var error: String?
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    HStack(alignment: .top, spacing: 16) {
-                        HearthIcon(symbol: "house.fill")
-                        ScreenIntro(eyebrow: "Your household", title: repository.household?.name ?? "Your household",
-                                    subtitle: "Household members: \(repository.members.count)")
-                    }.padding(.vertical, 12)
-                }.listRowBackground(Color.clear)
-                Section("Household") {
-                    NavigationLink { FamilyView() } label: { Label("Family", systemImage: "person.3") }
-                    NavigationLink {
-                        ContentUnavailableView("Your household documents", systemImage: "doc.text", description: Text("Document import and preview are planned for a future release. No files are being read or uploaded."))
-                            .navigationTitle("Documents")
-                    } label: { Label("Documents", systemImage: "doc.text") }
+        SettingsDetailPage(title: "Preferences", subtitle: "Small choices for a calmer home.", symbol: "slider.horizontal.3", accent: AppTheme.plum) {
+            SettingsDetailCard(title: "Warranty alerts", symbol: "bell.badge", accent: AppTheme.plum) {
+                Text("Show expiring warranties this far ahead.").font(.subheadline).foregroundStyle(.secondary)
+                Picker("Remind me before expiry", selection: $horizon) {
+                    ForEach([7, 30, 60], id: \.self) { Text("\($0) days").tag($0) }
+                }.pickerStyle(.menu).accessibilityIdentifier("more.warrantyHorizon")
+                    .frame(minHeight: 44)
+            }
+            SettingsDetailCard(title: "Getting started", symbol: "sparkles", accent: AppTheme.clay) {
+                Text("Explore the ways your household connects.").font(.subheadline).foregroundStyle(.secondary)
+                if let homeID = repository.household?.id {
+                    NavigationLink { HomeSetupGuideView(householdID: homeID) } label: {
+                        Label("Step-by-step setup", systemImage: "checklist").frame(minHeight: 44)
+                    }.accessibilityIdentifier("more.setupGuide")
                 }
-                Section {
-                    LabeledContent("Storage", value: "This Device")
-                    NavigationLink { BackupView() } label: { Label("iCloud backup", systemImage: "icloud") }
-                        .accessibilityIdentifier("more.backup")
-                    Text("Your household is saved locally. No account, tracking, or network connection is required. You can optionally save a private iCloud backup. Live family sharing and Apple Calendar connections are not available in this build.")
-                        .font(.footnote).foregroundStyle(.secondary)
-                } header: { Text("Privacy & Sync") }
-                Section("Settings") {
-                    Picker("Warranty alerts", selection: $horizon) {
-                        ForEach([7, 30, 60], id: \.self) { Text("\($0) days ahead").tag($0) }
-                    }
-                }
-                Section { Text("LunaHearth · NeuralLuna").foregroundStyle(.secondary) }
+                Button("Take a look around", systemImage: "arrow.up.forward") { showingTour = true }
+                    .frame(minHeight: 44).accessibilityIdentifier("more.welcome")
+            }
+            #if DEBUG
+            SettingsDetailCard(title: "Developer tools", symbol: "hammer", accent: .gray) {
+                Button("Reset Local Household", role: .destructive) { confirmReset = true }.frame(minHeight: 44)
+            }
+            #endif
+        }.saveError($error)
+            .sheet(isPresented: $showingTour) { OnboardingView(isTour: true) }
+            .confirmationDialog("Delete all household records on this device? This cannot be undone.", isPresented: $confirmReset, titleVisibility: .visible) {
                 #if DEBUG
-                Section("Developer tools") {
-                    Button("Reset Local Household", role: .destructive) { confirmReset = true }
+                Button("Delete Local Household", role: .destructive) {
+                    do { try repository.resetLocalData() } catch { self.error = userFacingError(error) }
                 }
                 #endif
-            }.hearthList().navigationTitle("More").navigationBarTitleDisplayMode(.inline)
-                .saveError($error)
-                .confirmationDialog("Delete all household records on this device? This cannot be undone.", isPresented: $confirmReset, titleVisibility: .visible) {
-                    #if DEBUG
-                    Button("Delete Local Household", role: .destructive) {
-                        do { try repository.resetLocalData() } catch { self.error = userFacingError(error) }
-                    }
-                    #endif
-                }
+            }
+    }
+}
+private struct MorePrivacyView: View {
+    var body: some View {
+        SettingsDetailPage(title: "Privacy & data", subtitle: "Your home, stored on your terms.", symbol: "hand.raised.fill", accent: AppTheme.sage) {
+            NavigationLink { PrivacyPolicyView() } label: {
+                MoreDestinationRow(title: "Privacy policy", detail: "Read the offline policy draft", symbol: "doc.text", accent: AppTheme.sage)
+            }.accessibilityIdentifier("more.privacyPolicy")
+            SettingsDetailCard(title: "Your home works offline", symbol: "iphone", accent: AppTheme.sage) {
+                Text("Your household is saved on this device. No LunaHearth account or tracking is required.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+            }
+            SettingsDetailCard(title: "iCloud sync", symbol: "icloud", accent: AppTheme.slate) {
+                Text("Optional sharing uses Apple CloudKit and the owner’s iCloud storage. Participants can access shared records according to their permissions. Sync needs connectivity and may be delayed.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                NavigationLink { HouseholdSharingView() } label: {
+                    Label("Sync & recovery", systemImage: "arrow.right").frame(minHeight: 44)
+                }.accessibilityIdentifier("more.sync")
+            }
+            SettingsDetailCard(title: "Backups", symbol: "clock.arrow.circlepath", accent: AppTheme.slate) {
+                Text("Save a private snapshot to restore later. Backups are separate from live family sync.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                NavigationLink { BackupView() } label: {
+                    Label("Manage backups", systemImage: "arrow.right").frame(minHeight: 44)
+                }.accessibilityIdentifier("more.backup")
+            }
+            SettingsDetailCard(title: "Data controls", symbol: "externaldrive", accent: AppTheme.clay) {
+                Text("Choose which records to clear, then review and confirm your choice. Backups, exports and copies already received by others may remain.")
+                    .font(.subheadline).foregroundStyle(.secondary)
+                NavigationLink { DangerZoneView() } label: {
+                    Label("Clear household data", systemImage: "trash").frame(minHeight: 44)
+                }.accessibilityIdentifier("more.dangerZone")
+            }
         }
     }
 }
 
-struct FamilyView: View {
-    @Environment(LocalHouseholdRepository.self) private var repository
-    @State private var name = ""
-    @State private var role: MemberRole = .adult
-    @State private var error: String?
+/// Shared visual treatment for More's secondary screens; no persistence or permission behavior.
+struct SettingsDetailPage<Content: View>: View {
+    let title: String
+    let subtitle: String
+    let symbol: String
+    let accent: Color
+    @ViewBuilder var content: Content
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dynamicTypeSize) private var textSize
     var body: some View {
-        Form {
-            Section(repository.household?.name ?? "Household") {
-                if repository.members.isEmpty { Text("Add people to assign household events and tasks.").foregroundStyle(.secondary) }
-                ForEach(repository.members) { member in LabeledContent(member.displayName, value: member.role.rawValue.capitalized) }
-            }
-            Section {
-                TextField("Display name", text: $name)
-                Picker("Profile", selection: $role) {
-                    Text("Adult").tag(MemberRole.adult)
-                    Text("Child").tag(MemberRole.child)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 20) {
+                if !textSize.isAccessibilitySize {
+                    HStack(alignment: .top, spacing: 16) {
+                    Image(systemName: symbol).font(.title).foregroundStyle(accent)
+                        .frame(width: 56, height: 56).background(accent.opacity(0.12), in: RoundedRectangle(cornerRadius: 18))
+                        .accessibilityHidden(true)
+                    Text(subtitle).font(.title3.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }.padding(20).background(accent.opacity(0.07), in: RoundedRectangle(cornerRadius: 18))
                 }
-                Button("Add Person") {
-                    do { try repository.addMember(name: name, role: role); name = "" }
-                    catch { self.error = userFacingError(error) }
-                }.disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            } header: { Text("Add to household") } footer: { Text("These are local profiles managed by adults, not accounts or sharing invitations.") }
-        }.hearthList().navigationTitle("Family").saveError($error)
+                content
+            }.padding(20).frame(maxWidth: 760).frame(maxWidth: .infinity)
+        }
+        .background(AppTheme.canvas)
+        .tint(accent).foregroundStyle(.primary)
+        .navigationTitle(title).navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+struct SettingsDetailCard<Content: View>: View {
+    let title: String
+    let symbol: String
+    let accent: Color
+    @ViewBuilder var content: Content
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Image(systemName: symbol).foregroundStyle(accent).accessibilityHidden(true)
+                Text(title).foregroundStyle(.primary)
+            }.font(.headline).accessibilityElement(children: .combine).accessibilityAddTraits(.isHeader)
+            content
+        }.frame(maxWidth: .infinity, alignment: .leading).padding(20)
+            .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
     }
 }

@@ -32,6 +32,21 @@ actor CloudKitBackupService: HouseholdBackupService {
         return container
     }
 
+    func deleteBackups() async throws {
+        let container = try await readyContainer()
+        let account = try await container.userRecordID()
+        let database = container.privateCloudDatabase
+        let zones = try await database.allRecordZones()
+        // Only the app's manual backup generations and catalog; never live/shared homes.
+        let ids = zones.map(\.zoneID).filter { $0.zoneName == Schema.catalogZone || $0.zoneName.hasPrefix("LHBackup-") }
+        for id in ids.sorted(by: { $0.zoneName < $1.zoneName }) {
+            guard try await container.userRecordID() == account else { throw BackupError.accountChanged }
+            do { try await database.deleteRecordZone(withID: id) }
+            catch let error as CKError where error.code == .zoneNotFound || error.code == .unknownItem { /* Idempotent retry. */ }
+        }
+        guard try await container.userRecordID() == account else { throw BackupError.accountChanged }
+    }
+
     func upload(_ backup: HouseholdBackup) async throws {
         try backup.validateEnvelope()
         let container = try await readyContainer()

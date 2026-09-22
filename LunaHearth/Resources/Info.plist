@@ -12,7 +12,12 @@
     <key>CFBundleName</key><string>$(PRODUCT_NAME)</string>
     <key>CFBundlePackageType</key><string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
+    <key>CFBundleURLTypes</key>
+    <array><dict><key>CFBundleURLName</key><string>com.neuralluna.lunahearth.task</string>
+    <key>CFBundleURLSchemes</key><array><string>lunahearth</string></array></dict></array>
     <key>CFBundleVersion</key><string>$(CURRENT_PROJECT_VERSION)</string>
+    <key>CKSharingSupported</key><true/>
+    <key>ITSAppUsesNonExemptEncryption</key><false/>
     <key>LSRequiresIPhoneOS</key><true/>
     <key>UILaunchScreen</key><dict/>
     <key>UISupportedInterfaceOrientations</key>
@@ -21,15 +26,24 @@
         <string>UIInterfaceOrientationLandscapeLeft</string>
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
     <key>NSCalendarsFullAccessUsageDescription</key>
-    <string>LunaHearth can show calendar events you choose alongside your household schedule.</string>
+    <string>LunaHearth can show selected calendars and keep appointments you choose updated in Apple Calendar. Only enable this when you want to connect your calendar.</string>
     <key>NSCalendarsWriteOnlyAccessUsageDescription</key>
     <string>LunaHearth can add events to your Apple Calendar when you ask it to.</string>
     <key>NSRemindersFullAccessUsageDescription</key>
-    <string>LunaHearth can show and create reminders only when you enable Reminders integration.</string>
+    <string>Optionally browse and edit the Apple Reminders lists you select. Your LunaHearth household lists work without this permission.</string>
+    <key>UIBackgroundModes</key>
+    <array><string>remote-notification</string></array>
     <key>NSCameraUsageDescription</key>
-    <string>LunaHearth uses the camera only when you scan a room, receipt, appliance label, or document.</string>
+    <string>LunaHearth uses the camera only when you scan a room, kitchen shelf, receipt, appliance label, or document.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>LunaHearth uses selected photos only when you import a receipt, warranty, manual, or event flyer.</string>
+    <string>LunaHearth uses selected photos only when you import pantry items, a receipt, warranty, manual, or event flyer.</string>
 </dict>
 </plist>

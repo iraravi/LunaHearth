@@ -11,7 +11,7 @@ extension EntryDraft {
                    memberID: task.assignedMemberID, recordID: task.id)
     }
     static func editing(_ item: GroceryItem) -> EntryDraft {
-        EntryDraft(kind: .grocery, title: item.name, quantity: item.quantityText ?? "", recordID: item.id)
+        EntryDraft(kind: .grocery, title: item.name, memberID: item.assignedMemberID, parentID: item.relatedAssetID, quantity: item.quantityAmount ?? item.quantityText ?? "", storeName: item.storeName ?? "", neededLater: item.neededLater == true, recordID: item.id, quantityUnit: item.quantityUnit.flatMap(ShoppingUnit.init(rawValue:)) ?? .custom, shoppingDate: item.plannedDay.flatMap { ShoppingEntryRules.date(for: $0) } ?? ShoppingEntryRules.tomorrow())
     }
     static func editing(_ meal: MealPlanEntry) -> EntryDraft {
         var date = meal.date
@@ -23,7 +23,7 @@ extension EntryDraft {
                 date = calendar.date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2], hour: 12)) ?? meal.date
             }
         }
-        return EntryDraft(kind: .meal, title: meal.title, date: date, notes: meal.notes ?? "", mealType: meal.mealType, recordID: meal.id)
+        return EntryDraft(kind: .meal, title: meal.title, date: date, notes: meal.notes ?? "", mealType: meal.mealType, mealIngredients: (meal.ingredientNames ?? []).joined(separator: "\n"), mealSteps: (meal.preparationSteps ?? []).joined(separator: "\n"), mealServings: meal.servings ?? 2, mealAmountsPerServing: meal.ingredientAmountsPerServing ?? [:], recordID: meal.id)
     }
     static func editing(_ room: Room) -> EntryDraft {
         EntryDraft(kind: .room, title: room.name, parentID: room.floorID, recordID: room.id)

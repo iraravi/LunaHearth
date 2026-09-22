@@ -7,6 +7,7 @@ struct BackupView: View {
     @State private var busy = false
     @State private var message: String?
     @State private var candidate: HouseholdBackup?
+    @State private var confirmDelete = false
     @State private var confirmUpload = false
     private let service: any HouseholdBackupService
     private let onRestore: () -> Void
@@ -37,13 +38,19 @@ struct BackupView: View {
                     Button("Back up to iCloud", systemImage: "icloud.and.arrow.up") { confirmUpload = true }
                         .accessibilityIdentifier("backup.upload").disabled(busy)
                 } footer: {
-                    Text("Manual backups replace the previous backup in this Apple Account. Changes do not sync automatically. Family sharing is not enabled.")
+                    Text("Manual backups replace the previous backup in this Apple Account. These snapshots are separate from live sync and family sharing.")
                 }
             } else {
                 Section {
                     Button("Find my iCloud backup", systemImage: "icloud.and.arrow.down") { findBackup() }
                         .accessibilityIdentifier("backup.find").disabled(busy)
                 } footer: { Text("Nothing is restored until you review the backup below. An internet connection is needed for this step.") }
+            }
+            Section {
+                Button("Delete private iCloud backups", role: .destructive) { confirmDelete = true }
+                    .accessibilityIdentifier("backup.delete").disabled(busy)
+                Text("Deletes LunaHearth manual backups in this Apple Account. Your local data and live shared homes are kept.")
+                    .font(.footnote).foregroundStyle(.secondary)
             }
             if busy { Section { ProgressView("Connecting to iCloud…").accessibilityIdentifier("backup.progress") } }
             if let message {
@@ -61,11 +68,27 @@ struct BackupView: View {
                 }
             }
         }.hearthList().navigationTitle("iCloud backup").navigationBarTitleDisplayMode(.inline)
+            .confirmationDialog("Delete private iCloud backups?", isPresented: $confirmDelete, titleVisibility: .visible) {
+                Button("Delete backups", role: .destructive) { deleteBackups() }
+            } message: { Text("Permanently deletes all LunaHearth manual backup generations currently stored in this Apple Account, including older snapshots. You cannot restore them afterward. Local homes, live household sync and Apple Reminders are unchanged.") }
             .confirmationDialog("Save this home to your private iCloud storage?", isPresented: $confirmUpload, titleVisibility: .visible) {
                 Button("Save backup") { upload() }
             } message: {
                 Text("Household names, profiles, schedules, item details and notes will be sent to Apple iCloud. This replaces your previous LunaHearth backup.")
             }
+    }
+
+    private func deleteBackups() {
+        guard !busy else { return }
+        busy = true; message = nil; candidate = nil
+        Task { @MainActor in
+            defer { busy = false }
+            do {
+                try await service.deleteBackups()
+                lastHousehold = ""; lastSavedAt = 0
+                message = "Private backups deleted. Local data and live shared homes are unchanged."
+            } catch { message = "Backup deletion was not confirmed; some snapshots may remain. Retry to finish. " + cloudMessage(error) }
+        }
     }
 
     private func upload() {

@@ -30,7 +30,13 @@ struct EntryDraft: Identifiable {
     var parentID: UUID?
     var notes = ""
     var quantity = ""
+    var storeName = ""
+    var neededLater = false
     var mealType = "Dinner"
+    var mealIngredients = ""
+    var mealSteps = ""
+    var mealServings = 2
+    var mealAmountsPerServing: [String: String] = [:]
     var category: AssetCategory = .other
     var manufacturer = ""
     var modelNumber = ""
@@ -39,9 +45,14 @@ struct EntryDraft: Identifiable {
     var repeats = false
     var shoppingItem = ""
     var recordID: UUID?
+    var quantityUnit: ShoppingUnit = .custom
+    var shoppingDate: Date = ShoppingEntryRules.tomorrow()
+    var allowDuplicateShoppingItem = false
 
     func validate() throws {
         _ = try HouseholdRules.requiredName(title)
+        if kind == .grocery && !storeName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { _ = try HouseholdRules.requiredName(storeName) }
+        if kind == .grocery { _ = try ShoppingEntryRules.quantityText(quantity, unit: quantityUnit) }
         if kind == .event && endDate <= date { throw HouseholdValidation.invalidEventRange }
         if (kind == .maintenance || kind == .warranty) && parentID == nil {
             throw HouseholdValidation.assetRequired

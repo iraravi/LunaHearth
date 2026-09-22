@@ -10,6 +10,8 @@ final class FamilyEvent {
     var endAt: Date
     var assignedMemberID: UUID?
     var notes: String?
+    var appointmentKind: String? = nil
+    var reminderMinutes: Int? = nil
     var sourceRawValue: String
     var createdAt: Date
     var modifiedAt: Date
@@ -42,6 +44,7 @@ final class HouseholdTask {
     var isCompleted: Bool
     var recurrenceRule: String?
     var relatedAssetID: UUID?
+    var mealID: UUID? = nil
     var createdAt: Date
     var modifiedAt: Date
 
@@ -67,19 +70,32 @@ final class GroceryItem {
     var householdID: UUID
     var name: String
     var quantityText: String?
+    var quantityAmount: String? = nil
+    var quantityUnit: String? = nil
+    var plannedDay: String? = nil
+    var neededLater: Bool?
+    var storeName: String?
+    var storeID: UUID? = nil
+    var assignedMemberID: UUID?
     var category: String?
+    var purchaseDisposition: String? = nil
+    var receiptImportKey: String? = nil
     var isCompleted: Bool
     var relatedAssetID: UUID?
     var createdAt: Date
     var modifiedAt: Date
 
     init(id: UUID = UUID(), householdID: UUID, name: String, quantityText: String? = nil,
-         category: String? = nil, isCompleted: Bool = false, relatedAssetID: UUID? = nil,
+         storeName: String? = nil, storeID: UUID? = nil, neededLater: Bool? = nil, assignedMemberID: UUID? = nil, category: String? = nil, isCompleted: Bool = false, relatedAssetID: UUID? = nil,
          createdAt: Date = .now, modifiedAt: Date = .now) {
         self.id = id
         self.householdID = householdID
         self.name = name
         self.quantityText = quantityText
+        self.storeName = storeName
+        self.storeID = storeID
+        self.neededLater = neededLater
+        self.assignedMemberID = assignedMemberID
         self.category = category
         self.isCompleted = isCompleted
         self.relatedAssetID = relatedAssetID
@@ -97,6 +113,11 @@ final class MealPlanEntry {
     var mealType: String
     var title: String
     var notes: String?
+    var ingredientNames: [String]? = nil
+    var ingredientAmountsPerServing: [String: String]? = nil
+    var preparationSteps: [String]? = nil
+    var servings: Int? = nil
+    var cookedAt: Date? = nil
     var createdAt: Date
     var modifiedAt: Date
 

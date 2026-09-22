@@ -78,7 +78,7 @@ struct HomeLayoutPreview: View {
                 context.draw(Text(room.name).font(.system(size: 11, weight: .semibold)).foregroundColor(.black), at: labelPoint)
             }
         }
-        .background(Color(red: 0.96, green: 0.97, blue: 0.99), in: RoundedRectangle(cornerRadius: 24))
+        .background(AppTheme.secondarySurface, in: RoundedRectangle(cornerRadius: 18))
         .accessibilityLabel(is3D ? "3D room layout" : "2D floor plan")
         .accessibilityValue("\(rooms.count) rooms. Room names and dimensions are listed below.")
     }
