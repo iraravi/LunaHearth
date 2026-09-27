@@ -14,7 +14,9 @@
 - 255 Swift Testing tests in 48 suites passed; the 1,000-ingredient search performance test also passed. Initial log: `/tmp/luna63-check.log`.
 - All eight release UI scenarios passed on the Duo simulator across the initial run and targeted reruns. Final calendar and receipt results: `/tmp/LunaHearthRelease63/DuoRelease.xcresult`, `/tmp/luna63-duo-release.log`.
 - The initial UI failures exposed test gestures outside adaptive sheets and transient accessibility identities during navigation. The helper now snapshots the hierarchy, resolves only the foreground scroll container for its gesture, and preserves the outcome assertions. Only test code changed after archiving.
-- iPad and additional iPhone help/capability UI checks are being completed separately; their results will be appended.
+- All eight release UI scenarios also passed on iPad: expense, large-text family week and measured restock in `/tmp/luna63-ipad-verified.log`; the remaining five in `/tmp/LunaHearthRelease63/iPadRelease.xcresult` and `/tmp/luna63-ipad-release.log`.
+- Three additional iPhone UI checks passed: help/checklist recovery, publisher settings preserving manual shopping, and non-AI shopping/pantry fallback. Results: `/tmp/LunaHearthRelease63/iPhoneHelpRelease.xcresult`, `/tmp/luna63-iphone-release.log`.
+- Xcode emitted a post-test simulator diagnostic-collection warning, but the final targeted runs reported success. Interrupted development reruns are not counted as passes.
 - No physical installation or live household sharing test is claimed by this release check. Fixtures use local synthetic data and mocked Calendar delivery.
 
 ## Distribution
@@ -26,3 +28,7 @@ Xcode Organizer confirmed upload completion. App Store Connect confirmed process
 External **Ravi Home** distribution is not yet complete: build 63 was selected, but the Mac locked at the What to Test form before submission. User unlock is required to finish that UI step. No public App Store submission was requested or made.
 
 A request for a new tester name/email remains unanswered; no additional tester identity was inferred or created. Existing group membership was retained.
+
+## Git handoff
+
+Release code was committed as `bf45bf7` on `main`. The push to `origin/main` reached the macOS credential helper and remained blocked while the Mac was locked; remote publication has not been verified. The rejected navigation prototype remains untracked and excluded.
