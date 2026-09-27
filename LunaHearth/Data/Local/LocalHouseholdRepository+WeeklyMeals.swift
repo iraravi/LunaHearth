@@ -34,6 +34,7 @@ extension LocalHouseholdRepository {
         }
     }
     func saveWeeklyDrafts(_ drafts: [EntryDraft], householdID: UUID, prepTimes: [UUID: Date] = [:]) throws {
+        try FeatureAccess.require(.weeklyMeals)
         guard household?.id == householdID, !drafts.isEmpty, drafts.count <= 21 else { throw HouseholdValidation.invalidReference }
         guard Set(prepTimes.keys).isSubset(of: Set(drafts.map(\.id))) else { throw MealCookingError.changed }
         var slots: Set<String> = []

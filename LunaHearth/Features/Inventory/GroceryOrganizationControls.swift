@@ -99,6 +99,7 @@ struct GroceryAIOrganizationControls: View {
 
 /// One action layout keeps shopping and at-home inventory in step.
 struct GroceryShelfActions: View {
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(\.dynamicTypeSize) private var typeSize
     let identifier: String
     let filterCount: Int
@@ -118,7 +119,7 @@ struct GroceryShelfActions: View {
     private var actions: some View {
         Group {
             Button(action: tools) {
-                Label(filterCount == 0 ? "Filters & AI" : "Filters & AI (\(filterCount))", systemImage: "slider.horizontal.3")
+                Label(filterCount == 0 ? aiAvailability.filterTitle : "\(aiAvailability.filterTitle) (\(filterCount))", systemImage: "slider.horizontal.3")
             }.accessibilityIdentifier("\(identifier).tools")
             Button(action: ideas) { Label("Ideas", systemImage: "sparkles") }
                 .accessibilityIdentifier(identifier == "shopping" ? "shopping.ai.open" : "inventory.ideas")

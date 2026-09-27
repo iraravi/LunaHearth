@@ -3,6 +3,8 @@ import SwiftUI
 struct ShoppingSuggestionsView: View {
     let householdID: UUID
     var service: any ShoppingSuggestionService = OnDeviceShoppingSuggestionService()
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
     @State private var prompt = ""
@@ -27,9 +29,9 @@ struct ShoppingSuggestionsView: View {
                     if explanation == nil { requestStep } else { reviewStep }
                 }.padding(20).frame(maxWidth: 640).frame(maxWidth: .infinity)
             }.background(ShoppingTheme.canvas)
-                .navigationTitle(explanation == nil ? "Shopping ideas" : "Review your list").navigationBarTitleDisplayMode(.inline)
+                .featureAvailability(.shoppingIdeas).navigationTitle(explanation == nil ? "Shopping ideas" : "Review your list").navigationBarTitleDisplayMode(.inline)
                 .scrollDismissesKeyboard(.interactively)
-                .safeAreaInset(edge: .bottom) { bottomAction }
+                .safeAreaInset(edge: .bottom) { if publicStatus.configuration?.allows(.shoppingIdeas) ?? true { bottomAction } }
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                     if explanation != nil { ToolbarItem(placement: .confirmationAction) { Button("Start over") { explanation = nil; items = []; selected = [] } } }
@@ -42,12 +44,14 @@ struct ShoppingSuggestionsView: View {
                     guard repository.household?.id == householdID else { return }
                     let request = ShoppingSuggestionRequest(prompt: prompt,
                         recentItems: includeHistory ? repository.groceries.filter(\.isCompleted).sorted { $0.modifiedAt > $1.modifiedAt }.prefix(20).map(\.name) : [],
-                        pendingItems: repository.groceries.filter { !$0.isCompleted }.map(\.name))
+                        pendingItems: repository.groceries.filter { !$0.isCompleted }.map(\.name),
+                        pantryItems: repository.stockedShoppingSuggestionNames)
                     do {
                         let result = try await service.suggest(request)
                         try Task.checkCancellation()
                         guard repository.household?.id == householdID else { return }
-                        items = result.items; selected = Set(items.map(\.id))
+                        items = ShoppingSuggestionRules.reviewed(result.items, excluding: repository.groceries.filter { !$0.isCompleted }.map(\.name) + repository.stockedShoppingSuggestionNames)
+                        selected = Set(items.map(\.id))
                         explanation = result.explanation; usedModel = result.usedModel
                     } catch is CancellationError { return }
                     catch { self.error = "Couldn’t prepare ideas. Your shopping list is unchanged." }
@@ -60,7 +64,7 @@ struct ShoppingSuggestionsView: View {
             HearthArtwork(name: "WelcomeTable", height: 120)
             VStack(alignment: .leading, spacing: 8) {
                 Text("A good shop starts here.").font(AppTheme.displayTitle)
-                Text("Tell us what you have in mind. We’ll help with the list.").font(.subheadline).foregroundStyle(.secondary)
+                Text("Tell us what you have in mind. We’ll help with the list. Items already stocked in your pantry or on your shopping list are skipped.").font(.subheadline).foregroundStyle(.secondary)
             }
             ShoppingFormCard {
                 Text("What are you planning?").font(.headline)
@@ -73,7 +77,7 @@ struct ShoppingSuggestionsView: View {
                 Toggle("Use my checked items", isOn: $includeHistory).font(.subheadline).tint(AppTheme.sage)
                 if prompt.count > 400 { Text("Keep your request to 400 characters or fewer.").font(.caption).foregroundStyle(.red) }
             }
-            Label("On-device intelligence. Always your choice.", systemImage: "lock.shield.fill").font(.footnote).foregroundStyle(.secondary)
+            Label((aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiShopping) ?? true)) ? "On-device intelligence. Always your choice." : "Built-in list ideas. Review before adding.", systemImage: "lock.shield.fill").font(.footnote).foregroundStyle(.secondary)
             DisclosureGroup("How suggestions stay private") {
                 Text("Only your request, current item names and optional checked-item names are used on this device. No cloud AI. If Apple’s model is unavailable, you’ll see clearly labeled list ideas instead.").font(.footnote).foregroundStyle(.secondary).padding(.top, 8)
             }.font(.footnote)
@@ -93,11 +97,11 @@ struct ShoppingSuggestionsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Keep what you need.").font(AppTheme.displayTitle)
                 Text("Tap a circle to include an item. Edit any detail below.").font(.subheadline).foregroundStyle(.secondary)
-                Label(usedModel ? "AI suggestions · review before adding" : "List ideas · AI unavailable", systemImage: usedModel ? "sparkles" : "basket")
+                Label(usedModel ? "AI suggestions · review before adding" : "Built-in list ideas · review before adding", systemImage: usedModel ? "sparkles" : "basket")
                     .font(.caption.weight(.semibold)).foregroundStyle(usedModel ? .purple : .secondary)
                 Text(explanation ?? "").font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("shopping.ai.status")
             }
-            if items.isEmpty { ContentUnavailableView("No new ideas yet", systemImage: "basket", description: Text("Try another request, or add an item manually.")) }
+            if items.isEmpty { ContentUnavailableView("No new items to add", systemImage: "basket", description: Text("Matching stocked pantry items and shopping items are skipped. Add an item manually if you want extra.")) }
             ForEach($items) { $item in
                 ShoppingFormCard {
                     HStack(alignment: .top, spacing: 14) {
@@ -137,7 +141,7 @@ struct ShoppingSuggestionsView: View {
                 editing = false; working = true; items = []; selected = []; generation += 1
             }
         } else {
-            ShoppingBottomAction(title: "Add \(selected.count) items to my list", detail: "Already on your list? We’ll skip duplicates.", disabled: selected.isEmpty || working, identifier: "shopping.ai.add") { save() }
+            ShoppingBottomAction(title: "Add \(selected.count) items to my list", detail: "Pantry and shopping are checked again before adding.", disabled: selected.isEmpty || working, identifier: "shopping.ai.add") { save() }
         }
     }
 
@@ -145,7 +149,7 @@ struct ShoppingSuggestionsView: View {
         do {
             let count = try repository.addShoppingSuggestions(items.filter { selected.contains($0.id) }, householdID: householdID, store: store, buyer: buyer, neededLater: neededLater, plannedDate: plannedDate)
             if count > 0 { dismiss() }
-            else { error = "The selected items are already on your list. Nothing was added twice." }
+            else { error = "These items are already stocked in your pantry or on your shopping list. Nothing was added." }
         } catch { self.error = userFacingError(error) }
     }
 }

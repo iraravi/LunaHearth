@@ -6,10 +6,12 @@ struct HomeSetupGuideView: View {
     @Environment(\.dynamicTypeSize) private var textSize
     @AppStorage private var completed: String
     @AppStorage private var skipped: String
+    @AppStorage private var dismissed: Bool
     @State private var selected: HomeSetupStep = .pantry
     init(householdID: UUID) {
         _completed = AppStorage(wrappedValue: "", HomeSetupProgress.storageKey(householdID: householdID, field: "completed"))
         _skipped = AppStorage(wrappedValue: "", HomeSetupProgress.storageKey(householdID: householdID, field: "skipped"))
+        _dismissed = AppStorage(wrappedValue: false, HomeSetupProgress.storageKey(householdID: householdID, field: "dismissed"))
     }
     private var progress: HomeSetupProgress {
         HomeSetupProgress(savedCompleted: completed, savedSkipped: skipped, observed: repository.setupMilestones)
@@ -20,7 +22,7 @@ struct HomeSetupGuideView: View {
             VStack(alignment: .leading, spacing: 22) {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(progress.isFinished ? "Make yourself at home." : "A few small steps. A calmer day.").font(.system(.title2, design: .serif, weight: .regular))
-                    Text("Your home is ready to use. Try each step, or leave it for later.")
+                    Text("Your home is ready. These activities are optional. Open one, add your own information and save, then return here. You can use the app without finishing this checklist.")
                         .font(.subheadline).foregroundStyle(.secondary)
                     SetupProgressIndicator(progress: progress)
                 }
@@ -33,7 +35,7 @@ struct HomeSetupGuideView: View {
                 }
                 VStack(alignment: .leading, spacing: 16) {
                     if !textSize.isAccessibilitySize { WelcomePhotograph(name: selected.art, height: 170).accessibilityHidden(true) }
-                    Text("Step \(HomeSetupStep.allCases.firstIndex(of: selected).map { $0 + 2 } ?? 2) of \(progress.totalCount)").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                    Text("Optional activity \(HomeSetupStep.allCases.firstIndex(of: selected).map { $0 + 1 } ?? 1) of \(HomeSetupStep.allCases.count)").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                     Text(selected.title).font(.system(.title2, design: .serif, weight: .regular))
                     Text(selected.explanation).font(.body).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                     NavigationLink { destination(selected) } label: {
@@ -75,11 +77,15 @@ struct HomeSetupGuideView: View {
                             .accessibilityValue(step == selected ? "Selected" : "")
                     }
                 }.background(WelcomeStyle.surface, in: RoundedRectangle(cornerRadius: 16))
-                Text("Progress is saved on this device for this home. You can return from Home or More → Preferences.")
+                if !progress.isFinished {
+                    Toggle("Show checklist on Home", isOn: Binding(get: { !dismissed }, set: { dismissed = !$0 }))
+                        .frame(minHeight: 44).accessibilityIdentifier("guide.showOnHome")
+                }
+                Text("Progress is saved on this device for this home. You can return from More → Help & guides.")
                     .font(.footnote).foregroundStyle(.secondary)
             }.padding(20).frame(maxWidth: 760).frame(maxWidth: .infinity)
         }.background(WelcomeStyle.canvas).foregroundStyle(WelcomeStyle.ink).tint(WelcomeStyle.ink)
-            .navigationTitle("Set up your home").navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Getting started").navigationBarTitleDisplayMode(.inline)
             .onAppear { rememberCompleted(); selected = progress.next ?? .pantry }
             .onChange(of: repository.setupMilestones) { _, _ in rememberCompleted() }
         }
@@ -101,31 +107,53 @@ struct HomeSetupGuideCard: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @AppStorage private var completed: String
     @AppStorage private var skipped: String
+    @AppStorage private var dismissed: Bool
     let open: () -> Void
     init(householdID: UUID, open: @escaping () -> Void) {
         self.open = open
         _completed = AppStorage(wrappedValue: "", HomeSetupProgress.storageKey(householdID: householdID, field: "completed"))
         _skipped = AppStorage(wrappedValue: "", HomeSetupProgress.storageKey(householdID: householdID, field: "skipped"))
+        _dismissed = AppStorage(wrappedValue: false, HomeSetupProgress.storageKey(householdID: householdID, field: "dismissed"))
     }
     var body: some View {
         let progress = HomeSetupProgress(savedCompleted: completed, savedSkipped: skipped, observed: repository.setupMilestones)
-        if !progress.isFinished {
-            Button(action: open) {
-                VStack(alignment: .leading, spacing: 12) {
+        Group {
+            if !progress.isFinished && !dismissed {
+                VStack(alignment: .leading, spacing: 10) {
                     HStack {
-                        Label("Set up your home", systemImage: "sparkles").font(.headline)
+                        Text("GETTING STARTED").font(.caption.weight(.semibold)).tracking(1)
+                            .foregroundStyle(.secondary)
                         Spacer(minLength: 0)
-                        Image(systemName: "chevron.right").accessibilityHidden(true)
+                        Menu {
+                            Button("Hide setup checklist", systemImage: "eye.slash") { dismissed = true }
+                                .accessibilityIdentifier("home.hideSetup")
+                        } label: {
+                            Image(systemName: "ellipsis").frame(minWidth: 44, minHeight: 44)
+                        }.accessibilityLabel("Setup checklist options")
+                            .accessibilityIdentifier("home.setupOptions")
                     }
-                    Text("Next: \(progress.next?.title ?? "Review your setup")").font(.subheadline).foregroundStyle(.secondary)
-                    SetupProgressIndicator(progress: progress)
-                }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
-                    .background(WelcomeStyle.surface, in: RoundedRectangle(cornerRadius: 16)).contentShape(Rectangle())
-            }.buttonStyle(.plain)
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel("Set up your home")
-                .accessibilityValue("\(progress.reviewedCount) of \(progress.totalCount) steps reviewed")
-                .accessibilityIdentifier("home.setupGuide")
+                    Button(action: open) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text("Explore your home").font(.headline)
+                                Spacer(minLength: 0)
+                                Image(systemName: "chevron.right").accessibilityHidden(true)
+                            }
+                            Text("Next: \(progress.next?.title ?? "Review your setup")").font(.subheadline).foregroundStyle(.secondary)
+                            SetupProgressIndicator(progress: progress)
+                        }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).contentShape(Rectangle())
+                    }.buttonStyle(.plain)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityAddTraits(.isButton)
+                        .accessibilityLabel("Explore your home, optional getting-started checklist")
+                        .accessibilityValue("\(progress.reviewedCount) of \(progress.totalCount) steps reviewed")
+                        .accessibilityIdentifier("home.setupGuide")
+                }.padding(18).background(WelcomeStyle.surface, in: RoundedRectangle(cornerRadius: 16))
+            }
+        }
+        .onAppear { completed = HomeSetupProgress.encode(progress.completed) }
+        .onChange(of: repository.setupMilestones) { _, _ in
+            completed = HomeSetupProgress.encode(progress.completed)
         }
     }
 }

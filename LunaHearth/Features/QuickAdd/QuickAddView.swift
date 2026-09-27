@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct QuickAddView: View {
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(AppleConnections.self) private var connections
     @State private var saving = false
@@ -154,8 +156,10 @@ struct QuickAddView: View {
                     Button("Keep existing item") { dismiss() }.buttonStyle(.borderless).accessibilityIdentifier("shopping.keepExisting")
                     Toggle("Keep a separate entry", isOn: $draft.allowDuplicateShoppingItem).font(.subheadline).accessibilityIdentifier("shopping.allowDuplicate")
                 }
-                Button { focusedField = nil; comparing = true } label: { Label(comparing ? "Comparing on your device…" : "Check similar names with AI", systemImage: "sparkles") }
-                    .disabled(comparing).buttonStyle(.borderless).accessibilityIdentifier("shopping.compareAI")
+                if (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiDuplicates) ?? true)) {
+                    Button { focusedField = nil; comparing = true } label: { Label(comparing ? "Comparing on your device…" : "Check similar names with AI", systemImage: "sparkles") }
+                        .disabled(comparing).buttonStyle(.borderless).accessibilityIdentifier("shopping.compareAI")
+                }
                 if let comparisonStatus { Text(comparisonStatus).font(.caption).accessibilityIdentifier("shopping.comparisonStatus") }
                 Text("Aliases and likely typos are checked offline. Compare store, buyer and amount before adding another purchase.").font(.caption).foregroundStyle(ShoppingTheme.muted)
             }.foregroundStyle(ShoppingTheme.ink).padding(12).background(ShoppingTheme.canvas, in: RoundedRectangle(cornerRadius: 14))

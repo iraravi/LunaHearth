@@ -2,6 +2,9 @@ import Foundation
 
 enum AIAvailability: String, Sendable, CaseIterable {
     case ready, disabled, preparing, unsupportedDevice, olderOS, unavailable
+    var showsAIActions: Bool { self == .ready }
+    var filterTitle: String { showsAIActions ? "Filters & AI" : "Filters" }
+
     var title: String {
         switch self {
         case .ready: "Ready on this device"

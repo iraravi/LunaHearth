@@ -89,6 +89,7 @@ struct ShoppingListView: View {
         .foregroundStyle(ShoppingTheme.ink).tint(ShoppingTheme.accent)
         .listSectionSpacing(16)
         .contentMargins(.top, 8, for: .scrollContent)
+        .householdHelp(.shopping)
         .navigationTitle("Groceries")
         .featureCanvas(.shopping)
         .navigationBarTitleDisplayMode(.inline)

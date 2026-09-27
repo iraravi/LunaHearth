@@ -7,6 +7,7 @@ actor OnDevicePantryPhotoScanner: PantryPhotoScanning {
     private let allowsImageModel: Bool
     init(allowsImageModel: Bool = true) { self.allowsImageModel = allowsImageModel }
     func scan(imageData: Data) async throws -> PantryPhotoScan {
+        try FeatureAccess.require(.pantryPhoto)
         guard imageData.count <= 20_000_000 else { throw ReceiptImportError.tooLarge }
         try Task.checkCancellation()
         guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),
@@ -16,7 +17,7 @@ actor OnDevicePantryPhotoScanner: PantryPhotoScanning {
                 kCGImageSourceThumbnailMaxPixelSize: 1800
               ] as CFDictionary) else { throw ReceiptImportError.unreadable }
         var explanation = "Label reading only. Full photo recognition needs iOS 27 and available Apple Intelligence. Unlabelled items may be missed."
-        if #available(iOS 27.0, *), allowsImageModel, !ProcessInfo.processInfo.arguments.contains("--ui-testing") {
+        if #available(iOS 27.0, *), allowsImageModel, FeatureAccess.allows(.aiPhoto), !ProcessInfo.processInfo.arguments.contains("--ui-testing") {
             if case .available = SystemLanguageModel.default.availability, SystemLanguageModel.default.capabilities.contains(.vision) {
                 do {
                     let session = LanguageModelSession(model: SystemLanguageModel.default, instructions: """

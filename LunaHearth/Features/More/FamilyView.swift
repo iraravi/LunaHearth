@@ -39,7 +39,8 @@ struct FamilyView: View {
             }.accessibilityIdentifier("family.content")
         }.background(AppTheme.canvas)
             .foregroundStyle(.primary).tint(.primary)
-            .navigationTitle("Family").navigationBarTitleDisplayMode(.inline)
+            .householdHelp(.family)
+        .navigationTitle("Family").navigationBarTitleDisplayMode(.inline)
             .saveError($sharingError)
             .sheet(isPresented: $addingProfile) { FamilyProfileForm() }
             .sheet(item: $renamingMember) { member in FamilyMemberNameForm(member: member) }

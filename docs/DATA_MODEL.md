@@ -395,3 +395,6 @@ Added CalendarDeliveryLink to the local SwiftData schema. Its event/household ID
 Build 46 changes restock business rules only: compatible quantityText measures and matching package counts add on a new reviewed purchase. Replay markers still prevent repeated addition. No schema change or retroactive balance rewrite. See ADR 039.
 
 Build 47 adds optional PurchaseEntry.receiptLineKey for durable receipt reconciliation. It is nullable for old stores/payloads, validated as a 64-character hex digest, and included in backups. Existing purchase identity and stock snapshots are retained when receipt grouping/expense evidence is attached. See ADR 040.
+
+### Public operational configuration (ADR 049)
+A new public CloudKit record type `LHAppConfiguration` uses a fixed `ios-current` record ID and one bounded versioned `payload` String. It describes publisher-controlled feature availability and plain text only; it is not a household entity. No householdID, member identifier, migration, backup format change, private/shared schema field or SwiftData table is introduced. Device-local UserDefaults caches the validated value and refresh timestamps. Production schema deployment and permission validation remain required separately.

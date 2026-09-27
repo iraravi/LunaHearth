@@ -28,6 +28,7 @@ extension LocalHouseholdRepository {
     /// Shopping and inventory commit together. A deterministic UUID prevents duplicate receipt
     /// imports or the same purchase being added independently on two offline devices.
     func recordPurchase(_ grocery: GroceryItem, addToInventory: Bool, keeping existingID: UUID? = nil, allowSeparatePack: Bool = false) throws {
+        if addToInventory { try FeatureAccess.require(.shoppingToPantry) }
         guard let home = household?.id, grocery.householdID == home, groceries.contains(where: { $0.id == grocery.id }) else { throw HouseholdValidation.invalidReference }
         let alreadyStocked = grocery.purchaseDisposition == "inventory"
         let matches = inventory.filter { InventoryRules.canRestock(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay) && IngredientMatching.same($0.name, grocery.name) }
@@ -70,6 +71,7 @@ extension LocalHouseholdRepository {
         }
     }
     func addPantryIdeas(_ names: [String], householdID: UUID) throws {
+        try FeatureAccess.require(.pantryTemplates)
         guard household?.id == householdID else { throw HouseholdValidation.invalidReference }
         let reviewed = PantrySuggestionRules.reviewed(names, existing: inventory.filter { !$0.isUsedUp }.map(\.name))
         try commit { for name in reviewed { context.insert(InventoryItem(householdID: householdID, name: name)) } }

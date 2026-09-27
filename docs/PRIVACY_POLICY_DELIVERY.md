@@ -17,3 +17,5 @@ Publish the approved page; configure the actual URL both in App Store Connect an
 Apple references:
 - https://developer.apple.com/help/app-store-connect/manage-app-information/manage-app-privacy
 - https://developer.apple.com/app-store/review/guidelines/#privacy
+
+September 23, 2026: bundled draft now discloses read-only public CloudKit operational settings, separately from optional household sync. This does not implement dynamic legal-policy delivery. The hosted policy must receive the same disclosure before release; no website publication is claimed.

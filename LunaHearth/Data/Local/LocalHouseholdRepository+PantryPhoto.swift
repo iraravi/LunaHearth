@@ -4,6 +4,7 @@ extension LocalHouseholdRepository {
     /// An observation is not a purchase. Never increment existing stock or complete shopping.
     @discardableResult
     func importPantryPhoto(_ rows: [PantryPhotoItem], householdID: UUID) throws -> Int {
+        try FeatureAccess.require(.pantryPhoto)
         guard household?.id == householdID else { throw HouseholdValidation.invalidReference }
         var drafts: [InventoryDraft] = []
         var known = inventory.filter { !$0.isUsedUp }.map(\.name)

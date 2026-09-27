@@ -10,6 +10,7 @@ actor MealPlanningReminder: MealPlanningReminderService {
         return await center.pendingNotificationRequests().contains { $0.identifier == Self.identifier }
     }
     func setEnabled(_ enabled: Bool) async throws {
+        if enabled { try FeatureAccess.require(.mealReminder) }
         let center = UNUserNotificationCenter.current()
         center.removePendingNotificationRequests(withIdentifiers: [Self.identifier])
         center.removeDeliveredNotifications(withIdentifiers: [Self.identifier])

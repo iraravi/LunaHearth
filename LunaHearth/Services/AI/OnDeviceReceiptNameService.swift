@@ -9,7 +9,7 @@ actor OnDeviceReceiptNameService: ReceiptNameDecodingService {
         guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else {
             return unavailable("On-device AI is unavailable in this test. You can edit item names yourself.")
         }
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, *), FeatureAccess.allows(.aiReceiptNames) {
             switch SystemLanguageModel.default.availability {
             case .available: break
             case .unavailable(let reason):

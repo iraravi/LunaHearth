@@ -17,6 +17,7 @@ actor CalendarIntegrationService: ApplePlanningService, ReminderDeliveryService 
         }
     }
     func requestAccess(_ access: PlanningAccess) async throws {
+        if access == .reminders { try FeatureAccess.require(.reminders) }
         guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else { throw ApplePlanningError.unavailable }
         let status = EKEventStore.authorizationStatus(for: access == .calendar ? .event : .reminder)
         if status == .fullAccess { return }
@@ -34,6 +35,7 @@ actor CalendarIntegrationService: ApplePlanningService, ReminderDeliveryService 
         }.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
     }
     func createStandardReminderList(usingListID: String, title: String) throws -> ApplePlanningSource {
+        try FeatureAccess.require(.reminders)
         try check(.reminders)
         let store = store()
         guard let reference = store.calendars(for: .reminder).first(where: { $0.calendarIdentifier == usingListID && $0.allowsContentModifications }) else { throw ApplePlanningError.missingSource }
@@ -93,6 +95,7 @@ actor CalendarIntegrationService: ApplePlanningService, ReminderDeliveryService 
         try store.save(item, commit: true)
     }
     func createReminder(_ draft: ReminderExportDraft, listID: String) async throws {
+        try FeatureAccess.require(.reminders)
         try check(.reminders)
         guard !pendingExports.contains(draft.id) else { throw ApplePlanningError.alreadyExported }
         pendingExports.insert(draft.id)

@@ -13,6 +13,8 @@ struct ReceiptImportView: View {
         self.householdID = householdID; self.sampleImage = sampleImage
         _recordingExpense = State(initialValue: startsWithExpense)
     }
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
     @State private var photos: [PhotosPickerItem] = []
@@ -98,7 +100,7 @@ struct ReceiptImportView: View {
                         if lines.isEmpty {
                             Section { Text("Text was found, but no priced item lines were clear. Read the original text and add a line below, or try another photo.") }
                         }
-                        if !lines.isEmpty {
+                        if !lines.isEmpty && (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiReceiptNames) ?? true)) {
                             Section {
                                 if decoding {
                                     ProgressView("Decoding names on this device…")
@@ -125,11 +127,12 @@ struct ReceiptImportView: View {
             }
             .contentMargins(.top, 8, for: .scrollContent).listSectionSpacing(12)
             .scrollContentBackground(.hidden).background(ShoppingTheme.canvas).tint(ShoppingTheme.accent)
-            .navigationTitle("Receipt").navigationBarTitleDisplayMode(.inline)
+            .householdHelp(.receipts)
+        .featureAvailability(.receipts).navigationTitle("Receipt").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
-                    if outcome == nil {
+                    if outcome == nil && (publicStatus.configuration?.allows(.receipts) ?? true) {
                         Button(recordingExpense ? "Save receipt" : "Add \(selected)") { save() }
                             .disabled(busy || decoding || (selected == 0 && !recordingExpense)).accessibilityIdentifier("receipt.confirm")
                     }

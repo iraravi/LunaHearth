@@ -2,6 +2,7 @@ import SwiftUI
 import PhotosUI
 
 struct PantryPhotoImportView: View {
+    @Environment(PublicConfigurationStore.self) private var publicStatus
     let householdID: UUID
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
@@ -72,11 +73,11 @@ struct PantryPhotoImportView: View {
                     }
                 }.padding(20).frame(maxWidth: 760).frame(maxWidth: .infinity)
             }.background(InventoryTheme.canvas).tint(InventoryTheme.accent)
-                .navigationTitle("Pantry from a photo").navigationBarTitleDisplayMode(.inline)
+                .featureAvailability(.pantryPhoto).navigationTitle("Pantry from a photo").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                     ToolbarItem(placement: .confirmationAction) {
-                        if saved == nil {
+                        if saved == nil && (publicStatus.configuration?.allows(.pantryPhoto) ?? true) {
                             Button("Add \(selectedCount)") { save() }.disabled(busy || selectedCount == 0)
                                 .accessibilityIdentifier("pantryPhoto.save")
                         }

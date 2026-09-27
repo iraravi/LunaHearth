@@ -45,6 +45,7 @@ struct ExpensesView: View {
             }.padding(20).frame(maxWidth: 1100).frame(maxWidth: .infinity)
         }
         .background(ExpenseTheme.canvas).tint(ExpenseTheme.accent).featureCanvas(.expenses)
+        .householdHelp(.expenses)
         .navigationTitle("Expenses").navigationBarTitleDisplayMode(.inline)
         .searchable(text: $search, prompt: "Find a purchase")
         .toolbar {

@@ -237,3 +237,36 @@ ADR 044 removes preparation steps from new generative meal output and from its o
 
 ## Meal planning only (ADR 045)
 Built-in recipes and all recipe-step display/edit controls are removed. Meal ideas remain names and ingredients; older stored steps are preserved but hidden, including during editing. Day/week planning and explicit pantry-use tracking remain. This is a scope reduction, not a food-safety certification or substitute for accurate privacy/legal disclosures.
+
+## Capability-aware controls (September 2026)
+
+The root presentation checks `AppleAIStatusService` at launch and whenever the app
+becomes active. Only `AIAvailability.ready` exposes AI-only actions; disabled,
+preparing, unsupported, older-OS, and unknown states hide them. There are no retail
+device-name checks. Filters retain their normal controls without the “& AI” label.
+Receipt name decoding, optional duplicate-name AI comparison, category generation,
+and free-text pantry/meal tailoring follow this policy.
+
+Manual entry, Vision receipt/label reading, deterministic duplicate matching,
+automatic categories, kitchen templates, built-in shopping/meal ideas, and meal
+planning reminders remain available. More → AI Status remains accessible.
+Services still check actual model availability at invocation and preserve fallback
+behavior if readiness changes. This changes presentation only: no household
+schema, persistence, permissions, network access, or privacy behavior changes.
+
+Debug UI fixtures can explicitly request ready or unavailable presentation using
+`--ui-testing-ai-ready` / `--ui-testing-ai-unavailable` together with
+`--ui-testing`. They never override real model execution or ship in Release.
+
+Validation: simulator build passed; 244 Swift Testing tests and the grocery search
+performance XCTest passed. Both available-AI and unavailable-AI shopping/pantry UI
+flows passed, including a repeat on the final source. Physical iPhone 15 validation
+and TestFlight distribution were not performed for this change.
+
+### Public operational switches — ADR 049
+The public configuration master AI switch and individual AI switches are checked before model invocation. Real device capability checks remain mandatory. No prompts, household data or inference are sent to the public database; it supplies only publisher-owned flags and plain status/help text. In-flight work is not guaranteed to cancel when a new setting arrives. See `PUBLIC_APP_CONFIGURATION.md`.
+
+### Shopping suggestions and recorded pantry stock — September 26, 2026
+Shopping ideas now deterministically exclude ingredient-identity matches in recorded pantry stock, as well as open shopping items. Used-up, low-stock and past-expiry packs remain eligible for restocking. The same check runs for built-in suggestions, model output, after asynchronous generation and immediately before saving. Pantry names are used locally for filtering; this change adds no model prompt data or network access. Name-only stock is not a quantity guarantee; users can manually add extra items. Distinct ingredient forms and varieties retain existing identity semantics.
+
+Regression coverage: pantry Rice is excluded from fallback and save, Chicken remains suggested, and low-stock/used-up/past-expiry Rice remains eligible. Build/test log: /tmp/luna-shopping-pantry.log. Exact user-reported ingredient wording is still needed to diagnose variety mismatches separately.

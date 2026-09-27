@@ -12,6 +12,7 @@ actor SystemCalendarDelivery: CalendarDeliveryService {
         guard EKEventStore.authorizationStatus(for: .event) == .fullAccess else { throw ApplePlanningError.permission }
     }
     func requestCalendars() async throws -> [ApplePlanningSource] {
+        try FeatureAccess.require(.calendarExport)
         guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else { throw ApplePlanningError.unavailable }
         if EKEventStore.authorizationStatus(for: .event) != .fullAccess {
             guard try await store().requestFullAccessToEvents() else { throw ApplePlanningError.permission }
@@ -22,6 +23,7 @@ actor SystemCalendarDelivery: CalendarDeliveryService {
         }.sorted { $0.title.localizedStandardCompare($1.title) == .orderedAscending }
     }
     func deliver(_ job: CalendarDeliveryJob) throws -> String? {
+        if !job.deleting { try FeatureAccess.require(.calendarExport) }
         if job.deleting && !job.attempted && job.externalID == nil { return nil }
         try check()
         let store = store()

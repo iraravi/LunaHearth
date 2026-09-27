@@ -72,6 +72,6 @@ struct NotesSharingView: View {
                 ShareLink(item: text) { Label("Choose Notes or another app", systemImage: "square.and.arrow.up") }
                     .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty).accessibilityIdentifier("notes.share")
             } footer: { Text("Nothing is sent until you choose an app and complete its sharing step. This draft is temporary; save it in Notes before leaving.") }
-        }.hearthList().navigationTitle("Share a note").navigationBarTitleDisplayMode(.inline)
+        }.hearthList().featureAvailability(.notesSharing).navigationTitle("Share a note").navigationBarTitleDisplayMode(.inline)
     }
 }

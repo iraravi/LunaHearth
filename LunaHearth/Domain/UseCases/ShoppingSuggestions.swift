@@ -11,6 +11,7 @@ struct ShoppingSuggestionRequest: Sendable {
     let prompt: String
     let recentItems: [String]
     let pendingItems: [String]
+    var pantryItems: [String] = []
 }
 
 struct ShoppingSuggestionResult: Sendable {
@@ -37,8 +38,8 @@ enum ShoppingSuggestionRules {
         }.prefix(8).map { $0 }
     }
     static func fallback(_ request: ShoppingSuggestionRequest, reason: String) -> ShoppingSuggestionResult {
-        let history = reviewed(request.recentItems.map { ShoppingSuggestion(name: $0) }, excluding: request.pendingItems)
-        let basics = reviewed(["Milk", "Eggs", "Bread", "Rice", "Fruit", "Vegetables"].map { ShoppingSuggestion(name: $0) }, excluding: request.pendingItems)
+        let history = reviewed(request.recentItems.map { ShoppingSuggestion(name: $0) }, excluding: request.pendingItems + request.pantryItems)
+        let basics = reviewed(["Milk", "Eggs", "Bread", "Rice", "Fruit", "Vegetables"].map { ShoppingSuggestion(name: $0) }, excluding: request.pendingItems + request.pantryItems)
         return ShoppingSuggestionResult(items: history.isEmpty ? basics : history, usedModel: false,
             explanation: reason + (history.isEmpty ? " Here are starter ideas to review; they are not AI-generated or based on your request." : " These are previously checked items to review; they are not AI-generated."))
     }

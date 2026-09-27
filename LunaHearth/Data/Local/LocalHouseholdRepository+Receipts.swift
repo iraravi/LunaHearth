@@ -4,6 +4,9 @@ import SwiftData
 extension LocalHouseholdRepository {
     /// Validate the complete review before a single local transaction; failed reviews save nothing.
     @discardableResult func importReceipt(_ lines: [ReceiptLine], householdID: UUID, storeName: String, expense: ExpenseDraft? = nil, receiptKey: String? = nil) throws -> Int {
+        try FeatureAccess.require(.receiptImport)
+        if expense != nil { try FeatureAccess.require(.receiptExpenses) }
+        if lines.contains(where: { $0.included && $0.addToInventory && $0.existingPurchaseID == nil }) { try FeatureAccess.require(.receiptPantry) }
         guard household?.id == householdID else { throw HouseholdValidation.invalidReference }
         let selected = lines.filter(\.included)
         guard (!selected.isEmpty || expense != nil), selected.count <= 150 else { throw ReceiptImportError.noSelection }

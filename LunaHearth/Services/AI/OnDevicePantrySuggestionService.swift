@@ -7,7 +7,7 @@ actor OnDevicePantrySuggestionService: PantrySuggestionService {
             PantryIdeas(names: PantrySuggestionRules.reviewed(style.starters, existing: existing), outcome: outcome)
         }
         guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else { return fallback(.unavailable) }
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, *), FeatureAccess.allows(.aiPantry) {
             switch SystemLanguageModel.default.availability {
             case .available: break
             case .unavailable(let reason):

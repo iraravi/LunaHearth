@@ -2,6 +2,8 @@ import SwiftUI
 
 struct DangerZoneView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
+    @State private var showingReset = false
+    @State private var resetConfirmation = ""
     @State private var preview: HouseholdCleanupPreview?
     @State private var error: String?
     @State private var status: String?
@@ -33,8 +35,29 @@ struct DangerZoneView: View {
             } footer: {
                 Text("When iCloud sync is enabled, deletions also sync to this household’s shared devices. Saved backup snapshots are separate and remain unchanged. Apple Reminders-only lists are not included.")
             }
+            Section("Start over on this device") {
+                Text("Remove all local homes and their saved household records, then return to setup. This cannot be undone. Private iCloud backups and data in Apple Calendar or Reminders are not deleted.")
+                    .foregroundStyle(.secondary)
+                Button("Delete local homes & start over", role: .destructive) {
+                    resetConfirmation = ""
+                    showingReset = true
+                }.accessibilityIdentifier("cleanup.resetLocal")
+                Text("Connected iCloud homes are protected. If this device has a connected home, the reset will stop without deleting records.")
+                    .font(.footnote).foregroundStyle(.secondary)
+            }
         }.navigationTitle("Danger Zone").navigationBarTitleDisplayMode(.inline)
             .sheet(item: $preview) { item in CleanupConfirmationView(preview: item) { status = "\(item.scope.rawValue) cleared from this household.\(repository.syncConfiguration?.enabled == true ? " iCloud changes will sync when connected." : "")" } }
+            .alert("Delete all local homes?", isPresented: $showingReset) {
+                TextField("Type DELETE", text: $resetConfirmation)
+                    .textInputAutocapitalization(.characters).autocorrectionDisabled()
+                Button("Cancel", role: .cancel) { }
+                Button("Delete & return to setup", role: .destructive) {
+                    do { try repository.resetLocalData() }
+                    catch { self.error = userFacingError(error) }
+                }.disabled(resetConfirmation != "DELETE")
+            } message: {
+                Text("Type DELETE to remove all local household records on this device. iCloud backups and Apple Calendar or Reminders stay unchanged.")
+            }
             .saveError($error)
     }
 }

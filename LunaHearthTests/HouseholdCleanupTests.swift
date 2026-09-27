@@ -16,6 +16,23 @@ import Testing
         try repo.saveExpense(expense)
         return repo
     }
+    @Test func localResetReturnsToEmptyHome() throws {
+        let repo = try fixture()
+        try repo.resetLocalData()
+        #expect(repo.household == nil)
+        #expect(repo.inventory.isEmpty && repo.groceries.isEmpty && repo.expenses.isEmpty)
+        #expect(repo.meals.isEmpty && repo.tasks.isEmpty && repo.purchases.isEmpty)
+        try repo.createHousehold(name: "Fresh home", owner: "", members: [])
+        #expect(repo.household?.name == "Fresh home")
+    }
+    @Test func localResetProtectsConnectedHome() throws {
+        let repo = try fixture()
+        let id = try #require(repo.household?.id)
+        try repo.configureSharing(SyncDestination(householdID: id, zoneName: "test", ownerName: "owner", accountID: "test", isOwner: true))
+        #expect(throws: HouseholdSharingError.self) { try repo.resetLocalData() }
+        #expect(repo.household?.id == id)
+        #expect(!repo.inventory.isEmpty)
+    }
     @Test func eachCategoryClearsOnlyItsPromisedScope() throws {
         for scope in HouseholdCleanupScope.allCases {
             let repo = try fixture()

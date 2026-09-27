@@ -24,7 +24,7 @@ struct OnboardingView: View {
             .background(WelcomeStyle.canvas).foregroundStyle(WelcomeStyle.ink).tint(WelcomeStyle.ink)
             .scrollDismissesKeyboard(.interactively)
             .safeAreaInset(edge: .bottom) { bottomBar }
-            .navigationTitle(isTour ? (started ? "Setup preview" : "Welcome") : (started ? "Make yourself at home" : ""))
+            .navigationTitle(isTour ? (started ? "Setup preview" : "Welcome") : (started ? "Create a home" : ""))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
@@ -43,17 +43,15 @@ struct OnboardingView: View {
             Text("LUNAHEARTH").font(.caption.weight(.medium)).tracking(3).foregroundStyle(WelcomeStyle.muted)
             if !typeSize.isAccessibilitySize { WelcomePhotograph(name: "WelcomeResidence", height: 220) }
             Text("Make yourself at home.").font(WelcomeStyle.heading).fixedSize(horizontal: false, vertical: true)
-            Text("One private place for your day, your people and everything at home.")
+            Text("Keep shopping, pantry items, meals and plans together in one home. Use it on your own or share it with family.")
                 .font(.body).foregroundStyle(WelcomeStyle.muted).lineSpacing(3)
             Divider()
-            HStack(alignment: .top, spacing: 14) {
-                Image(systemName: "house").font(.title3.weight(.light)).accessibilityHidden(true)
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("Start with a name").font(.headline)
-                    Text("No rooms, lists or accounts to set up first. Add the details whenever you’re ready.")
-                        .font(.subheadline).foregroundStyle(WelcomeStyle.muted)
-                }
-            }
+            VStack(alignment: .leading, spacing: 18) {
+                Text("Choose how to start").font(.headline)
+                privacyRow("New to LunaHearth?", detail: "Choose Create a new home. Give it a name, then start adding your own items.", symbol: "house")
+                privacyRow("Someone invited you?", detail: "Choose Join an existing home. Open the invitation from Mail or Messages to use the same home as your family.", symbol: "person.2")
+                privacyRow("Used the app before?", detail: "Choose Restore from iCloud if you saved a backup of your home.", symbol: "icloud.and.arrow.down")
+            }.accessibilityIdentifier("setup.startInstructions")
             privacy
         }
     }
@@ -61,19 +59,19 @@ struct OnboardingView: View {
     private var setup: some View {
         VStack(alignment: .leading, spacing: 24) {
             if !typeSize.isAccessibilitySize { WelcomePhotograph(name: "WelcomeResidence", height: 150) }
-            VStack(alignment: .leading, spacing: 10) {
-                Text("Step 1 of \(1 + HomeSetupStep.allCases.count) · Your home").font(.caption.weight(.medium)).foregroundStyle(WelcomeStyle.muted)
-                ProgressView(value: 1, total: Double(1 + HomeSetupStep.allCases.count))
-                    .tint(WelcomeStyle.accent).accessibilityLabel("Setup, step 1 of \(1 + HomeSetupStep.allCases.count)")
-            }.accessibilityIdentifier("setup.progress")
-            Text("A name that feels like home.").font(WelcomeStyle.heading).fixedSize(horizontal: false, vertical: true)
-            Text("Everything else can come later.").foregroundStyle(WelcomeStyle.muted)
+            Label("One required step · Name your home", systemImage: "house")
+                .font(.subheadline.weight(.medium)).foregroundStyle(WelcomeStyle.muted)
+                .accessibilityIdentifier("setup.progress")
+            Text("What would you like to call your home?").font(WelcomeStyle.heading).fixedSize(horizontal: false, vertical: true)
+            Text("This name labels your shared space in the app. It isn’t your address or an account name.")
+                .foregroundStyle(WelcomeStyle.muted)
             VStack(alignment: .leading, spacing: 10) {
                 Text("Home name").font(.subheadline.weight(.medium))
                 setupField("e.g. Our Home", text: $name, identifier: "setup.householdName")
-                Text("You can add rooms and invite people after setup.")
+                Text("For example, Our Home or Kira Home. Choose a name everyone will recognize.")
                     .font(.footnote).foregroundStyle(WelcomeStyle.muted)
             }
+            privacyRow("What happens next?", detail: "Tap Create my home to open the app. Your home starts empty. Adding pantry items, shopping, rooms and family members is optional; the getting-started guide can help when you’re ready.", symbol: "arrow.right.circle")
             privacy
         }
     }
@@ -111,7 +109,7 @@ struct OnboardingView: View {
                 Text("Preview only · Your existing home is unchanged").font(.caption).foregroundStyle(WelcomeStyle.muted)
             } else {
                 Button { if started { create() } else { started = true } } label: {
-                    Text(started ? "Create my home" : "Get Started").font(.subheadline.weight(.medium)).padding(.horizontal, 24).padding(.vertical, 3).frame(minHeight: 28)
+                    Text(started ? "Create my home" : "Create a new home").font(.subheadline.weight(.medium)).padding(.horizontal, 24).padding(.vertical, 3).frame(minHeight: 28)
                 }.buttonStyle(.borderedProminent).controlSize(.regular).buttonBorderShape(.capsule)
                     .accessibilityIdentifier(started ? "setup.create" : "setup.start")
                     .disabled(started && name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
@@ -132,6 +130,8 @@ struct OnboardingView: View {
             .padding(14).frame(minHeight: 52)
             .background(WelcomeStyle.surface, in: RoundedRectangle(cornerRadius: 12))
             .overlay { RoundedRectangle(cornerRadius: 12).strokeBorder(WelcomeStyle.muted.opacity(0.5), lineWidth: 1) }
+            .accessibilityLabel("Home name")
+            .accessibilityHint("Enter a name such as Our Home. Required to create your home.")
             .accessibilityIdentifier(identifier)
     }
 

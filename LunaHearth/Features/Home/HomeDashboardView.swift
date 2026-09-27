@@ -91,7 +91,8 @@ struct HomeView: View {
                     }.accessibilityIdentifier("home.connectedDemo")
                 }.padding(20).frame(maxWidth: 1000).frame(maxWidth: .infinity)
             }.background(AppTheme.canvas).buttonStyle(.plain).foregroundStyle(.primary)
-                .navigationTitle("Home").navigationBarTitleDisplayMode(.inline)
+                .householdHelp(.home)
+        .navigationTitle("Home").navigationBarTitleDisplayMode(.inline)
                 .navigationDestination(isPresented: $showingSetup) {
                     if let homeID = repository.household?.id { HomeSetupGuideView(householdID: homeID) }
                 }

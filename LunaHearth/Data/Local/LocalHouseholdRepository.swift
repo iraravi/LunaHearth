@@ -215,6 +215,10 @@ final class LocalHouseholdRepository: HouseholdRepository {
     }
 
     func add(_ draft: EntryDraft) throws {
+        if draft.kind == .grocery, let buyer = draft.memberID,
+           groceries.first(where: { $0.id == draft.recordID })?.assignedMemberID != buyer {
+            try FeatureAccess.require(.shoppingAssignments)
+        }
         try draft.validate()
         if draft.kind == .meal { try WeeklyMealRules.validateAmounts(draft.mealAmountsPerServing.filter { MealCookingRules.lines(draft.mealIngredients).contains($0.key) }, names: MealCookingRules.lines(draft.mealIngredients)); try MealCookingRules.validate(servings: draft.mealServings, ingredients: MealCookingRules.lines(draft.mealIngredients), steps: MealCookingRules.lines(draft.mealSteps)) }
         if draft.kind == .grocery, !draft.allowDuplicateShoppingItem, duplicateShoppingItem(draft.title, excluding: draft.recordID) != nil { throw ShoppingEntryError.duplicateItem }
@@ -406,7 +410,7 @@ final class LocalHouseholdRepository: HouseholdRepository {
     func memberName(_ id: UUID?) -> String { members.first { $0.id == id }?.displayName ?? "Family" }
     func assetName(_ id: UUID) -> String { assets.first { $0.id == id }?.name ?? "Home item" }
 
-    #if DEBUG
+    /// Removes local homes only; connected cloud homes must be handled through sharing recovery.
     func resetLocalData() throws {
         guard try context.fetchCount(FetchDescriptor<HouseholdSyncConfiguration>()) == 0 else { throw HouseholdSharingError.resetBlocked }
         try commit {
@@ -430,7 +434,7 @@ final class LocalHouseholdRepository: HouseholdRepository {
             try context.delete(model: FamilyEvent.self)
             try context.delete(model: HouseholdMember.self)
             try context.delete(model: Household.self)
+            try context.delete(model: ActiveHouseholdSelection.self)
         }
     }
-    #endif
 }

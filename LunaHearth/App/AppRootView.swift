@@ -17,6 +17,8 @@ struct AppRootView: View {
     @Environment(AppointmentAlertCoordinator.self) private var appointmentAlerts
     @State private var appointmentLink: AppointmentLink?
     @AppStorage("welcome.walkthrough.v1.reviewed") private var walkthroughReviewed = false
+    @State private var aiAvailability: AIAvailability = .unavailable
+    @State private var publicStatus = PublicConfigurationStore()
     @State private var loaded = false
     @State private var loadFailed = false
 
@@ -24,6 +26,12 @@ struct AppRootView: View {
         @Bindable var sharing = sharing
         VStack(spacing: 0) {
             cloudStatusBanner
+            if let config = publicStatus.configuration, config.expiresAt > .now,
+               let notice = config.announcement, !notice.isEmpty {
+                Label(notice, systemImage: "info.circle")
+                    .font(.footnote).padding(10).frame(maxWidth: .infinity, alignment: .leading)
+                    .background(.regularMaterial).accessibilityIdentifier("appStatus.notice")
+            }
             Group {
                 if loadFailed {
                     ContentUnavailableView {
@@ -53,32 +61,38 @@ struct AppRootView: View {
         }
         .background(AppTheme.canvas).tint(AppTheme.accent)
         .scrollContentBackground(.hidden)
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            aiAvailability = AppleAIStatusService().status().availability
+            #if DEBUG
+            // Presentation fixture only; AI services retain their real capability checks.
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("--ui-testing") {
+                if arguments.contains("--ui-testing-ai-ready") { aiAvailability = .ready }
+                if arguments.contains("--ui-testing-ai-unavailable") { aiAvailability = .unsupportedDevice }
+            }
+            #endif
+        }
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            #if DEBUG
+            if ProcessInfo.processInfo.arguments.contains("--ui-testing") { return }
+            #endif
+            await publicStatus.refresh()
+        }
         .task { load() }
         .task(id: "\(scenePhase == .active)-\(repository.household?.id.uuidString ?? "none")") {
-            guard scenePhase == .active else { return }
+            guard scenePhase == .active, repository.household != nil else { return }
             await personal.preparePush(repository, service: sharing.service)
-            await sharing.sync(repository, force: true)
-            await personal.refresh(repository)
-            await appointmentAlerts.refresh(repository)
-            await calendarDelivery.run(repository)
-            if let home = repository.household?.id { await MealPrepReminder().reconcile(householdID: home, tasks: repository.tasks.filter { $0.mealID != nil }.map { MealPrepReminderInput(id: $0.id, due: $0.dueAt, completed: $0.isCompleted) }) }
-            while !Task.isCancelled {
-                await sharing.sync(repository)
-                await personal.refresh(repository)
-            await appointmentAlerts.refresh(repository)
-            await calendarDelivery.run(repository)
-            if let home = repository.household?.id { await MealPrepReminder().reconcile(householdID: home, tasks: repository.tasks.filter { $0.mealID != nil }.map { MealPrepReminderInput(id: $0.id, due: $0.dueAt, completed: $0.isCompleted) }) }
-                do { try await Task.sleep(for: .seconds(20)) } catch { return }
+            await refreshHouseholdServices(force: true)
+            await ForegroundRefreshLoop.run {
+                await refreshHouseholdServices()
             }
         }
         .task(id: repository.writeRevision) {
-            guard scenePhase == .active else { return }
+            guard scenePhase == .active, repository.household != nil else { return }
             do { try await Task.sleep(for: .seconds(1)) } catch { return }
-            await sharing.sync(repository)
-            await personal.refresh(repository)
-            await appointmentAlerts.refresh(repository)
-            await calendarDelivery.run(repository)
-            if let home = repository.household?.id { await MealPrepReminder().reconcile(householdID: home, tasks: repository.tasks.filter { $0.mealID != nil }.map { MealPrepReminderInput(id: $0.id, due: $0.dueAt, completed: $0.isCompleted) }) }
+            await refreshHouseholdServices()
         }
         .alert("Couldn’t open invitation", isPresented: Binding(get: { sharing.invitationError != nil }, set: { if !$0 { sharing.invitationError = nil } })) {
             Button("OK") { sharing.invitationError = nil }
@@ -117,6 +131,8 @@ struct AppRootView: View {
             Button("OK", role: .cancel) {}
         } message: { Text("This task isn't in the household stored on this device.") }
         .onChange(of: scenePhase) { _, phase in if phase == .active { load(); connections.foreground() } }
+        .environment(publicStatus)
+        .environment(\.aiAvailability, (publicStatus.configuration?.allows(.ai) ?? true) ? aiAvailability : .unavailable)
     }
 
     @ViewBuilder private var cloudStatusBanner: some View {
@@ -133,6 +149,18 @@ struct AppRootView: View {
         if ProcessInfo.processInfo.arguments.contains("--ui-testing") && !ProcessInfo.processInfo.arguments.contains("--ui-testing-walkthrough") { return false }
         #endif
         return !walkthroughReviewed
+    }
+
+    private func refreshHouseholdServices(force: Bool = false) async {
+        guard !Task.isCancelled, scenePhase == .active, let home = repository.household?.id else { return }
+        await sharing.sync(repository, force: force)
+        guard !Task.isCancelled, repository.household?.id == home else { return }
+        await personal.refresh(repository)
+        await appointmentAlerts.refresh(repository)
+        await calendarDelivery.run(repository)
+        await MealPrepReminder().reconcile(householdID: home, tasks: repository.tasks.filter { $0.mealID != nil }.map {
+            MealPrepReminderInput(id: $0.id, due: $0.dueAt, completed: $0.isCompleted)
+        })
     }
 
     private func load() {

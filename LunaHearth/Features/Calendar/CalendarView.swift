@@ -58,6 +58,7 @@ struct CalendarAgendaView: View {
             }.background(AppTheme.canvas)
         }
         .tint(AppTheme.slate)
+        .householdHelp(.calendar)
         .navigationTitle("Calendar").navigationBarTitleDisplayMode(.inline)
         .toolbar {
             Button("Calendar settings", systemImage: "slider.horizontal.3") { settings = true }.accessibilityIdentifier("calendar.settings")

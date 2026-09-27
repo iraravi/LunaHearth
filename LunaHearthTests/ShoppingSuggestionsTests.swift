@@ -3,6 +3,25 @@ import Testing
 @testable import LunaHearth
 
 @MainActor struct ShoppingSuggestionsTests {
+    @Test func pantryRiceIsExcludedFromFallbackAndSave() throws {
+        let request = ShoppingSuggestionRequest(prompt: "Chicken biryani", recentItems: ["Rice", "Chicken"], pendingItems: [], pantryItems: [" rice "])
+        #expect(ShoppingSuggestionRules.fallback(request, reason: "Fallback").items.map(\.name) == ["Chicken"])
+        let repo = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
+        try repo.createHousehold(name: "Home", owner: "Ravi", members: [])
+        let id = try #require(repo.household?.id)
+        var rice = InventoryDraft(); rice.name = "Rice"
+        try repo.saveInventory(rice)
+        #expect(try repo.addShoppingSuggestions([.init(name: "RICE"), .init(name: "Chicken")], householdID: id, store: "", buyer: nil) == 1)
+        #expect(repo.groceries.map(\.name) == ["Chicken"])
+        let pack = try #require(repo.inventory.first)
+        pack.isLowStock = true
+        #expect(!repo.stockedShoppingSuggestionNames.contains("Rice"))
+        pack.isLowStock = false; pack.isUsedUp = true
+        #expect(repo.stockedShoppingSuggestionNames.isEmpty)
+        pack.isUsedUp = false; pack.expiryDay = "2000-01-01"
+        #expect(repo.stockedShoppingSuggestionNames.isEmpty)
+    }
+
     @Test func suggestionsValidateBoundAndExcludeExistingItems() {
         let items = [ShoppingSuggestion(name: " MILK "), ShoppingSuggestion(name: ""), ShoppingSuggestion(name: "Eggs"), ShoppingSuggestion(name: "eggs"), ShoppingSuggestion(name: String(repeating: "x", count: 201))]
         let reviewed = ShoppingSuggestionRules.reviewed(items, excluding: ["milk"])

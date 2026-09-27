@@ -2,6 +2,8 @@ import SwiftUI
 
 /// No automatic merging: equal ingredients can still be different purchased packs.
 struct InventoryDuplicateReview: View {
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
     @State private var deleting: InventoryItem?
@@ -20,7 +22,7 @@ struct InventoryDuplicateReview: View {
                     Text("These names match, including known regional aliases. Compare the pack details before removing an extra entry. Quantities are never combined automatically.")
                 }
                 if groups.isEmpty {
-                    ContentUnavailableView("No matching duplicates", systemImage: "checkmark.circle", description: Text("Offline name and alias checks found none. Open any item to check less obvious names with on-device AI."))
+                    ContentUnavailableView("No matching duplicates", systemImage: "checkmark.circle", description: Text((aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiDuplicates) ?? true)) ? "Offline name and alias checks found none. Open any item to check less obvious names with on-device AI." : "Offline name and alias checks found no matching duplicates."))
                 }
                 ForEach(groups, id: \.first?.id) { group in
                     Section(group.first?.name ?? "Similar items") {

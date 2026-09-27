@@ -4,7 +4,6 @@ struct MoreView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.colorScheme) private var colorScheme
-    @State private var showingHowItWorks = false
 
     private var canvas: Color {
         AppTheme.canvas
@@ -36,9 +35,6 @@ struct MoreView: View {
                 }.accessibilityIdentifier("more.content")
             }.background(canvas).foregroundStyle(.primary).tint(.primary)
                 .navigationTitle("More").navigationBarTitleDisplayMode(.inline)
-                .sheet(isPresented: $showingHowItWorks) {
-                    HowItWorksView(hasHome: true, replay: true) { showingHowItWorks = false }
-                }
         }
     }
 
@@ -69,9 +65,9 @@ struct MoreView: View {
     }
     private var household: some View {
         MoreSection(title: "Your home") {
-            Button { showingHowItWorks = true } label: {
-                MoreDestinationRow(title: "How it works", detail: "Receipts, shopping, pantry & meals", symbol: "play.rectangle", accent: AppTheme.sage)
-            }.accessibilityIdentifier("more.howItWorks")
+            NavigationLink { HouseholdHelpCenter() } label: {
+                MoreDestinationRow(title: "Help & guides", detail: "Quick guides, setup & common questions", symbol: "questionmark.circle", accent: AppTheme.sage)
+            }.accessibilityIdentifier("more.help")
             MoreDivider()
             NavigationLink { FamilyView() } label: {
                 MoreDestinationRow(title: "Family", detail: "Invite someone · people & access", symbol: "person.2.fill", accent: AppTheme.slate)

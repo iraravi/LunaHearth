@@ -129,7 +129,7 @@ struct WeeklyMealDraftView: View {
                         }.padding(16).background(InventoryTheme.surface, in: RoundedRectangle(cornerRadius: 20))
                     }
                 }.padding(20).frame(maxWidth: 760).frame(maxWidth: .infinity)
-            }.background(InventoryTheme.canvas).tint(InventoryTheme.accent).navigationTitle("Review week").navigationBarTitleDisplayMode(.inline)
+            }.background(InventoryTheme.canvas).tint(InventoryTheme.accent).featureAvailability(.weeklyMeals).navigationTitle("Review week").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                     ToolbarItem(placement: .confirmationAction) { Button("Save") {

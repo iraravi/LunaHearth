@@ -35,6 +35,10 @@ enum IngredientMatching {
         for group in groups { guard let first = group.first else { continue }; for alias in group { result[alias] = first } }
         return result
     }()
+    // Immutable search metadata is prepared once, not allocated for each row on each keystroke.
+    private static let searchAliases: [(alias: String, padded: String, group: [String])] = groups.flatMap { group in
+        group.map { (alias: $0, padded: " " + $0 + " ", group: group) }
+    }
     static func key(_ name: String) -> String { let value = normalized(name); return aliases[value] ?? value }
     static func same(_ lhs: String, _ rhs: String) -> Bool { !key(lhs).isEmpty && key(lhs) == key(rhs) }
     /// Name-only search. Aliases broaden discovery, never ingredient/pack identity.
@@ -42,16 +46,14 @@ enum IngredientMatching {
         let queryWords = normalized(query).split(separator: " ")
         guard !queryWords.isEmpty else { return true }
         let value = normalized(name)
-        var labels = [value, key(name)]
+        var labels = [value, aliases[value] ?? value]
         // Prefer a specific form (cumin powder) over the shorter ingredient (cumin).
-        let matches = groups.flatMap { group in
-            group.compactMap { alias -> (String, [String])? in
-                (" " + value + " ").contains(" " + alias + " ") ? (alias, group) : nil
-            }
-        }
-        if let match = matches.max(by: { $0.0.count < $1.0.count }) {
-            labels += match.1.map { alias in
-                (" " + value + " ").replacingOccurrences(of: " " + match.0 + " ", with: " " + alias + " ")
+        let paddedName = " " + value + " "
+        let match = searchAliases.lazy.filter { paddedName.contains($0.padded) }
+            .max(by: { $0.alias.count < $1.alias.count })
+        if let match {
+            labels += match.group.map { alias in
+                paddedName.replacingOccurrences(of: match.padded, with: " " + alias + " ")
             }
         }
         return labels.contains { label in

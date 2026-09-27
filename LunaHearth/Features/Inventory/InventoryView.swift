@@ -139,6 +139,11 @@ struct InventoryView: View {
                 ContentUnavailableView(filter == "home" && search.isEmpty ? "Start with what you have" : "Nothing here yet", systemImage: "cabinet",
                     description: Text(filter == "home" && search.isEmpty ? "Choose starter ideas or add an item. Only its name is required." : "Try another filter or add more items."))
                     .listRowBackground(InventoryTheme.surface)
+                if active.isEmpty && filter == "home" && search.isEmpty && selectedCategory == nil {
+                    Button("Choose pantry starter items", systemImage: "lightbulb") { ideas = true }
+                        .frame(minHeight: 44).accessibilityIdentifier("inventory.empty.start")
+                        .listRowBackground(InventoryTheme.surface)
+                }
             }
             if shelfView {
                 InventoryShelf(items: visible, hints: categoryHints, now: now) { editing = $0 }
@@ -166,6 +171,7 @@ struct InventoryView: View {
             } footer: { Text("Dates come from the pack details you enter. Missing dates stay unknown. Inventory works offline and syncs with your home when iCloud is enabled.") }
         }
         .scrollContentBackground(.hidden).background(InventoryTheme.canvas).tint(InventoryTheme.accent)
+        .householdHelp(.pantry)
         .navigationTitle("Groceries at home").navigationBarTitleDisplayMode(.inline)
         .searchable(text: $search, prompt: "Find an ingredient")
         .onChange(of: search) { _, _ in selectedCategory = nil }
@@ -179,6 +185,8 @@ struct InventoryView: View {
 }
 
 struct InventoryEditor: View {
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
     private enum Field: Hashable { case name, quantity, pack, location, store }
@@ -223,11 +231,13 @@ struct InventoryEditor: View {
                             Button("Keep existing item") { dismiss() }.accessibilityIdentifier("inventory.keepExisting")
                             Toggle("This is a separate pack or ingredient", isOn: $separatePack).accessibilityIdentifier("inventory.separatePack")
                         }
-                        Button(checking ? "Comparing on your device…" : "Check similar names with AI", systemImage: "sparkles") { checking = true }
-                            .disabled(checking).accessibilityIdentifier("inventory.compareAI")
+                        if (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiDuplicates) ?? true)) {
+                            Button(checking ? "Comparing on your device…" : "Check similar names with AI", systemImage: "sparkles") { checking = true }
+                                .disabled(checking).accessibilityIdentifier("inventory.compareAI")
+                        }
                         if let aiStatus { Text(aiStatus).font(.caption).foregroundStyle(InventoryTheme.muted) }
                     } footer: {
-                        Text("Names and regional aliases are checked offline. AI can suggest other matches for review. Separate packs keep their own amounts and dates.")
+                        Text((aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiDuplicates) ?? true)) ? "Names and regional aliases are checked offline. AI can suggest other matches for review. Separate packs keep their own amounts and dates." : "Names and regional aliases are checked offline. Separate packs keep their own amounts and dates.")
                     }.listRowBackground(InventoryTheme.surface)
                 }
                 Section {

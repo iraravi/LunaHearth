@@ -5,7 +5,7 @@ actor OnDeviceTodayBriefService: TodayBriefService {
     func summarize(_ facts: TodayBriefFacts) async throws -> TodayBrief {
         let fallback = TodayBrief(text: facts.fallback, usedModel: false)
         guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else { return fallback }
-        if #available(iOS 26.0, *), case .available = SystemLanguageModel.default.availability {
+        if #available(iOS 26.0, *), FeatureAccess.allows(.aiBriefs), case .available = SystemLanguageModel.default.availability {
             do {
                 let session = LanguageModelSession(instructions: """
                 Write a calm household overview in at most two short sentences using only the supplied counts.

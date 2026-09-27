@@ -15,7 +15,8 @@ struct TodayView: View {
                 }
             }
             .background(TodayTheme.canvas).foregroundStyle(TodayTheme.ink).tint(TodayTheme.accent)
-            .navigationTitle("Today").navigationBarTitleDisplayMode(.inline)
+            .householdHelp(.today)
+        .navigationTitle("Today").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button("Quick Add", systemImage: "plus") { adding = true }

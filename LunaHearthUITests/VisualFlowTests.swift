@@ -2,9 +2,137 @@ import XCTest
 
 @MainActor
 final class VisualFlowTests: XCTestCase {
+    func testPublicSettingsPreserveManualShopping() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-known-groceries", "--ui-testing-ai-ready", "--ui-testing-public-settings"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap()
+        app.staticTexts["Shopping"].tap()
+        XCTAssertTrue(app.buttons["shopping.add"].waitForExistence(timeout: 5))
+        app.buttons["shopping.tools"].tap()
+        XCTAssertFalse(app.buttons["shopping.organizeAI"].exists)
+        app.buttons["shopping.tools.done"].tap()
+        tapVisible("shopping.scanReceipt", app: app)
+        XCTAssertTrue(app.staticTexts["Receipt scanning is temporarily paused. Manual entry is available."].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["receipt.confirm"].exists)
+        capture("Public-Settings-Paused-Receipt", app: app)
+        app.buttons["Close"].firstMatch.tap()
+        app.buttons["More"].firstMatch.tap()
+        XCTAssertFalse(app.buttons["more.appStatus"].exists)
+        XCTAssertFalse(app.buttons["appStatus.refresh"].exists)
+        tapVisible("more.help", app: app)
+        XCTAssertTrue(app.staticTexts["Your saved household records remain available."].waitForExistence(timeout: 5))
+        capture("Publisher-Guidance", app: app)
+    }
+
+    func testUnavailableAIKeepsShoppingAndPantryUsable() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-known-groceries", "--ui-testing-ai-unavailable"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap()
+        app.staticTexts["Shopping"].tap()
+        XCTAssertTrue(app.buttons["shopping.tools"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.buttons["shopping.tools"].label, "Filters")
+        XCTAssertTrue(app.buttons["shopping.add"].exists)
+        XCTAssertTrue(app.buttons["shopping.ai.open"].exists, "Built-in ideas remain available")
+        app.buttons["shopping.tools"].tap()
+        XCTAssertTrue(app.buttons["shopping.tools.done"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["shopping.organizeAI"].exists)
+        XCTAssertFalse(app.buttons["shopping.resetAICategories"].exists)
+        XCTAssertTrue(app.buttons["shopping.reviewDuplicates"].exists)
+        capture("Shopping-Without-AI", app: app)
+        app.buttons["shopping.tools.done"].tap()
+        tapVisible("shopping.inventory", app: app)
+        XCTAssertTrue(app.buttons["inventory.tools"].waitForExistence(timeout: 5))
+        app.buttons["inventory.tools"].tap()
+        XCTAssertTrue(app.buttons["inventory.tools.done"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["inventory.organizeAI"].exists)
+        app.buttons["inventory.tools.done"].tap()
+        tapVisible("inventory.ideas", app: app)
+        XCTAssertTrue(app.buttons["inventory.ideasStyle"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["inventory.generateIdeas"].exists)
+        XCTAssertFalse(app.textFields["inventory.ideasRequest"].exists)
+        capture("Pantry-Templates-Without-AI", app: app)
+    }
+
+    func testContextHelpAndChecklistRecovery() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-ai-unavailable"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap()
+        tapVisible("home.setupOptions", app: app)
+        app.buttons["Hide setup checklist"].tap()
+        XCTAssertFalse(app.buttons["home.setupGuide"].exists)
+        tapVisible("help.open.home", app: app)
+        XCTAssertTrue(app.buttons["help.done"].waitForExistence(timeout: 5))
+        capture("Help-Home-Quick-Guide", app: app)
+        app.buttons["help.done"].tap()
+        app.buttons["More"].firstMatch.tap()
+        tapVisible("more.help", app: app)
+        XCTAssertTrue(app.buttons["help.setup"].waitForExistence(timeout: 5))
+        capture("Help-Center", app: app)
+        let search = app.searchFields.firstMatch
+        search.tap()
+        search.typeText("another device")
+        XCTAssertTrue(app.buttons["help.answer.sync"].waitForExistence(timeout: 5))
+        app.buttons["help.answer.sync"].tap()
+        capture("Help-Sync-Answer", app: app)
+        search.buttons["Clear text"].tap()
+        tapVisible("help.setup", app: app)
+        let restore = app.switches["guide.showOnHome"]
+        for _ in 0..<5 {
+            if restore.exists && restore.isHittable { break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(restore.waitForExistence(timeout: 5))
+        if restore.switches.firstMatch.exists { restore.switches.firstMatch.tap() }
+        else { restore.tap() }
+        XCTAssertEqual(restore.value as? String, "1")
+        capture("Help-Checklist-Restored", app: app)
+        app.buttons["Home"].firstMatch.tap()
+        XCTAssertTrue(app.buttons["home.setupGuide"].waitForExistence(timeout: 5))
+        tapVisible("home.shopping", app: app)
+        tapVisible("help.open.shopping", app: app)
+        XCTAssertTrue(app.buttons["help.done"].waitForExistence(timeout: 5))
+        capture("Help-Shopping-Quick-Guide", app: app)
+        app.buttons["help.done"].tap()
+        XCTAssertTrue(app.buttons["shopping.add"].waitForExistence(timeout: 5))
+    }
+
+    func testHelpAtAccessibilityTextSize() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--large-text"]
+        app.launch()
+        XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["More"].firstMatch.tap()
+        tapVisible("more.help", app: app)
+        tapVisible("help.topic.connected", app: app)
+        XCTAssertTrue(app.navigationBars["Quick guide"].waitForExistence(timeout: 5))
+        capture("Help-Connected-Large-Text", app: app)
+        app.swipeUp()
+        app.swipeUp()
+        capture("Help-Connected-Large-Text-End", app: app)
+        XCTAssertTrue(app.staticTexts["Nothing is imported by reading this guide. Scanned or generated suggestions need your review."].exists)
+    }
+
+    func testLaunchPerformance() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--store-screenshots"]
+        let options = XCTMeasureOptions()
+        options.iterationCount = 3
+        measure(metrics: [XCTApplicationLaunchMetric()], options: options) {
+            app.launch()
+            XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+            app.terminate()
+        }
+    }
+
     func testWelcomeWalkthrough() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-walkthrough", "--ui-testing-reset-walkthrough"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-walkthrough", "--ui-testing-reset-walkthrough"]
         app.launch()
         XCTAssertTrue(app.buttons["tour.next"].waitForExistence(timeout: 10))
         capture("Welcome-Overview", app: app)
@@ -17,7 +145,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["tour.next"].tap()
         XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 5))
         app.terminate()
-        app.launchArguments = ["--ui-testing", "--ui-testing-walkthrough"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-walkthrough"]
         app.launch()
         XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 10))
         XCTAssertFalse(app.buttons["tour.next"].exists)
@@ -25,7 +153,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testWelcomeAccessibilityDark() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-walkthrough", "--ui-testing-reset-walkthrough", "--large-text", "--dark"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-walkthrough", "--ui-testing-reset-walkthrough", "--large-text", "--dark"]
         app.launch()
         XCTAssertTrue(app.buttons["tour.next"].waitForExistence(timeout: 10))
         capture("Premium-Welcome-Accessibility-Dark", app: app)
@@ -40,23 +168,24 @@ final class VisualFlowTests: XCTestCase {
 
     func testWalkthroughReplayLargeText() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--large-text"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--large-text"]
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
-        tapVisible("more.howItWorks", app: app)
+        tapVisible("more.help", app: app)
+        tapVisible("help.replay", app: app)
         XCTAssertTrue(app.buttons["tour.next"].waitForExistence(timeout: 5))
         app.buttons["tour.next"].tap()
         capture("Welcome-Receipt-Large", app: app)
         app.buttons["tour.skip"].tap()
-        XCTAssertTrue(app.buttons["more.howItWorks"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["help.replay"].waitForExistence(timeout: 5))
     }
 
     /// Capture real views with a fictional in-memory household; never production data.
     func testAppStoreScreenshots() {
         XCUIDevice.shared.orientation = .portrait
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--store-screenshots"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--store-screenshots"]
         app.launch()
         XCTAssertTrue(app.buttons["Today"].firstMatch.waitForExistence(timeout: 10))
         capture("Store-01-Today", app: app)
@@ -81,7 +210,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testStoreFailureNeverShowsNewHomeSetup() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-store-failure"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-store-failure"]
         app.launch()
         XCTAssertTrue(app.descendants(matching: .any)["storage.recovery"].firstMatch.waitForExistence(timeout: 10))
         XCTAssertFalse(app.buttons["Get started"].exists)
@@ -92,7 +221,7 @@ final class VisualFlowTests: XCTestCase {
     func testReceiptLinkLargeText() { receiptLink(largeText: true) }
     private func receiptLink(largeText: Bool) {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-receipt", "--ui-testing-receipt-link"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-receipt", "--ui-testing-receipt-link"]
         if largeText { app.launchArguments.append("--large-text") }
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
@@ -116,7 +245,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testLinkedAppleCalendarFlow() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-calendar", "--ui-testing-calendar-delivery"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-calendar", "--ui-testing-calendar-delivery"]
         app.launch()
         XCTAssertTrue(app.buttons["Calendar"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Calendar"].firstMatch.tap()
@@ -126,7 +255,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(title.waitForExistence(timeout: 5)); title.tap(); title.typeText("Linked lesson")
         app.buttons["Done"].firstMatch.tap()
         let toggle = app.switches["appointment.appleEnabled"].firstMatch
-        for _ in 0..<5 where !toggle.isHittable { app.swipeUp() }
+        reveal(toggle, app: app)
         XCTAssertTrue(toggle.exists)
         toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
         tapVisible("appointment.appleCalendar", app: app)
@@ -148,7 +277,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testSiriAppointmentDraftLink() throws {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-calendar"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-calendar"]
         app.launch()
         let url = try XCTUnwrap(URL(string: "lunahearth://calendar?title=Shortcuts%20review&date=1800000000&member=Kira&create=1"))
         app.open(url)
@@ -165,7 +294,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testAppointmentEditor() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-calendar"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-calendar"]
         app.launch()
         XCTAssertTrue(app.buttons["Calendar"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Calendar"].firstMatch.tap()
@@ -201,7 +330,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testCalendarLargeText() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-calendar", "--large-text"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-calendar", "--large-text"]
         app.launch()
         XCTAssertTrue(app.buttons["Calendar"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Calendar"].firstMatch.tap()
@@ -213,7 +342,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testFamilyWeekLargeText() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-calendar", "--large-text"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-calendar", "--large-text"]
         app.launch()
         XCTAssertTrue(app.buttons["Calendar"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Calendar"].firstMatch.tap()
@@ -226,7 +355,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testFamilyWeekPlanning() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-calendar"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-calendar"]
         app.launch()
         XCTAssertTrue(app.buttons["Calendar"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Calendar"].firstMatch.tap()
@@ -269,7 +398,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testHouseholdCalendar() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-calendar"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-calendar"]
         app.launch()
         XCTAssertTrue(app.buttons["Calendar"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Calendar"].firstMatch.tap()
@@ -286,7 +415,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testOfflinePrivacyPolicy() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
@@ -299,7 +428,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testRealPantryMealIdeas() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
@@ -353,7 +482,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testMealPerServingQuantityEntry() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
@@ -380,7 +509,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testWeeklyMealPlanningAndShoppingReview() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
@@ -414,7 +543,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testListsMealsRowOpens() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
@@ -429,7 +558,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testHomeMealsCardOpens() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
@@ -443,7 +572,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testHomeDashboardAndCleanup() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
@@ -496,15 +625,45 @@ final class VisualFlowTests: XCTestCase {
 
     private func tapVisible(_ id: String, app: XCUIApplication) {
         let element = app.descendants(matching: .any)[id].firstMatch
-        for _ in 0..<5 {
-            if element.exists && element.isHittable {
-                let top = app.navigationBars.allElementsBoundByIndex.filter(\.isHittable).map { $0.frame.maxY }.max() ?? 0
-                if element.frame.minY >= top { break }
-                app.swipeDown()
-            } else { app.swipeUp() }
-        }
+        reveal(element, app: app)
         XCTAssertTrue(element.waitForExistence(timeout: 5), "Missing \(id)")
         element.tap()
+    }
+
+    /// Swipe inside the foreground form, not the whole window: adaptive sheets
+    /// can be shorter than the window and whole-app swipes hit the backdrop.
+    private func reveal(_ element: XCUIElement, app: XCUIApplication) {
+        _ = element.waitForExistence(timeout: 2)
+        for _ in 0..<12 {
+            guard let snapshot = try? app.snapshot() else { return }
+            func descendants(_ node: XCUIElementSnapshot) -> [XCUIElementSnapshot] {
+                [node] + node.children.flatMap(descendants)
+            }
+            let nodes = descendants(snapshot)
+            let window = nodes.first { $0.elementType == .window }?.frame ?? app.frame
+            let scrollTypes: [XCUIElement.ElementType] = [.scrollView, .collectionView]
+            let foreground = nodes.last { scrollTypes.contains($0.elementType)
+                && $0.frame.intersection(window).height > 150 }
+            let bounds = (foreground?.frame.intersection(window) ?? window).insetBy(dx: 8, dy: 20)
+            let top = nodes.filter { $0.elementType == .navigationBar }
+                .map { $0.frame.maxY }.max() ?? bounds.minY
+            if element.exists && element.isHittable
+                && element.frame.midY >= max(top, bounds.minY)
+                && element.frame.midY < bounds.maxY { return }
+            let down = element.exists && element.frame.midY < max(top, bounds.minY)
+            // Resolve only the selected container when gesturing; enumerating live
+            // element frames races with SwiftUI replacing the previous screen.
+            let surface: XCUIElement
+            if let foreground {
+                let peers = nodes.filter { $0.elementType == foreground.elementType }
+                let index = peers.lastIndex { $0.frame == foreground.frame } ?? 0
+                surface = app.descendants(matching: foreground.elementType).element(boundBy: index)
+            } else { surface = app }
+            guard surface.exists else { continue }
+            surface.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.3 : 0.8))
+                .press(forDuration: 0.05, thenDragTo: surface.coordinate(
+                    withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.8 : 0.3)))
+        }
     }
 
     private func saveEntry(_ name: String, app: XCUIApplication) {
@@ -516,7 +675,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testFamilyOwnerCanNameProfile() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite"]
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
@@ -534,7 +693,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testFamilyNativeInvitationUnavailableShowsError() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite"]
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
@@ -549,7 +708,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testGuidedSetupSavesProgressAndKeepsSkipsSeparate() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.setupGuide", app: app)
@@ -580,7 +739,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testPantryCuminSearchExcludesRiceAndStorageMatches() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
@@ -617,7 +776,7 @@ final class VisualFlowTests: XCTestCase {
     }
     private func checkAIStatus(largeText: Bool) {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite"] + (largeText ? ["--large-text", "--dark"] : [])
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite"] + (largeText ? ["--large-text", "--dark"] : [])
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
@@ -634,7 +793,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testPantryPhotoReviewKeepsExistingStock() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--pantry-photo-fixture"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--pantry-photo-fixture"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.inventory", app: app)
@@ -655,7 +814,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testPantryPhotoLargeTextManualFallback() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--large-text", "--dark"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--large-text", "--dark"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.inventory", app: app)
@@ -670,7 +829,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testGuidedSetupLargeText() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--large-text", "--dark"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--large-text", "--dark"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.setupGuide", app: app)
@@ -682,7 +841,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testFourTabsAndHomeReminders() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         XCTAssertFalse(app.tabBars.buttons["Lists"].exists)
@@ -698,7 +857,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testMoreRedesignNavigation() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite"]
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
@@ -724,7 +883,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testMoreRedesignLargeText() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite", "--large-text", "--dark"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite", "--large-text", "--dark"]
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
@@ -736,7 +895,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testFamilyOwnerInvitationDirection() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite"]
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
@@ -752,7 +911,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testFamilyOfflineProfileDirection() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.buttons["More"].firstMatch.tap()
         tapVisible("more.family", app: app)
@@ -771,7 +930,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testFamilyLargeDark() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-named-invite", "--large-text", "--dark"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-named-invite", "--large-text", "--dark"]
         app.launch()
         XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["More"].firstMatch.tap()
@@ -783,7 +942,7 @@ final class VisualFlowTests: XCTestCase {
 
 
     func testIngredientDuplicateWarningAndSeparatePack() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); tapVisible("home.inventory", app: app)
         app.buttons["inventory.add"].tap()
@@ -810,7 +969,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testVisualPantryShelvesAndList() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); tapVisible("home.inventory", app: app)
         tapVisible("inventory.ideas", app: app)
@@ -839,7 +998,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testInventoryExpiryAndLowStock() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); tapVisible("home.inventory", app: app)
@@ -861,7 +1020,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testLowStockDarkShelf() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--dark"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--dark"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); tapVisible("home.inventory", app: app)
@@ -880,7 +1039,7 @@ final class VisualFlowTests: XCTestCase {
 
     private func todayAttentionFlow(interactive: Bool = false, dark: Bool = false, largeText: Bool = false, landscape: Bool = false) {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-today", "--ui-testing-known-groceries"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-today", "--ui-testing-known-groceries"]
         if dark { app.launchArguments.append("--dark") }
         if largeText { app.launchArguments.append("--large-text") }
         if landscape { XCUIDevice.shared.orientation = .landscapeLeft }
@@ -931,7 +1090,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testTodayEmptyState() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         XCTAssertTrue(app.staticTexts["No shopping needed now. Later items stay on your list."].exists)
         tapVisible("today.summarize", app: app)
@@ -942,7 +1101,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingShelfActionsBelongToOneItem() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
@@ -970,7 +1129,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingListKeepsSingleSwipeActions() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
@@ -995,7 +1154,7 @@ final class VisualFlowTests: XCTestCase {
 
     private func redesignedGroceryTools(largeText: Bool = false, dark: Bool = false, landscape: Bool = false) {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-category-hints"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-category-hints"]
         if largeText { app.launchArguments.append("--large-text") }
         if dark { app.launchArguments.append("--dark") }
         if landscape { XCUIDevice.shared.orientation = .landscapeLeft }
@@ -1063,7 +1222,7 @@ final class VisualFlowTests: XCTestCase {
     func testMatchingShelvesLandscape() { matchingShelfLayout(largeText: false, landscape: true) }
     private func matchingShelfLayout(largeText: Bool, dark: Bool = false, landscape: Bool = false) {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-known-groceries"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-known-groceries"]
         if largeText { app.launchArguments.append("--large-text") }
         if dark { app.launchArguments.append("--dark") }
         if landscape { XCUIDevice.shared.orientation = .landscapeLeft }
@@ -1094,7 +1253,7 @@ final class VisualFlowTests: XCTestCase {
     func testCompactShoppingAccessibilityLayout() { compactShoppingLayout(largeText: true) }
     private func compactShoppingLayout(largeText: Bool) {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-known-groceries"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-known-groceries"]
         if largeText { app.launchArguments.append("--large-text") }
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
@@ -1121,7 +1280,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingOrganizationControlsStayVisibleForKnownItems() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-known-groceries"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-known-groceries"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
@@ -1143,7 +1302,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingInventoryCategoryParityAndReset() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-category-hints"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-category-hints"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
@@ -1168,7 +1327,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testShoppingShelvesPurchaseAndAI() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
@@ -1196,7 +1355,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testShoppingDuplicateAIAndReview() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
@@ -1233,7 +1392,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testExpensesUseSavedShoppingStores() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.expenses", app: app)
@@ -1253,7 +1412,7 @@ final class VisualFlowTests: XCTestCase {
     func testExpenseDashboardMonthlyTracking() { expenseDashboard(largeText: false) }
     func testExpenseDashboardLargeText() { expenseDashboard(largeText: true) }
     private func expenseDashboard(largeText: Bool) {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         if largeText { app.launchArguments += ["--large-text", "--dark"] }
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.expenses", app: app)
@@ -1274,7 +1433,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testDemoAnimationPlaysWithoutSaving() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.connectedDemo", app: app)
@@ -1292,7 +1451,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testConnectedDemoFlow() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.connectedDemo", app: app)
@@ -1324,7 +1483,7 @@ final class VisualFlowTests: XCTestCase {
         receiptReview(largeText: false)
     }
     private func receiptReview(largeText: Bool) {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-receipt"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-receipt"]
         if largeText { app.launchArguments.append("--large-text") }
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
@@ -1355,7 +1514,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testMeasuredShoppingRestockUpdatesPantry() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-restock-count"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-restock-count"]
         app.launch()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
@@ -1375,7 +1534,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testShoppingKeepsExistingMilkInventory() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-fresh-milk"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-fresh-milk"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
@@ -1392,7 +1551,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testOneExistingMilkActionAndCleanup() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-duplicate-milk"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-duplicate-milk"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
@@ -1417,7 +1576,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testPantryAndShoppingCanvasTransition() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         capture("Pantry-Unified-Canvas", app: app)
@@ -1431,7 +1590,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testKitchenTemplateBulkReview() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         tapVisible("inventory.ideas", app: app)
@@ -1453,7 +1612,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testEmptyPantryIdeasAreSuggestionsNotSavedStock() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         tapVisible("inventory.ideas", app: app)
@@ -1468,7 +1627,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testInventoryNameOnlyAndSouthIndianReview() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         app.buttons["inventory.add"].tap()
@@ -1497,7 +1656,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testInventoryDarkAndLargeText() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--dark", "--large-text"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--dark", "--large-text"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); tapVisible("home.inventory", app: app)
         capture("65-Inventory-Large-Dark", app: app)
@@ -1520,7 +1679,7 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testShoppingPurchaseInventoryAndFriends() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing"]
+        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         for (name, choice) in [("Milk", "shopping.purchaseInventory"), ("Gift chocolates", "shopping.purchaseOnly")] {
@@ -1544,7 +1703,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingIdeasReviewBeforeAddingAndFallback() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         tapVisible("shopping.ai.open", app: app)
@@ -1566,7 +1725,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingFormDarkAndLargeText() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--dark", "--large-text"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--dark", "--large-text"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap()
         let shopping = app.staticTexts["Shopping"]
@@ -1584,7 +1743,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testStoreAutofillPersistsAfterCancelAndCompactAction() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         app.navigationBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Add")).firstMatch.tap()
@@ -1614,7 +1773,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingInlineStoreUnitsDateAndDuplicateWarning() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         app.navigationBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Add")).firstMatch.tap()
@@ -1643,7 +1802,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testPrivateStoreCreationSurvivesCancelledShoppingItem() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         app.navigationBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Add")).firstMatch.tap()
@@ -1678,7 +1837,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingStoreCatalogInDarkMode() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--dark"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--dark"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         capture("49-Shopping-Sage-Dark", app: app)
@@ -1698,7 +1857,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testInvitationTakesPriorityOverNewHomeSetup() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-invitation"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-invitation"]
         app.launch()
         XCTAssertTrue(app.buttons["sharing.accept"].waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts["Join Kira Home"].exists)
@@ -1715,7 +1874,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testAssignedTaskAppearsAndCompletes() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-assignments"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-assignments"]
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Today"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Today"].tap()
@@ -1735,7 +1894,7 @@ final class VisualFlowTests: XCTestCase {
     func testPersonalShoppingLargeDark() { personalShoppingFlow(largeDark: true) }
     private func personalShoppingFlow(largeDark: Bool) {
         let app = XCUIApplication()
-        app.launchArguments = largeDark ? ["--ui-testing", "--dark", "--large-text"] : ["--ui-testing"]
+        app.launchArguments = largeDark ? ["--ui-testing", "--ui-testing-ai-ready", "--dark", "--large-text"] : ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["More"].tap(); app.buttons["more.family"].tap()
         tapVisible("family.addProfile", app: app)
@@ -1763,7 +1922,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingStoreAndBuyer() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["More"].tap()
         app.buttons["more.family"].tap()
@@ -1797,7 +1956,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testPrivateBackupDeletionRequiresConfirmationAndKeepsLocalHome() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["More"].tap()
         tapVisible("more.privacy", app: app)
@@ -1817,7 +1976,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testLiveSharingUnavailablePreservesLocalHome() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["More"].tap()
         tapVisible("more.privacy", app: app)
@@ -1836,7 +1995,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testSimpleHomeSetupAndOfflineShopping() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 10))
         app.buttons["setup.start"].tap()
@@ -1875,7 +2034,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testAppleOnlyReminderCreationAndCompletion() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-reminder-sync"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-reminder-sync"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["More"].tap()
         tapVisible("more.connections", app: app)
@@ -1907,7 +2066,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testShoppingSetupCreatesOnlyAppleItems() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-reminder-sync"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-reminder-sync"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["More"].tap()
         tapVisible("more.connections", app: app)
@@ -1930,7 +2089,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testOrganizedHomeNavigation() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
@@ -1949,7 +2108,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testHomeEndToEndRoomItemWarrantyAndMaintenance() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         createHousehold(app)
         app.tabBars.buttons["Home"].tap()
@@ -2007,7 +2166,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testSetupRestoreAndCloudUnavailableKeepLocalHome() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 10))
         app.buttons["setup.restore"].tap()
@@ -2039,7 +2198,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testAppleConnectionsAndNotesDraftKeepLocalModeAvailable() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         createHousehold(app)
         app.tabBars.buttons["More"].tap()
@@ -2064,7 +2223,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testLightModeScreensAndQuickAdd() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 10))
         capture("01-Welcome-Light", app: app)
@@ -2091,7 +2250,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testBuildHomeLayout() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         createHousehold(app)
         app.tabBars.buttons["Home"].tap()
@@ -2144,7 +2303,7 @@ final class VisualFlowTests: XCTestCase {
     func testLayoutAppearanceAndAccessibilityText() {
         for appearance in ["--dark", "--large-text"] {
             let app = XCUIApplication()
-            app.launchArguments = ["--ui-testing", appearance]
+            app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", appearance]
             app.launch()
             createHousehold(app)
             app.tabBars.buttons["Home"].tap()
@@ -2165,7 +2324,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testDarkModeAndLargeText() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--dark"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--dark"]
         app.launch()
         XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 10))
         capture("36-Welcome-Dark", app: app)
@@ -2174,7 +2333,7 @@ final class VisualFlowTests: XCTestCase {
         app.tabBars.buttons["Home"].tap()
         capture("07-Lists-Dark", app: app)
         app.terminate()
-        app.launchArguments = ["--ui-testing", "--large-text"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--large-text"]
         app.launch()
         XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 10))
         capture("37-Welcome-Large-Text", app: app)

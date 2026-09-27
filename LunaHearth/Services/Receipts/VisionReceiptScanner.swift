@@ -4,6 +4,7 @@ import ImageIO
 
 actor VisionReceiptScanner: ReceiptScanningService {
     func scan(imageData: Data) async throws -> ReceiptScan {
+        try FeatureAccess.require(.receipts)
         guard imageData.count <= 20_000_000 else { throw ReceiptImportError.tooLarge }
         try Task.checkCancellation()
         guard let source = CGImageSourceCreateWithData(imageData as CFData, nil),

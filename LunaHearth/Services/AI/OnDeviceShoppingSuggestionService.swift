@@ -3,11 +3,12 @@ import FoundationModels
 
 actor OnDeviceShoppingSuggestionService: ShoppingSuggestionService {
     func suggest(_ request: ShoppingSuggestionRequest) async throws -> ShoppingSuggestionResult {
+        try FeatureAccess.require(.shoppingIdeas)
         try Task.checkCancellation()
         guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else {
             return ShoppingSuggestionRules.fallback(request, reason: "On-device AI is unavailable in this test session.")
         }
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, *), FeatureAccess.allows(.aiShopping) {
             guard case .available = SystemLanguageModel.default.availability else {
                 return ShoppingSuggestionRules.fallback(request, reason: "Apple’s on-device model isn’t ready on this device. Check Apple Intelligence in Settings.")
             }
@@ -25,7 +26,7 @@ actor OnDeviceShoppingSuggestionService: ShoppingSuggestionService {
                 let data = try JSONEncoder().encode(context)
                 let response = try await session.respond(to: String(decoding: data, as: UTF8.self), generating: GeneratedShoppingIdeas.self)
                 try Task.checkCancellation()
-                let items = ShoppingSuggestionRules.reviewed(response.content.items.map { ShoppingSuggestion(name: $0.name, quantity: $0.quantity) }, excluding: request.pendingItems)
+                let items = ShoppingSuggestionRules.reviewed(response.content.items.map { ShoppingSuggestion(name: $0.name, quantity: $0.quantity) }, excluding: request.pendingItems + request.pantryItems)
                 return ShoppingSuggestionResult(items: items, usedModel: true, explanation: "Generated on this device. Review each item before adding. Store and buyer are your choices.")
             } catch is CancellationError { throw CancellationError() }
             catch {

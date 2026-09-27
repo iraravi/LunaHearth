@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct MealIdeasView: View {
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.scenePhase) private var scenePhase
@@ -38,13 +40,15 @@ struct MealIdeasView: View {
                         ForEach(MealCookingStyle.allCases) { style in Text(style.rawValue).tag(style.rawValue) }
                     }.pickerStyle(.menu).frame(minHeight: 44).accessibilityIdentifier("meals.cookingStyle")
                     Text("Choose a cuisine for your ideas. You can change it anytime.").font(.footnote).foregroundStyle(.secondary)
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Anything else? (optional)").font(.subheadline.weight(.medium))
-                        TextField("e.g. Vegetarian, mild spice, dinner for four in 20 minutes", text: $context, axis: .vertical)
-                            .focused($contextFocused).lineLimit(2...4).padding(12).background(.background, in: RoundedRectangle(cornerRadius: 12))
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(.secondary.opacity(0.3)))
-                            .accessibilityLabel("Meal preferences, optional").accessibilityIdentifier("meals.context")
-                        Text("\(context.count)/\(MealSuggestionRules.contextLimit) · Used by on-device AI").font(.caption).foregroundStyle(.secondary)
+                    if (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiMeals) ?? true)) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Anything else? (optional)").font(.subheadline.weight(.medium))
+                            TextField("e.g. Vegetarian, mild spice, dinner for four in 20 minutes", text: $context, axis: .vertical)
+                                .focused($contextFocused).lineLimit(2...4).padding(12).background(.background, in: RoundedRectangle(cornerRadius: 12))
+                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(.secondary.opacity(0.3)))
+                                .accessibilityLabel("Meal preferences, optional").accessibilityIdentifier("meals.context")
+                            Text("\(context.count)/\(MealSuggestionRules.contextLimit) · Used by on-device AI").font(.caption).foregroundStyle(.secondary)
+                        }
                     }
                     DatePicker("Plan for", selection: $day, in: Calendar.current.startOfDay(for: .now)..., displayedComponents: .date)
                     Text("\(names.count) saved packs considered · check actual amounts and pack labels.").font(.footnote).foregroundStyle(.secondary)
@@ -54,7 +58,7 @@ struct MealIdeasView: View {
                         changingReminder = true
                         Task { do { try await reminders.setEnabled(value); reminderEnabled = await reminders.enabled() } catch { self.error = error.localizedDescription }; changingReminder = false }
                     })) { Label("Plan tomorrow at 5 PM", systemImage: "clock") }.disabled(changingReminder).accessibilityIdentifier("meals.reminder")
-                    Text("Daily reminder on this device, at local time. Open it to get fresh suggestions. AI runs only when you ask.").font(.footnote).foregroundStyle(.secondary)
+                    Text("Daily reminder on this device, at local time. Open it to get meal ideas.").font(.footnote).foregroundStyle(.secondary)
                 }.padding(20).background(.background, in: RoundedRectangle(cornerRadius: 18))
                 HStack {
                     Button { generate() } label: { Label(generating ? "Finding ideas…" : "Get suggestions now", systemImage: "sparkles").padding(.vertical, 6) }
@@ -91,7 +95,8 @@ struct MealIdeasView: View {
         }.background(AppTheme.canvas).tint(accent)
             .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done") { contextFocused = false }.accessibilityIdentifier("meals.keyboardDone") } }
             .scrollDismissesKeyboard(.interactively)
-            .navigationTitle("Meal ideas").navigationBarTitleDisplayMode(.inline)
+            .householdHelp(.meals)
+        .featureAvailability(.mealIdeas).navigationTitle("Meal ideas").navigationBarTitleDisplayMode(.inline)
             .sheet(item: $draft) { QuickAddView(draft: $0) }
             .task {
                 if ProcessInfo.processInfo.arguments.contains("--ui-testing") { styleRaw = "" }

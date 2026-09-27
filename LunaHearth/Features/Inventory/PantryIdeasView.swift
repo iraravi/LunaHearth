@@ -2,6 +2,8 @@ import SwiftUI
 
 struct PantryIdeasView: View {
     let householdID: UUID
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
     @State private var style: PantryStyle = .southIndian
@@ -42,11 +44,13 @@ struct PantryIdeasView: View {
                         .font(.subheadline).foregroundStyle(InventoryTheme.muted).accessibilityIdentifier("inventory.savedCount")
                     Picker("Kitchen template", selection: $style) { ForEach(PantryStyle.allCases) { Text($0.rawValue).tag($0) } }
                         .accessibilityIdentifier("inventory.ideasStyle")
-                    TextField("Describe what you want, e.g. South Indian breakfast staples", text: $request, axis: .vertical).lineLimit(2...3)
-                        .accessibilityIdentifier("inventory.ideasRequest")
-                        .onChange(of: request) { _, value in if value.count > 300 { request = String(value.prefix(300)) } }
-                    Button { generating = true; generationID += 1 } label: { Label(generating ? "Thinking on your device…" : "Tailor with on-device AI", systemImage: "sparkles") }
-                        .disabled(generating).accessibilityIdentifier("inventory.generateIdeas")
+                    if (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiPantry) ?? true)) {
+                        TextField("Describe what you want, e.g. South Indian breakfast staples", text: $request, axis: .vertical).lineLimit(2...3)
+                            .accessibilityIdentifier("inventory.ideasRequest")
+                            .onChange(of: request) { _, value in if value.count > 300 { request = String(value.prefix(300)) } }
+                        Button { generating = true; generationID += 1 } label: { Label(generating ? "Thinking on your device…" : "Tailor with on-device AI", systemImage: "sparkles") }
+                            .disabled(generating).accessibilityIdentifier("inventory.generateIdeas")
+                    }
                     if generating {
                         ProgressView("Making suggestions…").accessibilityIdentifier("inventory.ideasProgress")
                     }
@@ -101,12 +105,12 @@ struct PantryIdeasView: View {
                         .listRowBackground(InventoryTheme.surface)
                 }
             }.scrollContentBackground(.hidden).background(InventoryTheme.canvas).tint(InventoryTheme.accent)
-                .navigationTitle("Pantry ideas").navigationBarTitleDisplayMode(.inline)
+                .featureAvailability(.pantryTemplates).navigationTitle("Pantry ideas").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Review \(selectionCount)") { reviewing = true }
-                            .disabled(selectionCount == 0).accessibilityIdentifier("inventory.addIdeas")
+                            .disabled(selectionCount == 0 || !(publicStatus.configuration?.allows(.pantryTemplates) ?? true)).accessibilityIdentifier("inventory.addIdeas")
                     }
                 }
                 .onChange(of: style) { _, _ in generated = nil; selected = []; search = ""; generating = false; generationID += 1 }

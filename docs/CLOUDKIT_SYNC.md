@@ -276,3 +276,9 @@ CalendarDeliveryLink is strictly device-local and excluded from BackupCodec. Sha
 Build 46 restock arithmetic uses existing inventory/grocery/purchase records and existing sync mapping, with no new zone/schema/permission. Sequential local purchases add known compatible quantities; simultaneous offline writes still use the existing per-record conflict model and are not a distributed additive stock ledger. Historical purchase replay markers remain in use. See ADR 039.
 
 Build 47 includes optional PurchaseEntry.receiptLineKey in the existing payload, without new CloudKit record keys/types. Upgrade household devices together. Simulated two-repository tests verify offline receipt linking and replay protection; simultaneous quantity edits pause for explicit conflict review rather than automatic addition. These tests do not verify live CloudKit or APNs delivery.
+
+### September 22 foreground energy audit
+Foreground periodic reconciliation now waits 20 seconds after the initial refresh, rather than repeating immediately. Setup without a household does not run periodic or write-triggered reconciliation. Scene cancellation/home changes continue to stop the loop, and local writes still trigger a debounced refresh. No sync interval, ownership, conflict or transport semantics changed. See `docs/validation/2026-09-22-performance-energy.md` for measured results and physical-device limits.
+
+### Public operational settings — ADR 049
+A separate read-only public `LHAppConfiguration` / `ios-current` record provides app feature switches, notices and help text. This contains no household records and does not participate in private/shared sync, backups, conflict handling or ownership. Fixed fetches are bounded/cached; manual core workflows and existing data survive unavailable/expired configuration. See `PUBLIC_APP_CONFIGURATION.md` for permissions, publication and pending production validation.

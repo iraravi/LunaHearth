@@ -10,7 +10,7 @@ actor OnDevicePantryCategorizationService: PantryCategorizationService {
         }
         #endif
         guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else { return nil }
-        if #available(iOS 26.0, *), case .available = SystemLanguageModel.default.availability {
+        if #available(iOS 26.0, *), FeatureAccess.allows(.aiCategories), case .available = SystemLanguageModel.default.availability {
             struct Input: Encodable { let index: Int; let name: String }
             let input = names.prefix(40).enumerated().map { Input(index: $0.offset, name: String($0.element.prefix(200))) }
             let session = LanguageModelSession(instructions: """

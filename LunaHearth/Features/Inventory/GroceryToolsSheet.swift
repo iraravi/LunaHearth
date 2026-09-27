@@ -19,6 +19,8 @@ struct GroceryToolsPalette {
 }
 
 struct GroceryToolsSheet<Filters: View, Organization: View>: View {
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var typeSize
     let title: String
@@ -56,9 +58,11 @@ struct GroceryToolsSheet<Filters: View, Organization: View>: View {
 
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Organize").font(.headline).padding(.horizontal, 4)
-                        GroceryToolsCard(palette: palette) { organization }
-                            .accessibilityElement(children: .contain)
-                            .accessibilityIdentifier("\(identifier).organizationCard")
+                        if (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiCategories) ?? true)) {
+                            GroceryToolsCard(palette: palette) { organization }
+                                .accessibilityElement(children: .contain)
+                                .accessibilityIdentifier("\(identifier).organizationCard")
+                        }
                         GroceryToolsCard(palette: palette) {
                             Button(action: reviewDuplicates) {
                                 HStack(spacing: 12) {
@@ -78,7 +82,7 @@ struct GroceryToolsSheet<Filters: View, Organization: View>: View {
                     }
 
                     DisclosureGroup {
-                        Text("Familiar items use automatic categories. On-device AI can suggest categories for unfamiliar names. Suggestions last while this screen is open; Reset restores automatic categories. Item details stay as you entered them.")
+                        Text((aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiCategories) ?? true)) ? "Familiar items use automatic categories. On-device AI can suggest categories for unfamiliar names. Suggestions last while this screen is open; Reset restores automatic categories. Item details stay as you entered them." : "Familiar items use automatic categories and offline name matching. Item details stay as you entered them.")
                             .font(.footnote).foregroundStyle(palette.muted)
                             .fixedSize(horizontal: false, vertical: true).padding(.bottom, 8)
                     } label: {
@@ -89,7 +93,7 @@ struct GroceryToolsSheet<Filters: View, Organization: View>: View {
                 }.frame(maxWidth: 600).padding(.horizontal, 20).padding(.top, 8).padding(.bottom, 24)
                     .frame(maxWidth: .infinity)
             }.background(palette.canvas).foregroundStyle(palette.ink)
-                .navigationTitle("Filters & AI").navigationBarTitleDisplayMode(.inline)
+                .navigationTitle(aiAvailability.filterTitle).navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Done") { dismiss() }.font(.subheadline.weight(.semibold))
