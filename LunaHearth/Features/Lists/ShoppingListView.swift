@@ -5,6 +5,7 @@ struct ShoppingListView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var showingTools = false
+    @State private var feedback: PurchaseFeedback?
     @State private var purchase: GroceryItem?
     @State private var adding = false
     @State private var scanningReceipt = false
@@ -136,7 +137,8 @@ struct ShoppingListView: View {
                 .dynamicTypeSize(typeSize)
                 .sheet(isPresented: $reviewingDuplicates) { ShoppingDuplicateReview() }
         }
-        .sheet(item: $purchase) { ShoppingPurchaseSheet(item: $0) }
+        .sheet(item: $purchase) { ShoppingPurchaseSheet(item: $0) { feedback = $0 } }
+        .purchaseFeedback($feedback)
         .sheet(isPresented: $scanningReceipt) { if let home = repository.household?.id { ReceiptImportView(householdID: home) } }
         .sheet(isPresented: $adding) { QuickAddView(kind: .grocery, fixedKind: true) }
         .sheet(isPresented: $suggesting) {

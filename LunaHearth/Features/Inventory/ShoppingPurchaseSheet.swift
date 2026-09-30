@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ShoppingPurchaseSheet: View {
     let item: GroceryItem
+    var onCompleted: (PurchaseFeedback) -> Void = { _ in }
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
     @State private var error: String?
@@ -22,7 +23,7 @@ struct ShoppingPurchaseSheet: View {
                         Label("Already at home", systemImage: "cabinet").font(.headline)
                         Button {
                             if matches.count == 1, let match = matches.first {
-                                do { try repository.recordPurchase(item, addToInventory: true, keeping: match.id); dismiss() } catch { self.error = error.localizedDescription }
+                                do { try repository.recordPurchase(item, addToInventory: true, keeping: match.id); completed() } catch { self.error = error.localizedDescription }
                             } else { choosingExisting = true }
                         } label: {
                             HStack(alignment: .top, spacing: 14) {
@@ -46,13 +47,22 @@ struct ShoppingPurchaseSheet: View {
             }.background(InventoryTheme.canvas).tint(InventoryTheme.accent)
                 .navigationTitle("Finish shopping").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
-                .sheet(isPresented: $choosingExisting) { ExistingInventoryPurchasePicker(grocery: item) { dismiss() } }
+                .sheet(isPresented: $choosingExisting) { ExistingInventoryPurchasePicker(grocery: item) { completed() } }
                 .saveError($error)
         }.presentationDetents(matches.isEmpty ? [.medium, .large] : [.large])
     }
+    private func completed() {
+        let history = repository.purchases.first { $0.groceryID == item.id }
+        let stock = history?.inventoryID.flatMap { id in repository.inventory.first { $0.id == id } }
+        let detail = item.purchaseDisposition == "inventory"
+            ? stock?.quantityText.map { "Pantry · " + $0 } ?? "Recorded in pantry"
+            : "Shopping completed · Not added to pantry"
+        onCompleted(PurchaseFeedback(name: item.name, detail: detail))
+        dismiss()
+    }
     private func choice(_ title: String, detail: String, symbol: String, identifier: String, inventory: Bool, keeping: UUID? = nil, separate: Bool = false) -> some View {
         Button {
-            do { try repository.recordPurchase(item, addToInventory: inventory, keeping: keeping, allowSeparatePack: separate); dismiss() } catch { self.error = error.localizedDescription }
+            do { try repository.recordPurchase(item, addToInventory: inventory, keeping: keeping, allowSeparatePack: separate); completed() } catch { self.error = error.localizedDescription }
         } label: {
             HStack(alignment: .top, spacing: 14) {
                 Image(systemName: symbol).font(.title2).frame(width: 32).accessibilityHidden(true)

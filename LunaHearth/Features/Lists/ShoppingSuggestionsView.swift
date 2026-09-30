@@ -74,7 +74,9 @@ struct ShoppingSuggestionsView: View {
                     HStack { promptChip("Weekly essentials"); promptChip("Breakfast") }
                     VStack(alignment: .leading) { promptChip("Weekly essentials"); promptChip("Breakfast") }
                 }
-                Toggle("Use my checked items", isOn: $includeHistory).font(.subheadline).tint(AppTheme.sage)
+                if prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                    Toggle("Use my checked items", isOn: $includeHistory).font(.subheadline).tint(AppTheme.sage)
+                }
                 if prompt.count > 400 { Text("Keep your request to 400 characters or fewer.").font(.caption).foregroundStyle(.red) }
             }
             Label((aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiShopping) ?? true)) ? "On-device intelligence. Always your choice." : "Built-in list ideas. Review before adding.", systemImage: "lock.shield.fill").font(.footnote).foregroundStyle(.secondary)
@@ -97,11 +99,11 @@ struct ShoppingSuggestionsView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("Keep what you need.").font(AppTheme.displayTitle)
                 Text("Tap a circle to include an item. Edit any detail below.").font(.subheadline).foregroundStyle(.secondary)
-                Label(usedModel ? "AI suggestions · review before adding" : "Built-in list ideas · review before adding", systemImage: usedModel ? "sparkles" : "basket")
+                Label(usedModel ? "AI suggestions · review before adding" : (prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "Built-in list ideas · review before adding" : "Request not generated"), systemImage: usedModel ? "sparkles" : "basket")
                     .font(.caption.weight(.semibold)).foregroundStyle(usedModel ? .purple : .secondary)
                 Text(explanation ?? "").font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("shopping.ai.status")
             }
-            if items.isEmpty { ContentUnavailableView("No new items to add", systemImage: "basket", description: Text("Matching stocked pantry items and shopping items are skipped. Add an item manually if you want extra.")) }
+            if items.isEmpty { ContentUnavailableView("No new items to add", systemImage: "basket", description: Text(usedModel ? "Matching stocked pantry items and shopping items are skipped. Add an item manually if you want extra." : "Check the explanation above. Try again, or add ingredients manually using a trusted recipe.")) }
             ForEach($items) { $item in
                 ShoppingFormCard {
                     HStack(alignment: .top, spacing: 14) {

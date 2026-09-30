@@ -108,6 +108,7 @@ struct TodayPriorityItems: View {
     let limit: Int?
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(PersonalShopping.self) private var personal
+    @State private var feedback: PurchaseFeedback?
     @State private var purchase: GroceryItem?
     @State private var editing: InventoryItem?
     @State private var error: String?
@@ -166,7 +167,8 @@ struct TodayPriorityItems: View {
                 NavigationLink { ShoppingListView() } label: { footer("Open shopping") }
             }
         }
-        .sheet(item: $purchase) { ShoppingPurchaseSheet(item: $0) }
+        .sheet(item: $purchase) { ShoppingPurchaseSheet(item: $0) { feedback = $0 } }
+        .purchaseFeedback($feedback)
         .sheet(item: $editing) { InventoryEditor(item: $0) }
         .saveError($error)
     }

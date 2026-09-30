@@ -529,3 +529,10 @@ The welcome direction now applies throughout the app: ivory canvas, near-white s
 ## Liquid Glass controls — ADR 048
 
 On iOS 26+, let native bars supply Liquid Glass. Use HearthGlassControls and hearthGlassButton for grouped navigation/action controls; preserve opaque ivory content surfaces. Availability fallback uses native bordered styles. Reduce Transparency and Increase Contrast also use solid/bordered styles. Do not apply glass to whole cards, forms, images or screens. See ADR 048.
+
+## Assignment arrival and purchase confirmation — September 29, 2026
+Assignment notification taps distinguish tasks from shopping and show the matching section in For You. A static sage banner identifies the destination; a single symbol bounce provides arrival feedback when Reduce Motion is off. The sheet opens before the background refresh finishes. Another home's notification is explicitly identified rather than displaying unrelated current assignments. Existing personal-member selection and current saved lists remain authoritative; this does not claim an exact unread-item count or guaranteed push timing.
+
+Successful shopping completion shows a dismissible, width-capped confirmation on Shopping, For You and Today priority screens. Its text uses the saved pantry quantity when a linked pack exists. The confirmation is emitted only after the repository commits, and a purchase-sheet cancellation or save failure does not trigger it. It remains readable until dismissed, disappears on home change, and uses native Dynamic Type with labelled 44-point dismissal. A short insertion transition is disabled for Reduce Motion. There is no animation timer, background rendering or new permission.
+
+Duo follows the existing adaptive navigation/sheet guidance. No hinge angle is inferred from size, no posture-specific API was introduced, and no physical fold transition is claimed. Tests cover the available Duo simulator plus an iPad layout; real VoiceOver and physical-device motion remain manual checks. No schema, AI, cloud payload or notification subscription changes.

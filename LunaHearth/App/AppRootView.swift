@@ -17,8 +17,8 @@ struct AppRootView: View {
     @Environment(AppointmentAlertCoordinator.self) private var appointmentAlerts
     @State private var appointmentLink: AppointmentLink?
     @AppStorage("welcome.walkthrough.v1.reviewed") private var walkthroughReviewed = false
-    @State private var aiAvailability: AIAvailability = .unavailable
-    @State private var publicStatus = PublicConfigurationStore()
+    @Binding var aiAvailability: AIAvailability
+    @Environment(PublicConfigurationStore.self) private var publicStatus
     @State private var loaded = false
     @State private var loadFailed = false
 

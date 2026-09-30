@@ -35,9 +35,13 @@ struct PersonalShoppingCard: View {
 }
 
 struct PersonalShoppingView: View {
+    var notificationFocus: AssignmentFocus? = nil
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(PersonalShopping.self) private var personal
     @Environment(HouseholdSharingController.self) private var sharing
+    @State private var feedback: PurchaseFeedback?
     @State private var purchase: GroceryItem?
     @State private var brief: ShoppingBrief?
     @State private var summarizing = false
@@ -47,8 +51,20 @@ struct PersonalShoppingView: View {
 
     var body: some View {
         TimelineView(.periodic(from: .now, by: 60)) { timeline in
-            content(today: HouseholdDay(timeline.date).key)
+            ScrollViewReader { proxy in
+                content(today: HouseholdDay(timeline.date).key)
+                    .task(id: notificationScrollKey) {
+                        guard let notificationFocus else { return }
+                        await Task.yield()
+                        proxy.scrollTo("assignment.\(notificationFocus.rawValue)", anchor: .top)
+                    }
+            }
         }
+    }
+
+    private var notificationScrollKey: String {
+        let member = repository.household.flatMap { personal.memberID($0.id) }
+        return (notificationFocus?.rawValue ?? "") + (member?.uuidString ?? "")
     }
 
     private func content(today: String) -> some View {
@@ -70,6 +86,7 @@ struct PersonalShoppingView: View {
                     }
                 } footer: { Text("Your view on this device. Shared members can see the full household list.") }
                 if personal.memberID(home) != nil {
+                    if notificationFocus == .tasks { AssignmentArrivalBanner(focus: .tasks).id("assignment.tasks") }
                     Section("Your tasks & chores") {
                         let tasks = personal.tasks(repository)
                         if tasks.isEmpty { Text("No tasks assigned to you.").foregroundStyle(ShoppingTheme.muted) }
@@ -91,6 +108,7 @@ struct PersonalShoppingView: View {
                         }
                     }
 
+                    if notificationFocus == .shopping { AssignmentArrivalBanner(focus: .shopping).id("assignment.shopping") }
                     Section {
                         Text(AssignedShoppingRules.summary(items, today: today)).font(.headline)
                             .accessibilityIdentifier("shopping.personalCount")
@@ -99,9 +117,11 @@ struct PersonalShoppingView: View {
                             Text(brief.usedModel ? "Summarized on this device. Check the list for exact details. Up to 40 items included." : "List summary · On-device AI isn’t available right now.")
                                 .font(.caption).foregroundStyle(ShoppingTheme.muted)
                         }
+                        if aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiBriefs) ?? true) {
                         Button { summaryRequested = true } label: {
                             Label(summarizing ? "Summarizing…" : "Summarize my shopping", systemImage: "sparkles")
                         }.disabled(summarizing || items.isEmpty).accessibilityIdentifier("shopping.personalSummary")
+                        }
                     } header: { Text("Your shopping brief") }
                     if items.isEmpty {
                         ContentUnavailableView("All caught up", systemImage: "checkmark.circle", description: Text("Items assigned to you will appear here."))
@@ -129,12 +149,20 @@ struct PersonalShoppingView: View {
             guard summaryRequested else { return }
             summarizing = true
             defer { summarizing = false; summaryRequested = false }
-            do { brief = try await service.summarize(items, today: today) }
+            let home = repository.household?.id
+            do {
+                let result = try await service.summarize(items, today: today)
+                try Task.checkCancellation()
+                guard home == repository.household?.id, items == personal.items(repository), today == HouseholdDay(.now).key else { return }
+                brief = result
+            }
             catch { if !Task.isCancelled { self.error = "Couldn’t summarize. Your shopping list is still available." } }
         }
+        .onChange(of: repository.household?.id) { _, _ in brief = nil; summaryRequested = false }
         .onChange(of: today) { _, _ in brief = nil; summaryRequested = false }
         .onChange(of: items) { _, _ in brief = nil; summaryRequested = false }
-        .sheet(item: $purchase) { ShoppingPurchaseSheet(item: $0) }
+        .sheet(item: $purchase) { ShoppingPurchaseSheet(item: $0) { feedback = $0 } }
+        .purchaseFeedback($feedback)
         .saveError($error)
     }
 

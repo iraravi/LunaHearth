@@ -3,24 +3,15 @@ import FoundationModels
 
 actor OnDeviceReceiptNameService: ReceiptNameDecodingService {
     func decode(_ items: [ReceiptNameInput]) async throws -> ReceiptNameDecoding {
+        try Task.checkCancellation()
         func unavailable(_ message: String) -> ReceiptNameDecoding {
             ReceiptNameDecoding(proposals: [], message: message)
         }
-        guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else {
-            return unavailable("On-device AI is unavailable in this test. You can edit item names yourself.")
+        if let reason = AIModelSupport.unavailability(for: .aiReceiptNames) {
+            AIRequestDiagnostics.record(.aiReceiptNames, failure: reason)
+            return unavailable(reason.message + " You can edit names manually.")
         }
-        if #available(iOS 26.0, *), FeatureAccess.allows(.aiReceiptNames) {
-            switch SystemLanguageModel.default.availability {
-            case .available: break
-            case .unavailable(let reason):
-                switch reason {
-                case .appleIntelligenceNotEnabled:
-                    return unavailable("Turn on Apple Intelligence in Settings to decode names. Manual editing is always available.")
-                case .modelNotReady:
-                    return unavailable("Apple Intelligence is still getting ready. Try again later, or edit names yourself.")
-                default: return unavailable("On-device AI is unavailable on this device. You can edit names yourself.")
-                }
-            }
+        if #available(iOS 26.0, *) {
             var proposals: [ReceiptNameProposal] = []
             let bounded = Array(items.prefix(150))
             do {
@@ -45,14 +36,16 @@ actor OnDeviceReceiptNameService: ReceiptNameDecodingService {
                         proposals.append(proposal)
                     }
                 }
+                AIRequestDiagnostics.record(.aiReceiptNames, failure: nil)
                 return ReceiptNameDecoding(proposals: proposals, message: proposals.isEmpty
                     ? "No clearer names suggested. Edit any unclear labels yourself."
                     : "Review \(proposals.count) suggested names below. AI can misread abbreviations; accept only names you recognize.")
             } catch is CancellationError { throw CancellationError() }
             catch {
                 try Task.checkCancellation()
+                let reason = AIModelSupport.recordFailure(error, feature: .aiReceiptNames)
                 return ReceiptNameDecoding(proposals: proposals, message: proposals.isEmpty
-                    ? "AI could not decode these names. Try again or edit them yourself."
+                    ? reason.message + " Edit names manually or try again."
                     : "AI stopped before finishing. Review \(proposals.count) suggestions below, or try again.")
             }
         }

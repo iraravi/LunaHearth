@@ -122,10 +122,16 @@ struct MealIdeasView: View {
         generation?.cancel(); result = nil; generating = true
         let snapshot = names
         let preferences = context
+        let home = repository.household?.id
         let token = UUID(); generationID = token
         generation = Task {
             defer { if generationID == token { generating = false } }
-            do { let value = try await service.suggest(names: snapshot, style: style, context: preferences); try Task.checkCancellation(); result = value }
+            do {
+                let value = try await service.suggest(names: snapshot, style: style, context: preferences)
+                try Task.checkCancellation()
+                guard generationID == token, home == repository.household?.id, snapshot == names, preferences == context, style == cookingStyle else { return }
+                result = value
+            }
             catch is CancellationError { }
             catch { self.error = error.localizedDescription }
         }

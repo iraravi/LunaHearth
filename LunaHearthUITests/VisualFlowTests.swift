@@ -2,6 +2,30 @@ import XCTest
 
 @MainActor
 final class VisualFlowTests: XCTestCase {
+    func testNotificationForAnotherHomeDoesNotShowCurrentAssignments() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--notification-shopping", "--notification-other-home"]
+        app.launch()
+        XCTAssertTrue(app.staticTexts["Another home’s notification"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.descendants(matching: .any)["assignment.arrival.shopping"].firstMatch.exists)
+        app.buttons["Done"].firstMatch.tap()
+    }
+
+    func testAssignmentArrivalAndReducedMotion() { assignmentArrival(reduced: true) }
+    func testAssignmentArrivalWithMotion() { assignmentArrival(reduced: false) }
+    private func assignmentArrival(reduced: Bool) {
+        for focus in ["tasks", "shopping"] {
+            let app = XCUIApplication()
+            app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--notification-" + focus] + (reduced ? ["--reduce-motion", "--large-text"] : [])
+            app.launch()
+            let banner = app.descendants(matching: .any)["assignment.arrival." + focus].firstMatch
+            XCTAssertTrue(banner.waitForExistence(timeout: 10))
+            XCTAssertTrue(banner.isHittable)
+            capture("Assignment-Arrival-" + focus, app: app)
+            app.buttons["Done"].firstMatch.tap()
+        }
+    }
+
     func testPublicSettingsPreserveManualShopping() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-known-groceries", "--ui-testing-ai-ready", "--ui-testing-public-settings"]
@@ -789,6 +813,11 @@ final class VisualFlowTests: XCTestCase {
             app.swipeUp()
         }
         XCTAssertTrue(app.staticTexts["aiStatus.pantryMode"].exists)
+        for _ in 0..<6 {
+            if app.staticTexts["Last AI results on this device"].isHittable { break }
+            app.swipeUp()
+        }
+        XCTAssertTrue(app.staticTexts["Last AI results on this device"].exists)
     }
 
     func testPantryPhotoReviewKeepsExistingStock() {
@@ -1523,6 +1552,9 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "1500 g")).firstMatch.waitForExistence(timeout: 5))
         capture("Restock-Quantity-Review", app: app)
         tapVisible("shopping.keepInventory.existing", app: app)
+        XCTAssertTrue(app.descendants(matching: .any)["shopping.purchaseConfirmation"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Dismiss purchase confirmation"].isHittable)
+        app.buttons["Dismiss purchase confirmation"].tap()
         tapVisible("shopping.inventory", app: app)
         tapVisible("inventory.item.Rice", app: app)
         tapVisible("inventory.details", app: app)

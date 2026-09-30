@@ -16,6 +16,8 @@ actor OnDevicePantryPhotoScanner: PantryPhotoScanning {
                 kCGImageSourceCreateThumbnailWithTransform: true,
                 kCGImageSourceThumbnailMaxPixelSize: 1800
               ] as CFDictionary) else { throw ReceiptImportError.unreadable }
+        let unavailable = AIModelSupport.unavailability(for: .aiPhoto)
+        if let unavailable { AIRequestDiagnostics.record(.aiPhoto, failure: unavailable) }
         var explanation = "Label reading only. Full photo recognition needs iOS 27 and available Apple Intelligence. Unlabelled items may be missed."
         if #available(iOS 27.0, *), allowsImageModel, FeatureAccess.allows(.aiPhoto), !ProcessInfo.processInfo.arguments.contains("--ui-testing") {
             if case .available = SystemLanguageModel.default.availability, SystemLanguageModel.default.capabilities.contains(.vision) {
@@ -28,15 +30,20 @@ actor OnDevicePantryPhotoScanner: PantryPhotoScanning {
                         Attachment(image)
                     }
                     try Task.checkCancellation()
+                    AIRequestDiagnostics.record(.aiPhoto, failure: nil)
                     return PantryPhotoScan(names: PantryPhotoRules.names(response.content.names), explanation: "On-device AI suggestions. Check every name against your photo; hidden or unclear items may be missed.")
                 } catch {
                     try Task.checkCancellation()
-                    explanation = "Photo AI could not finish. These suggestions use readable product labels only. Try another photo or add missed items."
+                    let reason = AIModelSupport.recordFailure(error, feature: .aiPhoto)
+                    explanation = reason.message + " These suggestions use readable product labels only. Try another photo or add missed items."
+                    // Preserve OCR as a separate non-generative fallback.
                 }
             } else {
+                AIRequestDiagnostics.record(.aiPhoto, failure: unavailable ?? .unsupported)
                 explanation = "Image AI is unavailable or still preparing. These suggestions use readable product labels only; unlabelled items may be missed."
             }
         }
+        if let unavailable { explanation = unavailable.message + " Reading product labels only; unlabelled items may be missed." }
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         request.usesLanguageCorrection = true

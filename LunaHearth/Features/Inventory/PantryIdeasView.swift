@@ -47,7 +47,10 @@ struct PantryIdeasView: View {
                     if (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiPantry) ?? true)) {
                         TextField("Describe what you want, e.g. South Indian breakfast staples", text: $request, axis: .vertical).lineLimit(2...3)
                             .accessibilityIdentifier("inventory.ideasRequest")
-                            .onChange(of: request) { _, value in if value.count > 300 { request = String(value.prefix(300)) } }
+                            .onChange(of: request) { _, value in
+                                if value.count > 300 { request = String(value.prefix(300)) }
+                                generated = nil; selected = []; generating = false; generationID += 1
+                            }
                         Button { generating = true; generationID += 1 } label: { Label(generating ? "Thinking on your device…" : "Tailor with on-device AI", systemImage: "sparkles") }
                             .disabled(generating).accessibilityIdentifier("inventory.generateIdeas")
                     }
@@ -118,10 +121,11 @@ struct PantryIdeasView: View {
                 .task(id: generationID) {
                     guard generating else { return }
                     let currentGeneration = generationID
+                    let requestSnapshot = request, styleSnapshot = style
                     do {
                         let result = try await service.suggest(style: style, request: request, existing: existing)
                         try Task.checkCancellation()
-                        guard currentGeneration == generationID else { return }
+                        guard currentGeneration == generationID, request == requestSnapshot, style == styleSnapshot, repository.household?.id == householdID else { return }
                         generated = result; selected = []; generating = false
                     } catch {
                         guard !Task.isCancelled, currentGeneration == generationID else { return }

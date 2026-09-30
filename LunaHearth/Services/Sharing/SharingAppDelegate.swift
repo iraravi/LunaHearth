@@ -7,6 +7,7 @@ import UserNotifications
     @Published var showAppointment = false
     var appointmentID: UUID?
     @Published var showPersonalShopping = false
+    @Published var assignmentRoute: AssignmentNotificationRoute?
     @Published var showMealIdeas = false
     @Published var showMealPreparation = false
     var preparationTaskID: UUID?
@@ -17,15 +18,16 @@ import UserNotifications
         if response.notification.request.identifier.hasPrefix("appointment.") { await openAppointment(response.notification.request.identifier); return }
         if response.notification.request.identifier.hasPrefix("meal.prep.") { await openPreparation(response.notification.request.identifier); return }
         if response.notification.request.identifier == "meal.planning.daily" { await openMealIdeas(); return }
-        guard response.notification.request.identifier.hasPrefix("shopping.personal.") || response.notification.request.identifier.hasPrefix("tasks.personal.") else { return }
-        await openPersonalShopping()
+        guard let route = AssignmentNotificationRoute(identifier: response.notification.request.identifier) else { return }
+        await openPersonalShopping(route)
     }
     private func openAppointment(_ identifier: String) { appointmentID = identifier.split(separator: ".").last.flatMap { UUID(uuidString: String($0)) }; showAppointment = true }
     private func openPreparation(_ identifier: String) { preparationTaskID = identifier.split(separator: ".").last.flatMap { UUID(uuidString: String($0)) }; showMealPreparation = true }
     private func openMealIdeas() { showMealIdeas = true }
-    private func openPersonalShopping() async {
-        await refreshShopping?()
+    private func openPersonalShopping(_ route: AssignmentNotificationRoute) async {
+        assignmentRoute = route
         showPersonalShopping = true
+        await refreshShopping?()
     }
     var refreshShopping: (@MainActor () async -> Void)?
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {

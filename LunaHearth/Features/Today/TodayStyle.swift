@@ -41,6 +41,8 @@ struct TodayHero: View {
 }
 
 struct TodayBriefCard: View {
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @Environment(\.aiAvailability) private var aiAvailability
     let facts: TodayBriefFacts
     @State private var brief: TodayBrief?
     @State private var requested = false
@@ -52,12 +54,14 @@ struct TodayBriefCard: View {
             HStack {
                 Label("Your daily brief", systemImage: "sparkles").font(.subheadline.weight(.semibold))
                 Spacer(minLength: 8)
+                if aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiBriefs) ?? true) {
                 Button { requested = true } label: {
                     if running { ProgressView().accessibilityLabel("Summarizing") }
                     else { Text("Summarize").font(.caption.weight(.semibold)) }
                 }.frame(minWidth: 44, minHeight: 44).buttonStyle(.plain)
                     .foregroundStyle(TodayTheme.accent).disabled(running)
                     .accessibilityIdentifier("today.summarize")
+                }
             }
             Text(brief?.text ?? facts.fallback).font(.subheadline).foregroundStyle(TodayTheme.muted)
                 .fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("today.briefText")

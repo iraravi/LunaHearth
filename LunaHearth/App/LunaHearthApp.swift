@@ -13,6 +13,8 @@ struct LunaHearthApp: App {
     @State private var appointmentAlerts: AppointmentAlertCoordinator
     @State private var personal: PersonalShopping
     @State private var reminderDelivery: ReminderDeliveryCoordinator
+    @State private var publicStatus = PublicConfigurationStore()
+    @State private var aiAvailability: AIAvailability = .unavailable
 
     init() {
         do {
@@ -104,7 +106,7 @@ struct LunaHearthApp: App {
                 .accessibilityIdentifier("storage.recovery")
                 .background(Color(.systemBackground))
             } else {
-            AppRootView().environment(calendarDelivery).environment(appointmentAlerts).environment(repository).environment(connections).environment(reminderDelivery).environment(sharing).environment(personal).tint(AppTheme.accent)
+            AppRootView(aiAvailability: $aiAvailability).environment(calendarDelivery).environment(appointmentAlerts).environment(repository).environment(connections).environment(reminderDelivery).environment(sharing).environment(personal).tint(AppTheme.accent)
                 .sheet(isPresented: Binding(get: { sharingDelegate.showAppointment }, set: { sharingDelegate.showAppointment = $0 })) {
                     NavigationStack {
                         Group {
@@ -126,7 +128,11 @@ struct LunaHearthApp: App {
                 }
                 .sheet(isPresented: Binding(get: { sharingDelegate.showPersonalShopping }, set: { sharingDelegate.showPersonalShopping = $0 })) {
                     NavigationStack {
-                        PersonalShoppingView().toolbar {
+                        Group {
+                            if let route = sharingDelegate.assignmentRoute, route.householdID != repository.household?.id {
+                                ContentUnavailableView("Another home’s notification", systemImage: "house", description: Text("Open the home that sent this notification to see its assignments."))
+                            } else { PersonalShoppingView(notificationFocus: sharingDelegate.assignmentRoute?.focus) }
+                        }.toolbar {
                             ToolbarItem(placement: .confirmationAction) { Button("Done") { sharingDelegate.showPersonalShopping = false } }
                         }
                     }.environment(repository).environment(personal).environment(sharing)
@@ -148,8 +154,19 @@ struct LunaHearthApp: App {
                     sharingDelegate.invitationMetadata = nil
                 }
                 .environment(calendarDelivery).environment(appointmentAlerts)
+                .environment(publicStatus)
+                .environment(\.aiAvailability, (publicStatus.configuration?.allows(.ai) ?? true) ? aiAvailability : .unavailable)
                 #if DEBUG
                 .modifier(UITestAppearance())
+                .task {
+                    let args = ProcessInfo.processInfo.arguments
+                    guard args.contains("--ui-testing"), let home = repository.household?.id,
+                          let focus = args.contains("--notification-tasks") ? AssignmentFocus.tasks : args.contains("--notification-shopping") ? AssignmentFocus.shopping : nil else { return }
+                    personal.select(repository.members.first?.id, repository: repository)
+                    let notificationHome = args.contains("--notification-other-home") ? UUID() : home
+                    sharingDelegate.assignmentRoute = AssignmentNotificationRoute(identifier: "\(focus.rawValue).personal.\(notificationHome).notification")
+                    sharingDelegate.showPersonalShopping = true
+                }
                 #endif
             }
         }

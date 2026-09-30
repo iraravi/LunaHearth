@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AIStatusView: View {
     @Environment(\.scenePhase) private var scenePhase
+    @State private var diagnostics: [AIRequestDiagnostic] = []
     @State private var snapshot: AIStatusSnapshot?
     private let service: any AIStatusProviding = AppleAIStatusService()
 
@@ -41,6 +42,26 @@ struct AIStatusView: View {
                     Text("This shows current capability, not the result of your last scan. Each scan tells you which method it used.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
+                SettingsDetailCard(title: "Last AI results on this device", symbol: "stethoscope", accent: AppTheme.slate) {
+                    Text("Try the action that failed, then refresh this screen. These checks distinguish a model failure from a generated answer that needs correction.").font(.subheadline)
+                    if diagnostics.isEmpty {
+                        Text("No recorded requests yet.").font(.subheadline).foregroundStyle(.secondary)
+                    }
+                    ForEach(diagnostics) { result in
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(result.feature.title).font(.subheadline.weight(.semibold))
+                            Text(result.failure?.message ?? "Generation completed. This does not verify the accuracy of its answer.")
+                                .font(.subheadline).foregroundStyle(.secondary)
+                            Text(result.checkedAt.formatted(date: .abbreviated, time: .shortened)).font(.caption).foregroundStyle(.secondary)
+                        }.accessibilityElement(children: .combine)
+                    }
+                    Text("Only the feature, time and result category are kept locally. No prompts, photos, ingredient names, responses or raw errors are recorded here or sent to us.")
+                        .font(.footnote).foregroundStyle(.secondary)
+                    if !diagnostics.isEmpty {
+                        Button("Clear diagnostic results") { AIRequestDiagnostics.clear(); refresh() }
+                            .frame(minHeight: 44).accessibilityIdentifier("aiStatus.clearDiagnostics")
+                    }
+                }.accessibilityIdentifier("aiStatus.lastResults")
                 SettingsDetailCard(title: "Review AI results", symbol: "exclamationmark.triangle", accent: AppTheme.clay) {
                     Text("On-device processing does not guarantee accuracy. AI can misidentify products, miss details or suggest unsuitable ingredients. Review results before saving or acting on them. LunaHearth does not verify food safety or allergens.").font(.subheadline)
                 }
@@ -54,7 +75,7 @@ struct AIStatusView: View {
         .task { refresh() }
         .onChange(of: scenePhase) { _, phase in if phase == .active { refresh() } }
     }
-    private func refresh() { snapshot = service.status() }
+    private func refresh() { snapshot = service.status(); diagnostics = AIRequestDiagnostics.latest() }
     private func detail(_ title: String, _ value: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title).font(.caption).foregroundStyle(.secondary)

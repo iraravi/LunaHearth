@@ -3,9 +3,13 @@ import FoundationModels
 
 actor OnDeviceTodayBriefService: TodayBriefService {
     func summarize(_ facts: TodayBriefFacts) async throws -> TodayBrief {
+        try Task.checkCancellation()
         let fallback = TodayBrief(text: facts.fallback, usedModel: false)
-        guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else { return fallback }
-        if #available(iOS 26.0, *), FeatureAccess.allows(.aiBriefs), case .available = SystemLanguageModel.default.availability {
+        if let reason = AIModelSupport.unavailability(for: .aiBriefs) {
+            AIRequestDiagnostics.record(.aiBriefs, failure: reason)
+            return fallback
+        }
+        if #available(iOS 26.0, *) {
             do {
                 let session = LanguageModelSession(instructions: """
                 Write a calm household overview in at most two short sentences using only the supplied counts.
@@ -19,10 +23,11 @@ actor OnDeviceTodayBriefService: TodayBriefService {
                 let result = try await session.respond(to: String(decoding: data, as: UTF8.self))
                 try Task.checkCancellation()
                 let text = result.content.trimmingCharacters(in: .whitespacesAndNewlines)
-                guard !text.isEmpty else { return fallback }
+                guard !text.isEmpty else { AIRequestDiagnostics.record(.aiBriefs, failure: .invalidResponse); return fallback }
+                AIRequestDiagnostics.record(.aiBriefs, failure: nil)
                 return TodayBrief(text: String(text.prefix(600)), usedModel: true)
             } catch is CancellationError { throw CancellationError() }
-            catch { try Task.checkCancellation(); return fallback }
+            catch { try Task.checkCancellation(); AIModelSupport.recordFailure(error, feature: .aiBriefs); return fallback }
         }
         return fallback
     }

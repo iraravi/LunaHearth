@@ -93,7 +93,7 @@ enum PantrySuggestionRules {
         var seen = Set(existing.map(IngredientMatching.key))
         return names.prefix(300).compactMap { value in
             let name = value.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !name.isEmpty, name.count <= 200, seen.insert(IngredientMatching.key(name)).inserted else { return nil }
+            guard AIInputRules.label(name, maximum: 200), seen.insert(IngredientMatching.key(name)).inserted else { return nil }
             return name
         }.prefix(150).map { $0 }
     }

@@ -21,8 +21,7 @@ enum PantryPhotoRules {
         var result: [String] = []
         for value in values.prefix(100) {
             let name = value.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !name.isEmpty, name.count <= 100,
-                  !name.unicodeScalars.contains(where: CharacterSet.controlCharacters.contains),
+            guard AIInputRules.label(name, maximum: 100),
                   !result.contains(where: { IngredientMatching.same($0, name) }) else { continue }
             result.append(name)
             if result.count == 50 { break }

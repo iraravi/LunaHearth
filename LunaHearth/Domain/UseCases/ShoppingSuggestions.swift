@@ -12,6 +12,10 @@ struct ShoppingSuggestionRequest: Sendable {
     let recentItems: [String]
     let pendingItems: [String]
     var pantryItems: [String] = []
+
+    var hasPlan: Bool { !prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    // Past purchases are useful for an open-ended list, not evidence of dish ingredients.
+    var relevantHistory: [String] { hasPlan ? [] : recentItems }
 }
 
 struct ShoppingSuggestionResult: Sendable {
@@ -33,12 +37,17 @@ enum ShoppingSuggestionRules {
         var seen = Set(pending.map(key))
         return items.prefix(20).compactMap { item in
             let name = item.name.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !name.isEmpty, name.count <= 200, item.quantity.count <= 100, seen.insert(key(name)).inserted else { return nil }
+            guard AIInputRules.label(name, maximum: 200), item.quantity.count <= 100,
+                  !item.quantity.unicodeScalars.contains(where: CharacterSet.controlCharacters.contains), seen.insert(key(name)).inserted else { return nil }
             return ShoppingSuggestion(name: name, quantity: item.quantity.trimmingCharacters(in: .whitespacesAndNewlines))
         }.prefix(8).map { $0 }
     }
     static func fallback(_ request: ShoppingSuggestionRequest, reason: String) -> ShoppingSuggestionResult {
-        let history = reviewed(request.recentItems.map { ShoppingSuggestion(name: $0) }, excluding: request.pendingItems + request.pantryItems)
+        guard !request.hasPlan else {
+            return ShoppingSuggestionResult(items: [], usedModel: false,
+                explanation: reason + " No ingredients were generated for your request. Try again when on-device AI is ready, or add ingredients manually using a trusted recipe.")
+        }
+        let history = reviewed(request.relevantHistory.map { ShoppingSuggestion(name: $0) }, excluding: request.pendingItems + request.pantryItems)
         let basics = reviewed(["Milk", "Eggs", "Bread", "Rice", "Fruit", "Vegetables"].map { ShoppingSuggestion(name: $0) }, excluding: request.pendingItems + request.pantryItems)
         return ShoppingSuggestionResult(items: history.isEmpty ? basics : history, usedModel: false,
             explanation: reason + (history.isEmpty ? " Here are starter ideas to review; they are not AI-generated or based on your request." : " These are previously checked items to review; they are not AI-generated."))

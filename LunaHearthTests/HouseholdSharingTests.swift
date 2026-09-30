@@ -449,6 +449,48 @@ private actor SharingFake: HouseholdSharingService, HouseholdInvitationLookupSer
         #expect(owner.inventory.first?.quantityText == "1 litre")
     }
 
+    @Test func sharedRestockClearsLowStockAndReceiptReplayKeepsOneBalance() async throws {
+        let server = SharedHomeServer(), owner = try repo("Family"), participant = try repo("Personal")
+        let ravi = HouseholdSharingController(service: SharingFake(server: server, account: "ravi"))
+        let kira = HouseholdSharingController(service: SharingFake(server: server, account: "kira"))
+        var draft = InventoryDraft(); draft.name = "Curd"; draft.quantity = "500 g"; draft.isLowStock = true
+        let stockID = try owner.saveInventory(draft)
+        try owner.add(EntryDraft(kind: .grocery, title: "Curd", quantity: "1 kg"))
+        let groceryID = try #require(owner.groceries.first?.id)
+        await ravi.enable(owner)
+        let home = try #require(owner.household?.id)
+        await kira.open(participantDestination(home), repository: participant)
+        #expect(participant.inventory.first?.isLowStock == true)
+        try participant.recordPurchase(try #require(participant.groceries.first), addToInventory: true, keeping: stockID)
+        await kira.sync(participant, force: true); await ravi.sync(owner, force: true)
+        for repository in [owner, participant] {
+            #expect(repository.inventory.count == 1)
+            #expect(repository.inventory.first?.id == stockID)
+            #expect(repository.inventory.first?.quantityText == "1500 g")
+            #expect(repository.inventory.first?.isLowStock == false)
+            #expect(repository.groceries.first?.id == groceryID && repository.groceries.first?.isCompleted == true)
+            #expect(repository.purchases.count == 1)
+            #expect(repository.syncBaselines.allSatisfy { !$0.conflict })
+        }
+        var lines = ReceiptRules.scan(text: "Curd 4.00").lines
+        lines[0].existingPurchaseID = owner.purchases.first?.id
+        lines[0].amount = "4.00"
+        var expense = ExpenseDraft(); expense.merchant = "Market"; expense.amount = "4.00"; expense.currency = "USD"
+        let key = ReceiptRules.hash("shared-curd-receipt")
+        try owner.importReceipt(lines, householdID: home, storeName: "Market", expense: expense, receiptKey: key)
+        await ravi.sync(owner, force: true); await kira.sync(participant, force: true)
+        #expect(try participant.importReceipt(lines, householdID: home, storeName: "Market", expense: expense, receiptKey: key) == 0)
+        for repository in [owner, participant] {
+            #expect(repository.inventory.count == 1 && repository.inventory.first?.quantityText == "1500 g")
+            #expect(repository.inventory.first?.isLowStock == false)
+            #expect(repository.expenses.count == 1 && repository.purchases.count == 1)
+            #expect(repository.purchases.first?.inventoryID == stockID)
+            #expect(repository.purchases.first?.expenseID == repository.expenses.first?.id)
+            let report = ExpenseRules.summary(repository.expenseReportItems, month: ExpenseRules.month(.now), currency: "USD")
+            #expect(report.spent == 400 && report.net == 400)
+        }
+    }
+
     @Test func simultaneousOfflineRestocksPreserveBothVersionsForReview() async throws {
         let server = SharedHomeServer(), owner = try repo("Family"), participant = try repo("Personal")
         let ravi = HouseholdSharingController(service: SharingFake(server: server, account: "ravi"))

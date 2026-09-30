@@ -98,10 +98,13 @@ enum MealSuggestionRules {
     // Generative output is never accepted as cooking instructions.
     static func generatedIdea(id: String, name: String, ingredients: [String], minutes: Int) -> PantryMealIdea? {
         guard valid(name: name, ingredients: ingredients, minutes: minutes) else { return nil }
-        return PantryMealIdea(id: id, name: name, ingredients: ingredients, minutes: minutes)
+        var seen: Set<String> = []
+        let cleaned = ingredients.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { seen.insert(IngredientMatching.key($0)).inserted }
+        return PantryMealIdea(id: id, name: name.trimmingCharacters(in: .whitespacesAndNewlines), ingredients: cleaned, minutes: minutes)
     }
     static func valid(name: String, ingredients: [String], minutes: Int) -> Bool {
-        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && name.count <= 100 && (1...180).contains(minutes)
-        && (1...15).contains(ingredients.count) && ingredients.allSatisfy { !$0.isEmpty && $0.count <= 80 && !$0.contains("\n") }
+        AIInputRules.label(name, maximum: 100) && (1...180).contains(minutes)
+        && (1...15).contains(ingredients.count) && ingredients.allSatisfy { AIInputRules.label($0, maximum: 80) }
     }
 }

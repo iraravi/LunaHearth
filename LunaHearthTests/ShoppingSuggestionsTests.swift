@@ -4,7 +4,7 @@ import Testing
 
 @MainActor struct ShoppingSuggestionsTests {
     @Test func pantryRiceIsExcludedFromFallbackAndSave() throws {
-        let request = ShoppingSuggestionRequest(prompt: "Chicken biryani", recentItems: ["Rice", "Chicken"], pendingItems: [], pantryItems: [" rice "])
+        let request = ShoppingSuggestionRequest(prompt: "", recentItems: ["Rice", "Chicken"], pendingItems: [], pantryItems: [" rice "])
         #expect(ShoppingSuggestionRules.fallback(request, reason: "Fallback").items.map(\.name) == ["Chicken"])
         let repo = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
         try repo.createHousehold(name: "Home", owner: "Ravi", members: [])
@@ -30,11 +30,31 @@ import Testing
     }
 
     @Test func fallbackIsExplicitAndUsesOnlyProvidedHistory() {
-        let request = ShoppingSuggestionRequest(prompt: "Dinner", recentItems: ["Soap", "MILK", "Soap"], pendingItems: ["Milk"])
+        let request = ShoppingSuggestionRequest(prompt: "", recentItems: ["Soap", "MILK", "Soap"], pendingItems: ["Milk"])
         let result = ShoppingSuggestionRules.fallback(request, reason: "Model unavailable.")
         #expect(!result.usedModel)
         #expect(result.items.map(\.name) == ["Soap"])
         #expect(result.explanation.contains("not AI-generated"))
+    }
+
+    @Test func dishRequestNeverFallsBackToUnrelatedHistoryOrBasics() {
+        for plan in ["Chicken biryani", "chicken briyani", "chicken biriyani", "Vegetarian dinner without chicken"] {
+            let request = ShoppingSuggestionRequest(prompt: plan, recentItems: ["Lentils", "Soap"], pendingItems: [], pantryItems: ["Rice"])
+            let result = ShoppingSuggestionRules.fallback(request, reason: "AI unavailable.")
+            #expect(request.relevantHistory.isEmpty)
+            #expect(result.items.isEmpty)
+            #expect(!result.usedModel)
+            #expect(result.explanation.contains("No ingredients were generated"))
+        }
+        let general = ShoppingSuggestionRequest(prompt: " \n ", recentItems: ["Lentils"], pendingItems: [])
+        #expect(general.relevantHistory == ["Lentils"])
+        #expect(ShoppingSuggestionRules.fallback(general, reason: "Offline").items.map(\.name) == ["Lentils"])
+    }
+
+    @Test func mainIngredientSurvivesPantryAndListReviewUnlessAlreadyRecorded() {
+        let generated: [ShoppingSuggestion] = [.init(name: "Chicken"), .init(name: "Rice"), .init(name: "Onion")]
+        #expect(ShoppingSuggestionRules.reviewed(generated, excluding: ["Rice"]).map(\.name) == ["Chicken", "Onion"])
+        #expect(ShoppingSuggestionRules.reviewed(generated, excluding: ["Rice", "chicken"]).map(\.name) == ["Onion"])
     }
 
     @Test func reviewIsRequiredAndBatchIsAtomicWithDuplicateAndHouseholdChecks() throws {
