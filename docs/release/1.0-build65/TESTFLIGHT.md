@@ -14,4 +14,6 @@ Archive: /Users/ira/Library/Developer/Xcode/Archives/2026-09-30/LunaHearth 1.0 (
 Live remote-notification delivery and physical folding remain unverified.
 
 ## Distribution
-Command-line upload succeeded on September 30 at 14:34 CDT: /tmp/luna65-upload.log. Apple reports the package is processing. Tester availability is not yet verified.
+Command-line upload succeeded on September 30 at 14:34 CDT: /tmp/luna65-upload.log. App Store Connect processing is Complete. Assigned to LunaHearth Beta (4 internal testers) and Ravi Home (1 external tester); beta-review submission completed with automatic tester notification enabled. LunaHearth Beta shows build 65 as Testing. Ravi Home also shows build 65 as Testing. Verified both group build pages on September 30. Both Ravi iCloud accounts are present in the internal group; the no-dot account is also in Ravi Home.
+
+Release bookkeeping commit 29bacda was created locally. Its GitHub push failed because macOS Keychain could not supply credentials; this does not affect the successful TestFlight distribution.
