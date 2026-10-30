@@ -18,6 +18,17 @@ import UIKit
         #expect(scan.lines.map(\.id) == ReceiptRules.scan(text: scan.text).lines.map(\.id))
         #expect(ReceiptRules.scan(text: "TOTAL 25.00\nThank you").lines.isEmpty)
     }
+    @Test func currencyLabelsAndWholeRupeesDoNotDropItems() {
+        let result = ReceiptRules.scan(text: "MARKET\nMilk ₹60\nCurd Rs. 35.00\nRice INR 120\nApples₹80.00\nBread $2.00\nTOTAL INR 297.00")
+        #expect(result.lines.map(\.name) == ["Milk", "Curd", "Rice", "Apples", "Bread"])
+        #expect(result.lines.allSatisfy { $0.quantity.isEmpty && $0.amount.isEmpty })
+    }
+
+    @Test func currencyFormatsDoNotTurnRefundsOrPackSizesIntoPurchases() {
+        let result = ReceiptRules.scan(text: "Milk - ₹60.00\nCurd ₹-35.00\nRice −120.00\nBread -2.00\nMilk 500\nTOTAL ₹120\nCGST Rs. 5.00\nVISA $20.00")
+        #expect(result.lines.isEmpty)
+    }
+
     @Test func repeatedIngredientLinesAreOneReviewRow() {
         let result = ReceiptRules.scan(text: "2 x CURD 4.00\n3 x Curd 6.00\nMilk 2.00\nMILK 2.00")
         #expect(result.lines.count == 2)
@@ -84,6 +95,34 @@ import UIKit
         repo.syncConfiguration?.readOnly = true
         #expect(throws: HouseholdSharingError.self) { try repo.importReceipt(lines, householdID: home, storeName: "Costco") }
         #expect(repo.inventory.isEmpty && repo.groceries.isEmpty && repo.stores.isEmpty)
+    }
+
+    @Test func cameraEncodingBoundsSizeAndPreservesReadableText() async throws {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        let image = UIGraphicsImageRenderer(size: CGSize(width: 3000, height: 4000), format: format).image { context in
+            UIColor.white.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 3000, height: 4000))
+            ("MARKET\nCURD 3.99\nTOTAL 3.99" as NSString).draw(
+                in: CGRect(x: 200, y: 200, width: 2600, height: 1200),
+                withAttributes: [.font: UIFont.monospacedSystemFont(ofSize: 120, weight: .regular), .foregroundColor: UIColor.black])
+        }
+        let data = try await ReceiptCameraEncoder().encode(image)
+        let output = try #require(UIImage(data: data))
+        #expect(max(output.size.width, output.size.height) <= 2600)
+        let scan = try await VisionReceiptScanner().scan(imageData: data)
+        #expect(scan.lines.contains { $0.name.localizedCaseInsensitiveContains("curd") })
+    }
+
+    @Test func invalidAndOversizedImagesFailWithoutRecognition() async {
+        for data in [Data(), Data("not an image".utf8), Data(repeating: 0, count: 20_000_001)] {
+            do {
+                _ = try await VisionReceiptScanner().scan(imageData: data)
+                Issue.record("Invalid image was accepted")
+            } catch {
+                #expect(error is ReceiptImportError)
+            }
+        }
     }
 
     @Test func visionReadsActualReceiptImage() async throws {

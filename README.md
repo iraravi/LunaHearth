@@ -1,5 +1,7 @@
 # LunaHearth
 
+Customer guidance: [Product guide](docs/support/product-guide.html), [help and FAQ](docs/support/help-and-faq.html). Publisher-only release preparation: [legal and privacy review](docs/support/legal-review.html). The policy remains a draft until publisher contact and publication details are confirmed.
+
 > Current foundation (ADR-012): local household reminders, shopping, schedules and home records support optional private CloudKit sync and CKShare invitations. Foreground changes sync automatically; live two-account device acceptance is still a release check. Apple Reminders is a separate optional connection. Setup no longer asks for a room. Earlier Apple-only/manual-backup-only implementation notes below are historical. See [ADR-012](docs/ADR/012-live-private-household-sharing.md).
 
 

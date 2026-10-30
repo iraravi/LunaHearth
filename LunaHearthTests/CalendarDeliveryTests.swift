@@ -85,6 +85,21 @@ import Testing
         let foreign = CalendarDeliveryCandidate(id: "foreign", calendarID: "one", marker: "unrelated", recurring: false, writable: true)
         #expect(throws: CalendarDeliveryError.self) { try CalendarDeliveryRules.resolve(job(external: "foreign"), candidates: [foreign]) }
     }
+    @Test func publisherPauseDoesNotTurnUnwrittenExportIntoUncertainWrite() async throws {
+        let repo = try repository()
+        let home = try #require(repo.household?.id)
+        _ = try repo.saveAppointment(.init(title: "Class"), householdID: home, appleCalendarID: "apple")
+        let service = PausedCalendarProvider()
+        let coordinator = CalendarDeliveryCoordinator(service: service)
+        await coordinator.run(repo)
+        #expect(repo.calendarDeliveryLinks.first?.attempted == false)
+        #expect(coordinator.syncMessage == "Calendar export is temporarily paused.")
+        await service.resume()
+        await coordinator.run(repo, force: true)
+        #expect(repo.calendarDeliveryLinks.first?.externalID == "created-once")
+        #expect(coordinator.syncMessage == nil)
+    }
+
     @Test func noAutomaticExportWithoutCheckbox() async throws {
         let repo = try repository(); let home = try #require(repo.household?.id)
         _ = try repo.saveAppointment(.init(title: "Private plan"), householdID: home)
@@ -106,5 +121,18 @@ private actor CalendarTestProvider: CalendarDeliveryService {
         if ids[job.eventID] == nil { ids[job.eventID] = UUID().uuidString; createdCount += 1 }
         if fail { fail = false; throw CalendarDeliveryError.uncertain }
         return ids[job.eventID]
+    }
+}
+
+private actor PausedCalendarProvider: CalendarDeliveryService {
+    private var paused = true
+    func resume() { paused = false }
+    func requestCalendars() async throws -> [ApplePlanningSource] { [] }
+    func deliver(_ job: CalendarDeliveryJob) async throws -> String? {
+        if paused { throw ConfigurationError.paused("Calendar export is temporarily paused.") }
+        guard try CalendarDeliveryRules.resolve(job, candidates: []) == .create else {
+            throw CalendarDeliveryError.uncertain
+        }
+        return "created-once"
     }
 }

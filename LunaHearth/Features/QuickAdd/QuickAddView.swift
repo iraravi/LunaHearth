@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct QuickAddView: View {
+    @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
+    private var reduceMotion: Bool { HearthMotion.reduced(systemReduceMotion) }
     @Environment(PublicConfigurationStore.self) private var publicStatus
     @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
@@ -128,7 +130,7 @@ struct QuickAddView: View {
             .saveError($error)
             .onChange(of: focusedField) { _, field in
                 if field == .store {
-                    withAnimation { scroll.scrollTo("shopping.store", anchor: .top) }
+                    withAnimation(reduceMotion ? nil : .default) { scroll.scrollTo("shopping.store", anchor: .top) }
                 }
             }
             }

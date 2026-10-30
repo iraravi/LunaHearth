@@ -282,3 +282,6 @@ Foreground periodic reconciliation now waits 20 seconds after the initial refres
 
 ### Public operational settings — ADR 049
 A separate read-only public `LHAppConfiguration` / `ios-current` record provides app feature switches, notices and help text. This contains no household records and does not participate in private/shared sync, backups, conflict handling or ownership. Fixed fetches are bounded/cached; manual core workflows and existing data survive unavailable/expired configuration. See `PUBLIC_APP_CONFIGURATION.md` for permissions, publication and pending production validation.
+
+### October 4 release validation hardening
+Incoming FamilyEvent records now reject non-finite/reversed dates and invalid titles before restore or sync insertion. MealPlanEntry records reject non-canonical/nonexistent civil date keys; absent legacy date keys still use the existing migration path. Rejections preserve the local graph and sync token. No schema, record key, network or ownership change. Regression evidence is in `validation/2026-10-04-deep-release-review.md`.

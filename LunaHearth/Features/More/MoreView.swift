@@ -190,6 +190,11 @@ private struct MorePrivacyView: View {
             NavigationLink { PrivacyPolicyView() } label: {
                 MoreDestinationRow(title: "Privacy policy", detail: "Read the offline policy draft", symbol: "doc.text", accent: AppTheme.sage)
             }.accessibilityIdentifier("more.privacyPolicy")
+            if let article = HouseholdSupportArticle.all.first(where: { $0.id == "use" }) {
+            NavigationLink { HouseholdSupportArticleView(article: article) } label: {
+                MoreDestinationRow(title: "Important information", detail: "AI, safety and product limitations", symbol: "doc.text.magnifyingglass", accent: AppTheme.sage)
+            }.accessibilityIdentifier("more.responsibleUse")
+            }
             SettingsDetailCard(title: "Your home works offline", symbol: "iphone", accent: AppTheme.sage) {
                 Text("Your household is saved on this device. No LunaHearth account or tracking is required.")
                     .font(.subheadline).foregroundStyle(.secondary)

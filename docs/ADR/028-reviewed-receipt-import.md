@@ -24,3 +24,14 @@ Unit tests exercise priced-line parsing, payment exclusion, explicit quantity ha
 
 ### On-device name proposals (build 26)
 User requested generative decoding of abbreviated receipt items. Add a domain decoding protocol and a Foundation Models adapter, with transient, individually accepted name proposals. No schema or networking change. Existing validated receipt import remains the only write path; AI does not infer quantities, money, dates or purchase actions. See AI_ON_DEVICE.md for availability, privacy and cancellation behavior.
+
+### Receipt scan recovery — October 30, 2026
+Photo loading and OCR are now one bounded review session. A 60-second watchdog releases the UI even if photo-provider or Vision work is slow to return; Cancel scan immediately restores controls. Cancellation invalidates the attempt, discards late results/errors, and preserves the prior review. Each retry owns its scanner, preventing an older blocked actor from serialising the retry. Photo selection resets after success/failure/cancellation so the same image can be selected again. No timeout claims to terminate an uncooperative system operation immediately. Saving is disabled until receipt text has been loaded.
+
+Entities remain Purchase/GroceryItem/InventoryItem/Expense through the existing reviewed save path. No new persistence, permissions, telemetry or network services. Photos stored only in iCloud still depend on Apple's photo-provider download; users are told to download in Photos or retry a clear page. Core manual expense/pantry entry remains available.
+
+### Deeper camera/retry review — October 30, 2026
+Camera callbacks now hand immutable captured images to the bounded session. A service actor normalizes orientation, downsizes to a maximum 2600-pixel dimension and encodes JPEG away from the main actor; conversion is covered by the same cancellation/timeout as recognition. Photo-library pages are loaded and recognized sequentially rather than retaining all encoded pages at once. Completing a session invalidates its watchdog generation, and cancellation before work starts skips the provider. Late name-decoding errors cannot overwrite a newer review. No additional permissions, image retention, networking or record changes.
+
+### Missing-item recovery — October 30, 2026
+Receipt item parsing now accepts explicit currency labels (Rs./INR and supported symbols), including whole-rupee prices and symbols touching the item name. Bare whole numbers remain excluded because they can be pack sizes rather than prices. Negative/refund/payment rows remain excluded, and amounts are still not inferred as quantities. Previously supported lines retain their source-position IDs. Add a missed item now appears before the proposed item rows. No new records or data transmission; the exact customer receipt is still needed to verify their missing line.

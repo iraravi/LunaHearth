@@ -54,6 +54,28 @@ import Testing
         let invalid = try #require(URL(string: "lunahearth://calendar?date=nan&create=1"))
         #expect(AppointmentLink(url: invalid) == nil)
     }
+    @Test func alertRefreshReconcilesChangesMadeDuringAnEarlierRefresh() async throws {
+        let repo = try repository()
+        let home = try #require(repo.household?.id)
+        let member = try #require(repo.members.first?.id)
+        let suite = "AppointmentRefreshTests.\(UUID())"
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        defaults.set(true, forKey: "calendar.alertsEnabled")
+        defaults.set(member.uuidString, forKey: "calendar.alertMember")
+        _ = try repo.saveAppointment(.init(title: "Plan", reminderMinutes: 15), householdID: home)
+        let service = SuspendedAppointmentAlerts()
+        let coordinator = AppointmentAlertCoordinator(service: service, defaults: defaults)
+        let first = Task { await coordinator.refresh(repo) }
+        await service.waitUntilStarted()
+        defaults.set(false, forKey: "calendar.alertsEnabled")
+        await coordinator.refresh(repo)
+        await service.release()
+        await first.value
+        #expect(await service.calls == 2)
+        #expect(await service.values.isEmpty)
+    }
+
     @Test func alertsTargetSelectedPersonAndDisableClears() async throws {
         let repo = try repository(); let home = try #require(repo.household?.id)
         let ravi = try #require(repo.members.first { $0.displayName == "Ravi" }?.id)
@@ -74,4 +96,27 @@ private actor TestAppointmentAlerts: AppointmentAlertService {
     var values: [AppointmentAlert] = []
     func requestPermission() async throws -> Bool { true }
     func replace(_ alerts: [AppointmentAlert]) async throws { values = alerts }
+}
+
+private actor SuspendedAppointmentAlerts: AppointmentAlertService {
+    private var started: CheckedContinuation<Void, Never>?
+    private var blocked: CheckedContinuation<Void, Never>?
+    var calls = 0
+    var values: [AppointmentAlert] = []
+    func requestPermission() async throws -> Bool { true }
+    func waitUntilStarted() async {
+        if calls > 0 { return }
+        await withCheckedContinuation { started = $0 }
+    }
+    func release() { blocked?.resume(); blocked = nil }
+    func replace(_ alerts: [AppointmentAlert]) async throws {
+        calls += 1
+        if calls == 1 {
+            await withCheckedContinuation { continuation in
+                blocked = continuation
+                started?.resume(); started = nil
+            }
+        }
+        values = alerts
+    }
 }

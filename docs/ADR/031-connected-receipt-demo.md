@@ -11,3 +11,5 @@ Receipt review also gains an optional expiry date for the selected pack, validat
 Shopping's delivered aggregate notice is cleared after completed/removed assignments are observed, preventing a stale count even while other shopping items remain. In-app lists already exclude bought items; cross-device delivery still depends on receiving sync.
 
 Build 30 replaces the stage highlight with a continuous vector animation and shortens the demo header. The animation is independent of actual sample transactions and owns no repository. Temporary-store creation and all receipt writes remain unchanged; the user's main household database and iCloud are untouched by the demo.
+
+October 1, 2026 presentation update: the original Canvas diagram is replaced by a five-chapter photographic walkthrough, animated sample record cards, direct chapter selection and native playback controls. Five-second structured task sleeps replace per-frame drawing; leaving the screen cancels playback. Reduce Motion retains manual navigation and all review actions. The underlying in-memory demo and review-confirmation boundary remain unchanged.

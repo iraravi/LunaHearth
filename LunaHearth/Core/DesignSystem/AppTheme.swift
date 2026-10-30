@@ -111,7 +111,7 @@ struct DashboardCard<Content: View>: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(AppTheme.contentPadding)
         .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius))
-        .overlay { RoundedRectangle(cornerRadius: AppTheme.cardCornerRadius).strokeBorder(AppTheme.ink.opacity(0.06)) }
+        .hearthCardOutline(AppTheme.ink, radius: AppTheme.cardCornerRadius)
     }
 }
 
@@ -189,13 +189,14 @@ extension AssetCategory {
 
 /// Visible boundaries strengthen with the system's Increase Contrast setting.
 private struct HearthCardOutline: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
     @Environment(\.colorSchemeContrast) private var contrast
     let color: Color
     let radius: CGFloat
     func body(content: Content) -> some View {
         content.overlay {
             RoundedRectangle(cornerRadius: radius)
-                .strokeBorder(color.opacity(contrast == .increased ? 0.6 : 0.12), lineWidth: contrast == .increased ? 2 : 1)
+                .strokeBorder(color.opacity(contrast == .increased ? 0.6 : (colorScheme == .dark ? 0.30 : 0.12)), lineWidth: contrast == .increased ? 2 : 1)
                 .allowsHitTesting(false).accessibilityHidden(true)
         }
     }

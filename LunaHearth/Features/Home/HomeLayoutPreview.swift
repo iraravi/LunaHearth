@@ -8,6 +8,7 @@ struct HomeLayoutPreview: View {
     var angle: Double = 35
     var elevation: Double = 35
     var selectedID: UUID?
+    @ScaledMetric(relativeTo: .caption) private var labelSize = 11.0
 
     static func color(_ preset: RoomPreset) -> Color {
         switch preset {
@@ -75,7 +76,7 @@ struct HomeLayoutPreview: View {
                     polygon([point(x,z+d), point(x+w,z+d), point(x+w,z+d,-0.12), point(x,z+d,-0.12)], fill: color.opacity(0.75))
                 }
                 let labelPoint = point(x+w/2, z+d/2)
-                context.draw(Text(room.name).font(.system(size: 11, weight: .semibold)).foregroundColor(.black), at: labelPoint)
+                context.draw(Text(room.name).font(.system(size: labelSize, weight: .semibold)).foregroundColor(AppTheme.ink), at: labelPoint)
             }
         }
         .background(AppTheme.secondarySurface, in: RoundedRectangle(cornerRadius: 18))

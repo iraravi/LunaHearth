@@ -4,6 +4,8 @@ struct TodayView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(PersonalShopping.self) private var personal
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var visibleSection: String?
     @AppStorage("warranty.horizon") private var warrantyHorizon = 30
     @State private var adding = false
 
@@ -11,7 +13,7 @@ struct TodayView: View {
         NavigationStack {
             GeometryReader { geometry in
                 TimelineView(.periodic(from: .now, by: 60)) { timeline in
-                    dashboard(at: timeline.date, wide: geometry.size.width >= 850 && !typeSize.isAccessibilitySize)
+                    dashboard(at: timeline.date, wide: TodayPlanningLayout.isExpanded(width: geometry.size.width, accessibilityText: typeSize.isAccessibilitySize))
                 }
             }
             .background(TodayTheme.canvas).foregroundStyle(TodayTheme.ink).tint(TodayTheme.accent)
@@ -48,12 +50,11 @@ struct TodayView: View {
                                    remindersDue: dueTasks.count, homeCareAlerts: plans.count + warranties.count)
         return ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                TodayHero(now: now, household: repository.household?.name ?? "Your home", wide: wide)
-                TodayPriorities(now: now, wide: wide)
-                TodayBriefCard(facts: facts)
-                    .id("\(repository.household?.id.uuidString ?? "none")|\(repository.household.flatMap { personal.memberID($0.id) }?.uuidString ?? "all")|\(day)")
-                Text("Your household today").font(.title3.bold()).padding(.top, 4)
-                TodayAlignedCards(columns: wide ? 2 : 1) {
+                TodayHero(now: now, household: repository.household?.name ?? "Your home", wide: wide).id("hero")
+                // One layout tree preserves selection and sheets; each panel receives a bounded width.
+                TodayAlignedCards(columns: wide ? 2 : 1, spacing: 20) {
+                    TodayPriorities(now: now, wide: false)
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
                     TodayCard {
                         TodayIllustratedHeading(title: "Schedule", detail: "\(events.count) events today", art: "EditorialPlanning")
                         if events.isEmpty { quiet("No events saved for today.") }
@@ -63,6 +64,14 @@ struct TodayView: View {
                         Spacer(minLength: 0)
                         NavigationLink { CalendarAgendaView() } label: { link("Open calendar") }
                     }
+                        .frame(maxWidth: .infinity, alignment: .topLeading)
+                }
+                .id("planning")
+                .animation(reduceMotion ? nil : .smooth(duration: 0.38, extraBounce: 0), value: wide)
+                TodayBriefCard(facts: facts)
+                    .id("\(repository.household?.id.uuidString ?? "none")|\(repository.household.flatMap { personal.memberID($0.id) }?.uuidString ?? "all")|\(day)")
+                Text("Around your home").font(.title3.bold()).padding(.top, 4).id("householdHeading")
+                TodayAlignedCards(columns: wide ? 2 : 1) {
                     TodayCard {
                         TodayIllustratedHeading(title: "Reminders", detail: "\(dueTasks.count) need attention", art: "EditorialPlanning")
                         if dueTasks.isEmpty { quiet("No reminders due or overdue.") }
@@ -122,9 +131,11 @@ struct TodayView: View {
                         NavigationLink { MealIdeasView() } label: { link("Get meal ideas") }
                     }
                 }
-            }.padding(20).frame(maxWidth: wide ? 1120 : 700).frame(maxWidth: .infinity)
+                .id("householdCards")
+            }.scrollTargetLayout().padding(20).frame(maxWidth: wide ? 1120 : 700).frame(maxWidth: .infinity)
                 .padding(.bottom, 12)
-        }.id(repository.household?.id)
+        }.scrollPosition(id: $visibleSection, anchor: .top)
+            .id(repository.household?.id)
     }
 
     private func quiet(_ text: String) -> some View {

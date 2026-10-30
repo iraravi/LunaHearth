@@ -1,3 +1,19 @@
+# UI and accessibility review — October 14, 2026
+
+See [the current review](validation/2026-10-14-final-review.md) for adaptive room colors, larger controls, Reduce Motion behavior, permission/copy corrections and test evidence. This does not clear the outstanding policy, rights, device, signing or store-submission gates.
+
+# Launch preparation — October 9, 2026
+
+Use [the launch checklist](LAUNCH_CHECKLIST.md) for the remaining steps and [the follow-up code review](validation/2026-10-09-launch-review.md) for fresh evidence. Publisher/privacy completion, physical acceptance and final signed distribution remain open.
+
+# Deep review — October 4, 2026
+
+See [the completed code/security review](validation/2026-10-04-deep-release-review.md) for current fixes and test evidence. This does not supersede the outstanding publisher, physical-device and App Store Connect gates below.
+
+# Current distribution preparation — October 3, 2026
+
+The user selected India only. The current reference beta is 1.0 (66), verified in both TestFlight groups on October 1. Public submission is not complete: publisher/contact/pricing decisions, public support/privacy URLs, replacement of the bundled draft policy and physical acceptance checks remain open. See [the current distribution packet](release/1.0-build66/DISTRIBUTION.md). The older build-47 and September 14 account audit below are historical, not current App Store Connect observations.
+
 # Release hardening — build 47
 
 ## Code fixes

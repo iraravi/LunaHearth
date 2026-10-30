@@ -53,9 +53,9 @@ enum ReceiptRules {
             guard line.count <= 250, !line.isEmpty else { continue }
             let excluded = #"(?i)\b(subtotal|sub total|total|tax|gst|cgst|sgst|igst|vat|cash|change|tender|balance|payment|visa|mastercard|debit|credit|savings|discount|coupon|refund|return|rounding|round off|loyalty|member|phone|tel|receipt|invoice|transaction|cashier|register|terminal)\b"#
             guard line.range(of: excluded, options: .regularExpression) == nil,
-                  let price = line.range(of: #"\s+[-₹$€£]?\s*\d[\d,]*[.,]\d{2}\s*[A-Za-z]?$"#, options: .regularExpression) else { continue }
+                  let price = line.range(of: #"(?i)(?:\s+|(?=[₹$€£]))[-−]?\s*(?:(?:₹|\$|€|£|INR\b|Rs\.?)\s*[-−]?\s*\d[\d,]*(?:\.\d{2})?|\d[\d,]*[.,]\d{2})\s*[A-Za-z]?$"#, options: .regularExpression) else { continue }
             // Refunds and discounts are never treated as newly purchased stock.
-            guard !String(line[price]).contains("-") else { continue }
+            guard !String(line[price]).contains("-"), !String(line[price]).contains("−") else { continue }
             var name = String(line[..<price.lowerBound]).trimmingCharacters(in: .whitespaces)
             var quantity = ""
             if let prefix = name.range(of: #"^\d{1,3}\s*[xX×]\s+"#, options: .regularExpression) {

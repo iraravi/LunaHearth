@@ -536,3 +536,31 @@ Assignment notification taps distinguish tasks from shopping and show the matchi
 Successful shopping completion shows a dismissible, width-capped confirmation on Shopping, For You and Today priority screens. Its text uses the saved pantry quantity when a linked pack exists. The confirmation is emitted only after the repository commits, and a purchase-sheet cancellation or save failure does not trigger it. It remains readable until dismissed, disappears on home change, and uses native Dynamic Type with labelled 44-point dismissal. A short insertion transition is disabled for Reduce Motion. There is no animation timer, background rendering or new permission.
 
 Duo follows the existing adaptive navigation/sheet guidance. No hinge angle is inferred from size, no posture-specific API was introduced, and no physical fold transition is claimed. Tests cover the available Duo simulator plus an iPad layout; real VoiceOver and physical-device motion remain manual checks. No schema, AI, cloud payload or notification subscription changes.
+
+## Open into planning — September 30, 2026
+
+Today places the selected attention category beside Schedule when at least 850 points are available. Narrow windows and accessibility text sizes stack the same panels. A single measured layout maintains child identity instead of rebuilding two separate dashboards; Buy/Use soon/Restock selection and presentation state survive layout changes. A 0.38-second smooth transition has no extra bounce and is disabled by the system Reduce Motion setting. Scroll targets identify the hero, planning panels, brief and household cards so scrolling can track the visible section through resizing. Existing ivory surfaces and artwork remain.
+
+This is an available-space transition, not hinge-angle detection. No fold sensor API, permission, network request, data-model change, or household write is added. All actions remain available in compact layouts. Domain coverage checks the width boundary, accessibility fallback and invalid sizes; UI checks exercise selection and an open form across rotation. Physical posture and motion smoothness require device validation.
+
+## Connected demo editorial refresh — October 1, 2026
+
+The connected demo uses five selectable chapters with full-width editorial photography and opaque, legible sample-record cards. Scene changes dissolve and lift over 0.8 seconds at five-second intervals. Ivory content surfaces, sage chapter selection, compact native glass playback controls and a separate “try it yourself” action replace the diagram. Sample values and the illustrative spending chart are explicitly labelled. Photography is decorative, and is omitted at accessibility text sizes; chapter titles and explanations remain native Dynamic Type text. Reduce Motion uses manually selected still chapters. Playback cancels when the view disappears and pauses on inactive scenes; no frame-rate rendering loop is used.
+
+The animation owns no household repository. Existing sample receipt review still writes only to the demo's in-memory store. No permission, network, schema, CloudKit or real notification behavior changes.
+
+### Rooms navigation review — October 4, 2026
+
+Compact rooms navigation uses Home's existing navigation stack and explicit room destinations. It keeps that stack when the window grows or rotates. On regular-width entry, Rooms & belongings opens as an independent full-screen split workspace with Done back to Home. This avoids nesting split/detail stacks inside Home's stack, which prevented room or item links from opening. The independent workspace supplies its own compact stack when resized. Reminders selection and completion rows include the full visible row in their hit areas.
+
+### October 14 release accessibility review
+
+Room-layout text, selection outlines and grid strokes use adaptive ink in dark mode. Canvas room labels scale with the caption text style; the room list and measurement form remain the accessible alternatives to the diagram. Fit, zoom and selected-room editing controls provide at least 44-by-44-point label hit regions. Custom store-field and pantry-result scrolling honors Reduce Motion. The layout footer describes the approximate measurements and optional household sharing. No navigation or visual identity redesign is introduced.
+
+Pantry-result scrolling waits until the new result section is installed before scrolling, including when Reduce Motion disables animation. This keeps the fallback explanation and review notice visible without depending on animated layout timing.
+
+### Prominent control contrast — October 30, 2026
+Prominent glass/bordered buttons explicitly pair the adaptive canvas foreground with their adaptive accent fill. Dark-mode pastel accents therefore use dark text, rather than relying on an inherited light label. The same pairing covers onboarding, shopping actions, meal suggestions/actions and sharing. Asset-level contrast for the current accent/canvas pairs is at least 5.70:1 in light appearance and 10.27:1 in dark appearance; actual glass rendering and disabled states still need visual checks. No semantic colours or user appearance preference changed.
+
+### Dark-mode control clarity — October 30, 2026
+Shared action controls now use opaque capsule backgrounds in dark appearance, with explicit light labels for secondary actions and dark labels on pastel primary fills. Disabled controls use a readable muted label and neutral surface instead of fading the whole control. A visible outline and pressed overlay make boundaries and interaction states clearer; Increase Contrast strengthens the outline. Existing light-mode glass/bordered choices are preserved. Setup, meal and sharing prominent actions use the same state handling. Card and category-filter boundaries are stronger in dark appearance. Native toolbar controls keep their platform behavior.

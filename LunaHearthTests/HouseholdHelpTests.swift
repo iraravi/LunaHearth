@@ -2,6 +2,17 @@ import Testing
 @testable import LunaHearth
 
 struct HouseholdHelpTests {
+    @Test func supportSearchFindsRecoveryAndSafetyInstructions() {
+        let articles = HouseholdSupportArticle.all
+        #expect(articles.contains { $0.id == "notifications" && $0.matches("  FOCUS  ") })
+        #expect(articles.contains { $0.id == "sync" && $0.matches("reinstall") })
+        #expect(articles.contains { $0.id == "safety" && $0.matches("allergens") })
+        #expect(articles.allSatisfy { $0.matches("  ") })
+        #expect(!articles.contains { $0.matches("zz-no-such-support") })
+        #expect(Set(articles.map(\.id)).count == articles.count)
+        #expect(Set(HouseholdHelpAnswer.all.map(\.id)).count == HouseholdHelpAnswer.all.count)
+    }
+
     @Test func searchFindsRelevantGuidesAndAnswers() {
         #expect(HouseholdHelpTopic.pantry.matches("  EXPIRY  "))
         #expect(HouseholdHelpTopic.connected.matches("receipt"))

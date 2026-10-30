@@ -693,6 +693,11 @@ private struct InventoryItemBackupValue: Codable, Sendable {
                 try reference(value.planID, "MaintenancePlan")
             case "FamilyEvent":
                 let value = try JSONDecoder().decode(FamilyEventBackupValue.self, from: record.payload)
+                // Imported/shared events must obey the same ordering rule as local entry.
+                guard value.startAt.timeIntervalSince1970.isFinite,
+                      value.endAt.timeIntervalSince1970.isFinite,
+                      value.endAt > value.startAt else { throw BackupError.invalidBackup }
+                _ = try HouseholdRules.requiredName(value.title)
                 guard value.id == record.id, value.householdID == backup.householdID, abs(value.createdAt.timeIntervalSince(record.createdAt)) < 0.002, abs(value.modifiedAt.timeIntervalSince(record.modifiedAt)) < 0.002 else { throw BackupError.invalidBackup }
                 try reference(value.assignedMemberID, "HouseholdMember")
             case "HouseholdTask":
@@ -772,6 +777,9 @@ private struct InventoryItemBackupValue: Codable, Sendable {
                 try reference(value.relatedAssetID, "HomeAsset")
             case "MealPlanEntry":
                 let value = try JSONDecoder().decode(MealPlanEntryBackupValue.self, from: record.payload)
+                if let day = value.dateKey, ShoppingEntryRules.date(for: day) == nil {
+                    throw BackupError.invalidBackup
+                }
                 try WeeklyMealRules.validateAmounts(value.ingredientAmountsPerServing ?? [:], names: value.ingredientNames ?? [])
                 try MealCookingRules.validate(servings: value.servings ?? 2, ingredients: value.ingredientNames ?? [], steps: value.preparationSteps ?? [])
                 guard value.id == record.id, value.householdID == backup.householdID, abs(value.createdAt.timeIntervalSince(record.createdAt)) < 0.002, abs(value.modifiedAt.timeIntervalSince(record.modifiedAt)) < 0.002 else { throw BackupError.invalidBackup }

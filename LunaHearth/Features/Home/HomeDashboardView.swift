@@ -7,6 +7,7 @@ struct HomeView: View {
     @State private var addingRoom = false
     @State private var quickAdding = false
     @State private var showingSetup = false
+    @State private var showingSpaces = false
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -52,18 +53,7 @@ struct HomeView: View {
                     }.accessibilityIdentifier("home.tasks")
                     VStack(alignment: .leading, spacing: 14) {
                         Text("Your spaces").font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
-                        NavigationLink { HomeSpacesView() } label: {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Image("WelcomeResidence").resizable().scaledToFill().frame(height: 145).clipped().clipShape(RoundedRectangle(cornerRadius: 18)).accessibilityHidden(true)
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text("Rooms & belongings").font(.title3.bold())
-                                        Text("\(repository.rooms.count) rooms · \(repository.assets.count) items").font(.subheadline).foregroundStyle(.secondary)
-                                    }
-                                    Spacer(); Image(systemName: "chevron.right").accessibilityHidden(true)
-                                }
-                            }.padding(16).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18)).contentShape(Rectangle())
-                        }.accessibilityIdentifier("home.spaces")
+                        spacesLink.accessibilityIdentifier("home.spaces")
                         ViewThatFits(in: .horizontal) {
                             HStack(spacing: 24) { roomActions }
                             VStack(alignment: .leading, spacing: 8) { roomActions }
@@ -97,10 +87,32 @@ struct HomeView: View {
                     if let homeID = repository.household?.id { HomeSetupGuideView(householdID: homeID) }
                 }
                 .toolbar { Button("Quick Add", systemImage: "plus") { quickAdding = true } }
+                .fullScreenCover(isPresented: $showingSpaces) { HomeSpacesView(isWorkspace: true) }
                 .sheet(isPresented: $quickAdding) { QuickAddView() }
                 .sheet(isPresented: $addingRoom) { QuickAddView(kind: .room, parentID: repository.floors.count == 1 ? repository.floors.first?.id : nil, fixedKind: true) }
         }
     }
+    @ViewBuilder private var spacesLink: some View {
+        if sizeClass == .regular {
+            Button { showingSpaces = true } label: { spacesCard }
+        } else {
+            NavigationLink { HomeSpacesView() } label: { spacesCard }
+        }
+    }
+
+    private var spacesCard: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Image("WelcomeResidence").resizable().scaledToFill().frame(height: 145).clipped().clipShape(RoundedRectangle(cornerRadius: 18)).accessibilityHidden(true)
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Rooms & belongings").font(.title3.bold())
+                    Text("\(repository.rooms.count) rooms · \(repository.assets.count) items").font(.subheadline).foregroundStyle(.secondary)
+                }
+                Spacer(); Image(systemName: "chevron.right").accessibilityHidden(true)
+            }
+        }.padding(16).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18)).contentShape(Rectangle())
+    }
+
     @ViewBuilder private var roomActions: some View {
         Button { addingRoom = true } label: { Label("Add a room", systemImage: "plus").frame(minHeight: 44) }.accessibilityIdentifier("home.addRoom")
         NavigationLink { HomeLayoutView() } label: { Label("2D / 3D floor plan", systemImage: "square.3.layers.3d").frame(minHeight: 44) }.accessibilityIdentifier("home.layout")

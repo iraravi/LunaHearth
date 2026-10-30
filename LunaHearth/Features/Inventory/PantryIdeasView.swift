@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct PantryIdeasView: View {
+    @Environment(\.accessibilityReduceMotion) private var systemReduceMotion
+    private var reduceMotion: Bool { HearthMotion.reduced(systemReduceMotion) }
     let householdID: UUID
     @Environment(PublicConfigurationStore.self) private var publicStatus
     @Environment(\.aiAvailability) private var aiAvailability
@@ -133,10 +135,13 @@ struct PantryIdeasView: View {
                         self.error = "Couldn’t tailor ideas. The starter list is still available."
                     }
                 }
-                .onChange(of: generating) { _, busy in
-                    if !busy, generated != nil {
-                        withAnimation { proxy.scrollTo("pantry.results", anchor: .top) }
-                    }
+                .task(id: generated != nil) {
+                    guard generated != nil else { return }
+                    // Let List install the new result section before an immediate
+                    // Reduce Motion scroll; an animation must not hide a layout race.
+                    await Task.yield()
+                    guard !Task.isCancelled else { return }
+                    withAnimation(reduceMotion ? nil : .default) { proxy.scrollTo("pantry.results", anchor: .top) }
                 }
                 .sheet(isPresented: $reviewing) {
                     PantryTemplateReviewView(householdID: householdID, names: names, selected: $selected) { dismiss() }

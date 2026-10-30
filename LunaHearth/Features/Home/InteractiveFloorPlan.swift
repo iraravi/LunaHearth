@@ -23,7 +23,7 @@ struct InteractiveFloorPlan: View {
                         for y in stride(from: 16.0, through: size.height, by: step) {
                             grid.move(to: CGPoint(x: 0, y: y)); grid.addLine(to: CGPoint(x: size.width, y: y))
                         }
-                        context.stroke(grid, with: .color(.black.opacity(0.07)), lineWidth: 1)
+                        context.stroke(grid, with: .color(AppTheme.ink.opacity(0.12)), lineWidth: 1)
                     }.accessibilityHidden(true)
                     ForEach(rooms) { room in
                         DraggableRoomTile(room: room, neighbors: rooms.filter { $0.id != room.id }.map(\.footprint),
@@ -35,11 +35,16 @@ struct InteractiveFloorPlan: View {
                 .background(AppTheme.secondarySurface)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
                 .overlay(alignment: .bottomTrailing) {
-                    Button("Fit rooms") {
+                    Button {
                         let x = rooms.map { $0.footprint.x + $0.footprint.width }.max() ?? 8
                         let z = rooms.map { $0.footprint.z + $0.footprint.depth }.max() ?? 8
                         span = max(8, x + 2, (z + 2) * (geometry.size.width - 32) / max(1, geometry.size.height - 32))
-                    }.font(.caption.bold()).padding(10).background(.regularMaterial, in: Capsule()).padding(8)
+                    } label: {
+                        Text("Fit rooms").font(.caption.bold()).padding(.horizontal, 12)
+                            .frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                    }
+                        .background(.regularMaterial, in: Capsule()).padding(8)
+                        .accessibilityIdentifier("layout.fitRooms")
                 }
             }.frame(height: 300)
             HStack {
@@ -47,13 +52,19 @@ struct InteractiveFloorPlan: View {
                 Text(message).font(.footnote)
             }.foregroundStyle(failed ? .red : AppTheme.muted).accessibilityElement(children: .combine).accessibilityIdentifier("layout.moveStatus")
             HStack {
-                Button("Zoom out", systemImage: "minus.magnifyingglass") { span = min(150, span * 1.3) }
+                Button { span = min(150, span * 1.3) } label: {
+                    Label("Zoom out", systemImage: "minus.magnifyingglass").frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                }.accessibilityIdentifier("layout.zoomOut")
                 Spacer()
                 if let id = selectedID {
-                    Button("Edit selected room", systemImage: "slider.horizontal.3") { onEdit(id) }
+                    Button { onEdit(id) } label: {
+                        Label("Edit selected room", systemImage: "slider.horizontal.3").frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                    }
                 }
                 Spacer()
-                Button("Zoom in", systemImage: "plus.magnifyingglass") { span = max(4, span / 1.3) }
+                Button { span = max(4, span / 1.3) } label: {
+                    Label("Zoom in", systemImage: "plus.magnifyingglass").frame(minWidth: 44, minHeight: 44).contentShape(Rectangle())
+                }.accessibilityIdentifier("layout.zoomIn")
             }.labelStyle(.iconOnly).buttonStyle(.bordered).tint(AppTheme.ink)
         }
     }
@@ -89,12 +100,12 @@ private struct DraggableRoomTile: View {
     private var tile: some View {
         let r = dragging ? candidate : room.footprint
         let color = HomeLayoutPreview.color(room.preset)
-        let border: Color = dragging && overlaps ? .red : (selected || dragging ? .black : color)
+        let border: Color = dragging && overlaps ? .red : (selected || dragging ? AppTheme.ink : color)
         return VStack(spacing: 4) {
             Image(systemName: room.preset.symbol).font(.body)
             Text(room.name).font(.caption.weight(.semibold)).lineLimit(2)
         }
-        .foregroundStyle(.black).padding(4)
+        .foregroundStyle(AppTheme.ink).padding(4)
         .frame(width: r.width * scale, height: r.depth * scale)
         .background(color.opacity(dragging ? 0.5 : 0.25))
         .overlay(Rectangle().strokeBorder(border, lineWidth: selected || dragging ? 3 : 1.5))

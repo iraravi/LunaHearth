@@ -29,6 +29,12 @@ struct HouseholdHelpView: View {
                         if index < topic.steps.count - 1 { Divider().padding(.horizontal, 18) }
                     }
                 }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+                if let article = HouseholdSupportArticle.all.first(where: { $0.id == topic.rawValue || (topic == .family && $0.id == "invite") || (topic == .receipts && $0.id == "receipt") }) {
+                    NavigationLink { HouseholdSupportArticleView(article: article) } label: {
+                        Label("Need help? Troubleshoot this feature", systemImage: "questionmark.circle")
+                            .font(.subheadline.weight(.medium)).frame(minHeight: 44)
+                    }.accessibilityIdentifier("help.troubleshoot.\(topic.rawValue)")
+                }
                 Text(topic.note).font(.footnote).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }.padding(20).frame(maxWidth: 680).frame(maxWidth: .infinity)
@@ -75,6 +81,7 @@ struct HouseholdHelpCenter: View {
     @State private var search = ""
     @State private var walkthrough = false
     private var topics: [HouseholdHelpTopic] { HouseholdHelpTopic.allCases.filter { $0.matches(search) } }
+    private var articles: [HouseholdSupportArticle] { HouseholdSupportArticle.all.filter { $0.matches(search) } }
     private var answers: [HouseholdHelpAnswer] { HouseholdHelpAnswer.all.filter { $0.matches(search) } }
 
     var body: some View {
@@ -124,6 +131,25 @@ struct HouseholdHelpCenter: View {
                         }
                     }
                 }
+                ForEach(HouseholdSupportArticle.Category.allCases, id: \.rawValue) { category in
+                    let matches = articles.filter { $0.category == category }
+                    if !matches.isEmpty {
+                        Text(category.title).font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
+                        VStack(spacing: 0) {
+                            ForEach(matches) { article in
+                                NavigationLink { HouseholdSupportArticleView(article: article) } label: {
+                                    HStack(spacing: 12) {
+                                        Image(systemName: article.symbol).foregroundStyle(AppTheme.sage).accessibilityHidden(true)
+                                        Text(article.title).font(.body).multilineTextAlignment(.leading)
+                                        Spacer(minLength: 8)
+                                        Image(systemName: "chevron.right").font(.caption).accessibilityHidden(true)
+                                    }.frame(minHeight: 44).padding(16).contentShape(Rectangle())
+                                }.buttonStyle(.plain).accessibilityIdentifier("help.article.\(article.id)")
+                                if article.id != matches.last?.id { Divider().padding(.horizontal, 16) }
+                            }
+                        }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 20))
+                    }
+                }
                 if !answers.isEmpty {
                     Text("Common questions").font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
                     VStack(spacing: 0) {
@@ -139,7 +165,7 @@ struct HouseholdHelpCenter: View {
                         }
                     }.background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 20))
                 }
-                if topics.isEmpty && answers.isEmpty {
+                if topics.isEmpty && answers.isEmpty && articles.isEmpty {
                     ContentUnavailableView.search(text: search)
                     Button("Show all guides") { search = "" }.frame(minHeight: 44)
                 }
@@ -150,5 +176,34 @@ struct HouseholdHelpCenter: View {
             .sheet(isPresented: $walkthrough) {
                 HowItWorksView(hasHome: repository.household != nil, replay: true) { walkthrough = false }
             }
+    }
+}
+
+
+struct HouseholdSupportArticleView: View {
+    let article: HouseholdSupportArticle
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
+                Label(article.category.title, systemImage: article.symbol).font(.subheadline).foregroundStyle(AppTheme.sage)
+                Text(article.title).font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
+                ForEach(Array(article.steps.enumerated()), id: \.offset) { index, step in
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("\(index + 1). \(step.title)").font(.headline).accessibilityAddTraits(.isHeader)
+                        Text(step.detail).font(.body).textSelection(.enabled).fixedSize(horizontal: false, vertical: true)
+                    }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
+                }
+                if article.category == .legal {
+                    NavigationLink("Read the privacy policy") { PrivacyPolicyView() }.frame(minHeight: 44)
+                    if let url = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/") {
+                        Link("Apple standard app licence (opens website)", destination: url).frame(minHeight: 44)
+                    }
+                }
+                Text("Offline guide · Updated September 30, 2026").font(.footnote).foregroundStyle(.secondary)
+            }.padding(20).frame(maxWidth: 720).frame(maxWidth: .infinity)
+        }.background(AppTheme.canvas).tint(AppTheme.sage)
+            .navigationTitle(article.category.title).navigationBarTitleDisplayMode(.inline)
+            .accessibilityIdentifier("help.articleDetail.\(article.id)")
     }
 }

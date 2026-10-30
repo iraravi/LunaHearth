@@ -36,9 +36,13 @@ import Observation
                     guard job.deleting || id?.isEmpty == false else { throw CalendarDeliveryError.uncertain }
                     try repository.finishCalendarDelivery(job, externalID: id, error: nil)
                 } catch {
-                    let text = (error as? ApplePlanningError)?.errorDescription ?? (error as? CalendarDeliveryError)?.errorDescription ?? "Appointment saved. Apple Calendar could not confirm the update. Open Calendar settings to retry."
+                    // Publisher pauses are checked before EventKit is touched. Preserve safe
+                    // first-attempt retry without clearing a previous uncertain write.
+                    let paused: Bool
+                    if case .paused = error as? ConfigurationError { paused = true } else { paused = false }
+                    let text = (error as? ApplePlanningError)?.errorDescription ?? (error as? CalendarDeliveryError)?.errorDescription ?? (error as? ConfigurationError)?.errorDescription ?? "Appointment saved. Apple Calendar could not confirm the update. Open Calendar settings to retry."
                     syncMessage = text
-                    try? repository.finishCalendarDelivery(job, externalID: nil, error: text, definitelyNotWritten: error is ApplePlanningError)
+                    try? repository.finishCalendarDelivery(job, externalID: nil, error: text, definitelyNotWritten: error is ApplePlanningError || paused)
                 }
             }
         } while rerun

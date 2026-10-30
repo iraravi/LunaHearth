@@ -38,14 +38,8 @@ private struct ConnectedDemoContent: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                HStack(alignment: .top, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("See it all connect.").font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
-                        Text("Demo only · temporary data").font(.subheadline.weight(.medium)).foregroundStyle(ExpenseTheme.accent)
-                        Text("No changes to your household or iCloud.").font(.caption).foregroundStyle(.secondary)
-                    }
-                    Image(systemName: "house.and.flag.fill").font(.largeTitle).foregroundStyle(ExpenseTheme.accent).accessibilityHidden(true)
-                }
+                Label("A private preview · nothing saved to your home", systemImage: "lock.shield")
+                    .font(.footnote).foregroundStyle(.secondary)
                 DemoWorkflowAnimation()
                 receiptCard
                 if saved {
@@ -58,7 +52,7 @@ private struct ConnectedDemoContent: View {
                     mealPreview
                 }
             }.padding(20).frame(maxWidth: 900).frame(maxWidth: .infinity)
-        }.background(ExpenseTheme.canvas).tint(ExpenseTheme.accent).featureCanvas(.expenses)
+        }.background(AppTheme.canvas).tint(AppTheme.sage).featureCanvas(.expenses)
             .sheet(isPresented: $receipt) {
                 if let home = repository.household?.id {
                     ReceiptImportView(householdID: home, sampleImage: DemoReceiptImage.make().pngData()).environment(repository)
@@ -68,14 +62,14 @@ private struct ConnectedDemoContent: View {
     }
     private var receiptCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label("Luna Demo Market", systemImage: "receipt").font(.headline)
+            Text("Now try it yourself.").font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
             Text("Rice · curd · carrots · eggs · bananas").font(.subheadline)
-            Text("Sample total: USD 16.00").font(.title3.bold())
-            Text("Load the receipt, check the expense total, then open Quantity & matches on an item to set its pack expiry. Use the label date; the app does not guess shelf life.").font(.subheadline).foregroundStyle(.secondary)
+            Text("5 items · USD 16.00 · sample receipt").font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.sage)
+            Text("Review the receipt and choose what reaches your sample pantry. Add pack dates from the label when known.").font(.subheadline).foregroundStyle(.secondary)
             Button(saved ? "Review sample receipt again" : "Load sample receipt", systemImage: "doc.viewfinder") { receipt = true }
-                .frame(minHeight: 44).accessibilityIdentifier("demo.loadReceipt")
+                .frame(minHeight: 44).hearthGlassButton(prominent: true).accessibilityIdentifier("demo.loadReceipt")
             ShareLink(item: Image(uiImage: DemoReceiptImage.make()), preview: SharePreview("Sample receipt", image: Image(uiImage: DemoReceiptImage.make()))) {
-                Label("Share or save receipt image", systemImage: "square.and.arrow.up").frame(minHeight: 44)
+                Label("Save sample image", systemImage: "square.and.arrow.up").font(.subheadline).frame(minHeight: 44)
             }
             Text("If you scan this image outside the demo, it can create real records after confirmation.").font(.caption).foregroundStyle(.secondary)
         }.padding(20).frame(maxWidth: .infinity, alignment: .leading).background(ExpenseTheme.surface, in: RoundedRectangle(cornerRadius: 18))

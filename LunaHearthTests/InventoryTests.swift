@@ -193,7 +193,7 @@ import Testing
         try repo.restockInventory(item)
         #expect(throws: InventoryError.self) { try repo.restockInventory(item) }
         #expect(repo.groceries.count == 1 && repo.inventory.count == 2)
-        #expect((repo.groceries.first?.quantityText ?? "").isEmpty)
+        #expect(repo.groceries.first?.quantityText == "")
     }
     @Test func kitchenTemplatesSupportHundredItemReviewAndAtomicAdd() throws {
         #expect(IngredientMatching.same("Rajma", "Kidney beans"))

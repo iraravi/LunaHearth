@@ -3,6 +3,7 @@ import SwiftUI
 /// Shared presentation for shopping items and inventory packs. Counts follow the
 /// screen's other filters, while category selection remains independently resettable.
 struct GroceryCategoryFilters: View {
+    @Environment(\.colorScheme) private var colorScheme
     let categories: [PantryCategory]
     @Binding var selection: PantryCategory?
     let accent: Color
@@ -28,6 +29,7 @@ struct GroceryCategoryFilters: View {
                 .font(.subheadline.weight(.medium)).padding(.horizontal, 14).padding(.vertical, 12)
                 .foregroundStyle(selection == category ? surface : ink)
                 .background(selection == category ? accent : surface, in: Capsule())
+                .overlay { Capsule().strokeBorder(ink.opacity(colorScheme == .dark ? 0.30 : 0.12)).allowsHitTesting(false) }
         }.buttonStyle(.plain).accessibilityAddTraits(selection == category ? .isSelected : [])
             .accessibilityLabel("\(category?.title ?? "All categories"), \(count) items")
             .accessibilityIdentifier("\(identifier).category.\(category?.rawValue ?? "all")")

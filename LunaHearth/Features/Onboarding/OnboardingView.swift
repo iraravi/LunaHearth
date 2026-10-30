@@ -104,13 +104,13 @@ struct OnboardingView: View {
         VStack(spacing: 10) {
             if isTour {
                 Button(started ? "Back to introduction" : "Preview setup") { started.toggle() }
-                    .buttonStyle(.borderedProminent).controlSize(.regular).accessibilityIdentifier("setup.preview")
+                    .hearthGlassButton(prominent: true, glassInLight: false).controlSize(.regular).accessibilityIdentifier("setup.preview")
                 Button("Back to my home") { dismiss() }
                 Text("Preview only · Your existing home is unchanged").font(.caption).foregroundStyle(WelcomeStyle.muted)
             } else {
                 Button { if started { create() } else { started = true } } label: {
                     Text(started ? "Create my home" : "Create a new home").font(.subheadline.weight(.medium)).padding(.horizontal, 24).padding(.vertical, 3).frame(minHeight: 28)
-                }.buttonStyle(.borderedProminent).controlSize(.regular).buttonBorderShape(.capsule)
+                }.hearthGlassButton(prominent: true, glassInLight: false).controlSize(.regular).buttonBorderShape(.capsule)
                     .accessibilityIdentifier(started ? "setup.create" : "setup.start")
                     .disabled(started && name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 if !started {

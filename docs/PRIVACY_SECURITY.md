@@ -179,3 +179,7 @@ user-enabled private household sync and backups. Household share participants ca
 read them under the existing sharing permissions. There is no public store upload,
 location permission, business-directory API, or AI processing of store names.
 The bundled chain-name catalog works offline. See ADR-014.
+
+## October 14 permission wording review
+
+Camera and photo purpose strings now describe the implemented receipt and kitchen-photo workflows, rather than future room, manual, warranty or flyer scanning. Reminders wording explicitly identifies Apple Reminders as the destination for new reminders while preserving unrelated household features when access is denied. No permission scope, data flow or API changed. The publisher policy remains a draft pending actual operator/contact/retention facts and a public URL.

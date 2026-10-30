@@ -1,7 +1,10 @@
 import SwiftUI
 
 struct HomeSpacesView: View {
+    var isWorkspace = false
+    @Environment(\.dismiss) private var dismiss
     @Environment(LocalHouseholdRepository.self) private var repository
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.featureCanvasCoordinator) private var canvas
     @State private var selectedRoomID: UUID?
     @State private var adding: EntryKind?
@@ -16,105 +19,126 @@ struct HomeSpacesView: View {
     }
 
     var body: some View {
-        NavigationSplitView {
-            List(selection: $selectedRoomID) {
-                Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HearthArtwork(name: "WelcomeResidence", height: 110)
-                            .accessibilityHidden(true)
-                        Text(repository.household?.name ?? "Your home")
-                            .font(AppTheme.sectionTitle).foregroundStyle(AppTheme.ink)
-                        Text("Rooms, belongings and home care.")
-                            .font(.subheadline).foregroundStyle(AppTheme.muted)
-                    }.padding(.vertical, 4)
-                }.listRowBackground(Color.clear).listRowSeparator(.hidden)
-
-                Section {
-                    if repository.rooms.isEmpty {
-                        Text("Start with a kitchen, bathroom or bedroom. Add belongings inside each room.")
-                            .font(.subheadline).foregroundStyle(AppTheme.muted)
-                    }
-                    ForEach(repository.floors) { floor in
-                        let rooms = repository.rooms.filter { $0.floorID == floor.id }
-                        if !rooms.isEmpty {
-                            Text(floor.name).font(.caption.weight(.semibold))
-                                .foregroundStyle(AppTheme.muted).accessibilityAddTraits(.isHeader)
-                            roomRows(rooms)
-                        }
-                    }
-                    roomRows(repository.rooms.filter { $0.floorID == nil })
-                    Button { add(.room, parent: repository.floors.count == 1 ? repository.floors.first?.id : nil) } label: {
-                        Label("Add a room", systemImage: "plus")
-                            .frame(minHeight: 44, alignment: .leading)
-                    }.accessibilityIdentifier("home.addRoom")
-                    NavigationLink { HomeLayoutView() } label: {
-                        HomeActionRow(title: "Floor plan", detail: "Arrange your rooms in 2D or explore in 3D", symbol: "square.3.layers.3d")
-                    }.accessibilityIdentifier("home.layout")
-                } header: {
-                    Text("Rooms · \(repository.rooms.count)")
-                }
-
-                Section("Belongings") {
-                    DisclosureGroup(isExpanded: $showAllItems) {
-                        if matchingAssets.isEmpty {
-                            Text(search.isEmpty ? "Add appliances, furniture and other belongings here or inside a room." : "No matching items.")
-                                .font(.subheadline).foregroundStyle(AppTheme.muted)
-                        }
-                        ForEach(matchingAssets) { asset in
-                            NavigationLink { AssetDetailView(asset: asset) } label: {
-                                HomeActionRow(title: asset.name,
-                                    detail: repository.rooms.first(where: { $0.id == asset.roomID })?.name ?? "No room assigned",
-                                    symbol: (AssetCategory(rawValue: asset.categoryRawValue) ?? .other).symbol)
-                            }.accessibilityIdentifier("home.item.\(asset.id)")
-                        }
-                        Button { add(.asset, parent: repository.rooms.count == 1 ? repository.rooms.first?.id : nil) } label: {
-                            Label("Add an item", systemImage: "plus").frame(minHeight: 44, alignment: .leading)
-                        }.accessibilityIdentifier("home.addItem")
-                    } label: {
-                        HomeActionRow(title: "All belongings", detail: "\(repository.assets.count) items across your home", symbol: "shippingbox")
-                    }.accessibilityIdentifier("home.belongings")
-                }
-                Section("Home care") {
-                    NavigationLink { HomeAlertsView() } label: {
-                        HomeActionRow(title: "Maintenance & warranties", detail: "Service dates and cover for your belongings", symbol: "wrench.and.screwdriver")
-                    }.accessibilityIdentifier("home.care")
-                }
-            }
-            .hearthList(canvas: canvas?.color(for: .home) ?? AppTheme.canvas)
-            .hearthNavigationMaterial(canvas?.color(for: .home) ?? AppTheme.canvas, for: .navigationBar)
-            .searchable(text: $search, prompt: "Find a room or item")
-            .onChange(of: search) { _, value in if !value.isEmpty { showAllItems = true } }
-            .navigationTitle("Rooms & belongings").navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                Menu {
-                    Button("Add a floor", systemImage: "square.3.layers.3d") { add(.floor) }
-                        .accessibilityIdentifier("home.addFloor")
-                    ForEach(repository.floors) { floor in
-                        Button("Edit \(floor.name)") { editingFloor = .editing(floor) }
-                    }
-                } label: { Label("Home settings", systemImage: "ellipsis") }.accessibilityIdentifier("home.add")
-            }
-        } detail: {
-            NavigationStack {
-                if let room = repository.rooms.first(where: { $0.id == selectedRoomID }) {
-                    RoomDetailView(room: room)
-                } else {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 20) {
-                            HearthArtwork(name: "WelcomeResidence", height: 240).accessibilityHidden(true)
-                            Text("A place for everything.").font(AppTheme.displayTitle)
-                            Text("Open a room to look after the things inside it.")
-                                .font(.title3).foregroundStyle(AppTheme.muted)
-                            Label("Rooms first. Floor plans whenever you’re ready.", systemImage: "square.3.layers.3d")
-                                .font(.subheadline).foregroundStyle(AppTheme.muted)
-                        }.frame(maxWidth: 660, alignment: .leading).padding(28).frame(maxWidth: .infinity)
-                    }.background(canvas?.color(for: .home) ?? AppTheme.canvas)
-
-                }
+        Group {
+            if sizeClass == .regular && isWorkspace {
+                NavigationSplitView { sidebar } detail: { roomDetail }
+            } else if isWorkspace {
+                NavigationStack { sidebar }
+            } else {
+                // Home already owns the compact navigation stack. Nesting a split
+                // view here prevents value links from opening their selected room.
+                sidebar
             }
         }
         .sheet(item: $adding) { QuickAddView(kind: $0, parentID: parentID, fixedKind: true) }
         .sheet(item: $editingFloor) { QuickAddView(draft: $0) }
+    }
+
+    private var sidebar: some View {
+        List(selection: $selectedRoomID) {
+            Section {
+                VStack(alignment: .leading, spacing: 12) {
+                    HearthArtwork(name: "WelcomeResidence", height: 110)
+                        .accessibilityHidden(true)
+                    Text(repository.household?.name ?? "Your home")
+                        .font(AppTheme.sectionTitle).foregroundStyle(AppTheme.ink)
+                    Text("Rooms, belongings and home care.")
+                        .font(.subheadline).foregroundStyle(AppTheme.muted)
+                }.padding(.vertical, 4)
+            }.listRowBackground(Color.clear).listRowSeparator(.hidden)
+
+            Section {
+                if repository.rooms.isEmpty {
+                    Text("Start with a kitchen, bathroom or bedroom. Add belongings inside each room.")
+                        .font(.subheadline).foregroundStyle(AppTheme.muted)
+                }
+                ForEach(repository.floors) { floor in
+                    let rooms = repository.rooms.filter { $0.floorID == floor.id }
+                    if !rooms.isEmpty {
+                        Text(floor.name).font(.caption.weight(.semibold))
+                            .foregroundStyle(AppTheme.muted).accessibilityAddTraits(.isHeader)
+                        roomRows(rooms)
+                    }
+                }
+                roomRows(repository.rooms.filter { $0.floorID == nil })
+                Button { add(.room, parent: repository.floors.count == 1 ? repository.floors.first?.id : nil) } label: {
+                    Label("Add a room", systemImage: "plus")
+                        .frame(minHeight: 44, alignment: .leading)
+                }.accessibilityIdentifier("home.addRoom")
+                NavigationLink { HomeLayoutView() } label: {
+                    HomeActionRow(title: "Floor plan", detail: "Arrange your rooms in 2D or explore in 3D", symbol: "square.3.layers.3d")
+                }.accessibilityIdentifier("home.layout")
+            } header: {
+                Text("Rooms · \(repository.rooms.count)")
+            }
+
+            Section("Belongings") {
+                DisclosureGroup(isExpanded: $showAllItems) {
+                    if matchingAssets.isEmpty {
+                        Text(search.isEmpty ? "Add appliances, furniture and other belongings here or inside a room." : "No matching items.")
+                            .font(.subheadline).foregroundStyle(AppTheme.muted)
+                    }
+                    ForEach(matchingAssets) { asset in
+                        NavigationLink { AssetDetailView(asset: asset) } label: {
+                            HomeActionRow(title: asset.name,
+                                detail: repository.rooms.first(where: { $0.id == asset.roomID })?.name ?? "No room assigned",
+                                symbol: (AssetCategory(rawValue: asset.categoryRawValue) ?? .other).symbol)
+                        }.accessibilityIdentifier("home.item.\(asset.id)")
+                    }
+                    Button { add(.asset, parent: repository.rooms.count == 1 ? repository.rooms.first?.id : nil) } label: {
+                        Label("Add an item", systemImage: "plus").frame(minHeight: 44, alignment: .leading)
+                    }.accessibilityIdentifier("home.addItem")
+                } label: {
+                    HomeActionRow(title: "All belongings", detail: "\(repository.assets.count) items across your home", symbol: "shippingbox")
+                }.accessibilityIdentifier("home.belongings")
+            }
+            Section("Home care") {
+                NavigationLink { HomeAlertsView() } label: {
+                    HomeActionRow(title: "Maintenance & warranties", detail: "Service dates and cover for your belongings", symbol: "wrench.and.screwdriver")
+                }.accessibilityIdentifier("home.care")
+            }
+        }
+        .hearthList(canvas: canvas?.color(for: .home) ?? AppTheme.canvas)
+        .hearthNavigationMaterial(canvas?.color(for: .home) ?? AppTheme.canvas, for: .navigationBar)
+        .searchable(text: $search, prompt: "Find a room or item")
+        .onChange(of: search) { _, value in if !value.isEmpty { showAllItems = true } }
+        .navigationTitle("Rooms & belongings").navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if isWorkspace {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }.accessibilityIdentifier("home.closeSpaces")
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Button("Add a floor", systemImage: "square.3.layers.3d") { add(.floor) }
+                    .accessibilityIdentifier("home.addFloor")
+                ForEach(repository.floors) { floor in
+                    Button("Edit \(floor.name)") { editingFloor = .editing(floor) }
+                }
+            } label: { Label("Home settings", systemImage: "ellipsis") }.accessibilityIdentifier("home.add")
+            }
+        }
+    }
+
+    private var roomDetail: some View {
+        NavigationStack {
+            if let room = repository.rooms.first(where: { $0.id == selectedRoomID }) {
+                RoomDetailView(room: room)
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 20) {
+                        HearthArtwork(name: "WelcomeResidence", height: 240).accessibilityHidden(true)
+                        Text("A place for everything.").font(AppTheme.displayTitle)
+                        Text("Open a room to look after the things inside it.")
+                            .font(.title3).foregroundStyle(AppTheme.muted)
+                        Label("Rooms first. Floor plans whenever you’re ready.", systemImage: "square.3.layers.3d")
+                            .font(.subheadline).foregroundStyle(AppTheme.muted)
+                    }.frame(maxWidth: 660, alignment: .leading).padding(28).frame(maxWidth: .infinity)
+                }.background(canvas?.color(for: .home) ?? AppTheme.canvas)
+
+            }
+        }
     }
 
     private func add(_ kind: EntryKind, parent: UUID? = nil) {
@@ -124,7 +148,7 @@ struct HomeSpacesView: View {
 
     @ViewBuilder private func roomRows(_ rooms: [Room]) -> some View {
         ForEach(rooms.filter { search.isEmpty || $0.name.localizedStandardContains(search) }) { room in
-            NavigationLink(value: room.id) {
+            roomLink(room) {
                 HStack(spacing: 14) {
                     HearthIcon(symbol: "door.left.hand.open")
                     VStack(alignment: .leading, spacing: 4) {
@@ -137,6 +161,14 @@ struct HomeSpacesView: View {
             }.accessibilityIdentifier("home.room.\(room.id)")
         }
     }
+    @ViewBuilder private func roomLink<Label: View>(_ room: Room, @ViewBuilder label: () -> Label) -> some View {
+        if sizeClass == .regular && isWorkspace {
+            NavigationLink(value: room.id, label: label)
+        } else {
+            NavigationLink { RoomDetailView(room: room) } label: { label() }
+        }
+    }
+
 }
 
 private struct HomeActionRow: View {

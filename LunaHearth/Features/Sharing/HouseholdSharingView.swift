@@ -133,7 +133,7 @@ struct HouseholdInvitationView: View {
                     if let message = sharing.message { Text(message) }
                     if sharing.working { ProgressView("Joining home…") }
                     Button("Join shared home") { Task { await sharing.acceptInvitation(repository) } }.accessibilityIdentifier("sharing.accept")
-                        .buttonStyle(.borderedProminent).controlSize(.large).disabled(sharing.working)
+                        .hearthGlassButton(prominent: true, glassInLight: false).controlSize(.large).disabled(sharing.working)
                 }.padding(24)
             }.background(AppTheme.canvas)
                 .toolbar { Button("Not now") { sharing.invitation = nil }.disabled(sharing.working) }

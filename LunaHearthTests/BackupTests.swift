@@ -108,6 +108,50 @@ import Testing
         #expect(target.household == nil)
     }
 
+    @Test func invalidImportedEventRangeCannotCreatePartialHome() throws {
+        let repo = try repository()
+        try repo.createHousehold(name: "Home", owner: "", members: [])
+        try repo.add(EntryDraft(kind: .event, title: "Appointment"))
+        let backup = try repo.makeBackup()
+        let records = try backup.records.map { record in
+            guard record.kind == "FamilyEvent" else { return record }
+            var fields = try #require(JSONSerialization.jsonObject(with: record.payload) as? [String: Any])
+            fields["endAt"] = (try #require(fields["startAt"] as? Double)) - 3600
+            return BackupRecord(id: record.id, householdID: record.householdID, kind: record.kind,
+                createdAt: record.createdAt, modifiedAt: record.modifiedAt,
+                payload: try JSONSerialization.data(withJSONObject: fields))
+        }
+        let target = try repository()
+        #expect(throws: BackupError.self) {
+            try target.restoreBackup(HouseholdBackup(version: 1, householdID: backup.householdID,
+                name: backup.name, savedAt: backup.savedAt, records: records))
+        }
+        #expect(target.household == nil)
+        #expect(target.events.isEmpty)
+    }
+
+    @Test func invalidImportedMealDayCannotHideRestoredMeal() throws {
+        let repo = try repository()
+        try repo.createHousehold(name: "Home", owner: "", members: [])
+        try repo.add(EntryDraft(kind: .meal, title: "Lunch"))
+        let backup = try repo.makeBackup()
+        let records = try backup.records.map { record in
+            guard record.kind == "MealPlanEntry" else { return record }
+            var fields = try #require(JSONSerialization.jsonObject(with: record.payload) as? [String: Any])
+            fields["dateKey"] = "2026-02-30"
+            return BackupRecord(id: record.id, householdID: record.householdID, kind: record.kind,
+                createdAt: record.createdAt, modifiedAt: record.modifiedAt,
+                payload: try JSONSerialization.data(withJSONObject: fields))
+        }
+        let target = try repository()
+        #expect(throws: BackupError.self) {
+            try target.restoreBackup(HouseholdBackup(version: 1, householdID: backup.householdID,
+                name: backup.name, savedAt: backup.savedAt, records: records))
+        }
+        #expect(target.household == nil)
+        #expect(target.meals.isEmpty)
+    }
+
     @Test func localFileReferencesAreNotSilentlyBackedUp() throws {
         let repo = try repository()
         try repo.createHousehold(name: "Home", owner: "", members: [], firstRoom: "Kitchen")

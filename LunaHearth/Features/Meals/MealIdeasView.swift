@@ -62,7 +62,7 @@ struct MealIdeasView: View {
                 }.padding(20).background(.background, in: RoundedRectangle(cornerRadius: 18))
                 HStack {
                     Button { generate() } label: { Label(generating ? "Finding ideas…" : "Get suggestions now", systemImage: "sparkles").padding(.vertical, 6) }
-                        .buttonStyle(.borderedProminent).disabled(generating || cookingStyle == nil).accessibilityIdentifier("meals.suggest")
+                        .hearthGlassButton(prominent: true, glassInLight: false).disabled(generating || cookingStyle == nil).accessibilityIdentifier("meals.suggest")
                     if generating { ProgressView(); Button("Cancel") { generation?.cancel(); generating = false } }
                 }
                 ReviewSafetyNotice(context: .meal)

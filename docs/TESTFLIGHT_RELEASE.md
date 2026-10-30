@@ -553,3 +553,12 @@ Archived the current 0.1.0 (48) release, including four-tab navigation, the More
 Command-line export failed to use the stored App Store account. Xcode Organizer's App Store Connect distribution subsequently succeeded and explicitly confirmed “LunaHearth 0.1.0 (48) uploaded.” Processing and tester availability are separate checks recorded below when confirmed. This upload does not submit the app for public App Store release.
 
 App Store Connect confirmed upload processing Complete for 0.1.0 (48). Saved testing notes and assigned the existing LunaHearth Beta internal group (3 testers) and Ravi Home external group (1 tester). External beta review submission succeeded; status is Waiting for Review, with automatic tester notification selected. This is beta review, not public App Store submission. Both Ravi device accounts were observed in the existing internal group, which now reports seven builds. Final per-build internal Testing status was not verified because the user was actively using Safari; no claim of external approval or completed device download is made. Build detail: https://appstoreconnect.apple.com/teams/278f79ef-d215-47fc-82e0-b88d1239f11b/apps/6811447245/testflight/ios/3a96c6e5-cfc7-4c2d-8cd1-067434318ee8
+
+
+## TestFlight 1.0 (66) — October 1, 2026
+
+Uploaded the current Help/FAQ, adaptive Today and animated demo updates successfully at 11:29 CDT. Xcode reports the uploaded package is processing. The simulator build, 272 Swift tests, performance XCTest and three targeted UI flows passed; signed Release archive succeeded. See `release/1.0-build66/TESTFLIGHT.md`.
+
+Assignment to existing LunaHearth Beta and Ravi Home groups is requested but pending: Safari App Store Connect is signed out. User sign-in is needed to confirm Apple processing completion and assign/check group availability. No completed tester assignment or public App Store submission is claimed.
+
+October 1 follow-up: user restored App Store Connect sign-in. Build 66 completed processing and was assigned to LunaHearth Beta (4 internal testers) and Ravi Home (1 external tester). Saved testing notes and completed external beta-review submission with automatic tester notification selected. Both group build tables now show 1.0 (66) as Testing. No new testers or public App Store submission.

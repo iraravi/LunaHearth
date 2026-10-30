@@ -67,7 +67,8 @@ struct ConnectedRemindersView: View {
                                 if let notes = reminder.notes, !notes.isEmpty { Text(notes).font(.caption).foregroundStyle(.secondary) }
                                 if let due = reminder.due { Text(due.formatted(date: .abbreviated, time: .omitted)).font(.caption).foregroundStyle(.secondary) }
                             }
-                        }.frame(minHeight: 44)
+                        }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+                            .contentShape(Rectangle())
                     }.buttonStyle(.plain)
                         .disabled(updating.contains(reminder.id) || connections.reminderSources.first(where: { $0.id == reminder.listID })?.writable != true)
                         .accessibilityLabel("\(reminder.title), \(reminder.completed ? "completed" : "not completed")")
@@ -134,8 +135,10 @@ struct ReminderListChooser: View {
                                     }
                                     Spacer()
                                     if selectedID == list.id { Image(systemName: "checkmark") }
-                                }.frame(minHeight: 44)
+                                }.frame(minHeight: 44).contentShape(Rectangle())
                             }.buttonStyle(.plain)
+                                .accessibilityIdentifier("reminders.setup.list.\(list.id)")
+                                .accessibilityAddTraits(selectedID == list.id ? .isSelected : [])
                         }
                         if let selected = connections.reminderSources.first(where: { $0.id == selectedID }) {
                             Text("Only items in \(selected.title) will appear in \(purpose.title). Switching lists does not move existing items.").font(.footnote)

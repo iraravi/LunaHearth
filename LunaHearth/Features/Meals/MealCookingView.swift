@@ -65,7 +65,7 @@ struct MealCookingView: View {
                     }.frame(maxWidth: .infinity, alignment: .leading)
                 }
                 if meal.cookedAt == nil {
-                    Button { finishing = true } label: { Label("Mark cooked · review pantry", systemImage: "checkmark.circle") }.buttonStyle(.borderedProminent).accessibilityIdentifier("meal.finish")
+                    Button { finishing = true } label: { Label("Mark cooked · review pantry", systemImage: "checkmark.circle") }.hearthGlassButton(prominent: true, glassInLight: false).accessibilityIdentifier("meal.finish")
                 }
             }.padding(20).frame(maxWidth: 760).frame(maxWidth: .infinity)
         }.groupBoxStyle(MealCookingGroupBoxStyle()).background(InventoryTheme.canvas).tint(InventoryTheme.accent).navigationTitle("Meal details").navigationBarTitleDisplayMode(.inline)

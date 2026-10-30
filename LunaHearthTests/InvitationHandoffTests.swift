@@ -18,7 +18,8 @@ import Testing
     @Test func unrelatedLinksAndActivitiesNeverBecomeAnInvitation() throws {
         let delegate = SharingAppDelegate()
         let activity = NSUserActivity(activityType: "unrelated.activity")
-        activity.webpageURL = try #require(URL(string: "https://www.icloud.com/share/test"))
+        let url = try #require(URL(string: "https://www.icloud.com/share/test"))
+        activity.webpageURL = url
         #expect(!delegate.receiveActivity(activity))
         #expect(!delegate.receiveInvitationURL(try #require(URL(string: "https://example.com/share/test"))))
         #expect(delegate.invitationURL == nil)

@@ -19,21 +19,20 @@ struct ReceiptImportView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var photos: [PhotosPickerItem] = []
     @State private var camera = false
-    @State private var busy = false
+    @State private var scanSession = ReceiptScanSession()
+    private var busy: Bool { scanSession.isReading }
     @State private var lines: [ReceiptLine] = []
     @State private var sourceText = ""
     @State private var store = ""
     @State private var error: String?
     @State private var outcome: String?
     @State private var savedPurchaseID: UUID?
-    @State private var scanTask: Task<Void, Never>?
     @State private var decoding = false
     @State private var decodeTask: Task<Void, Never>?
     @State private var decodeGeneration = UUID()
     @State private var proposals: [String: ReceiptNameProposal] = [:]
     @State private var decodeMessage: String?
     private let decoder: any ReceiptNameDecodingService = OnDeviceReceiptNameService()
-    private let scanner: any ReceiptScanningService = VisionReceiptScanner()
     private var selected: Int { lines.filter(\.included).count }
 
     var body: some View {
@@ -66,7 +65,14 @@ struct ReceiptImportView: View {
                             Text("Use up to four pages from one receipt. Photos are not retained or uploaded by LunaHearth.")
                         }
                     }
-                    if busy { Section { ProgressView("Reading your receipt…").accessibilityIdentifier("receipt.reading") } }
+                    if busy {
+                        Section {
+                            ProgressView("Loading and reading your receipt…").accessibilityIdentifier("receipt.reading")
+                            Text("Photos stored in iCloud may need to download first.").font(.caption).foregroundStyle(.secondary)
+                            Button("Cancel scan") { scanSession.cancel(); photos = [] }
+                                .frame(minHeight: 44).accessibilityIdentifier("receipt.cancelScan")
+                        }
+                    }
                     if !sourceText.isEmpty {
                         Section { ReviewSafetyNotice(context: .receipt) }
                         Section {
@@ -114,13 +120,13 @@ struct ReceiptImportView: View {
                                     .font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("receipt.decodeStatus")
                             }
                         }
-                        ForEach($lines) { $line in
-                            ReceiptReviewRow(line: $line, purchaseDay: HouseholdDay(recordingExpense ? expenseDraft.date : .now).key, currency: recordingExpense ? expenseDraft.currency : nil, proposal: proposals[line.id], alreadyImported: repository.receiptLineImported(line.id))
-                        }
                         Section {
                             Button("Add a missed item", systemImage: "plus") {
                                 lines.append(ReceiptLine(id: ReceiptRules.hash(sourceText + "|manual|\(lines.count)"), name: ""))
                             }.disabled(lines.count >= 150).accessibilityIdentifier("receipt.addLine")
+                        }
+                        ForEach($lines) { $line in
+                            ReceiptReviewRow(line: $line, purchaseDay: HouseholdDay(recordingExpense ? expenseDraft.date : .now).key, currency: recordingExpense ? expenseDraft.currency : nil, proposal: proposals[line.id], alreadyImported: repository.receiptLineImported(line.id))
                         }
                     }
                 }
@@ -134,32 +140,33 @@ struct ReceiptImportView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     if outcome == nil && (publicStatus.configuration?.allows(.receipts) ?? true) {
                         Button(recordingExpense ? "Save receipt" : "Add \(selected)") { save() }
-                            .disabled(busy || decoding || (selected == 0 && !recordingExpense)).accessibilityIdentifier("receipt.confirm")
+                            .disabled(sourceText.isEmpty || busy || decoding || (selected == 0 && !recordingExpense)).accessibilityIdentifier("receipt.confirm")
                     }
                 }
             }
             .sheet(isPresented: $camera) {
-                ReceiptCamera(completed: { data in camera = false; startScan(data) },
+                ReceiptCamera(completed: { data in camera = false; startCameraScan(data) },
                     failed: { message in camera = false; error = message }, cancelled: { camera = false })
             }
             .onChange(of: recordingExpense) { _, enabled in if !enabled { for index in lines.indices { lines[index].amount = "" } } }
             .onChange(of: photos) { _, value in
                 guard !value.isEmpty else { return }
-                cancelDecoding(); scanTask?.cancel(); busy = true
-                scanTask = Task {
-                    do {
-                        var images: [Data] = []
-                        for photo in value {
-                            guard let data = try await photo.loadTransferable(type: Data.self) else { throw ReceiptImportError.unreadable }
-                            guard data.count <= 20_000_000 else { throw ReceiptImportError.tooLarge }
-                            images.append(data)
-                        }
-                        try await read(images)
-                    } catch is CancellationError {} catch { self.error = userFacingError(error) }
-                    busy = false
-                }
+                cancelDecoding()
+                scanSession.start(operation: {
+                    let scanner = VisionReceiptScanner()
+                    var pages: [String] = []
+                    for photo in value {
+                        try Task.checkCancellation()
+                        guard let data = try await photo.loadTransferable(type: Data.self) else { throw ReceiptImportError.unreadable }
+                        guard data.count <= 20_000_000 else { throw ReceiptImportError.tooLarge }
+                        pages.append(try await scanner.scan(imageData: data).text)
+                    }
+                    try Task.checkCancellation()
+                    return ReceiptRules.scan(text: pages.joined(separator: "\n"))
+                }, completed: { scan in apply(scan); photos = [] },
+                   failed: { message in error = message; photos = [] })
             }
-            .onDisappear { scanTask?.cancel(); cancelDecoding() }
+            .onDisappear { scanSession.cancel(); cancelDecoding() }
             .onChange(of: repository.household?.id) { _, id in if id != householdID { dismiss() } }
             .task {
                 if let sampleImage { expenseDraft.currency = "USD"; startScan([sampleImage]) }
@@ -167,7 +174,9 @@ struct ReceiptImportView: View {
                     apply(ReceiptRules.scan(text: "FRESH MARKET\nCurd 3.99\n2 x Bananas 2.49\nTOTAL 6.48"))
                 }
             }
-            .saveError($error)
+            .alert("Receipt needs attention", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
+                Button("OK", role: .cancel) { error = nil }
+            } message: { Text(error ?? "Please try again.") }
             #if DEBUG
             .modifier(UITestAppearance())
             #endif
@@ -183,19 +192,36 @@ struct ReceiptImportView: View {
             }.disabled(busy).accessibilityIdentifier("receipt.camera")
         }
     }
-    private func startScan(_ images: [Data]) {
-        cancelDecoding(); scanTask?.cancel(); busy = true
-        scanTask = Task {
-            do { try await read(images) }
-            catch is CancellationError {} catch { self.error = userFacingError(error) }
-            busy = false
-        }
+    private func startCameraScan(_ images: [UIImage]) {
+        cancelDecoding()
+        scanSession.start(operation: {
+            let encoder = ReceiptCameraEncoder()
+            let scanner = VisionReceiptScanner()
+            var pages: [String] = []
+            for image in images {
+                try Task.checkCancellation()
+                let data = try await encoder.encode(image)
+                pages.append(try await scanner.scan(imageData: data).text)
+            }
+            try Task.checkCancellation()
+            return ReceiptRules.scan(text: pages.joined(separator: "\n"))
+        }, completed: { apply($0) }, failed: { error = $0 })
     }
-    private func read(_ images: [Data]) async throws {
+    private func startScan(_ images: [Data]) {
+        cancelDecoding()
+        scanSession.start(operation: { try await read(images) },
+                          completed: { apply($0) }, failed: { error = $0 })
+    }
+    private func read(_ images: [Data]) async throws -> ReceiptScan {
+        // Each attempt owns its scanner so cancelled Vision work cannot queue a retry behind it.
+        let scanner = VisionReceiptScanner()
         var pages: [String] = []
-        for data in images { pages.append(try await scanner.scan(imageData: data).text) }
+        for data in images {
+            try Task.checkCancellation()
+            pages.append(try await scanner.scan(imageData: data).text)
+        }
         try Task.checkCancellation()
-        apply(ReceiptRules.scan(text: pages.joined(separator: "\n")))
+        return ReceiptRules.scan(text: pages.joined(separator: "\n"))
     }
     private func apply(_ scan: ReceiptScan) {
         cancelDecoding(); proposals = [:]; decodeMessage = nil
@@ -228,7 +254,11 @@ struct ReceiptImportView: View {
                 guard decodeGeneration == generation, repository.household?.id == householdID else { return }
                 proposals = Dictionary(uniqueKeysWithValues: result.proposals.map { ($0.id, $0) })
                 decodeMessage = result.message
-            } catch is CancellationError {} catch { decodeMessage = "AI could not decode names. You can edit them yourself." }
+            } catch is CancellationError {} catch {
+                if decodeGeneration == generation, repository.household?.id == householdID {
+                    decodeMessage = "AI could not decode names. You can edit them yourself."
+                }
+            }
             if decodeGeneration == generation { decoding = false }
         }
     }
@@ -249,7 +279,7 @@ struct ReceiptImportView: View {
             } else {
                 outcome = count == 0 ? "These items were already imported. Nothing added again." : "\(count) purchases saved. Shopping and inventory are updated."
             }
-        } catch { self.error = userFacingError(error) }
+        } catch { self.error = (error as? ReceiptImportError)?.errorDescription ?? userFacingError(error) }
     }
 }
 

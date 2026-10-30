@@ -76,9 +76,11 @@ final class LocalHouseholdRepository: HouseholdRepository {
         }
         let savedStores = try context.fetch(FetchDescriptor<ShoppingStore>()).filter { $0.householdID == id }
         let baselines = try context.fetch(FetchDescriptor<HouseholdSyncBaseline>()).filter { $0.householdID == id }
+        let calendarLinks = try context.fetch(FetchDescriptor<CalendarDeliveryLink>()).filter { $0.householdID == id }
+        let purchaseHistory = try context.fetch(FetchDescriptor<PurchaseEntry>()).filter { $0.householdID == id }
         households = homes; syncConfiguration = configuration; syncBaselines = baselines
         reminderDeliverySettings = deliverySettings
-        calendarDeliveryLinks = try context.fetch(FetchDescriptor<CalendarDeliveryLink>()).filter { $0.householdID == id }
+        calendarDeliveryLinks = calendarLinks
         reminderDeliveryLinks = deliveryLinks
         household = home
         members = people.sorted { $0.createdAt < $1.createdAt }
@@ -86,7 +88,7 @@ final class LocalHouseholdRepository: HouseholdRepository {
         tasks = chores.sorted { ($0.dueAt ?? .distantFuture) < ($1.dueAt ?? .distantFuture) }
         stores = savedStores.sorted { $0.displayName.localizedStandardCompare($1.displayName) == .orderedAscending }
         inventory = pantry.sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
-        purchases = try context.fetch(FetchDescriptor<PurchaseEntry>()).filter { $0.householdID == id }.sorted { $0.day == $1.day ? $0.createdAt > $1.createdAt : $0.day > $1.day }
+        purchases = purchaseHistory.sorted { $0.day == $1.day ? $0.createdAt > $1.createdAt : $0.day > $1.day }
         expenses = spending.sorted { $0.day > $1.day }
         groceries = shopping.sorted { $0.createdAt < $1.createdAt }
         meals = food.sorted { ($0.dateKey ?? "") < ($1.dateKey ?? "") }

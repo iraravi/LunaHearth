@@ -91,7 +91,7 @@ struct HomeLayoutView: View {
                         }.buttonStyle(.plain).accessibilityIdentifier("layout.room.\(room.id)")
                     }
                 }
-                Text("A simple rectangular layout from your measurements. Saved on this device.")
+                Text("An approximate rectangular layout using the measurements you enter. Saved on this device and synced when you enable household sharing. Not a construction or safety plan.")
                     .font(.footnote).foregroundStyle(AppTheme.muted)
             }.padding(20).frame(maxWidth: 900).frame(maxWidth: .infinity)
         }.background(AppTheme.canvas).navigationTitle("Home layout").navigationBarTitleDisplayMode(.inline)

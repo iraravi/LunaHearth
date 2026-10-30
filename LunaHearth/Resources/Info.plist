@@ -38,12 +38,12 @@
     <key>NSCalendarsWriteOnlyAccessUsageDescription</key>
     <string>LunaHearth can add events to your Apple Calendar when you ask it to.</string>
     <key>NSRemindersFullAccessUsageDescription</key>
-    <string>Optionally browse and edit the Apple Reminders lists you select. Your LunaHearth household lists work without this permission.</string>
+    <string>LunaHearth uses Reminders access to show and update the lists you select. New reminders are saved in Apple Reminders. Shopping and other household features work without this permission.</string>
     <key>UIBackgroundModes</key>
     <array><string>remote-notification</string></array>
     <key>NSCameraUsageDescription</key>
-    <string>LunaHearth uses the camera only when you scan a room, kitchen shelf, receipt, appliance label, or document.</string>
+    <string>LunaHearth uses the camera when you choose to scan a receipt or photograph kitchen items. Review the extracted details before saving.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>LunaHearth uses selected photos only when you import pantry items, a receipt, warranty, manual, or event flyer.</string>
+    <string>LunaHearth reads the kitchen or receipt photos you select to suggest item and purchase details for your review.</string>
 </dict>
 </plist>

@@ -2,6 +2,57 @@ import XCTest
 
 @MainActor
 final class VisualFlowTests: XCTestCase {
+    override func setUp() async throws {
+        try await super.setUp()
+        // A failed rotation test must not change the next test's starting geometry.
+        await MainActor.run { XCUIDevice.shared.orientation = .portrait }
+    }
+
+    func testSearchTroubleshootingAndSafetyGuide() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--large-text"]
+        app.launch()
+        XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["More"].firstMatch.tap()
+        tapVisible("more.help", app: app)
+        let search = app.searchFields.firstMatch
+        XCTAssertTrue(search.waitForExistence(timeout: 5))
+        search.tap()
+        search.typeText("Focus")
+        tapVisible("help.article.notifications", app: app)
+        XCTAssertTrue(app.staticTexts["I did not receive an assignment alert"].waitForExistence(timeout: 5))
+        app.navigationBars.buttons.firstMatch.tap()
+        search.tap()
+        search.buttons["Clear text"].tap()
+        search.tap()
+        search.typeText("allergens")
+        tapVisible("help.article.safety", app: app)
+        XCTAssertTrue(app.staticTexts["AI, pantry and meal safety"].waitForExistence(timeout: 5))
+        app.terminate()
+    }
+
+    func testTodayPlanningRetainsSelectionDuringRotation() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        XCUIDevice.shared.orientation = .portrait
+        defer { XCUIDevice.shared.orientation = .portrait }
+        app.launch()
+        let restock = app.buttons["today.priority.restock"]
+        XCTAssertTrue(restock.waitForExistence(timeout: 10))
+        restock.tap()
+        XCTAssertTrue(restock.isSelected)
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertTrue(restock.waitForExistence(timeout: 5))
+        XCTAssertTrue(restock.isSelected, "Resizing must retain the chosen attention category")
+        app.buttons["today.quickAdd"].tap()
+        XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5))
+        XCUIDevice.shared.orientation = .portrait
+        XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5), "Resizing must preserve the open form")
+        app.buttons["Cancel"].firstMatch.tap()
+        XCTAssertTrue(restock.isSelected)
+        app.terminate()
+    }
+
     func testNotificationForAnotherHomeDoesNotShowCurrentAssignments() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--notification-shopping", "--notification-other-home"]
@@ -286,6 +337,10 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Family test calendar · Test account"].tap()
         capture("Apple-Calendar-Checkbox", app: app)
         app.buttons["appointment.save"].tap()
+        // The default start time can overlap today's fixture depending on the clock.
+        // Review the same confirmation a user sees before expecting a saved event.
+        let overlapConfirmation = app.alerts["Overlapping appointments"].buttons["Save anyway"]
+        if overlapConfirmation.waitForExistence(timeout: 2) { overlapConfirmation.tap() }
         XCTAssertTrue(app.buttons["calendar.add"].waitForExistence(timeout: 5))
         let event = app.staticTexts["Linked lesson"]
         for _ in 0..<5 where !event.isHittable { app.swipeUp() }
@@ -295,6 +350,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(title.waitForExistence(timeout: 5)); title.tap()
         title.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: "Linked lesson".count)); title.typeText("Updated lesson")
         app.buttons["appointment.save"].tap()
+        if overlapConfirmation.waitForExistence(timeout: 2) { overlapConfirmation.tap() }
         XCTAssertTrue(app.staticTexts["Last update sent"].waitForExistence(timeout: 5))
         capture("Apple-Calendar-Linked-Update", app: app)
     }
@@ -574,6 +630,7 @@ final class VisualFlowTests: XCTestCase {
         capture("Lists-Redesigned", app: app)
         let meals = app.buttons["home.meals"]
         XCTAssertTrue(meals.waitForExistence(timeout: 5))
+        reveal(meals, app: app)
         meals.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.8)).tap()
         XCTAssertTrue(app.navigationBars["Meal ideas"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["meals.cookingStyle"].exists)
@@ -589,6 +646,7 @@ final class VisualFlowTests: XCTestCase {
         let meals = app.buttons["home.meals"]
         XCTAssertTrue(meals.waitForExistence(timeout: 5))
         // Touch the visible card, rather than invoking an accessibility action.
+        reveal(meals, app: app)
         meals.coordinate(withNormalizedOffset: CGVector(dx: 0.85, dy: 0.8)).tap()
         XCTAssertTrue(app.navigationBars["Meal ideas"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.buttons["meals.cookingStyle"].exists)
@@ -639,7 +697,8 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(create.waitForExistence(timeout: 5))
         let homeName = app.textFields["setup.householdName"]
         XCTAssertTrue(homeName.waitForExistence(timeout: 5))
-        tapVisible("setup.householdName", app: app); homeName.typeText("Our Home")
+        tapVisible("setup.householdName", app: app)
+        homeName.typeText("Our Home")
         app.buttons["setup.keyboardDone"].tap()
         create.tap()
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 5))
@@ -648,45 +707,63 @@ final class VisualFlowTests: XCTestCase {
     }
 
     private func tapVisible(_ id: String, app: XCUIApplication) {
-        let element = app.descendants(matching: .any)[id].firstMatch
-        reveal(element, app: app)
+        let query = app.descendants(matching: .any).matching(identifier: id)
+        let matches = query.allElementsBoundByIndex
+        // SwiftUI can expose the presenting screen behind a modal. Target its
+        // visible control instead of an identically named action underneath it.
+        let element = matches.first { $0.isHittable } ?? matches.last ?? query.firstMatch
+        reveal(element, app: app, identifier: id)
         XCTAssertTrue(element.waitForExistence(timeout: 5), "Missing \(id)")
         element.tap()
     }
 
     /// Swipe inside the foreground form, not the whole window: adaptive sheets
     /// can be shorter than the window and whole-app swipes hit the backdrop.
-    private func reveal(_ element: XCUIElement, app: XCUIApplication) {
+    private func reveal(_ element: XCUIElement, app: XCUIApplication, identifier suppliedID: String? = nil) {
         _ = element.waitForExistence(timeout: 2)
+        var targetID = suppliedID
         for _ in 0..<12 {
             guard let snapshot = try? app.snapshot() else { return }
             func descendants(_ node: XCUIElementSnapshot) -> [XCUIElementSnapshot] {
                 [node] + node.children.flatMap(descendants)
             }
             let nodes = descendants(snapshot)
+            if targetID == nil && element.exists { targetID = element.identifier }
+            let target = nodes.last { targetID != nil && ($0.identifier == targetID || $0.label == targetID) }
             let window = nodes.first { $0.elementType == .window }?.frame ?? app.frame
-            let scrollTypes: [XCUIElement.ElementType] = [.scrollView, .collectionView]
-            let foreground = nodes.last { scrollTypes.contains($0.elementType)
+            let containers = nodes.filter { [.scrollView, .collectionView].contains($0.elementType)
                 && $0.frame.intersection(window).height > 150 }
-            let bounds = (foreground?.frame.intersection(window) ?? window).insetBy(dx: 8, dy: 20)
-            let top = nodes.filter { $0.elementType == .navigationBar }
-                .map { $0.frame.maxY }.max() ?? bounds.minY
-            if element.exists && element.isHittable
-                && element.frame.midY >= max(top, bounds.minY)
-                && element.frame.midY < bounds.maxY { return }
-            let down = element.exists && element.frame.midY < max(top, bounds.minY)
-            // Resolve only the selected container when gesturing; enumerating live
-            // element frames races with SwiftUI replacing the previous screen.
-            let surface: XCUIElement
-            if let foreground {
-                let peers = nodes.filter { $0.elementType == foreground.elementType }
-                let index = peers.lastIndex { $0.frame == foreground.frame } ?? 0
-                surface = app.descendants(matching: foreground.elementType).element(boundBy: index)
-            } else { surface = app }
-            guard surface.exists else { continue }
-            surface.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.3 : 0.8))
-                .press(forDuration: 0.05, thenDragTo: surface.coordinate(
-                    withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.8 : 0.3)))
+            let ancestors = containers.filter { container in
+                targetID != nil && descendants(container).contains { $0.identifier == targetID || $0.label == targetID }
+            }
+            // Do not mistake a tall horizontal category strip for the enclosing form.
+            let foreground = ancestors.last ?? containers.last { container in
+                container.elementType == .collectionView || descendants(container).contains {
+                    $0.label.hasPrefix("Vertical scroll bar")
+                }
+            } ?? containers.last
+            var visible = foreground?.frame.intersection(window) ?? window
+            // SwiftUI's scroll frame extends behind fixed footers; the indicator does not.
+            if let foreground, let indicator = descendants(foreground).first(where: {
+                $0.label.hasPrefix("Vertical scroll bar") && $0.frame.height > 150
+            }) {
+                visible = visible.intersection(CGRect(x: visible.minX, y: indicator.frame.minY,
+                    width: visible.width, height: indicator.frame.height))
+            }
+            let bounds = visible.insetBy(dx: 8, dy: 20)
+            let bars = nodes.filter { $0.elementType == .navigationBar }
+            let top = max(bounds.minY, bars.map { $0.frame.maxY }.max() ?? bounds.minY)
+            if let target, element.isHittable {
+                let toolbarControl = bars.contains { descendants($0).contains { $0.identifier == targetID || $0.label == targetID } }
+                if toolbarControl || ancestors.isEmpty { return }
+                if target.frame.midY >= top && target.frame.midY < bounds.maxY { return }
+            }
+            let down = target.map { $0.frame.midY < top } ?? false
+            guard bounds.width > 0, bounds.height > 0 else { return }
+            let origin = app.coordinate(withNormalizedOffset: .zero)
+            origin.withOffset(CGVector(dx: bounds.midX, dy: bounds.minY + bounds.height * (down ? 0.3 : 0.8)))
+                .press(forDuration: 0.05, thenDragTo: origin.withOffset(
+                    CGVector(dx: bounds.midX, dy: bounds.minY + bounds.height * (down ? 0.8 : 0.3))))
         }
     }
 
@@ -736,7 +813,7 @@ final class VisualFlowTests: XCTestCase {
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.setupGuide", app: app)
-        XCTAssertTrue(app.navigationBars["Set up your home"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Getting started"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["1 of 7 steps reviewed"].waitForExistence(timeout: 5))
         capture("Setup49-Guide", app: app)
         tapVisible("guide.open.pantry", app: app)
@@ -772,6 +849,7 @@ final class VisualFlowTests: XCTestCase {
             tapVisible("inventory.add", app: app)
             app.textFields["inventory.name"].tap(); app.textFields["inventory.name"].typeText(name)
             if name == "Rice" {
+                app.buttons["inventory.keyboardDone"].tap()
                 tapVisible("inventory.details", app: app)
                 tapVisible("inventory.location", app: app)
                 app.textFields["inventory.location"].typeText("Cumin shelf")
@@ -862,7 +940,7 @@ final class VisualFlowTests: XCTestCase {
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.setupGuide", app: app)
-        XCTAssertTrue(app.navigationBars["Set up your home"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.navigationBars["Getting started"].waitForExistence(timeout: 5))
         capture("Setup49-LargeText", app: app)
         tapVisible("guide.open.pantry", app: app)
         XCTAssertTrue(app.navigationBars["Groceries at home"].waitForExistence(timeout: 5))
@@ -989,6 +1067,7 @@ final class VisualFlowTests: XCTestCase {
         separate.switches.firstMatch.tap()
         XCTAssertTrue(app.buttons["inventory.save"].isEnabled)
         app.buttons["inventory.save"].tap()
+        tapVisible("inventory.tools", app: app)
         tapVisible("inventory.reviewDuplicates", app: app)
         XCTAssertTrue(app.staticTexts["Cumin seeds"].waitForExistence(timeout: 5))
         capture("68-Ingredient-Duplicate-Review", app: app)
@@ -1022,6 +1101,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["inventory.add"].tap()
         app.textFields["inventory.name"].tap(); app.textFields["inventory.name"].typeText("Family special")
         app.buttons["inventory.save"].tap()
+        tapVisible("inventory.tools", app: app)
         tapVisible("inventory.organizeAI", app: app)
         XCTAssertTrue(app.staticTexts["On-device AI is unavailable. Your visual pantry still works with offline categories."].waitForExistence(timeout: 5))
     }
@@ -1032,19 +1112,24 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); tapVisible("home.inventory", app: app)
         if app.buttons["inventory.changeView"].label == "Shelves" { app.buttons["inventory.changeView"].tap() }
+        tapVisible("inventory.tools", app: app)
         tapVisible("inventory.attentionDates", app: app)
+        tapVisible("inventory.tools.done", app: app)
         app.swipeUp()
         XCTAssertTrue(app.staticTexts["Past expiry"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Expires soon"].exists)
         capture("71-Inventory-Expiry-Colors", app: app)
         app.swipeDown(); app.swipeDown()
+        tapVisible("inventory.tools", app: app)
         tapVisible("inventory.attentionLow", app: app)
+        tapVisible("inventory.tools.done", app: app)
         tapVisible("inventory.item.Rice", app: app)
         let low = app.switches["inventory.lowStock"]
         XCTAssertTrue(low.waitForExistence(timeout: 5))
         XCTAssertEqual(low.value as? String, "1")
         low.switches.firstMatch.tap()
         app.buttons["inventory.save"].tap()
+        tapVisible("inventory.tools", app: app)
         XCTAssertFalse(app.buttons["inventory.attentionLow"].exists)
     }
 
@@ -1053,7 +1138,9 @@ final class VisualFlowTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); tapVisible("home.inventory", app: app)
+        tapVisible("inventory.tools", app: app)
         tapVisible("inventory.attentionLow", app: app)
+        tapVisible("inventory.tools.done", app: app)
         app.swipeUp()
         XCTAssertTrue(app.buttons["inventory.item.Rice"].waitForExistence(timeout: 5))
         capture("74-Low-Stock-Dark", app: app)
@@ -1081,7 +1168,8 @@ final class VisualFlowTests: XCTestCase {
         capture("97-Today-\(appearance)", app: app)
         if interactive {
             tapVisible("today.buy.Milk", app: app)
-            tapVisible("shopping.keepInventory.existing", app: app)
+            // The fixture has an expired milk pack; a new purchase stays separate.
+            tapVisible("shopping.purchaseInventory", app: app)
             XCTAssertFalse(app.buttons["today.buy.Milk"].exists)
         }
         func select(_ key: String) {
@@ -1194,8 +1282,8 @@ final class VisualFlowTests: XCTestCase {
         let appearance = largeText ? "Large" : (dark ? "Dark" : (landscape ? "Landscape" : "Light"))
 
         for screen in ["shopping", "inventory"] {
-            if screen == "inventory" { app.buttons["shopping.inventory"].tap() }
-            app.buttons["\(screen).tools"].tap()
+            if screen == "inventory" { tapVisible("shopping.inventory", app: app) }
+            tapVisible("\(screen).tools", app: app)
             let organize = app.buttons["\(screen).organizeAI"]
             XCTAssertTrue(organize.waitForExistence(timeout: 5))
             let filterCard = app.otherElements["\(screen).filterCard"]
@@ -1208,6 +1296,7 @@ final class VisualFlowTests: XCTestCase {
             if !largeText {
                 XCTAssertGreaterThanOrEqual(organize.frame.height, 44)
                 XCTAssertLessThanOrEqual(organize.frame.height, 50, "The AI action must remain compact")
+                reveal(app.buttons["\(screen).reviewDuplicates"], app: app)
                 XCTAssertTrue(app.buttons["\(screen).reviewDuplicates"].isHittable)
             }
             capture("94-\(screen)-Tools-\(appearance)", app: app)
@@ -1260,17 +1349,19 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap(); app.staticTexts["Shopping"].tap()
         for screen in ["shopping", "inventory"] {
-            if screen == "inventory" { app.buttons["shopping.inventory"].tap() }
+            if screen == "inventory" { tapVisible("shopping.inventory", app: app) }
             if app.buttons["\(screen).changeView"].label == "Shelves" { app.buttons["\(screen).changeView"].tap() }
             XCTAssertTrue(app.buttons["\(screen).tools"].waitForExistence(timeout: 5))
             XCTAssertFalse(app.buttons["\(screen).organizeAI"].exists)
             XCTAssertTrue(app.buttons["\(screen).category.all"].exists)
             let name = screen == "shopping" ? "Cumin seeds" : "Rice"
             let item = app.buttons["\(screen).item.\(name)"]
+            reveal(item, app: app)
             XCTAssertTrue(item.waitForExistence(timeout: 5))
+            XCTAssertTrue(item.isHittable)
             XCTAssertLessThan(item.frame.minY, app.frame.maxY - 100)
             capture("92-\(screen)-Polish-\(dark ? "Dark" : (landscape ? "Landscape" : (largeText ? "Large" : "Standard")))", app: app)
-            app.buttons["\(screen).tools"].tap()
+            tapVisible("\(screen).tools", app: app)
             XCTAssertTrue(app.buttons["\(screen).organizeAI"].waitForExistence(timeout: 5))
             if dark { capture("93-\(screen)-Tools-Dark", app: app) }
             app.buttons["\(screen).tools.done"].tap()
@@ -1343,10 +1434,11 @@ final class VisualFlowTests: XCTestCase {
             } else { app.buttons["shopping.tools"].tap() }
             tapVisible("\(screen).organizeAI", app: app)
             XCTAssertTrue(app.buttons["\(screen).resetAICategories"].waitForExistence(timeout: 5))
+            tapVisible("\(screen).tools.done", app: app)
             tapVisible("\(screen).category.grains", app: app)
             XCTAssertTrue(app.buttons["\(screen).category.grains"].isSelected)
             capture(screen == "shopping" ? "80-Shopping-Category-Controls" : "81-Inventory-Category-Controls", app: app)
-            app.swipeDown(); app.swipeDown()
+            tapVisible("\(screen).tools", app: app)
             tapVisible("\(screen).resetAICategories", app: app)
             XCTAssertFalse(app.buttons["\(screen).resetAICategories"].exists)
             app.buttons["\(screen).tools.done"].tap()
@@ -1361,9 +1453,10 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.tabBars.buttons["Home"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         if app.buttons["shopping.changeView"].label == "Shelves" { app.buttons["shopping.changeView"].tap() }
+        tapVisible("shopping.tools", app: app)
         tapVisible("shopping.organizeAI", app: app)
         XCTAssertTrue(app.staticTexts["On-device AI is unavailable. Offline shopping shelves are still available."].waitForExistence(timeout: 5))
-        app.swipeDown(); app.swipeDown()
+        tapVisible("shopping.tools.done", app: app)
         tapVisible("shopping.changeView", app: app)
         XCTAssertEqual(app.buttons["shopping.changeView"].label, "Shelves")
         tapVisible("shopping.changeView", app: app)
@@ -1372,12 +1465,13 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("shopping.item.Cumin seeds", app: app)
         XCTAssertTrue(app.buttons["shopping.purchaseInventory"].waitForExistence(timeout: 5))
         app.buttons["shopping.purchaseInventory"].tap()
-        app.swipeDown(); app.swipeDown()
+        tapVisible("shopping.tools", app: app)
         tapVisible("shopping.showChecked", app: app)
+        tapVisible("shopping.tools.done", app: app)
         app.swipeUp()
         capture("73-Shopping-Shelves-Cards", app: app)
         if app.buttons["shopping.tools.done"].exists { app.buttons["shopping.tools.done"].tap() }
-        app.buttons["shopping.inventory"].tap()
+        tapVisible("shopping.inventory", app: app)
         tapVisible("inventory.item.Cumin seeds", app: app)
         XCTAssertTrue(app.textFields["inventory.name"].waitForExistence(timeout: 5))
         XCTAssertEqual(app.textFields["inventory.name"].value as? String, "Cumin seeds")
@@ -1402,13 +1496,15 @@ final class VisualFlowTests: XCTestCase {
         separate.switches.firstMatch.tap()
         XCTAssertTrue(app.buttons["quickAdd.save"].isEnabled)
         app.buttons["quickAdd.save"].tap()
+        tapVisible("shopping.tools", app: app)
         tapVisible("shopping.reviewDuplicates", app: app)
         XCTAssertTrue(app.staticTexts["Jeera"].waitForExistence(timeout: 5))
         capture("76-Shopping-Duplicate-Review", app: app)
         app.buttons.matching(NSPredicate(format: "label == %@", "Remove extra")).element(boundBy: 1).tap()
         app.buttons["Remove Jeera"].tap()
         XCTAssertTrue(app.staticTexts["No matching duplicates"].waitForExistence(timeout: 5))
-        app.buttons["Done"].tap()
+        app.navigationBars["Similar shopping items"].buttons["Done"].tap()
+        tapVisible("shopping.tools.done", app: app)
         app.buttons["shopping.add"].tap()
         let title = app.textFields["quickAdd.title"]
         title.tap(); title.typeText("Cummin")
@@ -1462,8 +1558,9 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testDemoAnimationPlaysWithoutSaving() {
-        let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
-        app.launch(); createHousehold(app)
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launch()
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.connectedDemo", app: app)
         let caption = app.staticTexts["demo.animationCaption"]
@@ -1471,12 +1568,28 @@ final class VisualFlowTests: XCTestCase {
         let initial = caption.label
         expectation(for: NSPredicate(format: "label != %@", initial), evaluatedWith: caption)
         waitForExpectations(timeout: 8)
-        capture("Demo-Animation-In-Motion", app: app)
-        app.buttons["demo.play"].tap()
+        tapVisible("demo.play", app: app)
         let paused = caption.label
-        app.buttons["demo.next"].tap()
+        tapVisible("demo.next", app: app)
         XCTAssertNotEqual(caption.label, paused)
-        capture("Demo-Animation-Next-Scene", app: app)
+        XCTAssertFalse(app.buttons["demo.purchases"].exists)
+        app.terminate()
+    }
+
+    func testDemoChaptersWithReducedMotionAndLargeText() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--reduce-motion", "--large-text"]
+        app.launch()
+        app.buttons["Home"].firstMatch.tap()
+        tapVisible("home.connectedDemo", app: app)
+        let caption = app.staticTexts["demo.animationCaption"]
+        XCTAssertTrue(caption.waitForExistence(timeout: 5))
+        tapVisible("demo.next", app: app)
+        XCTAssertEqual(caption.label, "The receipt splits into an expense and purchased items.")
+        XCTAssertFalse(app.buttons["demo.play"].isEnabled)
+        tapVisible("demo.loadReceipt", app: app)
+        XCTAssertTrue(app.buttons["receipt.confirm"].waitForExistence(timeout: 20))
+        app.terminate()
     }
 
     func testConnectedDemoFlow() {
@@ -1505,15 +1618,18 @@ final class VisualFlowTests: XCTestCase {
     }
 
     func testReceiptReviewAndImport() { receiptReview(largeText: false) }
+    func testReceiptReviewDarkMode() { receiptReview(largeText: false, dark: true) }
     func testReceiptReviewLargeText() { receiptReview(largeText: true) }
+    func testReceiptReviewDarkLargeText() { receiptReview(largeText: true, dark: true) }
     func testReceiptReviewLandscape() {
         XCUIDevice.shared.orientation = .landscapeLeft
         defer { XCUIDevice.shared.orientation = .portrait }
         receiptReview(largeText: false)
     }
-    private func receiptReview(largeText: Bool) {
+    private func receiptReview(largeText: Bool, dark: Bool = false) {
         let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-receipt"]
         if largeText { app.launchArguments.append("--large-text") }
+        if dark { app.launchArguments.append("--dark") }
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         tapVisible("inventory.scanReceipt", app: app)
@@ -1522,7 +1638,7 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("receipt.decodeNames", app: app)
         let decodeStatus = app.staticTexts["receipt.decodeStatus"]
         XCTAssertTrue(decodeStatus.waitForExistence(timeout: 5))
-        XCTAssertTrue(decodeStatus.label.contains("unavailable in this test"))
+        XCTAssertTrue(decodeStatus.label.contains("Model generation is disabled in this automated test session."))
         capture("Receipt-Review", app: app)
         app.buttons["receipt.confirm"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
@@ -1593,10 +1709,11 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertEqual(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "shopping.keepInventory.")).count, 1)
         capture("78-One-Existing-Milk-Action", app: app)
         existing.tap()
+        reveal(app.buttons["shopping.existingPack.1"], app: app)
         XCTAssertTrue(app.buttons["shopping.existingPack.1"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["shopping.useSelectedInventory"].isEnabled)
         capture("79-Existing-Milk-Cleanup", app: app)
-        app.buttons["shopping.removeExistingPack.0"].tap()
+        tapVisible("shopping.removeExistingPack.0", app: app)
         app.buttons["Remove duplicate"].tap()
         app.buttons["shopping.existingPack.0"].tap()
         XCTAssertEqual(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "shopping.existingPack.")).count, 1)
@@ -1644,7 +1761,7 @@ final class VisualFlowTests: XCTestCase {
 
     func testEmptyPantryIdeasAreSuggestionsNotSavedStock() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--reduce-motion"]
         app.launch(); createHousehold(app)
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         tapVisible("inventory.ideas", app: app)
@@ -1726,7 +1843,10 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertFalse(app.buttons["inventory.item.Gift chocolates"].exists)
         tapVisible("inventory.item.Milk", app: app)
         tapVisible("inventory.usedUp", app: app)
-        app.segmentedControls["inventory.filter"].buttons["Used up"].tap()
+        tapVisible("inventory.tools", app: app)
+        tapVisible("inventory.filter", app: app)
+        app.buttons["Used up"].tap()
+        tapVisible("inventory.tools.done", app: app)
         tapVisible("inventory.item.Milk", app: app)
         tapVisible("inventory.restock", app: app)
         app.navigationBars.buttons.firstMatch.tap()
@@ -1768,6 +1888,11 @@ final class VisualFlowTests: XCTestCase {
         capture("45-Shopping-Form-Large-Dark", app: app)
         XCTAssertTrue(app.buttons["quickAdd.save"].isHittable)
         XCTAssertFalse(app.buttons["quickAdd.save"].isEnabled)
+        app.textFields["quickAdd.title"].tap()
+        app.textFields["quickAdd.title"].typeText("Milk")
+        tapVisible("quickAdd.keyboardDone", app: app)
+        XCTAssertTrue(app.buttons["quickAdd.save"].isEnabled)
+        capture("45-Shopping-Form-Enabled-Dark", app: app)
         app.buttons["Cancel"].tap()
         XCTAssertTrue(app.navigationBars["Groceries"].waitForExistence(timeout: 5))
         capture("46-Shopping-Large-Dark", app: app)
@@ -1775,11 +1900,15 @@ final class VisualFlowTests: XCTestCase {
 
     func testStoreAutofillPersistsAfterCancelAndCompactAction() {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--reduce-motion"]
         app.launch(); createHousehold(app)
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         app.navigationBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Add")).firstMatch.tap()
-        XCTAssertLessThanOrEqual(app.buttons["quickAdd.save"].frame.height, 48)
+        let save = app.buttons["quickAdd.save"]
+        XCTAssertTrue(save.isHittable)
+        XCTAssertGreaterThanOrEqual(save.frame.height, 44)
+        // Native glass adds padding; compact means a trailing action, not a full-width footer button.
+        XCTAssertLessThan(save.frame.width, app.frame.width / 2)
         tapVisible("shopping.store", app: app)
         app.textFields["shopping.store"].typeText("wal mart")
         capture("61-Store-Keyboard-Autofill", app: app)
@@ -1910,6 +2039,7 @@ final class VisualFlowTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Today"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Today"].tap()
+        capture("Assignment-Entry-Review", app: app)
         tapVisible("today.personalShopping", app: app)
         tapVisible("shopping.personalMember", app: app)
         app.buttons["Ravi"].tap()
@@ -1995,7 +2125,9 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("more.backup", app: app)
         tapVisible("backup.delete", app: app)
         XCTAssertTrue(app.buttons["Delete backups"].waitForExistence(timeout: 5))
-        app.navigationBars["iCloud backup"].tap()
+        if app.buttons["Cancel"].exists { app.buttons["Cancel"].tap() }
+        else { app.coordinate(withNormalizedOffset: CGVector(dx: 0.05, dy: 0.5)).tap() }
+        XCTAssertTrue(app.buttons["Delete backups"].waitForNonExistence(timeout: 5))
         XCTAssertFalse(app.staticTexts["backup.status"].exists)
         tapVisible("backup.delete", app: app)
         app.buttons["Delete backups"].tap()
@@ -2068,7 +2200,7 @@ final class VisualFlowTests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-reminder-sync"]
         app.launch(); createHousehold(app)
-        app.tabBars.buttons["More"].tap()
+        app.buttons["More"].firstMatch.tap()
         tapVisible("more.connections", app: app)
         tapVisible("connections.reminders.open", app: app)
         tapVisible("connections.reminders.connect", app: app)
@@ -2143,7 +2275,7 @@ final class VisualFlowTests: XCTestCase {
         app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         createHousehold(app)
-        app.tabBars.buttons["Home"].tap()
+        app.buttons["Home"].firstMatch.tap()
         capture("19-Home-Start", app: app)
         tapVisible("home.spaces", app: app)
         tapVisible("home.add", app: app)
@@ -2154,7 +2286,12 @@ final class VisualFlowTests: XCTestCase {
         saveEntry("Kitchen", app: app)
         let kitchen = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "home.room.", "Kitchen")).firstMatch
         XCTAssertTrue(kitchen.waitForExistence(timeout: 5))
+        reveal(kitchen, app: app)
         kitchen.tap()
+        XCTAssertTrue(app.buttons["room.addItem"].waitForExistence(timeout: 5))
+        XCUIDevice.shared.orientation = .landscapeLeft
+        XCTAssertTrue(app.buttons["room.addItem"].waitForExistence(timeout: 5))
+        XCUIDevice.shared.orientation = .portrait
         XCTAssertTrue(app.buttons["room.addItem"].waitForExistence(timeout: 5))
         capture("20-Room-Add-Item", app: app)
         app.buttons["room.addItem"].tap()
@@ -2194,6 +2331,10 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["quickAdd.save"].isEnabled)
         app.buttons["quickAdd.save"].tap()
         capture("23-Home-Care-Completed", app: app)
+        if app.buttons["home.closeSpaces"].exists {
+            app.buttons["home.closeSpaces"].tap()
+            XCTAssertTrue(app.buttons["home.spaces"].waitForExistence(timeout: 5))
+        }
     }
 
     func testSetupRestoreAndCloudUnavailableKeepLocalHome() {
@@ -2325,6 +2466,12 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertNotEqual(tile.value as? String, originalPosition)
         XCTAssertTrue(app.descendants(matching: .any)["layout.moveStatus"].firstMatch.label.contains("moved and saved"))
         capture("17-Room-Drag", app: app)
+        for identifier in ["layout.fitRooms", "layout.zoomOut", "layout.zoomIn"] {
+            let control = app.buttons[identifier]
+            XCTAssertTrue(control.exists)
+            XCTAssertGreaterThanOrEqual(control.frame.width, 44)
+            XCTAssertGreaterThanOrEqual(control.frame.height, 44)
+        }
         app.swipeUp()
         XCTAssertTrue(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "layout.room.", "Bedroom")).firstMatch.waitForExistence(timeout: 5))
         app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "layout.room.", "Bedroom")).firstMatch.tap()
@@ -2338,7 +2485,7 @@ final class VisualFlowTests: XCTestCase {
             app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", appearance]
             app.launch()
             createHousehold(app)
-            app.tabBars.buttons["Home"].tap()
+            app.buttons["Home"].firstMatch.tap()
             tapVisible("home.layout", app: app)
             XCTAssertTrue(app.buttons["layout.toolbarAdd"].waitForExistence(timeout: 5))
             app.buttons["layout.toolbarAdd"].tap()
@@ -2351,6 +2498,29 @@ final class VisualFlowTests: XCTestCase {
             app.buttons["layout.save"].tap()
             XCTAssertTrue(app.buttons["layout.toolbarAdd"].waitForExistence(timeout: 5))
             app.terminate()
+        }
+    }
+
+    func testDarkModeScreenSurvey() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--dark"]
+        app.launch(); createHousehold(app)
+        capture("Dark-Survey-Today", app: app)
+        app.buttons["Calendar"].firstMatch.tap()
+        capture("Dark-Survey-Calendar", app: app)
+        app.buttons["Home"].firstMatch.tap()
+        capture("Dark-Survey-Home", app: app)
+        for destination in ["home.tasks", "home.meals", "home.layout", "home.expenses", "home.care"] {
+            tapVisible(destination, app: app)
+            capture("Dark-Survey-" + destination, app: app)
+            app.navigationBars.buttons.firstMatch.tap()
+        }
+        app.buttons["More"].firstMatch.tap()
+        capture("Dark-Survey-More", app: app)
+        for destination in ["more.preferences", "more.privacy", "more.connections", "more.family"] {
+            tapVisible(destination, app: app)
+            capture("Dark-Survey-" + destination, app: app)
+            app.navigationBars.buttons.firstMatch.tap()
         }
     }
 

@@ -62,7 +62,7 @@ struct AssignmentArrivalBanner: View {
 }
 
 /// Production always follows accessibility settings; UI fixtures can exercise the static path.
-private enum HearthMotion {
+enum HearthMotion {
     static func reduced(_ system: Bool) -> Bool {
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("--ui-testing"), ProcessInfo.processInfo.arguments.contains("--reduce-motion") { return true }
