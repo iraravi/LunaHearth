@@ -562,3 +562,6 @@ Uploaded the current Help/FAQ, adaptive Today and animated demo updates successf
 Assignment to existing LunaHearth Beta and Ravi Home groups is requested but pending: Safari App Store Connect is signed out. User sign-in is needed to confirm Apple processing completion and assign/check group availability. No completed tester assignment or public App Store submission is claimed.
 
 October 1 follow-up: user restored App Store Connect sign-in. Build 66 completed processing and was assigned to LunaHearth Beta (4 internal testers) and Ravi Home (1 external tester). Saved testing notes and completed external beta-review submission with automatic tester notification selected. Both group build tables now show 1.0 (66) as Testing. No new testers or public App Store submission.
+
+## TestFlight 1.0 (67) — October 30, 2026
+Native release commit 4e8a387 pushed to origin/main. Signed archive succeeded and Organizer explicitly confirmed build 67 uploaded at 11:57 CDT. Includes receipt recovery/currency parsing and clearer dark-mode controls; 287 unit tests and six targeted dark UI tests passed. See release/1.0-build67/TESTFLIGHT.md. App Store Connect two-factor verification is pending; Apple processing completion and existing tester-group assignment are not yet confirmed. No public App Store submission.

@@ -15,4 +15,4 @@ Requested October 30, 2026: push the native app updates, upload a TestFlight bui
 - No new networking, permissions or schema changes were added by the receipt/dark-mode fixes. Existing previously unreleased native hardening remains in the tested checkout.
 
 ## Distribution
-Release archive and upload in progress. Apple processing and tester availability must be verified separately. No public App Store submission requested.
+Native release commit `4e8a387` pushed to origin/main. Signed Release archive succeeded at `/Users/ira/Library/Developer/Xcode/Archives/2026-10-30/LunaHearth 1.0 (67).xcarchive`; bundle identity, version 1.0, build 67 and iOS 18 minimum verified. CLI export could not load account credentials; Xcode Organizer confirmed “LunaHearth 1.0 (67) uploaded” at 11:57 CDT after account sign-in. Screenshot: upload-confirmation.png. Safari App Store Connect is waiting for Apple two-factor verification, so processing completion and assignment to LunaHearth Beta/Ravi Home remain unverified. No public App Store submission requested.
