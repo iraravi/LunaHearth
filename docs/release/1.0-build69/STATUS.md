@@ -6,5 +6,6 @@
 - Inspected 35 initial captures and the final Notes capture. Prior Duo light/dark workspace flows and compact Home regressions passed; see validation notes.
 - Documentation and offline heuristic security checks: passed, no findings. No Sonar or external vulnerability scan was run.
 - Final Release archive: succeeded; code signature verified; version 1.0, build 69.
-- TestFlight upload: pending. Existing build 68 remains Testing for LunaHearth Beta and Ravi Home until the new upload is processed and assigned.
+- TestFlight upload: Xcode Organizer confirmed 1.0 (69) uploaded. App Store Connect finished processing and showed **Testing** on 30 October 2026 at 21:43 CDT. Both groups are assigned: **LunaHearth Beta** (4 internal testers) and **Ravi Home** (1 external tester). Build-specific testing notes are saved and automatic tester notification is enabled. External beta submission completed. The command-line export could not use the account; the signed-in Xcode Organizer upload succeeded.
+- Source commit: `e0c2833`.
 - Public App Store submission: not part of this TestFlight release. Store screenshots still need separate completion.
