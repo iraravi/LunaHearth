@@ -25,6 +25,6 @@ actor MealPlanningReminder: MealPlanningReminderService {
     }
     private enum ReminderError: LocalizedError {
         case denied
-        var errorDescription: String? { "Notifications are off. Allow LunaHearth notifications in Settings, then enable the reminder here." }
+        var errorDescription: String? { "Notifications are off. Allow Nam Illam notifications in Settings, then enable the reminder here." }
     }
 }

@@ -28,7 +28,7 @@ struct MoreView: View {
                         Label("Your home. Your privacy.", systemImage: "lock")
                             .font(.footnote).foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity).padding(.top, 4)
-                        Text("LunaHearth · NeuralLuna").font(.caption2).foregroundStyle(.secondary)
+                        Text("Nam Illam · NeuralLuna").font(.caption2).foregroundStyle(.secondary)
                             .frame(maxWidth: .infinity)
                     }.frame(maxWidth: 1060).padding(.horizontal, wide ? 32 : 20).padding(.vertical, 20)
                         .frame(maxWidth: .infinity)
@@ -188,7 +188,7 @@ private struct MorePrivacyView: View {
     var body: some View {
         SettingsDetailPage(title: "Privacy & data", subtitle: "Your home, stored on your terms.", symbol: "hand.raised.fill", accent: AppTheme.sage) {
             NavigationLink { PrivacyPolicyView() } label: {
-                MoreDestinationRow(title: "Privacy policy", detail: "Read the offline policy draft", symbol: "doc.text", accent: AppTheme.sage)
+                MoreDestinationRow(title: "Privacy policy", detail: "Read the privacy policy", symbol: "doc.text", accent: AppTheme.sage)
             }.accessibilityIdentifier("more.privacyPolicy")
             if let article = HouseholdSupportArticle.all.first(where: { $0.id == "use" }) {
             NavigationLink { HouseholdSupportArticleView(article: article) } label: {
@@ -196,7 +196,7 @@ private struct MorePrivacyView: View {
             }.accessibilityIdentifier("more.responsibleUse")
             }
             SettingsDetailCard(title: "Your home works offline", symbol: "iphone", accent: AppTheme.sage) {
-                Text("Your household is saved on this device. No LunaHearth account or tracking is required.")
+                Text("Your household is saved on this device. No Nam Illam account or tracking is required.")
                     .font(.subheadline).foregroundStyle(.secondary)
             }
             SettingsDetailCard(title: "iCloud sync", symbol: "icloud", accent: AppTheme.slate) {

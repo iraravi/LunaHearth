@@ -9,7 +9,7 @@ struct CalendarDeliverySettingsView: View {
     var body: some View {
         List {
             Section {
-                Label("LunaHearth → Apple Calendar", systemImage: "calendar.badge.checkmark").font(.headline)
+                Label("Nam Illam → Apple Calendar", systemImage: "calendar.badge.checkmark").font(.headline)
                 Text("Enable ‘Also add to Apple Calendar’ on each appointment. Only this device manages these links. Use one exporting device per Apple calendar to avoid duplicate copies.").font(.subheadline).foregroundStyle(.secondary)
                 Button("Retry pending updates", systemImage: "arrow.clockwise") { Task { await delivery.run(repository, force: true) } }
                     .disabled(delivery.working).accessibilityIdentifier("calendar.delivery.retry")
@@ -41,7 +41,7 @@ struct CalendarDeliverySettingsView: View {
                     do { try repository.removeAppleCopy(id); Task { await delivery.run(repository, force: true) } } catch { self.error = error.localizedDescription }
                     removing = nil
                 }
-            } message: { Text("The LunaHearth appointment stays. Removal from Apple Calendar will be retried if it cannot finish now.") }
+            } message: { Text("The Nam Illam appointment stays. Removal from Apple Calendar will be retried if it cannot finish now.") }
             .confirmationDialog("Forget this device's link?", isPresented: Binding(get: { forgetting != nil }, set: { if !$0 { forgetting = nil } })) {
                 Button("Forget link", role: .destructive) {
                     guard let id = forgetting else { return }
@@ -54,7 +54,7 @@ struct CalendarDeliverySettingsView: View {
     private func status(_ link: CalendarDeliveryLink) -> String {
         if link.error != nil { return "Needs attention" }
         if link.deleteRequested { return "Apple removal pending" }
-        guard let event = repository.events.first(where: { $0.id == link.eventID }) else { return "LunaHearth appointment removed · Apple copy kept" }
+        guard let event = repository.events.first(where: { $0.id == link.eventID }) else { return "Nam Illam appointment removed · Apple copy kept" }
         if !link.enabled { return "Paused · Apple copy kept" }
         return link.sentRevision == event.modifiedAt ? "Last update sent" : "Update pending"
     }

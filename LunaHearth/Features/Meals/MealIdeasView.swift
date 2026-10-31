@@ -90,7 +90,7 @@ struct MealIdeasView: View {
                 }
                 NavigationLink { WeeklyMealPlannerView() } label: { Label("Plan the week", systemImage: "calendar") }.frame(minHeight: 44).accessibilityIdentifier("meals.week")
                 NavigationLink("View saved meal plans") { PlanningListView(kind: .meal, initialDay: day) }.frame(minHeight: 44)
-                Button("Plan a meal myself") { draft = EntryDraft(kind: .meal, date: day) }.frame(minHeight: 44)
+                Button("Add meal manually") { draft = EntryDraft(kind: .meal, date: day) }.frame(minHeight: 44)
             }.padding(20).frame(maxWidth: 1000).frame(maxWidth: .infinity)
         }.background(AppTheme.canvas).tint(accent)
             .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done") { contextFocused = false }.accessibilityIdentifier("meals.keyboardDone") } }

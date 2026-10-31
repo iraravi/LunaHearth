@@ -5,7 +5,7 @@
     <key>CloudKitDevelopmentTeam</key>
     <string>$(DEVELOPMENT_TEAM)</string>
     <key>CFBundleDevelopmentRegion</key><string>$(DEVELOPMENT_LANGUAGE)</string>
-    <key>CFBundleDisplayName</key><string>LunaHearth</string>
+    <key>CFBundleDisplayName</key><string>Nam Illam</string>
     <key>CFBundleExecutable</key><string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key><string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
     <key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
@@ -34,16 +34,16 @@
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
     <key>NSCalendarsFullAccessUsageDescription</key>
-    <string>LunaHearth can show selected calendars and keep appointments you choose updated in Apple Calendar. Only enable this when you want to connect your calendar.</string>
+    <string>Nam Illam can show selected calendars and keep appointments you choose updated in Apple Calendar. Only enable this when you want to connect your calendar.</string>
     <key>NSCalendarsWriteOnlyAccessUsageDescription</key>
-    <string>LunaHearth can add events to your Apple Calendar when you ask it to.</string>
+    <string>Nam Illam can add events to your Apple Calendar when you ask it to.</string>
     <key>NSRemindersFullAccessUsageDescription</key>
-    <string>LunaHearth uses Reminders access to show and update the lists you select. New reminders are saved in Apple Reminders. Shopping and other household features work without this permission.</string>
+    <string>Nam Illam uses Reminders access to show and update the lists you select. New reminders are saved in Apple Reminders. Shopping and other household features work without this permission.</string>
     <key>UIBackgroundModes</key>
     <array><string>remote-notification</string></array>
     <key>NSCameraUsageDescription</key>
-    <string>LunaHearth uses the camera when you choose to scan a receipt or photograph kitchen items. Review the extracted details before saving.</string>
+    <string>Nam Illam uses the camera when you choose to scan a receipt or photograph kitchen items. Review the extracted details before saving.</string>
     <key>NSPhotoLibraryUsageDescription</key>
-    <string>LunaHearth reads the kitchen or receipt photos you select to suggest item and purchase details for your review.</string>
+    <string>Nam Illam reads the kitchen or receipt photos you select to suggest item and purchase details for your review.</string>
 </dict>
 </plist>

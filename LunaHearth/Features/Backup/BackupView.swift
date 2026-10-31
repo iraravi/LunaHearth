@@ -49,7 +49,7 @@ struct BackupView: View {
             Section {
                 Button("Delete private iCloud backups", role: .destructive) { confirmDelete = true }
                     .accessibilityIdentifier("backup.delete").disabled(busy)
-                Text("Deletes LunaHearth manual backups in this Apple Account. Your local data and live shared homes are kept.")
+                Text("Deletes Nam Illam manual backups in this Apple Account. Your local data and live shared homes are kept.")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             if busy { Section { ProgressView("Connecting to iCloud…").accessibilityIdentifier("backup.progress") } }
@@ -70,11 +70,11 @@ struct BackupView: View {
         }.hearthList().navigationTitle("iCloud backup").navigationBarTitleDisplayMode(.inline)
             .confirmationDialog("Delete private iCloud backups?", isPresented: $confirmDelete, titleVisibility: .visible) {
                 Button("Delete backups", role: .destructive) { deleteBackups() }
-            } message: { Text("Permanently deletes all LunaHearth manual backup generations currently stored in this Apple Account, including older snapshots. You cannot restore them afterward. Local homes, live household sync and Apple Reminders are unchanged.") }
+            } message: { Text("Permanently deletes all Nam Illam manual backup generations currently stored in this Apple Account, including older snapshots. You cannot restore them afterward. Local homes, live household sync and Apple Reminders are unchanged.") }
             .confirmationDialog("Save this home to your private iCloud storage?", isPresented: $confirmUpload, titleVisibility: .visible) {
                 Button("Save backup") { upload() }
             } message: {
-                Text("Household names, profiles, schedules, item details and notes will be sent to Apple iCloud. This replaces your previous LunaHearth backup.")
+                Text("Household names, profiles, schedules, item details and notes will be sent to Apple iCloud. This replaces your previous Nam Illam backup.")
             }
     }
 

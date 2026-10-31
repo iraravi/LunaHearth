@@ -21,12 +21,12 @@ struct InvitationSendSheet: UIViewControllerRepresentable {
         if method == .mail, MFMailComposeViewController.canSendMail() {
             let controller = MFMailComposeViewController()
             controller.setToRecipients([recipient])
-            controller.setSubject("Join \(homeName) in LunaHearth")
-            controller.setMessageBody("You’re invited to join \(homeName) in LunaHearth. Open this invitation on the device signed into your invited iCloud account:\n\n\(url.absoluteString)", isHTML: false)
+            controller.setSubject("Join \(homeName) in Nam Illam")
+            controller.setMessageBody("You’re invited to join \(homeName) in Nam Illam. Open this invitation on the device signed into your invited iCloud account:\n\n\(url.absoluteString)", isHTML: false)
             controller.mailComposeDelegate = context.coordinator
             return controller
         }
-        let controller = UIActivityViewController(activityItems: ["Join \(homeName) in LunaHearth.", url], applicationActivities: nil)
+        let controller = UIActivityViewController(activityItems: ["Join \(homeName) in Nam Illam.", url], applicationActivities: nil)
         controller.view.accessibilityIdentifier = "sharing.sendSheet"
         if let popover = controller.popoverPresentationController {
             popover.sourceView = controller.view

@@ -10,7 +10,7 @@ actor MealPrepReminder: MealPrepReminderService {
     }
     private func post(identifier: String, due: Date) async throws {
         guard due > .now else { return }
-        let content = UNMutableNotificationContent(); content.title = "Time for meal preparation"; content.body = "Open LunaHearth to see your preparation tasks."; content.sound = .default
+        let content = UNMutableNotificationContent(); content.title = "Time for meal preparation"; content.body = "Open Nam Illam to see your preparation tasks."; content.sound = .default
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: max(1, due.timeIntervalSinceNow), repeats: false)
         try await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: identifier, content: content, trigger: trigger))
     }

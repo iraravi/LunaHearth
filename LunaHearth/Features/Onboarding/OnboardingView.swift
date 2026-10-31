@@ -40,7 +40,7 @@ struct OnboardingView: View {
 
     private var welcome: some View {
         VStack(alignment: .leading, spacing: 24) {
-            Text("LUNAHEARTH").font(.caption.weight(.medium)).tracking(3).foregroundStyle(WelcomeStyle.muted)
+            Text("NAM ILLAM").font(.caption.weight(.medium)).tracking(3).foregroundStyle(WelcomeStyle.muted)
             if !typeSize.isAccessibilitySize { WelcomePhotograph(name: "WelcomeResidence", height: 220) }
             Text("Make yourself at home.").font(WelcomeStyle.heading).fixedSize(horizontal: false, vertical: true)
             Text("Keep shopping, pantry items, meals and plans together in one home. Use it on your own or share it with family.")
@@ -48,7 +48,7 @@ struct OnboardingView: View {
             Divider()
             VStack(alignment: .leading, spacing: 18) {
                 Text("Choose how to start").font(.headline)
-                privacyRow("New to LunaHearth?", detail: "Choose Create a new home. Give it a name, then start adding your own items.", symbol: "house")
+                privacyRow("New to Nam Illam?", detail: "Choose Create a new home. Give it a name, then start adding your own items.", symbol: "house")
                 privacyRow("Someone invited you?", detail: "Choose Join an existing home. Open the invitation from Mail or Messages to use the same home as your family.", symbol: "person.2")
                 privacyRow("Used the app before?", detail: "Choose Restore from iCloud if you saved a backup of your home.", symbol: "icloud.and.arrow.down")
             }.accessibilityIdentifier("setup.startInstructions")

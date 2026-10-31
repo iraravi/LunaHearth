@@ -5,7 +5,8 @@ struct ReceiptImportView: View {
     let householdID: UUID
     let sampleImage: Data?
     let onExpenseSaved: ((String, String) -> Void)?
-    @State private var expenseDetails = false
+    @State private var expenseDetails = true
+    @State private var confirmingSave = false
     @State private var recordingExpense: Bool
     @State private var expenseDraft = ExpenseDraft(category: .groceries)
     init(householdID: UUID, startsWithExpense: Bool = true, sampleImage: Data? = nil, onExpenseSaved: ((String, String) -> Void)? = nil) {
@@ -17,6 +18,7 @@ struct ReceiptImportView: View {
     @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var textSize
     @State private var photos: [PhotosPickerItem] = []
     @State private var camera = false
     @State private var scanSession = ReceiptScanSession()
@@ -34,10 +36,18 @@ struct ReceiptImportView: View {
     @State private var decodeMessage: String?
     private let decoder: any ReceiptNameDecodingService = OnDeviceReceiptNameService()
     private var selected: Int { lines.filter(\.included).count }
+    private var inventoryCount: Int {
+        lines.filter { $0.included && $0.addToInventory && $0.existingPurchaseID == nil && !repository.receiptLineImported($0.id) }.count
+    }
+    private var saveSummary: String {
+        let amount = (try? ExpenseRules.minorUnits(expenseDraft.amount)).map { ExpenseRules.money($0, currency: expenseDraft.currency) } ?? expenseDraft.amount
+        return (recordingExpense ? "Expense total: \(amount). " : "") + "Inventory items selected: \(inventoryCount). Food kept at home can go in pantry inventory. Leave meals eaten out, services and gifts out. Purchased items stay in purchase history."
+    }
 
     var body: some View {
         NavigationStack {
             List {
+                if sourceText.isEmpty {
                 Section {
                     HStack(alignment: .top, spacing: 16) {
                         Image(systemName: "receipt").font(.title)
@@ -50,6 +60,7 @@ struct ReceiptImportView: View {
                         }
                     }.padding(.vertical, 8)
                 }.listRowBackground(Color.clear)
+                }
                 if let outcome {
                     Section {
                         Label(outcome, systemImage: "checkmark.circle.fill").accessibilityIdentifier("receipt.success")
@@ -62,7 +73,7 @@ struct ReceiptImportView: View {
                 } else {
                     if sourceText.isEmpty {
                         Section { scanControls } footer: {
-                            Text("Use up to four pages from one receipt. Photos are not retained or uploaded by LunaHearth.")
+                            Text("Use up to four pages from one receipt. Photos are not retained or uploaded by Nam Illam.")
                         }
                     }
                     if busy {
@@ -74,6 +85,11 @@ struct ReceiptImportView: View {
                         }
                     }
                     if !sourceText.isEmpty {
+                        Section {
+                            ReceiptScanSummary(lines: $lines, merchant: expenseDraft.merchant, amount: expenseDraft.amount,
+                                               currency: expenseDraft.currency,
+                                               unavailableIDs: Set(lines.filter { repository.receiptLineImported($0.id) }.map(\.id)))
+                        }.listRowBackground(Color.clear)
                         Section { ReviewSafetyNotice(context: .receipt) }
                         Section {
                             Toggle("Record in Expenses", isOn: $recordingExpense).accessibilityIdentifier("receipt.recordExpense")
@@ -122,7 +138,7 @@ struct ReceiptImportView: View {
                         }
                         Section {
                             Button("Add a missed item", systemImage: "plus") {
-                                lines.append(ReceiptLine(id: ReceiptRules.hash(sourceText + "|manual|\(lines.count)"), name: ""))
+                                lines.append(ReceiptLine(id: ReceiptRules.hash(sourceText + "|manual|\(lines.count)"), name: "", addToInventory: false))
                             }.disabled(lines.count >= 150).accessibilityIdentifier("receipt.addLine")
                         }
                         ForEach($lines) { $line in
@@ -139,7 +155,7 @@ struct ReceiptImportView: View {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                 ToolbarItem(placement: .confirmationAction) {
                     if outcome == nil && (publicStatus.configuration?.allows(.receipts) ?? true) {
-                        Button(recordingExpense ? "Save receipt" : "Add \(selected)") { save() }
+                        Button(recordingExpense ? "Save receipt" : "Add \(selected)") { reviewSave() }
                             .disabled(sourceText.isEmpty || busy || decoding || (selected == 0 && !recordingExpense)).accessibilityIdentifier("receipt.confirm")
                     }
                 }
@@ -174,6 +190,7 @@ struct ReceiptImportView: View {
                     apply(ReceiptRules.scan(text: "FRESH MARKET\nCurd 3.99\n2 x Bananas 2.49\nTOTAL 6.48"))
                 }
             }
+            .sheet(isPresented: $confirmingSave) { saveReview }
             .alert("Receipt needs attention", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
                 Button("OK", role: .cancel) { error = nil }
             } message: { Text(error ?? "Please try again.") }
@@ -181,6 +198,41 @@ struct ReceiptImportView: View {
             .modifier(UITestAppearance())
             #endif
         }
+    }
+    private var saveReview: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    Label("Ready to save?", systemImage: "receipt").font(.title2.bold())
+                    Text(saveSummary).font(.body).foregroundStyle(InventoryTheme.ink)
+                    if inventoryCount > 0 {
+                        Button {
+                            confirmingSave = false
+                            save()
+                        } label: {
+                            Label("Save & update pantry", systemImage: "checkmark")
+                                .frame(maxWidth: .infinity, minHeight: 44).padding(12)
+                                .background(InventoryTheme.ink, in: RoundedRectangle(cornerRadius: 18))
+                                .foregroundStyle(InventoryTheme.canvas)
+                        }.buttonStyle(.plain).accessibilityIdentifier("receipt.saveWithInventory")
+                    }
+                    Button {
+                        for index in lines.indices { lines[index].addToInventory = false }
+                        confirmingSave = false
+                        save()
+                    } label: {
+                        Text("Save without inventory")
+                            .frame(maxWidth: .infinity, minHeight: 44).padding(12)
+                            .background(InventoryTheme.surface, in: RoundedRectangle(cornerRadius: 18))
+                            .foregroundStyle(InventoryTheme.ink)
+                    }.buttonStyle(.plain).accessibilityIdentifier("receipt.saveWithoutInventory")
+                }.padding(24)
+            }.background(InventoryTheme.canvas)
+                .navigationTitle("Review receipt").navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .cancellationAction) {
+                    Button("Back") { confirmingSave = false }.accessibilityLabel("Keep reviewing receipt")
+                } }
+        }.presentationDetents(textSize.isAccessibilitySize ? [.large] : [.medium, .large])
     }
     @ViewBuilder private var scanControls: some View {
         PhotosPicker(selection: $photos, maxSelectionCount: 4, matching: .images) {
@@ -228,8 +280,10 @@ struct ReceiptImportView: View {
         sourceText = scan.text; lines = scan.lines
         expenseDraft.amount = ExpenseRules.receiptTotal(scan.text) ?? ""
         expenseDraft.merchant = String(scan.text.components(separatedBy: .newlines).first?.prefix(200) ?? "")
-        expenseDetails = expenseDraft.amount.isEmpty || expenseDraft.merchant.isEmpty
+        expenseDetails = true
+        if let currency = ExpenseRules.receiptCurrency(scan.text) { expenseDraft.currency = currency }
         for index in lines.indices {
+            lines[index].addToInventory = false
             let name = lines[index].name
             let shopping = repository.groceries.filter { !$0.isCompleted && $0.purchaseDisposition != "inventory" && $0.receiptImportKey == nil && IngredientMatching.same($0.name, name) }
             if shopping.count == 1 { lines[index].groceryID = shopping.first?.id }
@@ -262,8 +316,15 @@ struct ReceiptImportView: View {
             if decodeGeneration == generation { decoding = false }
         }
     }
+    private func reviewSave() {
+        do {
+            if recordingExpense { try ExpenseRules.validate(expenseDraft) }
+            confirmingSave = true
+        } catch { self.error = userFacingError(error) }
+    }
     private func save() {
         do {
+            let additions = inventoryCount
             let key = ExpenseRules.receiptKey(sourceText)
             let alreadyRecorded = repository.expenses.contains { $0.receiptKey == key }
             let count = try repository.importReceipt(lines, householdID: householdID,
@@ -275,7 +336,7 @@ struct ReceiptImportView: View {
                 if let saved = repository.expenses.first(where: { $0.receiptKey == key }) {
                     onExpenseSaved?(String(saved.day.prefix(7)), saved.currencyCode)
                 }
-                outcome = alreadyRecorded ? "Expense already recorded. \(count) additional items updated." : "Expense saved. \(count) shopping and inventory items updated."
+                outcome = alreadyRecorded ? "Expense already recorded. \(count) additional items updated." : "Expense saved. \(count) purchased items recorded. Inventory additions: \(additions)."
             } else {
                 outcome = count == 0 ? "These items were already imported. Nothing added again." : "\(count) purchases saved. Shopping and inventory are updated."
             }
@@ -321,7 +382,9 @@ private struct ReceiptReviewRow: View {
             if line.included {
                 if !candidates.isEmpty { purchaseReview }
                 if line.existingPurchaseID == nil {
-                Text(line.addToInventory ? (matches.isEmpty ? "New inventory item" : "Restock existing · clear Low stock") : "Bought only · kept elsewhere")
+                Toggle("Add to pantry", isOn: $line.addToInventory)
+                    .accessibilityIdentifier("receipt.inventory.\(line.name)")
+                Text(line.addToInventory ? (matches.isEmpty ? "New pantry item" : "Restock existing pack") : "Purchase only")
                     .font(.caption).foregroundStyle(.secondary)
                 DisclosureGroup("Quantity & matches") {
                 if let currency {
@@ -337,7 +400,6 @@ private struct ReceiptReviewRow: View {
                         Text("\(item.name)\(item.quantityText.map { " · \($0)" } ?? "")").tag(Optional(item.id))
                     }
                 }.accessibilityIdentifier("receipt.shopping.\(line.id)")
-                Toggle("Add to home inventory", isOn: $line.addToInventory)
                 if line.addToInventory {
                     Toggle("Set pack expiry date", isOn: Binding(get: { line.expiryDay != nil }, set: { enabled in line.expiryDay = enabled ? HouseholdDay(.now).key : nil }))
                         .accessibilityIdentifier("receipt.setExpiry.\(line.id)")
@@ -348,7 +410,7 @@ private struct ReceiptReviewRow: View {
                 }
                 if line.addToInventory {
                     if matches.isEmpty {
-                        Label("Add a new inventory item", systemImage: "plus.circle").font(.caption)
+                        Label("New pantry item", systemImage: "plus.circle").font(.caption)
                     } else {
                         Picker("Restock existing", selection: $line.inventoryID) {
                             Text("Choose a saved pack").tag(nil as UUID?)

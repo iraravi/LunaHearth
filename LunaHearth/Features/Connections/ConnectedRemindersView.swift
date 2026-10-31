@@ -16,7 +16,7 @@ struct ConnectedRemindersView: View {
         List {
             Section {
                 if !connections.remindersEnabled {
-                    ScreenIntro(eyebrow: "Connect your list", title: "Your Apple lists, connected.", subtitle: "Optionally browse and edit an Apple list here. These items stay in Apple Reminders, separate from your LunaHearth household and its private backup.")
+                    ScreenIntro(eyebrow: "Connect your list", title: "Your Apple lists, connected.", subtitle: "Optionally browse and edit an Apple list here. These items stay in Apple Reminders, separate from your Nam Illam household and its private backup.")
                     Button("Connect Apple Reminders", systemImage: "checklist") { Task { await connections.connect(.reminders); choosing = connections.remindersEnabled } }
                         .disabled(connections.working).accessibilityIdentifier("connections.reminders.connect")
                 } else {
@@ -203,7 +203,7 @@ struct ReminderSharingGuide: View {
                     Label("3. After they accept, everyone works on the same list.", systemImage: "checkmark.circle")
                 }
                 Section {
-                    Text("Invitations are managed in Apple Reminders. LunaHearth cannot send or manage list invitations here. Collaborators need an Apple Account with iCloud Reminders enabled; not every account or list supports sharing.")
+                    Text("Invitations are managed in Apple Reminders. Nam Illam cannot send or manage list invitations here. Collaborators need an Apple Account with iCloud Reminders enabled; not every account or list supports sharing.")
                         .font(.footnote).foregroundStyle(.secondary).accessibilityIdentifier("reminders.sharing.explanation")
                     if let url = URL(string: "https://support.apple.com/105124") { Link("Apple’s list-sharing instructions", destination: url) }
                 }

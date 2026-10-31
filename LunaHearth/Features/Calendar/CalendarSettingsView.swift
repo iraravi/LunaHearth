@@ -33,7 +33,7 @@ struct CalendarSettingsView: View {
                 }
                 Section("Siri & Shortcuts") {
                     Label("A little help, hands-free", systemImage: "waveform").font(.headline)
-                    Text("Try ‘Plan an appointment in LunaHearth’ or ‘Show my family calendar in LunaHearth’.")
+                    Text("Try ‘Plan an appointment in Nam Illam’ or ‘Show my family calendar in Nam Illam’.")
                     Text("Siri opens a draft for you to review and save. Choose the person in the app if their name is ambiguous. Siri availability and voice processing follow your Apple device settings.").font(.caption).foregroundStyle(.secondary)
                     ShortcutsLink()
                 }

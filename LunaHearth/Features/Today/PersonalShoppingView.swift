@@ -102,7 +102,7 @@ struct PersonalShoppingView: View {
                             Label("Task assignment alerts enabled", systemImage: "bell.badge")
                             Button("Turn off task alerts") { personal.disableTasks(repository) }
                         } else {
-                            Button("Notify me about task assignments", systemImage: "bell") {
+                            Button("Enable task alerts", systemImage: "bell") {
                                 Task { await personal.enableTasks(repository, service: sharing.service) }
                             }.accessibilityIdentifier("personal.taskAlerts")
                         }
@@ -133,7 +133,7 @@ struct PersonalShoppingView: View {
                             Label("Shopping assignment alerts enabled", systemImage: "bell.badge")
                             Button("Turn off alerts", role: .destructive) { personal.disable(repository) }
                         } else {
-                            Button("Notify me about shopping assignments", systemImage: "bell") {
+                            Button("Enable shopping alerts", systemImage: "bell") {
                                 Task { await personal.enable(repository, service: sharing.service) }
                             }
                         }

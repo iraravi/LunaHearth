@@ -27,7 +27,7 @@ struct ShoppingShelfCard: View {
                     }
                     Label(buyer, systemImage: "person.crop.circle").font(.caption).foregroundStyle(ShoppingTheme.muted)
                     if item.isCompleted {
-                        Label(item.purchaseDisposition == "inventory" ? "Added to inventory" : "Bought", systemImage: "checkmark.circle").font(.caption).foregroundStyle(ShoppingTheme.accent)
+                        Label(item.purchaseDisposition == "inventory" ? "Added to pantry" : "Bought", systemImage: "checkmark.circle").font(.caption).foregroundStyle(ShoppingTheme.accent)
                     } else if atHome { Label("Also at home", systemImage: "cabinet").font(.caption).foregroundStyle(ShoppingTheme.muted) }
                     if usedAI { Label("AI category", systemImage: "sparkles").font(.caption2).foregroundStyle(ShoppingTheme.muted) }
                 }.frame(maxWidth: .infinity, alignment: .topLeading).contentShape(Rectangle())
@@ -37,7 +37,7 @@ struct ShoppingShelfCard: View {
                 .accessibilityIdentifier("shopping.item.\(item.name)")
                 // The grid is one List row; card swipe actions would accumulate on that row.
                 .entryActions(.editing(item), includesSwipeActions: false)
-            if let addToInventory { Button("Add to inventory", systemImage: "shippingbox", action: addToInventory).font(.caption).frame(minHeight: 44).buttonStyle(.borderless) }
+            if let addToInventory { Button("Add to pantry", systemImage: "shippingbox", action: addToInventory).font(.caption).frame(minHeight: 44).buttonStyle(.borderless) }
         }.padding(12).frame(maxWidth: .infinity, minHeight: 220, alignment: .topLeading)
             .background(ShoppingTheme.surface, in: RoundedRectangle(cornerRadius: 18))
             .hearthCardOutline(ShoppingTheme.accent)

@@ -162,7 +162,7 @@ private actor PlanningFake: ApplePlanningService {
         #expect(await fake.writes == 1)
         try await connections.createStandardList(usingListID: "list")
         #expect(connections.reminderChoices == ["standard"])
-        #expect(connections.activeReminderList?.title == "LunaHearth Reminders")
+        #expect(connections.activeReminderList?.title == "Nam Illam Reminders")
         let draft = ReminderExportDraft(id: UUID(), title: "Direct", due: nil, appleOnly: true)
         #expect(draft.link?.host == "reminders")
         #expect(HouseholdLink.taskID(try #require(draft.link)) == nil)

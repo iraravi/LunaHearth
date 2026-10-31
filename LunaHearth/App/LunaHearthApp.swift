@@ -101,7 +101,7 @@ struct LunaHearthApp: App {
                 ContentUnavailableView {
                     Label("Your home needs a moment", systemImage: "externaldrive.badge.exclamationmark")
                 } description: {
-                    Text("LunaHearth couldn’t open its saved data. Nothing has been erased or replaced. Unlock your device, check that storage is available, then close and reopen the app. If this continues, keep the app installed to preserve its data.")
+                    Text("Nam Illam couldn’t open its saved data. Nothing has been erased or replaced. Unlock your device, check that storage is available, then close and reopen the app. If this continues, keep the app installed to preserve its data.")
                 }
                 .accessibilityIdentifier("storage.recovery")
                 .background(Color(.systemBackground))

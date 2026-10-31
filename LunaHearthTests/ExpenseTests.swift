@@ -20,6 +20,40 @@ import Testing
         #expect(ExpenseRules.receiptTotal("Subtotal 20.00\nVISA 21.20") == nil)
         #expect(ExpenseRules.receiptTotal("TOTAL 21.20\nTOTAL SAVINGS 5.00") == "21.20")
     }
+    @Test func receiptTotalsSupportCommonPrintedFormatsWithoutGuessing() throws {
+        let examples = [
+            ("GRAND TOTAL: Rs. 1,234.50", "1234.50"),
+            ("TOTAL\n₹ 250", "250.00"),
+            ("TOTAL INR ₹250.00", "250.00"),
+            ("Net Amount 1,23,456.70", "123456.70"),
+            ("Amount payable: 12,50 EUR", "12.50"),
+            ("Total 1.234,56 €", "1234.56"),
+            ("Total 100.00\nGrand Total 118.00\nCash 200.00\nChange 82.00", "118.00")
+        ]
+        for (text, expected) in examples { #expect(ExpenseRules.receiptTotal(text) == expected) }
+        for text in ["Total items 12", "Total savings 5.00", "Total 12.00\nTotal 15.00", "Total 1,234", "Subtotal 20.00\nCash 30.00"] {
+            #expect(ExpenseRules.receiptTotal(text) == nil)
+        }
+        #expect(ExpenseRules.receiptCurrency("TOTAL Rs. 250.00") == "INR")
+        #expect(ExpenseRules.receiptCurrency("TOTAL $25.00") == nil)
+        #expect(ExpenseRules.receiptCurrency("INR 250.00 / USD 3.00") == nil)
+    }
+
+    @Test func reviewedReceiptTotalAndInventoryChoicePersistIndependently() throws {
+        let repo = try repo(); let home = try #require(repo.household?.id)
+        let text = "Market\nMilk 40.00\nRice 100.00\nGrand Total Rs. 147.00"
+        var lines = ReceiptRules.scan(text: text).lines
+        for index in lines.indices { lines[index].addToInventory = lines[index].name == "Milk" }
+        var draft = ExpenseDraft(); draft.merchant = "Market"
+        draft.amount = try #require(ExpenseRules.receiptTotal(text)); draft.currency = "INR"
+        try repo.importReceipt(lines, householdID: home, storeName: "Market", expense: draft, receiptKey: ExpenseRules.receiptKey(text))
+        #expect(repo.expenses.first?.amountMinorUnits == 14700)
+        #expect(repo.expenses.first?.currencyCode == "INR")
+        #expect(repo.inventory.count == 1)
+        #expect(repo.inventory.first?.name == "Milk")
+        #expect(repo.groceries.count == 2)
+    }
+
     @Test func monthlyReportsSeparateCurrencyRefundsAndYearBoundaries() {
         func entry(_ date: String, _ amount: Int, _ currency: String = "USD", refund: Bool = false) -> ExpenseReportItem {
             ExpenseReportItem(id: UUID(), merchant: "Market", day: date, amount: amount, currency: currency, category: .groceries, isRefund: refund, notes: "")

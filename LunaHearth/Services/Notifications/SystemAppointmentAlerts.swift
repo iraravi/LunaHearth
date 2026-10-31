@@ -21,7 +21,7 @@ actor SystemAppointmentAlerts: AppointmentAlertService {
                let date = trigger.nextTriggerDate(), abs(date.timeIntervalSince(alert.date)) < 1 { continue }
             let content = UNMutableNotificationContent()
             content.title = "Upcoming family appointment"
-            content.body = "Open LunaHearth to see the details."
+            content.body = "Open Nam Illam to see the details."
             content.sound = .default
             content.userInfo = ["appointmentID": alert.id.uuidString, "householdID": alert.householdID.uuidString]
             var calendar = Calendar(identifier: .gregorian); calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .current

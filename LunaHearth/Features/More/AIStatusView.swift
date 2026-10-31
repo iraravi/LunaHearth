@@ -63,10 +63,10 @@ struct AIStatusView: View {
                     }
                 }.accessibilityIdentifier("aiStatus.lastResults")
                 SettingsDetailCard(title: "Review AI results", symbol: "exclamationmark.triangle", accent: AppTheme.clay) {
-                    Text("On-device processing does not guarantee accuracy. AI can misidentify products, miss details or suggest unsuitable ingredients. Review results before saving or acting on them. LunaHearth does not verify food safety or allergens.").font(.subheadline)
+                    Text("On-device processing does not guarantee accuracy. AI can misidentify products, miss details or suggest unsuitable ingredients. Review results before saving or acting on them. Nam Illam does not verify food safety or allergens.").font(.subheadline)
                 }
                 SettingsDetailCard(title: "Private by design", symbol: "lock.shield", accent: AppTheme.sage) {
-                    Text("LunaHearth uses on-device AI. Cloud AI and Private Cloud Compute are not used.").font(.subheadline)
+                    Text("Nam Illam uses on-device AI. Cloud AI and Private Cloud Compute are not used.").font(.subheadline)
                     Text("Checking status does not send photos or household data, run a model prompt, or enable Apple Intelligence. Your optional iCloud household sync is separate.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }

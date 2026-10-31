@@ -92,13 +92,48 @@ enum ExpenseRules {
     }
     /// Suggest only an explicitly labeled total; users confirm the complete receipt amount.
     static func receiptTotal(_ text: String) -> String? {
-        for line in text.components(separatedBy: .newlines).reversed() {
-            guard line.range(of: #"(?i)^\s*(grand\s+total|total\s+amount|amount\s+due|total)\s*[:\-]?\s*(USD|INR|EUR|GBP|CAD|AUD)?\s*[₹$€£]?\s*[0-9][0-9,]*[.]\d{2}\s*$"#, options: .regularExpression) != nil,
-                  let range = line.range(of: #"[0-9][0-9,]*[.]\d{2}\s*$"#, options: .regularExpression) else { continue }
-            let value = line[range].trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ",", with: "")
-            if (try? minorUnits(value)) != nil { return value }
+        let lines = String(text.prefix(40_000)).components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+        let labels = [
+            #"(?i)^(grand\s+total|net\s+(total|amount|payable)|amount\s+(due|payable)|total\s+payable|bill\s+total)\b\s*[:=\-]?\s*"#,
+            #"(?i)^(total\s+amount|total)\b\s*[:=\-]?\s*"#
+        ]
+        for pattern in labels {
+            var amounts = Set<String>()
+            for (index, line) in lines.enumerated() {
+                guard let label = line.range(of: pattern, options: .regularExpression) else { continue }
+                let remainder = String(line[label.upperBound...])
+                let candidate = remainder.isEmpty && index + 1 < lines.count ? lines[index + 1] : remainder
+                if let amount = normalizedReceiptAmount(candidate) { amounts.insert(amount) }
+            }
+            // Conflicting totals need human review, never an arbitrary last-line choice.
+            if !amounts.isEmpty { return amounts.count == 1 ? amounts.first : nil }
         }
         return nil
+    }
+
+    private static func normalizedReceiptAmount(_ input: String) -> String? {
+        var value = input.trimmingCharacters(in: .whitespaces)
+        let currency = #"(?:USD|INR|EUR|GBP|CAD|AUD|Rs\.?|₹|\$|€|£)"#
+        value = value.replacingOccurrences(of: "(?i)^(?:" + currency + #"\s*){1,2}"#, with: "", options: .regularExpression)
+        value = value.replacingOccurrences(of: #"(?i)\s*"# + currency + "$", with: "", options: .regularExpression)
+        // Accept standard/Indian grouping, decimal commas, and whole-rupee totals.
+        // A lone separator with three digits is ambiguous and is not guessed.
+        if value.range(of: #"^(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]{1,2}(?:,[0-9]{2})*,[0-9]{3})\.[0-9]{1,2}$"#, options: .regularExpression) != nil {
+            value = value.replacingOccurrences(of: ",", with: "")
+        } else if value.range(of: #"^[0-9]{1,3}(?:\.[0-9]{3})+,[0-9]{1,2}$"#, options: .regularExpression) != nil {
+            value = value.replacingOccurrences(of: ".", with: "").replacingOccurrences(of: ",", with: ".")
+        }
+        guard let minor = try? minorUnits(value) else { return nil }
+        return amountText(minor)
+    }
+
+    static func receiptCurrency(_ text: String) -> String? {
+        let patterns = [("INR", #"(?i)(₹|\bINR\b|\bRs\.?(?=\s*[0-9]))"#),
+                        ("USD", #"(?i)\bUSD\b"#), ("EUR", #"(?i)(€|\bEUR\b)"#),
+                        ("GBP", #"(?i)(£|\bGBP\b)"#), ("CAD", #"(?i)\bCAD\b"#), ("AUD", #"(?i)\bAUD\b"#)]
+        let matches = patterns.filter { text.range(of: $0.1, options: .regularExpression) != nil }.map(\.0)
+        return matches.count == 1 ? matches.first : nil
     }
     static func csv(_ report: ExpenseMonthSummary) -> String {
         func cell(_ value: String) -> String {

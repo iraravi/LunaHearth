@@ -268,6 +268,9 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["home.inventory"].waitForExistence(timeout: 5))
         capture("Store-02-Home", app: app)
         tapVisible("home.shopping", app: app)
+        let layout = app.buttons["shopping.changeView"]
+        XCTAssertTrue(layout.waitForExistence(timeout: 5))
+        if layout.label.contains("Shelves") { layout.tap() }
         XCTAssertTrue(app.buttons["shopping.item.Tomatoes"].waitForExistence(timeout: 5))
         capture("Store-03-Shopping", app: app)
         tapVisible("shopping.inventory", app: app)
@@ -307,6 +310,8 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertEqual(app.buttons["receipt.usePurchase.Curd"].value as? String, "Selected")
         capture("Receipt-Existing-Purchase", app: app)
         app.buttons["receipt.confirm"].tap()
+        XCTAssertTrue(app.buttons["receipt.saveWithoutInventory"].firstMatch.waitForExistence(timeout: 5))
+        app.buttons["receipt.saveWithoutInventory"].firstMatch.tap()
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["Close"].firstMatch.tap()
         tapVisible("inventory.item.Curd", app: app)
@@ -501,7 +506,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["More"].firstMatch.tap()
         tapVisible("more.privacy", app: app)
         tapVisible("more.privacyPolicy", app: app)
-        XCTAssertTrue(app.staticTexts["privacyPolicy.draft"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["privacyPolicy.effectiveDate"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Your household information"].exists)
         capture("Privacy-Policy-Offline", app: app)
     }
@@ -683,6 +688,9 @@ final class VisualFlowTests: XCTestCase {
     }
 
     private func capture(_ name: String, app: XCUIApplication) {
+        // Existence checks can finish before the system navigation transition does.
+        // Keep visual evidence from capturing two screens midway through a push.
+        Thread.sleep(forTimeInterval: 1)
         let attachment = XCTAttachment(screenshot: app.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
@@ -913,7 +921,6 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Already at home · kept unchanged"].exists)
         capture("PantryPhoto50-Review", app: app)
         tapVisible("pantryPhoto.selection", app: app)
-        app.buttons["Select new items"].tap()
         app.buttons["pantryPhoto.save"].tap()
         XCTAssertTrue(app.staticTexts["pantryPhoto.success"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["1 item added"].exists)
@@ -1617,6 +1624,34 @@ final class VisualFlowTests: XCTestCase {
         capture("Connected-Demo-Meals", app: app)
     }
 
+    func testReceiptExplicitInventoryChoiceAndExactTotal() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-receipt", "--dark"]
+        app.launch(); createHousehold(app)
+        app.buttons["Home"].firstMatch.tap(); tapVisible("home.expenses", app: app)
+        tapVisible("expenses.scan", app: app)
+        let amount = app.textFields["expense.amount"]
+        XCTAssertTrue(app.staticTexts["receipt.scannedTotal"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["receipt.scannedTotal"].label.contains("6.48"))
+        capture("Receipt-Scan-Overview", app: app)
+        tapVisible("receipt.inventoryAll", app: app)
+        XCTAssertEqual(app.staticTexts["receipt.inventorySummary"].label, "Inventory items selected: 2")
+        tapVisible("receipt.inventoryNone", app: app)
+        XCTAssertEqual(app.staticTexts["receipt.inventorySummary"].label, "Inventory items selected: 0")
+        tapVisible("receipt.card.Curd", app: app)
+        XCTAssertEqual(app.staticTexts["receipt.inventorySummary"].label, "Inventory items selected: 1")
+        capture("Receipt-Visual-Selection", app: app)
+        app.buttons["receipt.confirm"].tap()
+        XCTAssertTrue(app.buttons["receipt.saveWithInventory"].firstMatch.waitForExistence(timeout: 5))
+        capture("Receipt-Explicit-Inventory-Confirmation", app: app)
+        app.buttons["receipt.saveWithInventory"].firstMatch.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
+        tapVisible("receipt.purchaseDetails", app: app)
+        app.buttons["purchase.expense"].tap()
+        XCTAssertTrue(amount.waitForExistence(timeout: 5))
+        XCTAssertEqual(amount.value as? String, "6.48")
+    }
+
     func testReceiptReviewAndImport() { receiptReview(largeText: false) }
     func testReceiptReviewDarkMode() { receiptReview(largeText: false, dark: true) }
     func testReceiptReviewLargeText() { receiptReview(largeText: true) }
@@ -1641,6 +1676,8 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(decodeStatus.label.contains("Model generation is disabled in this automated test session."))
         capture("Receipt-Review", app: app)
         app.buttons["receipt.confirm"].tap()
+        XCTAssertTrue(app.buttons["receipt.saveWithoutInventory"].firstMatch.waitForExistence(timeout: 5))
+        app.buttons["receipt.saveWithoutInventory"].firstMatch.tap()
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
         capture("Receipt-Saved", app: app)
         tapVisible("receipt.purchaseDetails", app: app)
@@ -2061,7 +2098,7 @@ final class VisualFlowTests: XCTestCase {
         app.tabBars.buttons["More"].tap(); app.buttons["more.family"].tap()
         tapVisible("family.addProfile", app: app)
         app.textFields["Display name"].tap(); app.textFields["Display name"].typeText("Kira")
-        app.buttons["Add Person"].tap()
+        app.buttons["Add person"].tap()
         app.tabBars.buttons["Home"].tap(); app.staticTexts["Shopping"].tap()
         app.navigationBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Add")).firstMatch.tap()
         app.textFields["quickAdd.title"].tap(); app.textFields["quickAdd.title"].typeText("Milk")
@@ -2090,7 +2127,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["more.family"].tap()
         tapVisible("family.addProfile", app: app)
         app.textFields["Display name"].tap(); app.textFields["Display name"].typeText("Ravi")
-        app.buttons["Add Person"].tap()
+        app.buttons["Add person"].tap()
         app.tabBars.buttons["Home"].tap()
         app.staticTexts["Shopping"].tap()
         app.navigationBars.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Add")).firstMatch.tap()
@@ -2213,7 +2250,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Test household · Test account"].tap()
         tapVisible("reminders.createList", app: app)
         XCTAssertTrue(app.buttons["reminders.chooseList"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["reminders.chooseList"].label.contains("LunaHearth"))
+        XCTAssertTrue(app.buttons["reminders.chooseList"].label.contains("Nam Illam"))
         tapVisible("reminders.add", app: app)
         saveEntry("Water the plants", app: app)
         let reminder = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "appleReminder.", "Water the plants")).firstMatch
@@ -2243,7 +2280,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Test household · Test account"].tap()
         tapVisible("reminders.createList", app: app)
         XCTAssertTrue(app.buttons["reminders.chooseList"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["reminders.chooseList"].label.contains("LunaHearth Shopping"))
+        XCTAssertTrue(app.buttons["reminders.chooseList"].label.contains("Nam Illam Shopping"))
         tapVisible("reminders.add", app: app)
         saveEntry("Milk", app: app)
         XCTAssertTrue(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@ AND label CONTAINS %@", "appleReminder.", "Milk")).firstMatch.waitForExistence(timeout: 5))
@@ -2323,7 +2360,7 @@ final class VisualFlowTests: XCTestCase {
         capture("22-Item-Warranty-Maintenance", app: app)
         app.buttons["Clean filter"].tap()
         app.buttons["maintenance.complete"].tap()
-        app.buttons["Record Completion"].tap()
+        app.buttons["Record completion"].tap()
         XCTAssertTrue(app.descendants(matching: .any)["maintenance.nextDue"].firstMatch.waitForExistence(timeout: 5))
         tapVisible("maintenance.shopping", app: app)
         XCTAssertTrue(app.textFields["quickAdd.title"].waitForExistence(timeout: 5))
@@ -2388,6 +2425,7 @@ final class VisualFlowTests: XCTestCase {
         let note = app.textViews["notes.text"]
         XCTAssertTrue(note.waitForExistence(timeout: 5))
         note.tap(); note.typeText("Kitchen filter checklist")
+        app.buttons["notes.keyboardDone"].tap()
         XCTAssertTrue(app.buttons["notes.share"].isEnabled)
         capture("27-Notes-Sharing", app: app)
         app.tabBars.buttons["Home"].tap()
@@ -2419,6 +2457,37 @@ final class VisualFlowTests: XCTestCase {
         app.staticTexts["Reminders"].tap()
         XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Water the plants")).firstMatch.waitForExistence(timeout: 5))
         capture("05-Tasks-Light", app: app)
+    }
+
+    func testHomeWorkspaceDark() { homeWorkspace(dark: true) }
+    func testHomeWorkspaceLight() { homeWorkspace(dark: false) }
+
+    private func homeWorkspace(dark: Bool) {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"] + (dark ? ["--dark"] : [])
+        app.launch(); createHousehold(app)
+        XCUIDevice.shared.orientation = .landscapeLeft
+        defer { XCUIDevice.shared.orientation = .portrait }
+        app.buttons["Home"].firstMatch.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["home.workspace"].firstMatch.waitForExistence(timeout: 5))
+        capture("Duo-Workspace-Empty-\(dark ? "Dark" : "Light")", app: app)
+        app.buttons["home.addRoom"].tap()
+        XCTAssertTrue(app.buttons["layout.save"].waitForExistence(timeout: 5))
+        XCUIDevice.shared.orientation = .portrait
+        XCTAssertTrue(app.buttons["layout.save"].waitForExistence(timeout: 5))
+        XCUIDevice.shared.orientation = .landscapeLeft
+        app.buttons["layout.save"].tap()
+        let orbit = app.descendants(matching: .any)["layout.orbit"].firstMatch
+        XCTAssertTrue(orbit.waitForExistence(timeout: 5))
+        let initial = orbit.value as? String
+        orbit.swipeLeft()
+        XCTAssertNotEqual(orbit.value as? String, initial)
+        capture("Duo-Workspace-Home-\(dark ? "Dark" : "Light")", app: app)
+        app.buttons["home.workspace.scan"].tap()
+        XCTAssertTrue(app.buttons["receipt.photos"].waitForExistence(timeout: 5))
+        app.buttons["Close"].firstMatch.tap()
+        app.buttons["home.inventory"].tap()
+        XCTAssertTrue(app.buttons["inventory.scanReceipt"].waitForExistence(timeout: 5))
     }
 
     func testBuildHomeLayout() {

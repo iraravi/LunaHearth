@@ -152,7 +152,7 @@ struct HouseholdHelpAnswer: Identifiable, Sendable {
         return query.isEmpty || question.localizedStandardContains(query) || answer.localizedStandardContains(query)
     }
     static let all: [Self] = [
-        .init(id: "reminders", question: "Where are my Apple Reminders stored?", answer: "New entries made through the Apple Reminders connection are stored in the selected Apple list. They are separate from shared LunaHearth household records. Manage Apple list sharing and retained entries in Apple Reminders."),
+        .init(id: "reminders", question: "Where are my Apple Reminders stored?", answer: "New entries made through the Apple Reminders connection are stored in the selected Apple list. They are separate from shared Nam Illam household records. Manage Apple list sharing and retained entries in Apple Reminders."),
         .init(id: "notifications", question: "Are notifications guaranteed to arrive immediately?", answer: "No. Permissions, Focus, connectivity and Apple background scheduling can affect delivery. Check the saved assignment or appointment directly for important plans."),
         .init(id: "mealReminder", question: "Does the 5 PM reminder generate tomorrow’s meal?", answer: "No. It invites you to open meal planning. Choose a style, review ideas and save a plan yourself."),
         .init(id: "photo", question: "Can a kitchen photo create an exact inventory?", answer: "No. A photo can miss, duplicate or misidentify visible items. Review suggested names against the actual products; it cannot establish exact remaining amounts, expiry or food safety."),

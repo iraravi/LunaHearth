@@ -227,7 +227,7 @@ struct RoomDetailView: View {
                 Button(room.footprint == nil ? "Create a 2D / 3D layout" : "Edit room layout", systemImage: "square.3.layers.3d") { editingLayout = true }
             }
         }.hearthList().navigationTitle(room.name).navigationBarTitleDisplayMode(.inline)
-            .toolbar { Button("Add Item", systemImage: "plus") { adding = true } }
+            .toolbar { Button("Add item", systemImage: "plus") { adding = true } }
             .sheet(isPresented: $editingLayout) { RoomLayoutEditor(roomID: room.id, floorID: room.floorID) }
             .sheet(isPresented: $editing) { QuickAddView(draft: .editing(room)) }
             .sheet(isPresented: $adding) { QuickAddView(kind: .asset, parentID: room.id, fixedKind: true) }
@@ -275,18 +275,18 @@ struct AssetDetailView: View {
                         if let notes = warranty.notes, !notes.isEmpty { Text(notes).font(.subheadline) }
                     }.entryActions(.editing(warranty))
                 }
-                Button("Add Warranty", systemImage: "plus") { adding = .warranty }.accessibilityIdentifier("item.addWarranty")
+                Button("Add warranty", systemImage: "plus") { adding = .warranty }.accessibilityIdentifier("item.addWarranty")
             }
             Section("Maintenance") {
                 ForEach(repository.maintenance.filter { $0.assetID == asset.id }) { plan in
                     NavigationLink(plan.title) { MaintenanceDetailView(plan: plan) }
                 }
-                Button("Add Maintenance", systemImage: "plus") { adding = .maintenance }.accessibilityIdentifier("item.addMaintenance")
+                Button("Add maintenance", systemImage: "plus") { adding = .maintenance }.accessibilityIdentifier("item.addMaintenance")
             }
         }
         .hearthList()
         .navigationTitle(asset.name).navigationBarTitleDisplayMode(.inline)
-        .toolbar { Button("Edit Item") { editing = true } }
+        .toolbar { Button("Edit item") { editing = true } }
         .sheet(isPresented: $editing) { QuickAddView(draft: .editing(asset)) }
         .sheet(item: $adding) { QuickAddView(kind: $0, parentID: asset.id, fixedKind: true) }
         .saveError($error)
@@ -318,7 +318,7 @@ struct HomeAlertsView: View {
                     }
                 }
             }
-        }.hearthList().navigationTitle("Home Alerts")
+        }.hearthList().navigationTitle("Home alerts")
     }
 }
 
@@ -338,11 +338,11 @@ struct MaintenanceDetailView: View {
                 if let last = plan.lastCompletedAt { LabeledContent("Last completed", value: last.formatted(date: .abbreviated, time: .shortened)) }
             }
             Section {
-                Button("Mark Completed", systemImage: "checkmark.circle") { confirming = true }
+                Button("Mark complete", systemImage: "checkmark.circle") { confirming = true }
                     .disabled(plan.lastCompletedAt != nil && plan.nextDueAt == nil)
                     .accessibilityIdentifier("maintenance.complete")
                 if let shopping = plan.shoppingItemTemplate, !shopping.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                    Button("Add replacement to shopping", systemImage: "cart.badge.plus") { addingShopping = true }
+                    Button("Add replacement", systemImage: "cart.badge.plus") { addingShopping = true }
                         .accessibilityIdentifier("maintenance.shopping")
                     Text(shopping).font(.subheadline).foregroundStyle(.secondary)
                 }
@@ -357,7 +357,7 @@ struct MaintenanceDetailView: View {
             .sheet(isPresented: $addingShopping) { QuickAddView(draft: EntryDraft(kind: .grocery, title: plan.shoppingItemTemplate ?? "", parentID: plan.assetID)) }
             .sheet(isPresented: $editing) { QuickAddView(draft: .editing(plan)) }
             .confirmationDialog("Record this maintenance as completed now?", isPresented: $confirming, titleVisibility: .visible) {
-                Button("Record Completion") {
+                Button("Record completion") {
                     do { try repository.completeMaintenance(plan) } catch { self.error = userFacingError(error) }
                 }
             }

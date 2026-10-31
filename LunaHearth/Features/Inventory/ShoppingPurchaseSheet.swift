@@ -4,6 +4,7 @@ struct ShoppingPurchaseSheet: View {
     let item: GroceryItem
     var onCompleted: (PurchaseFeedback) -> Void = { _ in }
     @Environment(LocalHouseholdRepository.self) private var repository
+    @Environment(\.dynamicTypeSize) private var textSize
     @Environment(\.dismiss) private var dismiss
     @State private var error: String?
     @State private var choosingExisting = false
@@ -18,7 +19,7 @@ struct ShoppingPurchaseSheet: View {
                         Text("An older pack is past expiry. This purchase will use a separate pack or another recorded pack; expired quantities stay separate.").font(.subheadline).foregroundStyle(InventoryTheme.muted)
                     }
                     if item.purchaseDisposition == "inventory" {
-                        choice("Already added to inventory", detail: "Finish shopping again without creating another pack.", symbol: "checkmark.circle", identifier: "shopping.purchaseInventory", inventory: true)
+                        choice("Already in pantry", detail: "Finish shopping again without creating another pack.", symbol: "checkmark.circle", identifier: "shopping.purchaseInventory", inventory: true)
                     } else if !matches.isEmpty {
                         Label("Already at home", systemImage: "cabinet").font(.headline)
                         Button {
@@ -29,7 +30,7 @@ struct ShoppingPurchaseSheet: View {
                             HStack(alignment: .top, spacing: 14) {
                                 Image(systemName: "checkmark.circle").font(.title2).frame(width: 32)
                                 VStack(alignment: .leading, spacing: 6) {
-                                    Text("Restock existing \(item.name)").font(.headline)
+                                    Text("Restock pack").font(.headline)
                                     Text(matches.count == 1 ? RestockQuantity.detail(existing: matches.first?.quantityText, purchased: item.quantityText) : "\(matches.count) saved packs match. Choose which one to restock.")
                                         .font(.subheadline).foregroundStyle(InventoryTheme.muted)
                                 }
@@ -37,11 +38,11 @@ struct ShoppingPurchaseSheet: View {
                             }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
                                 .background(InventoryTheme.surface, in: RoundedRectangle(cornerRadius: 20)).contentShape(Rectangle())
                         }.buttonStyle(.plain).foregroundStyle(InventoryTheme.accent).accessibilityIdentifier("shopping.keepInventory.existing")
-                        choice("Add a separate pack", detail: "Create another pack only if it needs its own amount or expiry date.", symbol: "plus.square.on.square", identifier: "shopping.separateInventory", inventory: true, separate: true)
+                        choice("New pack", detail: "Create another pack only if it needs its own amount or expiry date.", symbol: "plus.square.on.square", identifier: "shopping.separateInventory", inventory: true, separate: true)
                     } else {
-                        choice("Add to home inventory", detail: "Mark bought and copy it to inventory. Add pack dates later.", symbol: "shippingbox.and.arrow.backward", identifier: "shopping.purchaseInventory", inventory: true)
+                        choice("Add to pantry", detail: "Mark this bought and add it to your pantry. You can add an expiry date later.", symbol: "shippingbox.and.arrow.backward", identifier: "shopping.purchaseInventory", inventory: true)
                     }
-                    choice("Bought · don’t add", detail: "For friends, gifts or items kept elsewhere.", symbol: "gift", identifier: "shopping.purchaseOnly", inventory: false)
+                    choice("Purchase only", detail: "Mark this bought without adding it to your pantry—for gifts, meals out or items kept elsewhere.", symbol: "gift", identifier: "shopping.purchaseOnly", inventory: false)
                     Text("Changing shopping status later won’t remove a pack from inventory.").font(.caption).foregroundStyle(InventoryTheme.muted)
                 }.padding(24)
             }.background(InventoryTheme.canvas).tint(InventoryTheme.accent)
@@ -49,7 +50,7 @@ struct ShoppingPurchaseSheet: View {
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
                 .sheet(isPresented: $choosingExisting) { ExistingInventoryPurchasePicker(grocery: item) { completed() } }
                 .saveError($error)
-        }.presentationDetents(matches.isEmpty ? [.medium, .large] : [.large])
+        }.presentationDetents(matches.isEmpty && !textSize.isAccessibilitySize ? [.medium, .large] : [.large])
     }
     private func completed() {
         let history = repository.purchases.first { $0.groceryID == item.id }

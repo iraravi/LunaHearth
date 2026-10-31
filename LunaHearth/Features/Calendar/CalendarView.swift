@@ -175,9 +175,9 @@ struct EventDetailView: View {
                 NavigationLink("Share as a note") {
                     NotesSharingView(text: "\(event.title)\n\(event.startAt.formatted()) – \(event.endAt.formatted())\n\n\(event.notes ?? "")")
                 }
-                Text("Enable Apple Calendar in the editor to keep its title, time, and notes updated from LunaHearth. The link is managed on this device.").font(.footnote).foregroundStyle(.secondary)
+                Text("Enable Apple Calendar in the editor to keep its title, time, and notes updated from Nam Illam. The link is managed on this device.").font(.footnote).foregroundStyle(.secondary)
             }
-            Section { Text("LunaHearth event · Stored on this device").foregroundStyle(.secondary) }
+            Section { Text("Nam Illam event · Stored on this device").foregroundStyle(.secondary) }
         }.hearthList().navigationTitle(event.title)
             .toolbar { Button("Edit") { editing = true } }
             .sheet(isPresented: $editing) { AppointmentEditorView(event: event) }

@@ -1,0 +1,11 @@
+Nam Illam 1.0 (69)
+
+Scan a receipt and compare the proposed total, currency, names and quantities with the original. Try a receipt with tax, discounts and a separate grand total.
+
+Choose Add all, clear the selection, then select individual pantry items. Confirm that Save without inventory records only the purchase, and Save & update pantry adds only the selected items. Check previously linked purchases do not restock twice.
+
+Review dark mode and large text across Home, Shopping, Pantry, Expenses and receipt review. Try the keyboard Done action in More > Apple connections > Share to Notes.
+
+On an expansive window or open Duo, try the Home action panel beside the room layout. Add a room, rotate its preview and resize or change posture while editing. Verify the draft remains available and the compact layout remains usable.
+
+Core manual features work offline. Please report the screen, device, text size and steps if anything looks wrong. Redact private details from screenshots and do not send full household backups.

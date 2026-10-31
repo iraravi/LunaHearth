@@ -10,13 +10,23 @@ import UIKit
         try repo.createHousehold(name: "Home", owner: "", members: [])
         return repo
     }
+    @Test func bulkInventorySelectionPreservesExcludedAndLinkedPurchases() {
+        var lines = [ReceiptLine(id: "new", name: "Milk", addToInventory: false),
+                     ReceiptLine(id: "excluded", name: "Bread", included: false, addToInventory: false),
+                     ReceiptLine(id: "linked", name: "Rice", addToInventory: false, existingPurchaseID: UUID()),
+                     ReceiptLine(id: "imported", name: "Curd", addToInventory: false)]
+        ReceiptInventorySelection.setAll(true, lines: &lines, unavailableIDs: ["imported"])
+        #expect(lines.map(\.addToInventory) == [true, false, false, false])
+        ReceiptInventorySelection.setAll(false, lines: &lines, unavailableIDs: ["imported"])
+        #expect(lines.allSatisfy { !$0.addToInventory })
+    }
     @Test func parserExcludesPaymentsAndNeverUsesPriceAsQuantity() {
         let scan = ReceiptRules.scan(text: "MARKET\n123456 CURD 3.99 T\n2 x BANANAS 2.49\nSUBTOTAL 6.48\nTax 0.25\nTOTAL 6.73\nVISA 6.73\nCoupon -1.00\nRefund curd 3.99")
         #expect(scan.lines.map(\.name) == ["CURD", "BANANAS"])
         #expect(scan.lines[0].quantity.isEmpty)
         #expect(scan.lines[1].quantity == "2 pieces")
         #expect(scan.lines.map(\.id) == ReceiptRules.scan(text: scan.text).lines.map(\.id))
-        #expect(ReceiptRules.scan(text: "TOTAL 25.00\nThank you").lines.isEmpty)
+        #expect(ReceiptRules.scan(text: "TOTAL 25.00\nNet Amount 25.00\nAmount payable 25.00\nThank you").lines.isEmpty)
     }
     @Test func currencyLabelsAndWholeRupeesDoNotDropItems() {
         let result = ReceiptRules.scan(text: "MARKET\nMilk ₹60\nCurd Rs. 35.00\nRice INR 120\nApples₹80.00\nBread $2.00\nTOTAL INR 297.00")

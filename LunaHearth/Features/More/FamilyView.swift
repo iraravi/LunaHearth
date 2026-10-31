@@ -219,7 +219,7 @@ private struct FamilyProfileForm: View {
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Add Person") {
+                        Button("Add person") {
                             do { try repository.addMember(name: name, role: role); editingName = false; dismiss() }
                             catch { self.error = userFacingError(error) }
                         }.disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || repository.syncConfiguration?.readOnly == true || repository.syncConfiguration?.recovery == true)

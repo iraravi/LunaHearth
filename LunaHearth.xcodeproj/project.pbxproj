@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		002F56E4C4A45E00BE6CD2F2 /* HouseholdSupportArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50A50F2F35F5CAAD08F1F6E0 /* HouseholdSupportArticle.swift */; };
+		0031DE74B2A5155D935F317C /* HomeWorkspaceLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D7324B1EF0F43F13F5DB99 /* HomeWorkspaceLayoutTests.swift */; };
 		028D457D12A21D083864BE5A /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40B495C18D5B849C35BC4219 /* CalendarView.swift */; };
 		031E73770777BD6A09E91224 /* OnDevicePantryCategorizationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCD6CF98DC9C7CB0DEB29240 /* OnDevicePantryCategorizationService.swift */; };
 		03D603D7CC26320C54E13AA5 /* RepositoryProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 711F26231B66EF38E063AF00 /* RepositoryProtocols.swift */; };
@@ -97,6 +98,7 @@
 		62ECB2C6B00FBA52EF095A7B /* CalendarDayPeriodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A2D057D100F02487FB0CE7 /* CalendarDayPeriodTests.swift */; };
 		63EAE2363D9F428CFC991456 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F8F5A1D4EAFB40AEA1FDB5 /* HomeDashboardView.swift */; };
 		66ACF93DEDCA7140FFBA7BB3 /* WelcomeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7A90DCFC541C0929A80A1 /* WelcomeStyle.swift */; };
+		66B4638E65F4976DB20C62B2 /* ReceiptScanSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D413F742C8FE7FA8A0ED551F /* ReceiptScanSummary.swift */; };
 		671C1D0939B6EC4EEF6F37E9 /* AICapabilityEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB4972168F59DABA1D4EF80D /* AICapabilityEnvironment.swift */; };
 		67497BA326B7C14E0C1525F7 /* HearthGlass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA2C7E44A2888564E51BD30 /* HearthGlass.swift */; };
 		67CE8487BB43BE3E500943FE /* AIStatusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F679170D640132ED069F7F68 /* AIStatusTests.swift */; };
@@ -192,6 +194,7 @@
 		B768FE8AF2F503D91FFE5CF9 /* MealCookingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1152F566014C0889336BC25B /* MealCookingTests.swift */; };
 		B8310B937A1EE05C16C13F95 /* PantryTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7FD5238F39C3808170697 /* PantryTemplates.swift */; };
 		B87C313F79DE1E92CEB4E3E8 /* LocalHouseholdRepository+Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E170550A79817176986EA12 /* LocalHouseholdRepository+Reminders.swift */; };
+		B8E02435ECF6A8CD58DC5BDE /* HomeWorkspaceDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47423F638027A6E472462D12 /* HomeWorkspaceDashboard.swift */; };
 		BAA85858312F7D160F9BFE45 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB02C7C43A2F3466EA1A5A5 /* ShoppingListView.swift */; };
 		BD3888448401951E2045B94C /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98C4F40166D6C632BC04072 /* SmokeTests.swift */; };
 		BD5510DFCEF93986EF74E1CE /* AppleConnectionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997C1EF46E5429D1070FC77E /* AppleConnectionsTests.swift */; };
@@ -225,6 +228,7 @@
 		DBE569C58046237D6DBE17B6 /* LocalHouseholdRepository+NamedMembers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88B5036EAD60E1E613E66390 /* LocalHouseholdRepository+NamedMembers.swift */; };
 		DD786493CC19B04F02BD04C1 /* HouseholdIntelligenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E68F125D1E493F6F88FBF4 /* HouseholdIntelligenceService.swift */; };
 		DDC4829A69DBD18EDD47380F /* FeatureCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C0ACA03FC5DDEEFFC69AE7D /* FeatureCanvas.swift */; };
+		DEA1BB4DB811DA5865DF2CB9 /* HomeWorkspaceLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB91EC24675684A5A1D802BF /* HomeWorkspaceLayout.swift */; };
 		E1241B2B9A1EA1FBEA0B2858 /* WeeklyMeals.swift in Sources */ = {isa = PBXBuildFile; fileRef = F59507B9BAC8C54A63C1E5E1 /* WeeklyMeals.swift */; };
 		E4152820CA1FC3D09C565135 /* ShoppingStoreCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E67D38E46EE193E5B680131 /* ShoppingStoreCatalog.swift */; };
 		E478AD26A43117C604A9242B /* UITestPantryFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F990D560B87C997FE42205 /* UITestPantryFixture.swift */; };
@@ -346,6 +350,7 @@
 		448A7B1C6B137BBE1125ECF2 /* LocalHouseholdRepository+ReceiptMatching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalHouseholdRepository+ReceiptMatching.swift"; sourceTree = "<group>"; };
 		4614CAB1BEA0E9C4CEB52619 /* BackupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupView.swift; sourceTree = "<group>"; };
 		4650F5D9886D99146AAA74B5 /* TodayAttentionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayAttentionTests.swift; sourceTree = "<group>"; };
+		47423F638027A6E472462D12 /* HomeWorkspaceDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeWorkspaceDashboard.swift; sourceTree = "<group>"; };
 		4769772E49F9CD4B8516B625 /* ReceiptNameDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptNameDecoding.swift; sourceTree = "<group>"; };
 		47F8F5A1D4EAFB40AEA1FDB5 /* HomeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDashboardView.swift; sourceTree = "<group>"; };
 		49C9E0DECF5EE0D86A024E28 /* InvitationDeliveryStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationDeliveryStatus.swift; sourceTree = "<group>"; };
@@ -428,6 +433,7 @@
 		905E6A418A0785F240C4F00D /* HouseholdSharingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSharingController.swift; sourceTree = "<group>"; };
 		90AC97FE46236E6CC68E1B6B /* LocalStoreConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStoreConfiguration.swift; sourceTree = "<group>"; };
 		91B6C4D7816CB0B4D94B630B /* OnDeviceReceiptNameService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceReceiptNameService.swift; sourceTree = "<group>"; };
+		91D7324B1EF0F43F13F5DB99 /* HomeWorkspaceLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeWorkspaceLayoutTests.swift; sourceTree = "<group>"; };
 		91D90914B83550B5AF4A2DA4 /* ShoppingStorePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingStorePicker.swift; sourceTree = "<group>"; };
 		92FACEC6B6880E8CD67EF00D /* ApplePlanning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplePlanning.swift; sourceTree = "<group>"; };
 		93D3307E8A4CCAD252FFDB89 /* CloudKitHouseholdService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitHouseholdService.swift; sourceTree = "<group>"; };
@@ -480,12 +486,14 @@
 		C7694CB23A40B9633BF503CF /* TodayPlanningLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayPlanningLayout.swift; sourceTree = "<group>"; };
 		C88A63FE47AF2709C8C8384C /* IngredientMatchingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IngredientMatchingTests.swift; sourceTree = "<group>"; };
 		CB4972168F59DABA1D4EF80D /* AICapabilityEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AICapabilityEnvironment.swift; sourceTree = "<group>"; };
+		CB91EC24675684A5A1D802BF /* HomeWorkspaceLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeWorkspaceLayout.swift; sourceTree = "<group>"; };
 		CE7E0E96BAD8D8C80D16B145 /* OnDeviceTodayBriefService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceTodayBriefService.swift; sourceTree = "<group>"; };
 		CE80FC56024C97C91DD58E1D /* FamilyWeekRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyWeekRules.swift; sourceTree = "<group>"; };
 		CE90A1880C0547877E4A92EA /* HouseholdCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdCleanup.swift; sourceTree = "<group>"; };
 		D14C2F9D2CB0CFB948E525F1 /* MealSuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealSuggestionTests.swift; sourceTree = "<group>"; };
 		D2FBFF7BAE37A194E8CFCD26 /* HouseholdHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdHelpView.swift; sourceTree = "<group>"; };
 		D36C60EEA7475676BB87EBAC /* TodayAttention.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayAttention.swift; sourceTree = "<group>"; };
+		D413F742C8FE7FA8A0ED551F /* ReceiptScanSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScanSummary.swift; sourceTree = "<group>"; };
 		D42D54EC6DE58854899590AC /* ReceiptNameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptNameTests.swift; sourceTree = "<group>"; };
 		D48C666609E6F92D05587AF8 /* ForegroundRefreshLoop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ForegroundRefreshLoop.swift; sourceTree = "<group>"; };
 		D5398A726F91728A5850361A /* HouseholdBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdBackup.swift; sourceTree = "<group>"; };
@@ -641,6 +649,7 @@
 				82AF957D3DDAE2173C203F26 /* HomeLayoutPreview.swift */,
 				28021456D9AA2DC73B82E9A4 /* HomeLayoutView.swift */,
 				71818E0DAF86BD299DDCCE1A /* HomeView.swift */,
+				47423F638027A6E472462D12 /* HomeWorkspaceDashboard.swift */,
 				A506ED8C7A5524DE05A28783 /* InteractiveFloorPlan.swift */,
 				9F25F716FF36ECF0B57F3211 /* OrbitingHomePreview.swift */,
 			);
@@ -716,6 +725,7 @@
 			children = (
 				5759F4301FD9E329092251A0 /* ReceiptImportView.swift */,
 				255C7E912AEE40CC18013179 /* ReceiptScanSession.swift */,
+				D413F742C8FE7FA8A0ED551F /* ReceiptScanSummary.swift */,
 			);
 			path = Receipts;
 			sourceTree = "<group>";
@@ -854,6 +864,7 @@
 				5CD118ED42F304B530403D48 /* ExpenseRules.swift */,
 				CE80FC56024C97C91DD58E1D /* FamilyWeekRules.swift */,
 				81C93A226649AD62E715FE50 /* HomeSetupProgress.swift */,
+				CB91EC24675684A5A1D802BF /* HomeWorkspaceLayout.swift */,
 				CE90A1880C0547877E4A92EA /* HouseholdCleanup.swift */,
 				FC1DF160CC9C4BC66786839E /* HouseholdHelp.swift */,
 				714ABA35B1BFA3729BEE68DC /* HouseholdRules.swift */,
@@ -1131,6 +1142,7 @@
 				B360DCE5AD25591529C13345 /* ForegroundRefreshLoopTests.swift */,
 				B59AC5C1A5D2DA44B42C7E78 /* GroceryPerformanceTests.swift */,
 				51AEBB79877BAE59526EFA85 /* HomeSetupProgressTests.swift */,
+				91D7324B1EF0F43F13F5DB99 /* HomeWorkspaceLayoutTests.swift */,
 				12EA2DE8F0C968108A5D89FD /* HouseholdCleanupTests.swift */,
 				15134D139FCBA1AB6354DA1B /* HouseholdHelpTests.swift */,
 				E24E64D2FD739C12599915DB /* HouseholdRulesTests.swift */,
@@ -1313,6 +1325,7 @@
 				1B99F1541D57C7D006E36781 /* ForegroundRefreshLoopTests.swift in Sources */,
 				B683364334E1A467134E545A /* GroceryPerformanceTests.swift in Sources */,
 				048F3CF1BA22A7350621E890 /* HomeSetupProgressTests.swift in Sources */,
+				0031DE74B2A5155D935F317C /* HomeWorkspaceLayoutTests.swift in Sources */,
 				A14B5E4CEB52FB9291FFD8B0 /* HouseholdCleanupTests.swift in Sources */,
 				44170EEFD95F85AD90ED68FC /* HouseholdHelpTests.swift in Sources */,
 				46588355EBE95EC07EE735C9 /* HouseholdRulesTests.swift in Sources */,
@@ -1429,6 +1442,8 @@
 				1F57875DB50BF73B8A70E72E /* HomeSetupGuideView.swift in Sources */,
 				AB309CA31A9778FBC6B2CB53 /* HomeSetupProgress.swift in Sources */,
 				C72390AE061EFAC962F1E02A /* HomeView.swift in Sources */,
+				B8E02435ECF6A8CD58DC5BDE /* HomeWorkspaceDashboard.swift in Sources */,
+				DEA1BB4DB811DA5865DF2CB9 /* HomeWorkspaceLayout.swift in Sources */,
 				D3DDF237A2E8584B4EE75A9D /* HouseholdBackup.swift in Sources */,
 				6D9C559AD97092FBEA22570D /* HouseholdCleanup.swift in Sources */,
 				0B5D67D312A714BD24CAD0AA /* HouseholdExpense.swift in Sources */,
@@ -1520,6 +1535,7 @@
 				1795B5C0BDE46001A0AAA9D9 /* ReceiptNameDecoding.swift in Sources */,
 				89B25932F2C336EF26FD994A /* ReceiptPurchaseMatching.swift in Sources */,
 				8F1569E4C2534BA6BCDED515 /* ReceiptScanSession.swift in Sources */,
+				66B4638E65F4976DB20C62B2 /* ReceiptScanSummary.swift in Sources */,
 				3E3B23F6BD709960246BF37E /* ReminderDelivery.swift in Sources */,
 				1BBE195C38746DBB6AE2C4CD /* ReminderDeliveryCoordinator.swift in Sources */,
 				343BED74E8D6E33EF85B714D /* ReminderDeliveryRecords.swift in Sources */,
@@ -1649,7 +1665,7 @@
 				CLOUDKIT_ENVIRONMENT = Development;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 67;
+				CURRENT_PROJECT_VERSION = 69;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1736,7 +1752,7 @@
 				CLOUDKIT_ENVIRONMENT = Production;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 67;
+				CURRENT_PROJECT_VERSION = 69;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_NS_ASSERTIONS = NO;

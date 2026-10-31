@@ -176,7 +176,7 @@ private struct PurchaseDetailContent: View {
                     }
                 }.accessibilityElement(children: .combine)
             }
-            Label(entry.stockAction == "elsewhere" ? "Kept elsewhere" : entry.stockAction == "restocked" ? "Restocked" : "Added to inventory",
+            Label(entry.stockAction == "elsewhere" ? "Kept elsewhere" : entry.stockAction == "restocked" ? "Restocked" : "Added to pantry",
                   systemImage: entry.stockAction == "elsewhere" ? "gift" : "checkmark.circle").font(.subheadline).foregroundStyle(.secondary)
             if let item = repository.inventory.first(where: { $0.id == entry.inventoryID }) {
                 Button { inventory = item } label: {

@@ -38,7 +38,7 @@ enum BackupError: LocalizedError {
         switch self {
         case .unavailable: "iCloud is unavailable in this build. Your home remains saved on this device."
         case .noAccount: "Sign in to iCloud in Settings, then try again. Your local home is safe."
-        case .noBackup: "No LunaHearth backup was found in this Apple Account."
+        case .noBackup: "No Nam Illam backup was found in this Apple Account."
         case .invalidBackup: "This backup is incomplete, too large, or uses an unsupported format. Nothing was restored."
         case .existingHome: "Restore is available before creating a home. Your existing home has not been replaced."
         case .attachmentsUnsupported: "This version cannot back up document or room-scan files. No backup was uploaded."

@@ -564,3 +564,12 @@ Prominent glass/bordered buttons explicitly pair the adaptive canvas foreground 
 
 ### Dark-mode control clarity — October 30, 2026
 Shared action controls now use opaque capsule backgrounds in dark appearance, with explicit light labels for secondary actions and dark labels on pastel primary fills. Disabled controls use a readable muted label and neutral surface instead of fading the whole control. A visible outline and pressed overlay make boundaries and interaction states clearer; Increase Contrast strengthens the outline. Existing light-mode glass/bordered choices are preserved. Setup, meal and sharing prominent actions use the same state handling. Card and category-filter boundaries are stronger in dark appearance. Native toolbar controls keep their platform behavior.
+
+
+## Home workspace on wider windows — October 30, 2026
+
+Home uses two independently scrolling panes when at least 650 points are available and accessibility text sizes are not selected. Household actions occupy the left pane; the right pane shows the household name, floor selection, saved-room 3D cutaway, room creation, floor-plan navigation and room details. This follows the reference image's control-panel/scene hierarchy while retaining Nam Illam's adaptive ivory/charcoal palette and native household workflows. No car imagery or simulated device controls are introduced.
+
+The scene renders only rooms with saved dimensions, one floor at a time. Empty or unmeasured floors explain how to create the layout. Drag rotation and accessible rotation/tilt actions use the existing local renderer. Narrow windows and accessibility text sizes keep the original stacked Home screen. Editor presentation, floor and camera state live above the layout switch so an open room or receipt sheet survives resizing. This is geometry-based adaptation, not hinge detection.
+
+Affected entities are household, floor, room, home asset, inventory, grocery and task presentation. No business-rule, schema, permission, network, CloudKit or privacy changes. All content and actions use existing local repositories. Build and visual test evidence are recorded separately in the release status; physical folding and VoiceOver require device checks.

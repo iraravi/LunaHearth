@@ -144,7 +144,7 @@ import UIKit
         let content = UNMutableNotificationContent()
         let isTask = identifier.hasPrefix("tasks.personal.")
         content.title = isTask ? "Tasks updated" : "Shopping updated"
-        content.body = isTask ? "\(newCount) new \(newCount == 1 ? "task" : "tasks") assigned to you. Open LunaHearth to see your tasks." : "\(newCount) new \(newCount == 1 ? "item" : "items") assigned to you. Open LunaHearth to see your list."
+        content.body = isTask ? "\(newCount) new \(newCount == 1 ? "task" : "tasks") assigned to you. Open Nam Illam to see your tasks." : "\(newCount) new \(newCount == 1 ? "item" : "items") assigned to you. Open Nam Illam to see your list."
         content.sound = .default
         try await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: identifier, content: content, trigger: nil))
     }

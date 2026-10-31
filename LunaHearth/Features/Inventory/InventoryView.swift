@@ -229,10 +229,10 @@ struct InventoryEditor: View {
                         }
                         if !matches.isEmpty {
                             Button("Keep existing item") { dismiss() }.accessibilityIdentifier("inventory.keepExisting")
-                            Toggle("This is a separate pack or ingredient", isOn: $separatePack).accessibilityIdentifier("inventory.separatePack")
+                            Toggle("Add as a separate pack", isOn: $separatePack).accessibilityIdentifier("inventory.separatePack")
                         }
                         if (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiDuplicates) ?? true)) {
-                            Button(checking ? "Comparing on your device…" : "Check similar names with AI", systemImage: "sparkles") { checking = true }
+                            Button(checking ? "Comparing on your device…" : "Compare with AI", systemImage: "sparkles") { checking = true }
                                 .disabled(checking).accessibilityIdentifier("inventory.compareAI")
                         }
                         if let aiStatus { Text(aiStatus).font(.caption).foregroundStyle(InventoryTheme.muted) }
@@ -253,23 +253,23 @@ struct InventoryEditor: View {
                         if draft.hasExpiryDate { DatePicker("Expires on", selection: $draft.expiryDate, displayedComponents: .date).accessibilityIdentifier("inventory.expiryDate") }
                         Toggle("Purchased date", isOn: $draft.hasPurchasedDate)
                         if draft.hasPurchasedDate { DatePicker("Purchased on", selection: $draft.purchasedDate, displayedComponents: .date) }
-                    } label: { Text("Add details (optional)").accessibilityIdentifier("inventory.details") }
+                    } label: { Text("More details").accessibilityIdentifier("inventory.details") }
                 }.listRowBackground(InventoryTheme.surface)
                 if let item {
                     Section {
-                        Button(item.isUsedUp ? "Mark as at home" : "Mark as used up", systemImage: item.isUsedUp ? "shippingbox" : "checkmark.circle") {
+                        Button(item.isUsedUp ? "Still at home" : "Used up", systemImage: item.isUsedUp ? "shippingbox" : "checkmark.circle") {
                             do { try repository.setInventoryUsedUp(item, usedUp: !item.isUsedUp); dismiss() } catch { self.error = error.localizedDescription }
                         }.accessibilityIdentifier("inventory.usedUp")
                         Button("Add to shopping", systemImage: "cart.badge.plus") {
                             do { try repository.restockInventory(item); dismiss() } catch { self.error = error.localizedDescription }
                         }.accessibilityIdentifier("inventory.restock")
-                        NavigationLink { PurchaseHistoryView(inventoryID: item.id) } label: { Label("Purchase & restock history", systemImage: "clock.arrow.circlepath") }
+                        NavigationLink { PurchaseHistoryView(inventoryID: item.id) } label: { Label("Purchase history", systemImage: "clock.arrow.circlepath") }
                             .accessibilityIdentifier("inventory.purchases")
                         Button("Delete this pack", role: .destructive) { deleting = true }
                     } footer: { Text("Each entry is a pack or batch. Add a separate entry for a different expiry date. Buying again starts a new shopping item.") }
                 }
             }.scrollContentBackground(.hidden).background(InventoryTheme.canvas).tint(InventoryTheme.accent)
-                .navigationTitle(item == nil ? "Add to inventory" : item?.name ?? "Item").navigationBarTitleDisplayMode(.inline)
+                .navigationTitle(item == nil ? "Add item" : item?.name ?? "Item").navigationBarTitleDisplayMode(.inline)
                 .scrollDismissesKeyboard(.interactively)
                 .toolbar {
                     ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done") { focused = nil; quantityFocused = false }.accessibilityIdentifier("inventory.keyboardDone") }

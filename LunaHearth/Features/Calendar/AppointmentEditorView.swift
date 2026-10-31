@@ -101,7 +101,7 @@ struct AppointmentEditorView: View {
                                     ForEach(delivery.calendars) { Text("\($0.title) · \($0.account)").tag($0.id) }
                                 }.accessibilityIdentifier("appointment.appleCalendar")
                             }
-                            Text("Title, time, and notes update from LunaHearth on this device. Changes made in Apple Calendar do not come back. Use one exporting device per Apple calendar.").font(.caption).foregroundStyle(.secondary)
+                            Text("Title, time, and notes update from Nam Illam on this device. Changes made in Apple Calendar do not come back. Use one exporting device per Apple calendar.").font(.caption).foregroundStyle(.secondary)
                         } else if existingAppleLink {
                             Text("Saving will pause updates. The existing Apple copy stays.").font(.caption).foregroundStyle(.secondary)
                         }
@@ -143,7 +143,7 @@ struct AppointmentEditorView: View {
     }
     private func save(allowConflict: Bool = false) {
         guard let homeID else { error = "Create or join a household first."; return }
-        if appleEnabled && appleCalendarID.isEmpty { error = "Choose an Apple calendar, or turn off the checkbox to save only in LunaHearth."; return }
+        if appleEnabled && appleCalendarID.isEmpty { error = "Choose an Apple calendar, or turn off the checkbox to save only in Nam Illam."; return }
         do {
             try repository.saveAppointment(draft, householdID: homeID, allowConflict: allowConflict, appleCalendarID: appleEnabled ? appleCalendarID : nil, appleCalendarName: delivery.calendars.first { $0.id == appleCalendarID }.map { "\($0.title) · \($0.account)" } ?? appleCalendarName, updateAppleLink: true)
             Task { await alerts.refresh(repository); await delivery.run(repository, force: true) }

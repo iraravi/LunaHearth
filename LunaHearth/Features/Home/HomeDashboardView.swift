@@ -8,8 +8,48 @@ struct HomeView: View {
     @State private var quickAdding = false
     @State private var showingSetup = false
     @State private var showingSpaces = false
+    @State private var workspaceFloorID: UUID?
+    @State private var workspaceAngle = 35.0
+    @State private var workspaceElevation = 35.0
+    @State private var workspaceInitialized = false
+    @State private var editingLayoutRoom = false
+    @State private var scanningReceipt = false
     var body: some View {
         NavigationStack {
+            GeometryReader { geometry in
+                if HomeWorkspaceLayout.isExpanded(width: geometry.size.width, accessibilityText: textSize.isAccessibilitySize) {
+                    HomeWorkspaceDashboard(showingSetup: $showingSetup, showingSpaces: $showingSpaces,
+                                           floorID: $workspaceFloorID, angle: $workspaceAngle, elevation: $workspaceElevation,
+                                           editingRoom: $editingLayoutRoom, scanning: $scanningReceipt, initialized: $workspaceInitialized)
+                } else {
+                    compactDashboard
+                }
+            }.background(AppTheme.canvas).buttonStyle(.plain).foregroundStyle(.primary)
+                .householdHelp(.home)
+                .navigationTitle("Home").navigationBarTitleDisplayMode(.inline)
+                .navigationDestination(isPresented: $showingSetup) {
+                    if let homeID = repository.household?.id { HomeSetupGuideView(householdID: homeID) }
+                }
+                .onChange(of: repository.household?.id) { _, _ in
+                    workspaceFloorID = repository.floors.first?.id
+                    workspaceAngle = 35; workspaceElevation = 35
+                    workspaceInitialized = false
+                    editingLayoutRoom = false; scanningReceipt = false
+                }
+                .onChange(of: repository.floors.map(\.id)) { _, ids in
+                    if let workspaceFloorID, !ids.contains(workspaceFloorID) { self.workspaceFloorID = ids.first }
+                }
+                .toolbar { Button("Quick add", systemImage: "plus") { quickAdding = true } }
+                .fullScreenCover(isPresented: $showingSpaces) { HomeSpacesView(isWorkspace: true) }
+                .sheet(isPresented: $editingLayoutRoom) { RoomLayoutEditor(roomID: nil, floorID: workspaceFloorID) }
+                .sheet(isPresented: $scanningReceipt) {
+                    if let homeID = repository.household?.id { ReceiptImportView(householdID: homeID) }
+                }
+                .sheet(isPresented: $quickAdding) { QuickAddView() }
+                .sheet(isPresented: $addingRoom) { QuickAddView(kind: .room, parentID: repository.floors.count == 1 ? repository.floors.first?.id : nil, fixedKind: true) }
+        }
+    }
+    private var compactDashboard: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 26) {
                     HearthEditorialHeader(eyebrow: "YOUR HOME", title: repository.household?.name ?? "Your home",
@@ -80,17 +120,7 @@ struct HomeView: View {
                         Label("Try the connected demo", systemImage: "play.rectangle").font(.subheadline).frame(minHeight: 44)
                     }.accessibilityIdentifier("home.connectedDemo")
                 }.padding(20).frame(maxWidth: 1000).frame(maxWidth: .infinity)
-            }.background(AppTheme.canvas).buttonStyle(.plain).foregroundStyle(.primary)
-                .householdHelp(.home)
-        .navigationTitle("Home").navigationBarTitleDisplayMode(.inline)
-                .navigationDestination(isPresented: $showingSetup) {
-                    if let homeID = repository.household?.id { HomeSetupGuideView(householdID: homeID) }
-                }
-                .toolbar { Button("Quick Add", systemImage: "plus") { quickAdding = true } }
-                .fullScreenCover(isPresented: $showingSpaces) { HomeSpacesView(isWorkspace: true) }
-                .sheet(isPresented: $quickAdding) { QuickAddView() }
-                .sheet(isPresented: $addingRoom) { QuickAddView(kind: .room, parentID: repository.floors.count == 1 ? repository.floors.first?.id : nil, fixedKind: true) }
-        }
+            }
     }
     @ViewBuilder private var spacesLink: some View {
         if sizeClass == .regular {

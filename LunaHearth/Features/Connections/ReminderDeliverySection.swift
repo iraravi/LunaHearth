@@ -35,8 +35,8 @@ struct ReminderDeliverySection: View {
                 }
             }
             if let error { Text(error).foregroundStyle(.secondary) }
-        } header: { Text("LunaHearth → Apple Reminders") } footer: {
-            Text("When enabled, new household tasks send their title, due day and completion to this list and its account or sharing participants. Later edits in LunaHearth update those reminders while the app is open. Changes in Apple Reminders do not update LunaHearth. Existing tasks are not added automatically. Turning this off pauses updates; reminders already sent stay in Apple. Linked tasks keep their original list if you choose a new destination.")
+        } header: { Text("Nam Illam → Apple Reminders") } footer: {
+            Text("When enabled, new household tasks send their title, due day and completion to this list and its account or sharing participants. Later edits in Nam Illam update those reminders while the app is open. Changes in Apple Reminders do not update Nam Illam. Existing tasks are not added automatically. Turning this off pauses updates; reminders already sent stay in Apple. Linked tasks keep their original list if you choose a new destination.")
         }
         .onAppear { selectedList = repository.reminderDeliverySettings?.listID ?? "" }
     }

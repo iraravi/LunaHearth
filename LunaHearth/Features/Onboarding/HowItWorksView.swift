@@ -46,7 +46,7 @@ struct HowItWorksView: View {
             }
             .background(WelcomeStyle.canvas)
             .foregroundStyle(WelcomeStyle.ink)
-            .navigationTitle("LunaHearth")
+            .navigationTitle("Nam Illam")
             .navigationBarTitleDisplayMode(.inline)
             .hearthNavigationMaterial(WelcomeStyle.canvas, for: .navigationBar)
             .toolbar {

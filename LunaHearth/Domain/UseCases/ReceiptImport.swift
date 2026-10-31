@@ -51,7 +51,7 @@ enum ReceiptRules {
         for (index, raw) in bounded.components(separatedBy: .newlines).enumerated() {
             let line = raw.trimmingCharacters(in: .whitespacesAndNewlines)
             guard line.count <= 250, !line.isEmpty else { continue }
-            let excluded = #"(?i)\b(subtotal|sub total|total|tax|gst|cgst|sgst|igst|vat|cash|change|tender|balance|payment|visa|mastercard|debit|credit|savings|discount|coupon|refund|return|rounding|round off|loyalty|member|phone|tel|receipt|invoice|transaction|cashier|register|terminal)\b"#
+            let excluded = #"(?i)\b(subtotal|sub total|total|net amount|net payable|amount due|amount payable|tax|gst|cgst|sgst|igst|vat|cash|change|tender|balance|payment|visa|mastercard|debit|credit|savings|discount|coupon|refund|return|rounding|round off|loyalty|member|phone|tel|receipt|invoice|transaction|cashier|register|terminal)\b"#
             guard line.range(of: excluded, options: .regularExpression) == nil,
                   let price = line.range(of: #"(?i)(?:\s+|(?=[₹$€£]))[-−]?\s*(?:(?:₹|\$|€|£|INR\b|Rs\.?)\s*[-−]?\s*\d[\d,]*(?:\.\d{2})?|\d[\d,]*[.,]\d{2})\s*[A-Za-z]?$"#, options: .regularExpression) else { continue }
             // Refunds and discounts are never treated as newly purchased stock.
@@ -88,5 +88,14 @@ enum ReceiptRules {
         var b = Array(SHA256.hash(data: Data("LunaHearth.receipt.v1|\(home)|\(key)".utf8)).prefix(16))
         b[6] = (b[6] & 0x0f) | 0x80; b[8] = (b[8] & 0x3f) | 0x80
         return UUID(uuid: (b[0],b[1],b[2],b[3],b[4],b[5],b[6],b[7],b[8],b[9],b[10],b[11],b[12],b[13],b[14],b[15]))
+    }
+}
+
+/// Bulk review never reselects excluded, imported or already-linked purchases.
+enum ReceiptInventorySelection {
+    static func setAll(_ enabled: Bool, lines: inout [ReceiptLine], unavailableIDs: Set<String>) {
+        for index in lines.indices where lines[index].included && lines[index].existingPurchaseID == nil && !unavailableIDs.contains(lines[index].id) {
+            lines[index].addToInventory = enabled
+        }
     }
 }

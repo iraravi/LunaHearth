@@ -18,7 +18,7 @@ import Observation
             message = calendars.isEmpty ? "No writable calendars are available. Create a calendar in Apple Calendar, then try again." : nil
             return !calendars.isEmpty
         } catch {
-            message = (error as? ApplePlanningError)?.errorDescription ?? "Apple Calendar is unavailable. Your appointment can still be saved in LunaHearth."
+            message = (error as? ApplePlanningError)?.errorDescription ?? "Apple Calendar is unavailable. Your appointment can still be saved in Nam Illam."
             return false
         }
     }

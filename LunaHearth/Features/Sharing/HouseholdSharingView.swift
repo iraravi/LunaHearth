@@ -51,7 +51,7 @@ struct HouseholdSharingView: View {
             }
             Section("Private by design") {
                 Label("Only invited people can access a shared home.", systemImage: "lock.shield")
-                Text("The owner’s private iCloud storage holds this home. Participants use CloudKit’s shared database. Apple Accounts and iCloud are needed for sharing; no LunaHearth account is required.")
+                Text("The owner’s private iCloud storage holds this home. Participants use CloudKit’s shared database. Apple Accounts and iCloud are needed for sharing; no Nam Illam account is required.")
                 Text("Changes sync automatically while the app is open and when you return. Offline edits stay on this device until a successful sync. Background delivery is not guaranteed.")
                 Text("Share only with people you trust: invitees can see this home’s plans, lists, rooms, belongings and warranty details. Document and room-scan files are not supported yet.")
             }.font(.footnote).foregroundStyle(.secondary)

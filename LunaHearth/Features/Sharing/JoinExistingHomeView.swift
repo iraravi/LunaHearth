@@ -19,7 +19,7 @@ struct JoinExistingHomeView: View {
                     .accessibilityIdentifier("sharing.openLink")
             }
             Section {
-                Button("Find homes I’ve already joined", systemImage: "icloud.and.arrow.down") {
+                Button("Find joined homes", systemImage: "icloud.and.arrow.down") {
                     Task { await sharing.findHomes(repository) }
                 }.accessibilityIdentifier("sharing.findJoined")
                 if sharing.working { ProgressView("Checking iCloud…") }

@@ -98,7 +98,7 @@ extension ApplePlanningService {
 enum ReminderPurpose: String, CaseIterable, Sendable {
     case reminders, shopping
     var title: String { self == .shopping ? "Shopping" : "Reminders" }
-    var standardTitle: String { "LunaHearth " + title }
+    var standardTitle: String { "Nam Illam " + title }
     var symbol: String { self == .shopping ? "basket.fill" : "checklist" }
 }
 

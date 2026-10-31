@@ -52,13 +52,10 @@ struct PantryPhotoImportView: View {
                             ContentUnavailableView("No clear items yet", systemImage: "viewfinder", description: Text("Try a closer photo of one shelf with labels facing forward, or add the names below."))
                         }
                         if !rows.isEmpty {
-                            HStack {
-                                Text("Review items").font(.title3.bold())
-                                Spacer()
-                                Menu("Select") {
-                                    Button("Select new items") { for index in rows.indices { rows[index].included = !alreadyHome(rows[index].name) } }
-                                    Button("Deselect all") { for index in rows.indices { rows[index].included = false } }
-                                }.frame(minHeight: 44).accessibilityIdentifier("pantryPhoto.selection")
+                            Text("Review items").font(.title3.bold())
+                            ViewThatFits(in: .horizontal) {
+                                HStack { selectionActions }
+                                VStack(alignment: .leading) { selectionActions }
                             }
                             Text("Select what you have. Edit names or add optional details.").font(.subheadline).foregroundStyle(.secondary)
                         }
@@ -73,7 +70,7 @@ struct PantryPhotoImportView: View {
                     }
                 }.padding(20).frame(maxWidth: 760).frame(maxWidth: .infinity)
             }.background(InventoryTheme.canvas).tint(InventoryTheme.accent)
-                .featureAvailability(.pantryPhoto).navigationTitle("Pantry from a photo").navigationBarTitleDisplayMode(.inline)
+                .featureAvailability(.pantryPhoto).navigationTitle("Scan pantry").navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                     ToolbarItem(placement: .confirmationAction) {
@@ -122,7 +119,7 @@ struct PantryPhotoImportView: View {
             Text("One shelf. Less typing.").font(AppTheme.sectionTitle)
             Text("Photograph food you already have, then review the suggested list.").foregroundStyle(.secondary)
             Label("Processed on this device", systemImage: "lock.shield").font(.subheadline.weight(.medium))
-            Text("LunaHearth does not retain or upload the photo. Confirmed items use your home's existing sync settings.").font(.footnote).foregroundStyle(.secondary)
+            Text("Nam Illam does not retain or upload the photo. Confirmed items use your home's existing sync settings.").font(.footnote).foregroundStyle(.secondary)
             }
         }
     }
@@ -135,8 +132,19 @@ struct PantryPhotoImportView: View {
                     Task { if await PantryPhotoCamera.authorize() { camera = true } else { error = "Camera access is off. Allow it in Settings, or choose a photo." } }
                 }.frame(minHeight: 44)
             }
-            if rows.isEmpty { Button("Have a receipt? Scan it instead", systemImage: "receipt") { receipt = true }.frame(minHeight: 44).accessibilityIdentifier("pantryPhoto.receipt") }
+            if rows.isEmpty { Button("Scan receipt", systemImage: "receipt") { receipt = true }.frame(minHeight: 44).accessibilityIdentifier("pantryPhoto.receipt") }
         }
+    }
+    @ViewBuilder private var selectionActions: some View {
+        Button("Add all", systemImage: "checkmark.circle.fill") {
+            for index in rows.indices { rows[index].included = !alreadyHome(rows[index].name) }
+        }.buttonStyle(.borderedProminent).tint(InventoryTheme.ink).foregroundStyle(InventoryTheme.canvas)
+            .controlSize(.large).accessibilityIdentifier("pantryPhoto.selection")
+            .accessibilityLabel("Select all new pantry items")
+        Button("Clear selection") {
+            for index in rows.indices { rows[index].included = false }
+        }.buttonStyle(.bordered).controlSize(.large).disabled(selectedCount == 0)
+            .accessibilityIdentifier("pantryPhoto.clearSelection")
     }
     private func binding(for item: PantryPhotoItem) -> Binding<PantryPhotoItem> {
         Binding(get: { rows.first { $0.id == item.id } ?? item }, set: { updated in

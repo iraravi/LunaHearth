@@ -24,9 +24,9 @@ struct HouseholdSupportArticle: Identifiable, Sendable {
         ]),
         .init(id: "notifications", category: .troubleshooting, title: "I did not receive an assignment alert", symbol: "bell", steps: [
             HelpStep(title: "Check the saved assignment", detail: "Confirm the item is assigned to the intended member in the shared home. On the receiving device, check the selected personal member and alert preferences.", symbol: "bell"),
-            HelpStep(title: "Check device permissions", detail: "In iOS Settings → Notifications → LunaHearth, check notification permission, sounds and delivery settings. Focus and Scheduled Summary can affect alerts.", symbol: "bell"),
-            HelpStep(title: "Check the original item", detail: "Open LunaHearth on the receiving device and allow sync to refresh. Confirm the assignment is visible before troubleshooting delivery.", symbol: "bell"),
-            HelpStep(title: "Allow for delivery limits", detail: "Background delivery may be delayed or unavailable. Recheck important plans in the app; do not rely on LunaHearth for emergencies or time-critical safety alerts.", symbol: "bell")
+            HelpStep(title: "Check device permissions", detail: "In iOS Settings → Notifications → Nam Illam, check notification permission, sounds and delivery settings. Focus and Scheduled Summary can affect alerts.", symbol: "bell"),
+            HelpStep(title: "Check the original item", detail: "Open Nam Illam on the receiving device and allow sync to refresh. Confirm the assignment is visible before troubleshooting delivery.", symbol: "bell"),
+            HelpStep(title: "Allow for delivery limits", detail: "Background delivery may be delayed or unavailable. Recheck important plans in the app; do not rely on Nam Illam for emergencies or time-critical safety alerts.", symbol: "bell")
         ]),
         .init(id: "receipt", category: .troubleshooting, title: "A receipt has incorrect or abbreviated items", symbol: "receipt", steps: [
             HelpStep(title: "Improve the image", detail: "Use an evenly lit, sharp photo with the receipt flat. Include the store, item lines, date and total. Avoid glare and clipped edges.", symbol: "receipt"),
@@ -53,15 +53,15 @@ struct HouseholdSupportArticle: Identifiable, Sendable {
             HelpStep(title: "Preserve existing data", detail: "If joining still fails, note the exact error and the app version. Do not clear the existing home to troubleshoot. Do not send invitation links or account passwords to support.", symbol: "person.2")
         ]),
         .init(id: "calendar", category: .troubleshooting, title: "An appointment is missing from Apple Calendar", symbol: "calendar", steps: [
-            HelpStep(title: "Check the event option", detail: "LunaHearth events do not automatically become Apple Calendar events. Open the event and check its optional Apple Calendar export setting.", symbol: "calendar"),
+            HelpStep(title: "Check the event option", detail: "Nam Illam events do not automatically become Apple Calendar events. Open the event and check its optional Apple Calendar export setting.", symbol: "calendar"),
             HelpStep(title: "Check permission and calendar", detail: "Check calendar permission in device Settings and the writable destination calendar chosen in the app.", symbol: "calendar"),
-            HelpStep(title: "Check visibility", detail: "In Apple Calendar, make sure the destination calendar is shown and the date is correct. Read any pending or error status in LunaHearth.", symbol: "calendar"),
-            HelpStep(title: "Understand the direction", detail: "LunaHearth → Apple Calendar is an optional export. Do not assume edits made in Apple Calendar update LunaHearth, or that a LunaHearth family share exposes someone’s personal calendars.", symbol: "calendar")
+            HelpStep(title: "Check visibility", detail: "In Apple Calendar, make sure the destination calendar is shown and the date is correct. Read any pending or error status in Nam Illam.", symbol: "calendar"),
+            HelpStep(title: "Understand the direction", detail: "Nam Illam → Apple Calendar is an optional export. Do not assume edits made in Apple Calendar update Nam Illam, or that a Nam Illam family share exposes someone’s personal calendars.", symbol: "calendar")
         ]),
         .init(id: "safety", category: .legal, title: "AI, pantry and meal safety", symbol: "hand.raised", steps: [
             HelpStep(title: "Ideas need review", detail: "AI and scanning may produce incorrect, incomplete or unsuitable names, matches, quantities, dates and summaries. Check important details before saving or acting.", symbol: "hand.raised"),
             HelpStep(title: "Food safety is not assessed", detail: "Pantry dates, colours, photographs and meal ideas do not establish freshness, safe storage, safe preparation or absence of allergens. Check actual packaging and authoritative food-safety advice. Do not taste food to test whether it is safe.", symbol: "hand.raised"),
-            HelpStep(title: "Meal ideas are not recipes", detail: "LunaHearth provides planning ideas and ingredient lists, not verified cooking instructions or medical, allergy or nutrition advice. Use a trusted recipe and appropriate professional advice for specific dietary needs.", symbol: "hand.raised"),
+            HelpStep(title: "Meal ideas are not recipes", detail: "Nam Illam provides planning ideas and ingredient lists, not verified cooking instructions or medical, allergy or nutrition advice. Use a trusted recipe and appropriate professional advice for specific dietary needs.", symbol: "hand.raised"),
             HelpStep(title: "Keep important safeguards separate", detail: "Alerts and sync may be delayed. The app is not an emergency, medical or safety-monitoring service. Use appropriate independent reminders for critical obligations.", symbol: "hand.raised")
         ]),
         .init(id: "data", category: .legal, title: "Privacy, sharing and deletion", symbol: "lock.shield", steps: [
@@ -70,8 +70,8 @@ struct HouseholdSupportArticle: Identifiable, Sendable {
             HelpStep(title: "On-device intelligence", detail: "The app’s AI adapters run on device and do not send household prompts to a third-party AI service. Local AI diagnostics retain a feature, result category and timestamp; they can be cleared in AI Status.", symbol: "lock.shield"),
             HelpStep(title: "Deletion has a scope", detail: "Read the confirmation before clearing data. Live shared records, private backups, exported files and Apple app copies have separate lifecycles. Removing a participant cannot erase copies already received. Read the privacy policy for details.", symbol: "lock.shield")
         ]),
-        .init(id: "use", category: .legal, title: "Important information about using LunaHearth", symbol: "doc.text", steps: [
-            HelpStep(title: "Purpose and limits", detail: "LunaHearth helps organize information you record. It does not inspect your home, measure inventory, verify purchases or guarantee the completeness of household records.", symbol: "doc.text"),
+        .init(id: "use", category: .legal, title: "Important information about using Nam Illam", symbol: "doc.text", steps: [
+            HelpStep(title: "Purpose and limits", detail: "Nam Illam helps organize information you record. It does not inspect your home, measure inventory, verify purchases or guarantee the completeness of household records.", symbol: "doc.text"),
             HelpStep(title: "Spending records", detail: "Expense reports summarize entered purchases and separate currencies. They are not connected bank balances, audited accounts, tax advice or a substitute for original receipts.", symbol: "doc.text"),
             HelpStep(title: "Your choices", detail: "Only enter or share information you are entitled to use. Review recipients, permissions, AI proposals and deletion confirmations. Keep separate copies of records you need.", symbol: "doc.text"),
             HelpStep(title: "Your rights remain", detail: "These explanations describe product limitations; they do not remove mandatory consumer rights or exclude responsibilities that applicable law does not permit a provider to exclude. The applicable App Store licence and privacy policy remain separate documents.", symbol: "doc.text")

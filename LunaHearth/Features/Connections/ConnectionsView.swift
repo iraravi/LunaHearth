@@ -27,7 +27,7 @@ struct ConnectionsView: View {
                 Text("Selected events appear in Calendar on this device. Busy only hides event titles. These events are not copied into household storage or iCloud backups.").font(.footnote).foregroundStyle(.secondary)
             }
             SettingsDetailCard(title: "Apple Reminders", symbol: "checklist", accent: AppTheme.slate) {
-                Text("Optional access to your existing Apple lists. Household reminders and shopping live in LunaHearth and work without this connection.").font(.subheadline).foregroundStyle(.secondary)
+                Text("Optional access to your existing Apple lists. Household reminders and shopping live in Nam Illam and work without this connection.").font(.subheadline).foregroundStyle(.secondary)
                 NavigationLink { ConnectedRemindersView(purpose: .shopping) } label: { Label("Set up Shopping", systemImage: "basket") }.accessibilityIdentifier("connections.shopping.open").frame(minHeight: 44)
                 NavigationLink { ConnectedRemindersView() } label: {
                     Label("Open Reminders", systemImage: "checklist")
@@ -43,7 +43,7 @@ struct ConnectionsView: View {
             if connections.working { ProgressView("Waiting for Apple access…") }
             SettingsDetailCard(title: "Device permissions", symbol: "hand.raised", accent: AppTheme.sage) {
                 if let settingsURL = URL(string: UIApplication.openSettingsURLString) { Link("Open device settings", destination: settingsURL) }
-                Text("Disconnect stops access inside LunaHearth. To revoke system permission, use device settings.").font(.footnote).foregroundStyle(.secondary)
+                Text("Disconnect stops access inside Nam Illam. To revoke system permission, use device settings.").font(.footnote).foregroundStyle(.secondary)
             }
         }
             .task(id: connections.revision) { await refresh() }
@@ -64,14 +64,22 @@ struct ConnectionsView: View {
 
 struct NotesSharingView: View {
     @State private var text: String
+    @FocusState private var isEditing: Bool
     init(text: String = "") { _text = State(initialValue: text) }
     var body: some View {
         Form {
-            Section("Text to share") { TextEditor(text: $text).frame(minHeight: 180).accessibilityLabel("Note text").accessibilityIdentifier("notes.text") }
+            Section("Text to share") { TextEditor(text: $text).focused($isEditing).frame(minHeight: 180).accessibilityLabel("Note text").accessibilityIdentifier("notes.text") }
             Section {
                 ShareLink(item: text) { Label("Choose Notes or another app", systemImage: "square.and.arrow.up") }
                     .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty).accessibilityIdentifier("notes.share")
             } footer: { Text("Nothing is sent until you choose an app and complete its sharing step. This draft is temporary; save it in Notes before leaving.") }
         }.hearthList().featureAvailability(.notesSharing).navigationTitle("Share a note").navigationBarTitleDisplayMode(.inline)
+            .scrollDismissesKeyboard(.interactively)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { isEditing = false }.accessibilityIdentifier("notes.keyboardDone")
+                }
+            }
     }
 }

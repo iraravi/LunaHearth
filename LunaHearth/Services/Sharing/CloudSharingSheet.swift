@@ -48,7 +48,7 @@ private struct SharingControllerRepresentable: UIViewControllerRepresentable {
         let onError: (Error) -> Void
         let onChanged: () -> Void
         init(onError: @escaping (Error) -> Void, onChanged: @escaping () -> Void) { self.onError = onError; self.onChanged = onChanged }
-        func itemTitle(for csc: UICloudSharingController) -> String? { "LunaHearth household" }
+        func itemTitle(for csc: UICloudSharingController) -> String? { "Nam Illam household" }
         func cloudSharingController(_ csc: UICloudSharingController, failedToSaveShareWithError error: Error) { onError(error) }
         func cloudSharingControllerDidSaveShare(_ csc: UICloudSharingController) { onChanged() }
         func cloudSharingControllerDidStopSharing(_ csc: UICloudSharingController) { onChanged() }

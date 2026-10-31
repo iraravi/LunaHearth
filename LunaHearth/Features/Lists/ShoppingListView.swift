@@ -223,7 +223,7 @@ struct ShoppingListView: View {
                     Text(item.name).font(.body.weight(.semibold)).strikethrough(item.isCompleted)
                         .foregroundStyle(item.isCompleted ? ShoppingTheme.muted : ShoppingTheme.ink)
                     if item.isCompleted, let disposition = item.purchaseDisposition {
-                        Label(disposition == "inventory" ? "Added to inventory" : "Bought · not for home", systemImage: disposition == "inventory" ? "shippingbox" : "gift")
+                        Label(disposition == "inventory" ? "Added to pantry" : "Purchase only", systemImage: disposition == "inventory" ? "shippingbox" : "gift")
                             .font(.caption).foregroundStyle(ShoppingTheme.muted)
                     }
                     if let quantity = item.quantityText, !quantity.isEmpty {
@@ -245,7 +245,7 @@ struct ShoppingListView: View {
             .accessibilityHint(item.isCompleted ? "Reopen shopping. Existing inventory stays unchanged." : "Choose bought and add to inventory, or bought without adding.")
             .swipeActions(edge: .leading) {
                 if item.isCompleted && item.purchaseDisposition != "inventory" && !repository.inventory.contains(where: { $0.sourceGroceryID == item.id }) {
-                    Button("Add to inventory", systemImage: "shippingbox") { purchase = item }.tint(InventoryTheme.accent)
+                    Button("Add to pantry", systemImage: "shippingbox") { purchase = item }.tint(InventoryTheme.accent)
                 }
             }
             .entryActions(.editing(item))
