@@ -1,0 +1,11 @@
+See your household plans.
+Open Calendar to see household appointments. Use the date and people controls to focus the view. If an appointment seems missing, check the selected date and person filters.
+
+Add the right time and person.
+Use the add action to create an appointment. Enter its title, date and time, then choose who it belongs to. Review repeat or reminder options when you need them.
+
+See what is coming today.
+After saving, review the appointment in Calendar. Today shows the schedule for the current day. Open the original appointment if you need to edit its details or check the time.
+
+Connect Apple Calendar by choice.
+Apple Calendar integration is optional. Use the appointment option when you want a copy there and review the destination calendar. Permission is needed; using the local household calendar does not require it.

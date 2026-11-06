@@ -1,0 +1,11 @@
+Start with your ingredients.
+Open Meals from Home. Choose your cooking style and date, then review ideas based on recorded pantry ingredients. Keep pantry amounts current so those ideas have useful context.
+
+Review before you plan.
+Check an idea against what you actually have and your dietary needs. Built in ideas work without Apple Intelligence. These are meal ideas, not complete cooking instructions or safety advice.
+
+Fill the gaps with Shopping.
+When planning a meal, review missing ingredients and add what you need to Shopping. Check existing shopping matches first. Buy the ingredients, then review whether the purchase should update Pantry.
+
+Plan tomorrow when it suits you.
+You can use the optional five p.m. planning reminder to think about tomorrow. It does not generate or save a meal automatically. You stay in control of the plan.

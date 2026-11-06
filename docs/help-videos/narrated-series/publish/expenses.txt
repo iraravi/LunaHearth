@@ -1,0 +1,11 @@
+Keep spending together.
+Open Expenses from Home. You can enter a purchase manually or scan a receipt. This is a record of what you enter, not a connection to your bank account.
+
+Check amount and currency.
+For manual entry, review the amount, currency, store and purchase date. Check the decimal places carefully. Save after the details agree with the purchase you want to record.
+
+Review every scanned amount.
+If you scan, compare the total and currency with the original receipt. Correct misread names, prices or quantities. Keep expense recording selected when you want this purchase included in Expenses.
+
+Read your monthly picture.
+Review spending by month and currency. Currencies are kept separate without exchange rate conversion. Pantry updates are a separate choice during receipt review. An expense alone does not automatically stock your pantry.

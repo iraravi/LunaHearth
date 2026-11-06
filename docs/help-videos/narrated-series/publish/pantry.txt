@@ -1,0 +1,11 @@
+Know what is at home.
+Open Home, then Pantry. This screen records food you have at home. Search before adding something, so you can check whether the same item is already recorded.
+
+Add the item. Keep it simple.
+Choose Add item. Only the item name is required. Add an amount, unit, storage location or pack details if you know them. Use packaging for expiry dates.
+
+Keep your stock accurate.
+Open a saved item to update its amount or mark it running low. Use a separate pack when needed. Do not treat a recorded expiry date as proof that food is safe.
+
+Bring purchases back to Pantry.
+After shopping, review pantry updates when recording the purchase or receipt. Select only what came home. Check whether to restock an existing pack, and avoid entering the same purchase twice.

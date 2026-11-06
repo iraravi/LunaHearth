@@ -1,0 +1,23 @@
+Start with what you already have.
+Start in Pantry. Check what you already have before shopping. Open an item to review its amount or mark it running low. Your pantry reflects what you record.
+
+Buy what you actually need.
+Open Shopping and add what is missing. Enter the item name, then an amount or store if useful. This is your shopping list, not extra pantry stock yet.
+
+Bring the receipt into the same flow.
+After buying, open Expenses and scan the receipt. Use a clear photo with all item lines and the total. The scan is a draft. Nothing is saved just by scanning.
+
+Give the expense a careful check.
+Review the store, purchase date, total and currency. Keep Record in Expenses selected if you want the receipt recorded there. Correct mistakes against the original receipt before saving.
+
+Choose what goes into Pantry.
+Choose Add all for eligible items, or tap individual cards. Select food you keep at home. Leave meals eaten out, gifts and services unselected. Check each selected quantity.
+
+Connect the shopping matches.
+Open Quantity and matches for each receipt item. Review its Shopping item selection. Choose the matching pending item when appropriate, or save it as a new bought item.
+
+Save the purchase once.
+Review the final choices, then save and update pantry. If you already recorded this purchase, link the recent matching purchase when offered. That keeps its pantry amount from being added twice.
+
+Check all three places.
+Now check Expenses for spending, Shopping for the bought items, and Pantry for selected stock. Saving an expense alone does not add pantry items. You choose those updates during review.

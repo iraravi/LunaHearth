@@ -1,0 +1,11 @@
+Keep the next task visible.
+Open Home, then Reminders. The task screen keeps household to dos together. Use it for jobs such as buying supplies, taking out the bins, or preparing for tomorrow.
+
+Give the task a clear name.
+Tap the add button. Enter a short, clear title. Set a due date or assign a household member when needed. Check the details, then save the reminder.
+
+Review what needs attention.
+Return to Today to review tasks that are due or overdue. Open a task when you need to make changes. Complete it when the work is actually finished.
+
+Choose Apple integration separately.
+Apple Reminders integration is optional. Enable it through Apple connections and review the chosen list and permissions. A local household task is not automatically a reminder in every Apple list.

@@ -1,0 +1,72 @@
+[
+  {
+    "guide": "connected-kitchen",
+    "duration_seconds": 120,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "create-home",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "pantry",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "shopping",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "reminders",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "expenses",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "meals",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "calendar",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "family-backup",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  },
+  {
+    "guide": "receipt-to-pantry",
+    "duration_seconds": 60,
+    "full_decode": "passed",
+    "audio": "AAC",
+    "video": "H264 1280x720 24fps"
+  }
+]

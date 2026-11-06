@@ -1,0 +1,11 @@
+Choose who shares your home.
+Open Family from More. You can use the home on your own or enable private iCloud sharing. Review the explanation before uploading. Adding a member profile alone does not grant access.
+
+Invite through Apple sharing.
+After enabling sharing, use the invitation controls and Apple sharing screen. The other person opens the invitation with their iCloud account. They should join your home, not create another copy.
+
+Check access and connection.
+Review participants and access in the sharing controls. Both devices need connectivity for changes to sync, and updates can take time. Keep using local records when the network is unavailable.
+
+Backups and sync are different.
+A saved iCloud backup is a separate snapshot, not the same as live family sync. Open Manage backups under Privacy and data to review backup and restore options before using them.

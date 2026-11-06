@@ -8,6 +8,50 @@ final class VisualFlowTests: XCTestCase {
         await MainActor.run { XCUIDevice.shared.orientation = .portrait }
     }
 
+    /// Public help media: isolated demo stores only, never a user's household.
+    func testNarratedHelpScreens() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--dark"]
+        app.launch()
+        XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 15))
+        capture("HelpVideo-Welcome", app: app)
+        app.buttons["setup.start"].tap()
+        let homeName = app.textFields["setup.householdName"]
+        XCTAssertTrue(homeName.waitForExistence(timeout: 5))
+        homeName.tap(); homeName.typeText("Our Home")
+        app.buttons["setup.keyboardDone"].tap()
+        capture("HelpVideo-CreateHome", app: app)
+        app.buttons["setup.create"].tap()
+        app.terminate()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--store-screenshots", "--dark"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 15))
+        capture("HelpVideo-Today", app: app)
+        app.buttons["Home"].firstMatch.tap()
+        capture("HelpVideo-Home", app: app)
+        for (destination, name, add) in [("home.inventory", "Pantry", "inventory.add"), ("home.shopping", "Shopping", "shopping.add"), ("home.tasks", "Reminders", "Add Task"), ("home.expenses", "Expenses", "expenses.add"), ("home.meals", "Meals", "")] {
+            tapVisible(destination, app: app)
+            capture("HelpVideo-" + name, app: app)
+            if !add.isEmpty {
+                tapVisible(add, app: app)
+                XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5))
+                capture("HelpVideo-" + name + "-Add", app: app)
+                app.buttons["Cancel"].firstMatch.tap()
+            }
+            app.navigationBars.buttons.firstMatch.tap()
+        }
+        app.buttons["Calendar"].firstMatch.tap()
+        capture("HelpVideo-Calendar", app: app)
+        app.buttons["More"].firstMatch.tap()
+        tapVisible("more.family", app: app)
+        capture("HelpVideo-Family", app: app)
+        app.navigationBars.buttons.firstMatch.tap()
+        tapVisible("more.privacy", app: app)
+        tapVisible("more.backup", app: app)
+        capture("HelpVideo-Backup", app: app)
+        app.terminate()
+    }
+
     func testSearchTroubleshootingAndSafetyGuide() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--large-text"]
@@ -1681,6 +1725,12 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("receipt.card.Curd", app: app)
         XCTAssertEqual(app.staticTexts["receipt.inventorySummary"].label, "Inventory items selected: 1")
         capture("Receipt-Visual-Selection", app: app)
+        let quantityMatches = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Quantity & matches")).firstMatch
+        reveal(quantityMatches, app: app)
+        quantityMatches.tap()
+        let shoppingMatch = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "receipt.shopping.")).firstMatch
+        reveal(shoppingMatch, app: app)
+        capture("HelpVideo-ReceiptMatches", app: app)
         app.buttons["receipt.confirm"].tap()
         XCTAssertTrue(app.buttons["receipt.saveWithInventory"].firstMatch.waitForExistence(timeout: 5))
         capture("Receipt-Explicit-Inventory-Confirmation", app: app)

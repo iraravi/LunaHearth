@@ -1,0 +1,11 @@
+Start with a clear receipt.
+Open Expenses from Home and choose Scan receipt. Photograph the full receipt or choose a photo. Include the item lines and total. You can enter an expense manually instead.
+
+Check what the scan read.
+Compare the store, amount and currency with the original receipt. Review the item names, quantities and prices. Scanning and optional AI can make mistakes, so correct the details before saving.
+
+Choose the items kept at home.
+Tap Add all for eligible items, or choose individual item cards. Use Clear selection to start again. Select only food you keep at home, and check quantities for those items.
+
+Review, then save.
+Tap Save receipt to review your choices. Choose Save and update pantry for selected items, or Save without inventory to record the purchase without adding stock. Always check the final amount.
