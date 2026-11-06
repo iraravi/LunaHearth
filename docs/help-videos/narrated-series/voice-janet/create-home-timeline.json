@@ -1,0 +1,114 @@
+{
+  "title": "Create your home",
+  "duration": 37.564081632653064,
+  "voice": "Janet - Warm & Approachable",
+  "engine": "orca",
+  "speed": 1,
+  "listening_review": "not_performed",
+  "timing_source": "HeyGen word timestamps, token-by-token checked against submitted script",
+  "scenes": [
+    {
+      "image": "Welcome",
+      "title": "Choose how\nto begin.",
+      "route": "Welcome screen",
+      "narration": "Welcome to Nam Illam. Choose Create a new home if you are starting fresh. If your family invited you, join that existing home instead of creating a duplicate.",
+      "start": 0,
+      "spoken_start": 0.256,
+      "end": 9.813
+    },
+    {
+      "image": "CreateHome",
+      "title": "Give your home\na familiar name.",
+      "route": "Create a new home \u2192 Home name",
+      "narration": "Enter a home name such as Our Home. This is a label inside the app, not your street address or a login account. Then choose Create my home.",
+      "start": 9.813,
+      "spoken_start": 9.813,
+      "end": 19.241
+    },
+    {
+      "image": "Home",
+      "title": "Start with\none small task.",
+      "route": "Home",
+      "narration": "Your new home starts empty. Open Pantry to record what you have, Shopping for what you need, or Expenses to record a purchase. The setup activities are optional.",
+      "start": 19.241,
+      "spoken_start": 19.241,
+      "end": 28.81
+    },
+    {
+      "image": "Today",
+      "title": "Make it part\nof your day.",
+      "route": "Today",
+      "narration": "Use Today for your schedule and reminders. Your household works locally without an app account. Family sharing and iCloud are optional, and can be set up later.",
+      "start": 28.81,
+      "spoken_start": 28.81,
+      "end": 37.564081632653064
+    }
+  ],
+  "captions": [
+    {
+      "start": 0.256,
+      "end": 4.053,
+      "text": "Welcome to Nam Illam. Choose Create a new home if you are starting"
+    },
+    {
+      "start": 4.053,
+      "end": 8.107,
+      "text": "fresh. If your family invited you, join that existing home instead"
+    },
+    {
+      "start": 8.107,
+      "end": 9.813,
+      "text": "of creating a duplicate."
+    },
+    {
+      "start": 9.813,
+      "end": 12.5,
+      "text": "Enter a home name such as Our Home."
+    },
+    {
+      "start": 12.5,
+      "end": 15.743,
+      "text": "This is a label inside the app, not your street address or a"
+    },
+    {
+      "start": 15.743,
+      "end": 19.241,
+      "text": "login account. Then choose Create my home."
+    },
+    {
+      "start": 19.241,
+      "end": 21.161,
+      "text": "Your new home starts empty."
+    },
+    {
+      "start": 21.161,
+      "end": 24.532,
+      "text": "Open Pantry to record what you have, Shopping for what you need,"
+    },
+    {
+      "start": 24.532,
+      "end": 26.89,
+      "text": "or Expenses to record a purchase."
+    },
+    {
+      "start": 26.89,
+      "end": 28.81,
+      "text": "The setup activities are optional."
+    },
+    {
+      "start": 28.81,
+      "end": 31.37,
+      "text": "Use Today for your schedule and reminders."
+    },
+    {
+      "start": 31.37,
+      "end": 34.015,
+      "text": "Your household works locally without an app account."
+    },
+    {
+      "start": 34.015,
+      "end": 37.564081632653064,
+      "text": "Family sharing and iCloud are optional, and can be set up later."
+    }
+  ]
+}

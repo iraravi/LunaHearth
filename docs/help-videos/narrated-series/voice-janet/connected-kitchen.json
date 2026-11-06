@@ -1,0 +1,1178 @@
+{
+  "duration": 84.29714285714286,
+  "request_id": "5f774e4649674052a0e1a0280da464f5",
+  "word_timestamps": [
+    {
+      "word": "<start>",
+      "start": 0,
+      "end": 0
+    },
+    {
+      "word": "Start",
+      "start": 0.256,
+      "end": 0.5547
+    },
+    {
+      "word": "in",
+      "start": 0.597,
+      "end": 0.6827
+    },
+    {
+      "word": "Pantry.",
+      "start": 0.725,
+      "end": 1.387
+    },
+    {
+      "word": "Check",
+      "start": 1.707,
+      "end": 1.92
+    },
+    {
+      "word": "what",
+      "start": 2.005,
+      "end": 2.091
+    },
+    {
+      "word": "you",
+      "start": 2.133,
+      "end": 2.176
+    },
+    {
+      "word": "already",
+      "start": 2.219,
+      "end": 2.4747
+    },
+    {
+      "word": "have",
+      "start": 2.603,
+      "end": 2.816
+    },
+    {
+      "word": "before",
+      "start": 2.944,
+      "end": 3.029
+    },
+    {
+      "word": "shopping.",
+      "start": 3.2,
+      "end": 3.861
+    },
+    {
+      "word": "Open",
+      "start": 4.181,
+      "end": 4.5227
+    },
+    {
+      "word": "an",
+      "start": 4.608,
+      "end": 4.693
+    },
+    {
+      "word": "item",
+      "start": 4.736,
+      "end": 4.992
+    },
+    {
+      "word": "to",
+      "start": 5.035,
+      "end": 5.1627
+    },
+    {
+      "word": "review",
+      "start": 5.205,
+      "end": 5.2907
+    },
+    {
+      "word": "its",
+      "start": 5.504,
+      "end": 5.5467
+    },
+    {
+      "word": "amount",
+      "start": 5.675,
+      "end": 5.888
+    },
+    {
+      "word": "or",
+      "start": 6.144,
+      "end": 6.4
+    },
+    {
+      "word": "mark",
+      "start": 6.443,
+      "end": 6.613
+    },
+    {
+      "word": "it",
+      "start": 6.656,
+      "end": 6.741
+    },
+    {
+      "word": "running",
+      "start": 6.784,
+      "end": 6.912
+    },
+    {
+      "word": "low.",
+      "start": 7.04,
+      "end": 7.595
+    },
+    {
+      "word": "Your",
+      "start": 7.979,
+      "end": 8.149
+    },
+    {
+      "word": "pantry",
+      "start": 8.192,
+      "end": 8.576
+    },
+    {
+      "word": "reflects",
+      "start": 8.661,
+      "end": 9.045
+    },
+    {
+      "word": "what",
+      "start": 9.131,
+      "end": 9.216
+    },
+    {
+      "word": "you",
+      "start": 9.259,
+      "end": 9.344
+    },
+    {
+      "word": "record.",
+      "start": 9.387,
+      "end": 9.899
+    },
+    {
+      "word": "Open",
+      "start": 10.325,
+      "end": 10.5387
+    },
+    {
+      "word": "Shopping",
+      "start": 10.624,
+      "end": 10.965
+    },
+    {
+      "word": "and",
+      "start": 11.136,
+      "end": 11.4347
+    },
+    {
+      "word": "add",
+      "start": 11.477,
+      "end": 11.733
+    },
+    {
+      "word": "what",
+      "start": 11.776,
+      "end": 11.904
+    },
+    {
+      "word": "is",
+      "start": 11.947,
+      "end": 11.989
+    },
+    {
+      "word": "missing.",
+      "start": 12.032,
+      "end": 12.407
+    },
+    {
+      "word": "Enter",
+      "start": 12.654,
+      "end": 12.8248
+    },
+    {
+      "word": "the",
+      "start": 12.91,
+      "end": 12.995
+    },
+    {
+      "word": "item",
+      "start": 13.038,
+      "end": 13.2515
+    },
+    {
+      "word": "name,",
+      "start": 13.294,
+      "end": 13.678
+    },
+    {
+      "word": "then",
+      "start": 13.892,
+      "end": 14.062
+    },
+    {
+      "word": "an",
+      "start": 14.105,
+      "end": 14.2328
+    },
+    {
+      "word": "amount",
+      "start": 14.275,
+      "end": 14.446
+    },
+    {
+      "word": "or",
+      "start": 14.617,
+      "end": 14.702
+    },
+    {
+      "word": "store",
+      "start": 14.745,
+      "end": 15.001
+    },
+    {
+      "word": "if",
+      "start": 15.129,
+      "end": 15.214
+    },
+    {
+      "word": "useful.",
+      "start": 15.257,
+      "end": 15.897
+    },
+    {
+      "word": "This",
+      "start": 16.238,
+      "end": 16.366
+    },
+    {
+      "word": "is",
+      "start": 16.409,
+      "end": 16.494
+    },
+    {
+      "word": "your",
+      "start": 16.537,
+      "end": 16.622
+    },
+    {
+      "word": "shopping",
+      "start": 16.665,
+      "end": 16.963
+    },
+    {
+      "word": "list,",
+      "start": 17.049,
+      "end": 17.412
+    },
+    {
+      "word": "not",
+      "start": 17.604,
+      "end": 17.774
+    },
+    {
+      "word": "extra",
+      "start": 17.817,
+      "end": 17.9875
+    },
+    {
+      "word": "pantry",
+      "start": 18.116,
+      "end": 18.414
+    },
+    {
+      "word": "stock",
+      "start": 18.5,
+      "end": 18.7128
+    },
+    {
+      "word": "yet.",
+      "start": 18.798,
+      "end": 19.31
+    },
+    {
+      "word": "After",
+      "start": 19.651,
+      "end": 19.779
+    },
+    {
+      "word": "buying,",
+      "start": 19.95,
+      "end": 20.334
+    },
+    {
+      "word": "open",
+      "start": 20.462,
+      "end": 20.675
+    },
+    {
+      "word": "Expenses",
+      "start": 20.846,
+      "end": 21.3155
+    },
+    {
+      "word": "and",
+      "start": 21.529,
+      "end": 21.614
+    },
+    {
+      "word": "scan",
+      "start": 21.657,
+      "end": 21.9128
+    },
+    {
+      "word": "the",
+      "start": 21.956,
+      "end": 22.0835
+    },
+    {
+      "word": "receipt.",
+      "start": 22.126,
+      "end": 22.638
+    },
+    {
+      "word": "Use",
+      "start": 22.894,
+      "end": 23.0648
+    },
+    {
+      "word": "a",
+      "start": 23.108,
+      "end": 23.1928
+    },
+    {
+      "word": "clear",
+      "start": 23.235,
+      "end": 23.406
+    },
+    {
+      "word": "photo",
+      "start": 23.491,
+      "end": 23.7048
+    },
+    {
+      "word": "with",
+      "start": 23.875,
+      "end": 24.003
+    },
+    {
+      "word": "all",
+      "start": 24.046,
+      "end": 24.2168
+    },
+    {
+      "word": "item",
+      "start": 24.302,
+      "end": 24.558
+    },
+    {
+      "word": "lines",
+      "start": 24.601,
+      "end": 24.771
+    },
+    {
+      "word": "and",
+      "start": 24.985,
+      "end": 25.113
+    },
+    {
+      "word": "the",
+      "start": 25.155,
+      "end": 25.198
+    },
+    {
+      "word": "total.",
+      "start": 25.241,
+      "end": 25.771
+    },
+    {
+      "word": "The",
+      "start": 26.087,
+      "end": 26.215
+    },
+    {
+      "word": "scan",
+      "start": 26.258,
+      "end": 26.471
+    },
+    {
+      "word": "is",
+      "start": 26.556,
+      "end": 26.642
+    },
+    {
+      "word": "a",
+      "start": 26.684,
+      "end": 26.727
+    },
+    {
+      "word": "draft.",
+      "start": 26.77,
+      "end": 27.261
+    },
+    {
+      "word": "Nothing",
+      "start": 27.538,
+      "end": 27.7085
+    },
+    {
+      "word": "is",
+      "start": 27.879,
+      "end": 27.9645
+    },
+    {
+      "word": "saved",
+      "start": 28.007,
+      "end": 28.263
+    },
+    {
+      "word": "just",
+      "start": 28.434,
+      "end": 28.6045
+    },
+    {
+      "word": "by",
+      "start": 28.69,
+      "end": 28.775
+    },
+    {
+      "word": "scanning.",
+      "start": 28.818,
+      "end": 29.458
+    },
+    {
+      "word": "Review",
+      "start": 29.756,
+      "end": 30.012
+    },
+    {
+      "word": "the",
+      "start": 30.055,
+      "end": 30.14
+    },
+    {
+      "word": "store,",
+      "start": 30.183,
+      "end": 30.631
+    },
+    {
+      "word": "purchase",
+      "start": 30.823,
+      "end": 31.1219
+    },
+    {
+      "word": "date,",
+      "start": 31.207,
+      "end": 31.57
+    },
+    {
+      "word": "total",
+      "start": 31.762,
+      "end": 31.9325
+    },
+    {
+      "word": "and",
+      "start": 32.06,
+      "end": 32.1459
+    },
+    {
+      "word": "currency.",
+      "start": 32.188,
+      "end": 32.956
+    },
+    {
+      "word": "Keep",
+      "start": 33.34,
+      "end": 33.5539
+    },
+    {
+      "word": "Record",
+      "start": 33.596,
+      "end": 33.895
+    },
+    {
+      "word": "in",
+      "start": 33.98,
+      "end": 34.023
+    },
+    {
+      "word": "Expenses",
+      "start": 34.066,
+      "end": 34.5779
+    },
+    {
+      "word": "selected",
+      "start": 34.663,
+      "end": 35.047
+    },
+    {
+      "word": "if",
+      "start": 35.133,
+      "end": 35.218
+    },
+    {
+      "word": "you",
+      "start": 35.261,
+      "end": 35.3459
+    },
+    {
+      "word": "want",
+      "start": 35.389,
+      "end": 35.4739
+    },
+    {
+      "word": "the",
+      "start": 35.517,
+      "end": 35.6019
+    },
+    {
+      "word": "receipt",
+      "start": 35.645,
+      "end": 35.943
+    },
+    {
+      "word": "recorded",
+      "start": 35.986,
+      "end": 36.2845
+    },
+    {
+      "word": "there.",
+      "start": 36.37,
+      "end": 36.792
+    },
+    {
+      "word": "Correct",
+      "start": 37.043,
+      "end": 37.384
+    },
+    {
+      "word": "mistakes",
+      "start": 37.512,
+      "end": 37.853
+    },
+    {
+      "word": "against",
+      "start": 38.067,
+      "end": 38.1946
+    },
+    {
+      "word": "the",
+      "start": 38.28,
+      "end": 38.365
+    },
+    {
+      "word": "original",
+      "start": 38.408,
+      "end": 38.5786
+    },
+    {
+      "word": "receipt",
+      "start": 38.792,
+      "end": 39.133
+    },
+    {
+      "word": "before",
+      "start": 39.219,
+      "end": 39.304
+    },
+    {
+      "word": "saving.",
+      "start": 39.517,
+      "end": 40.136
+    },
+    {
+      "word": "Choose",
+      "start": 40.541,
+      "end": 40.84
+    },
+    {
+      "word": "Add",
+      "start": 41.011,
+      "end": 41.224
+    },
+    {
+      "word": "all",
+      "start": 41.309,
+      "end": 41.437
+    },
+    {
+      "word": "for",
+      "start": 41.608,
+      "end": 41.736
+    },
+    {
+      "word": "eligible",
+      "start": 41.779,
+      "end": 42.077
+    },
+    {
+      "word": "items,",
+      "start": 42.205,
+      "end": 42.589
+    },
+    {
+      "word": "or",
+      "start": 42.717,
+      "end": 43.0586
+    },
+    {
+      "word": "tap",
+      "start": 43.101,
+      "end": 43.3146
+    },
+    {
+      "word": "individual",
+      "start": 43.4,
+      "end": 43.741
+    },
+    {
+      "word": "cards.",
+      "start": 43.912,
+      "end": 44.531
+    },
+    {
+      "word": "Select",
+      "start": 44.936,
+      "end": 45.2346
+    },
+    {
+      "word": "food",
+      "start": 45.363,
+      "end": 45.576
+    },
+    {
+      "word": "you",
+      "start": 45.661,
+      "end": 45.7466
+    },
+    {
+      "word": "keep",
+      "start": 45.789,
+      "end": 45.96
+    },
+    {
+      "word": "at",
+      "start": 46.003,
+      "end": 46.045
+    },
+    {
+      "word": "home.",
+      "start": 46.088,
+      "end": 46.515
+    },
+    {
+      "word": "Leave",
+      "start": 46.771,
+      "end": 46.984
+    },
+    {
+      "word": "meals",
+      "start": 47.069,
+      "end": 47.24
+    },
+    {
+      "word": "eaten",
+      "start": 47.411,
+      "end": 47.624
+    },
+    {
+      "word": "out,",
+      "start": 47.667,
+      "end": 47.987
+    },
+    {
+      "word": "gifts",
+      "start": 48.136,
+      "end": 48.477
+    },
+    {
+      "word": "and",
+      "start": 48.563,
+      "end": 48.648
+    },
+    {
+      "word": "services",
+      "start": 48.691,
+      "end": 48.9466
+    },
+    {
+      "word": "unselected.",
+      "start": 49.288,
+      "end": 50.169
+    },
+    {
+      "word": "Check",
+      "start": 50.411,
+      "end": 50.6668
+    },
+    {
+      "word": "each",
+      "start": 50.795,
+      "end": 50.965
+    },
+    {
+      "word": "selected",
+      "start": 51.093,
+      "end": 51.4348
+    },
+    {
+      "word": "quantity.",
+      "start": 51.52,
+      "end": 52.139
+    },
+    {
+      "word": "Open",
+      "start": 52.459,
+      "end": 52.6295
+    },
+    {
+      "word": "Quantity",
+      "start": 52.715,
+      "end": 53.056
+    },
+    {
+      "word": "and",
+      "start": 53.227,
+      "end": 53.3975
+    },
+    {
+      "word": "matches",
+      "start": 53.44,
+      "end": 53.7815
+    },
+    {
+      "word": "for",
+      "start": 53.867,
+      "end": 53.9948
+    },
+    {
+      "word": "each",
+      "start": 54.038,
+      "end": 54.1655
+    },
+    {
+      "word": "receipt",
+      "start": 54.251,
+      "end": 54.5495
+    },
+    {
+      "word": "item.",
+      "start": 54.592,
+      "end": 55.104
+    },
+    {
+      "word": "Review",
+      "start": 55.403,
+      "end": 55.744
+    },
+    {
+      "word": "its",
+      "start": 55.83,
+      "end": 55.9148
+    },
+    {
+      "word": "Shopping",
+      "start": 56,
+      "end": 56.256
+    },
+    {
+      "word": "item",
+      "start": 56.342,
+      "end": 56.5548
+    },
+    {
+      "word": "selection.",
+      "start": 56.64,
+      "end": 57.237
+    },
+    {
+      "word": "Choose",
+      "start": 57.579,
+      "end": 57.877
+    },
+    {
+      "word": "the",
+      "start": 57.963,
+      "end": 58.048
+    },
+    {
+      "word": "matching",
+      "start": 58.091,
+      "end": 58.304
+    },
+    {
+      "word": "pending",
+      "start": 58.389,
+      "end": 58.6028
+    },
+    {
+      "word": "item",
+      "start": 58.731,
+      "end": 58.9868
+    },
+    {
+      "word": "when",
+      "start": 59.072,
+      "end": 59.157
+    },
+    {
+      "word": "appropriate,",
+      "start": 59.2,
+      "end": 59.797
+    },
+    {
+      "word": "or",
+      "start": 59.883,
+      "end": 60.181
+    },
+    {
+      "word": "save",
+      "start": 60.224,
+      "end": 60.438
+    },
+    {
+      "word": "it",
+      "start": 60.48,
+      "end": 60.523
+    },
+    {
+      "word": "as",
+      "start": 60.566,
+      "end": 60.608
+    },
+    {
+      "word": "a",
+      "start": 60.651,
+      "end": 60.736
+    },
+    {
+      "word": "new",
+      "start": 60.779,
+      "end": 60.9068
+    },
+    {
+      "word": "bought",
+      "start": 60.95,
+      "end": 61.1628
+    },
+    {
+      "word": "item.",
+      "start": 61.206,
+      "end": 61.724
+    },
+    {
+      "word": "Review",
+      "start": 61.987,
+      "end": 62.286
+    },
+    {
+      "word": "the",
+      "start": 62.329,
+      "end": 62.414
+    },
+    {
+      "word": "final",
+      "start": 62.457,
+      "end": 62.627
+    },
+    {
+      "word": "choices,",
+      "start": 62.755,
+      "end": 63.246
+    },
+    {
+      "word": "then",
+      "start": 63.523,
+      "end": 63.651
+    },
+    {
+      "word": "save",
+      "start": 63.737,
+      "end": 63.9927
+    },
+    {
+      "word": "and",
+      "start": 64.163,
+      "end": 64.206
+    },
+    {
+      "word": "update",
+      "start": 64.249,
+      "end": 64.59
+    },
+    {
+      "word": "pantry.",
+      "start": 64.633,
+      "end": 65.337
+    },
+    {
+      "word": "If",
+      "start": 65.699,
+      "end": 65.87
+    },
+    {
+      "word": "you",
+      "start": 65.913,
+      "end": 65.998
+    },
+    {
+      "word": "already",
+      "start": 66.041,
+      "end": 66.254
+    },
+    {
+      "word": "recorded",
+      "start": 66.382,
+      "end": 66.6807
+    },
+    {
+      "word": "this",
+      "start": 66.766,
+      "end": 66.894
+    },
+    {
+      "word": "purchase,",
+      "start": 66.937,
+      "end": 67.449
+    },
+    {
+      "word": "link",
+      "start": 67.619,
+      "end": 67.8327
+    },
+    {
+      "word": "the",
+      "start": 67.918,
+      "end": 68.003
+    },
+    {
+      "word": "recent",
+      "start": 68.046,
+      "end": 68.2167
+    },
+    {
+      "word": "matching",
+      "start": 68.387,
+      "end": 68.643
+    },
+    {
+      "word": "purchase",
+      "start": 68.729,
+      "end": 69.07
+    },
+    {
+      "word": "when",
+      "start": 69.155,
+      "end": 69.2407
+    },
+    {
+      "word": "offered.",
+      "start": 69.283,
+      "end": 69.902
+    },
+    {
+      "word": "That",
+      "start": 70.222,
+      "end": 70.35
+    },
+    {
+      "word": "keeps",
+      "start": 70.393,
+      "end": 70.563
+    },
+    {
+      "word": "its",
+      "start": 70.649,
+      "end": 70.691
+    },
+    {
+      "word": "pantry",
+      "start": 70.777,
+      "end": 71.118
+    },
+    {
+      "word": "amount",
+      "start": 71.246,
+      "end": 71.374
+    },
+    {
+      "word": "from",
+      "start": 71.459,
+      "end": 71.5447
+    },
+    {
+      "word": "being",
+      "start": 71.587,
+      "end": 71.715
+    },
+    {
+      "word": "added",
+      "start": 71.801,
+      "end": 71.9287
+    },
+    {
+      "word": "twice.",
+      "start": 72.099,
+      "end": 72.683
+    },
+    {
+      "word": "Now",
+      "start": 73.053,
+      "end": 73.2237
+    },
+    {
+      "word": "check",
+      "start": 73.352,
+      "end": 73.565
+    },
+    {
+      "word": "Expenses",
+      "start": 73.65,
+      "end": 74.162
+    },
+    {
+      "word": "for",
+      "start": 74.205,
+      "end": 74.333
+    },
+    {
+      "word": "spending,",
+      "start": 74.376,
+      "end": 74.824
+    },
+    {
+      "word": "Shopping",
+      "start": 75.058,
+      "end": 75.3997
+    },
+    {
+      "word": "for",
+      "start": 75.485,
+      "end": 75.57
+    },
+    {
+      "word": "the",
+      "start": 75.613,
+      "end": 75.698
+    },
+    {
+      "word": "bought",
+      "start": 75.741,
+      "end": 75.9117
+    },
+    {
+      "word": "items,",
+      "start": 75.954,
+      "end": 76.381
+    },
+    {
+      "word": "and",
+      "start": 76.552,
+      "end": 76.637
+    },
+    {
+      "word": "Pantry",
+      "start": 76.68,
+      "end": 77.106
+    },
+    {
+      "word": "for",
+      "start": 77.192,
+      "end": 77.362
+    },
+    {
+      "word": "selected",
+      "start": 77.405,
+      "end": 77.746
+    },
+    {
+      "word": "stock.",
+      "start": 77.832,
+      "end": 78.45
+    },
+    {
+      "word": "Saving",
+      "start": 78.813,
+      "end": 79.1117
+    },
+    {
+      "word": "an",
+      "start": 79.24,
+      "end": 79.282
+    },
+    {
+      "word": "expense",
+      "start": 79.325,
+      "end": 79.6237
+    },
+    {
+      "word": "alone",
+      "start": 79.794,
+      "end": 80.0077
+    },
+    {
+      "word": "does",
+      "start": 80.178,
+      "end": 80.2637
+    },
+    {
+      "word": "not",
+      "start": 80.306,
+      "end": 80.605
+    },
+    {
+      "word": "add",
+      "start": 80.733,
+      "end": 80.9037
+    },
+    {
+      "word": "pantry",
+      "start": 80.989,
+      "end": 81.33
+    },
+    {
+      "word": "items.",
+      "start": 81.416,
+      "end": 81.906
+    },
+    {
+      "word": "You",
+      "start": 82.141,
+      "end": 82.269
+    },
+    {
+      "word": "choose",
+      "start": 82.312,
+      "end": 82.5677
+    },
+    {
+      "word": "those",
+      "start": 82.61,
+      "end": 82.738
+    },
+    {
+      "word": "updates",
+      "start": 82.824,
+      "end": 83.122
+    },
+    {
+      "word": "during",
+      "start": 83.25,
+      "end": 83.378
+    },
+    {
+      "word": "review.",
+      "start": 83.464,
+      "end": 84.0517006802721
+    },
+    {
+      "word": "<end>",
+      "start": 84.29714285714286,
+      "end": 84.29714285714286
+    }
+  ],
+  "engine": "orca",
+  "request": {
+    "text": "Start in Pantry. Check what you already have before shopping. Open an item to review its amount or mark it running low. Your pantry reflects what you record. Open Shopping and add what is missing. Enter the item name, then an amount or store if useful. This is your shopping list, not extra pantry stock yet. After buying, open Expenses and scan the receipt. Use a clear photo with all item lines and the total. The scan is a draft. Nothing is saved just by scanning. Review the store, purchase date, total and currency. Keep Record in Expenses selected if you want the receipt recorded there. Correct mistakes against the original receipt before saving. Choose Add all for eligible items, or tap individual cards. Select food you keep at home. Leave meals eaten out, gifts and services unselected. Check each selected quantity. Open Quantity and matches for each receipt item. Review its Shopping item selection. Choose the matching pending item when appropriate, or save it as a new bought item. Review the final choices, then save and update pantry. If you already recorded this purchase, link the recent matching purchase when offered. That keeps its pantry amount from being added twice. Now check Expenses for spending, Shopping for the bought items, and Pantry for selected stock. Saving an expense alone does not add pantry items. You choose those updates during review.",
+    "voiceId": "4270665fc47f44aa989c093bb3dc2b99",
+    "language": "en",
+    "speed": 1
+  }
+}

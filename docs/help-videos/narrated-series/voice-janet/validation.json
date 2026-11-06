@@ -1,0 +1,22 @@
+[
+  {
+    "guide": "connected-kitchen",
+    "duration": 84.29714285714286,
+    "decode": "passed",
+    "audio_hz": 48000,
+    "speed": 1,
+    "integrated_lufs": "-16.45",
+    "true_peak_db": "-1.29",
+    "listening_review": "not_performed"
+  },
+  {
+    "guide": "create-home",
+    "duration": 37.564081632653064,
+    "decode": "passed",
+    "audio_hz": 48000,
+    "speed": 1,
+    "integrated_lufs": "-16.35",
+    "true_peak_db": "-1.42",
+    "listening_review": "not_performed"
+  }
+]

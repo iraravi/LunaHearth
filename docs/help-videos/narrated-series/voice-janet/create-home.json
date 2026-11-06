@@ -1,0 +1,578 @@
+{
+  "duration": 37.564081632653064,
+  "request_id": "0375e5a401f34422b97c6520fb9fca8b",
+  "word_timestamps": [
+    {
+      "word": "<start>",
+      "start": 0,
+      "end": 0
+    },
+    {
+      "word": "Welcome",
+      "start": 0.256,
+      "end": 0.64
+    },
+    {
+      "word": "to",
+      "start": 0.683,
+      "end": 0.768
+    },
+    {
+      "word": "Nam",
+      "start": 0.811,
+      "end": 0.981
+    },
+    {
+      "word": "Illam.",
+      "start": 1.067,
+      "end": 1.579
+    },
+    {
+      "word": "Choose",
+      "start": 1.835,
+      "end": 2.133
+    },
+    {
+      "word": "Create",
+      "start": 2.219,
+      "end": 2.56
+    },
+    {
+      "word": "a",
+      "start": 2.603,
+      "end": 2.688
+    },
+    {
+      "word": "new",
+      "start": 2.731,
+      "end": 2.8587
+    },
+    {
+      "word": "home",
+      "start": 2.944,
+      "end": 3.1147
+    },
+    {
+      "word": "if",
+      "start": 3.285,
+      "end": 3.3707
+    },
+    {
+      "word": "you",
+      "start": 3.413,
+      "end": 3.541
+    },
+    {
+      "word": "are",
+      "start": 3.584,
+      "end": 3.669
+    },
+    {
+      "word": "starting",
+      "start": 3.712,
+      "end": 3.925
+    },
+    {
+      "word": "fresh.",
+      "start": 4.053,
+      "end": 4.629
+    },
+    {
+      "word": "If",
+      "start": 4.949,
+      "end": 5.12
+    },
+    {
+      "word": "your",
+      "start": 5.163,
+      "end": 5.248
+    },
+    {
+      "word": "family",
+      "start": 5.291,
+      "end": 5.504
+    },
+    {
+      "word": "invited",
+      "start": 5.675,
+      "end": 5.9307
+    },
+    {
+      "word": "you,",
+      "start": 6.059,
+      "end": 6.357
+    },
+    {
+      "word": "join",
+      "start": 6.485,
+      "end": 6.741
+    },
+    {
+      "word": "that",
+      "start": 6.827,
+      "end": 6.9547
+    },
+    {
+      "word": "existing",
+      "start": 7.04,
+      "end": 7.3387
+    },
+    {
+      "word": "home",
+      "start": 7.467,
+      "end": 7.637
+    },
+    {
+      "word": "instead",
+      "start": 7.765,
+      "end": 7.936
+    },
+    {
+      "word": "of",
+      "start": 8.107,
+      "end": 8.192
+    },
+    {
+      "word": "creating",
+      "start": 8.235,
+      "end": 8.4907
+    },
+    {
+      "word": "a",
+      "start": 8.661,
+      "end": 8.704
+    },
+    {
+      "word": "duplicate.",
+      "start": 8.747,
+      "end": 9.493
+    },
+    {
+      "word": "Enter",
+      "start": 9.813,
+      "end": 10.069
+    },
+    {
+      "word": "a",
+      "start": 10.197,
+      "end": 10.2827
+    },
+    {
+      "word": "home",
+      "start": 10.325,
+      "end": 10.496
+    },
+    {
+      "word": "name",
+      "start": 10.581,
+      "end": 10.752
+    },
+    {
+      "word": "such",
+      "start": 10.88,
+      "end": 11.0507
+    },
+    {
+      "word": "as",
+      "start": 11.136,
+      "end": 11.264
+    },
+    {
+      "word": "Our",
+      "start": 11.392,
+      "end": 11.6907
+    },
+    {
+      "word": "Home.",
+      "start": 11.861,
+      "end": 12.266
+    },
+    {
+      "word": "This",
+      "start": 12.5,
+      "end": 12.6707
+    },
+    {
+      "word": "is",
+      "start": 12.756,
+      "end": 12.799
+    },
+    {
+      "word": "a",
+      "start": 12.841,
+      "end": 12.884
+    },
+    {
+      "word": "label",
+      "start": 12.927,
+      "end": 13.1827
+    },
+    {
+      "word": "inside",
+      "start": 13.268,
+      "end": 13.4387
+    },
+    {
+      "word": "the",
+      "start": 13.652,
+      "end": 13.78
+    },
+    {
+      "word": "app,",
+      "start": 13.823,
+      "end": 14.143
+    },
+    {
+      "word": "not",
+      "start": 14.335,
+      "end": 14.548
+    },
+    {
+      "word": "your",
+      "start": 14.633,
+      "end": 14.7187
+    },
+    {
+      "word": "street",
+      "start": 14.761,
+      "end": 15.017
+    },
+    {
+      "word": "address",
+      "start": 15.06,
+      "end": 15.3587
+    },
+    {
+      "word": "or",
+      "start": 15.487,
+      "end": 15.572
+    },
+    {
+      "word": "a",
+      "start": 15.657,
+      "end": 15.7
+    },
+    {
+      "word": "login",
+      "start": 15.743,
+      "end": 16.041
+    },
+    {
+      "word": "account.",
+      "start": 16.127,
+      "end": 16.639
+    },
+    {
+      "word": "Then",
+      "start": 16.98,
+      "end": 17.1507
+    },
+    {
+      "word": "choose",
+      "start": 17.236,
+      "end": 17.449
+    },
+    {
+      "word": "Create",
+      "start": 17.705,
+      "end": 18.1747
+    },
+    {
+      "word": "my",
+      "start": 18.26,
+      "end": 18.388
+    },
+    {
+      "word": "home.",
+      "start": 18.431,
+      "end": 18.921
+    },
+    {
+      "word": "Your",
+      "start": 19.241,
+      "end": 19.412
+    },
+    {
+      "word": "new",
+      "start": 19.455,
+      "end": 19.5827
+    },
+    {
+      "word": "home",
+      "start": 19.668,
+      "end": 19.796
+    },
+    {
+      "word": "starts",
+      "start": 19.924,
+      "end": 20.137
+    },
+    {
+      "word": "empty.",
+      "start": 20.265,
+      "end": 20.841
+    },
+    {
+      "word": "Open",
+      "start": 21.161,
+      "end": 21.3747
+    },
+    {
+      "word": "Pantry",
+      "start": 21.46,
+      "end": 21.801
+    },
+    {
+      "word": "to",
+      "start": 21.887,
+      "end": 22.015
+    },
+    {
+      "word": "record",
+      "start": 22.057,
+      "end": 22.1
+    },
+    {
+      "word": "what",
+      "start": 22.356,
+      "end": 22.484
+    },
+    {
+      "word": "you",
+      "start": 22.527,
+      "end": 22.569
+    },
+    {
+      "word": "have,",
+      "start": 22.612,
+      "end": 23.039
+    },
+    {
+      "word": "Shopping",
+      "start": 23.295,
+      "end": 23.636
+    },
+    {
+      "word": "for",
+      "start": 23.721,
+      "end": 23.849
+    },
+    {
+      "word": "what",
+      "start": 23.892,
+      "end": 23.977
+    },
+    {
+      "word": "you",
+      "start": 24.02,
+      "end": 24.105
+    },
+    {
+      "word": "need,",
+      "start": 24.148,
+      "end": 24.425
+    },
+    {
+      "word": "or",
+      "start": 24.532,
+      "end": 24.916
+    },
+    {
+      "word": "Expenses",
+      "start": 24.959,
+      "end": 25.428
+    },
+    {
+      "word": "to",
+      "start": 25.513,
+      "end": 25.599
+    },
+    {
+      "word": "record",
+      "start": 25.641,
+      "end": 25.684
+    },
+    {
+      "word": "a",
+      "start": 25.897,
+      "end": 25.94
+    },
+    {
+      "word": "purchase.",
+      "start": 25.983,
+      "end": 26.586
+    },
+    {
+      "word": "The",
+      "start": 26.89,
+      "end": 26.975
+    },
+    {
+      "word": "setup",
+      "start": 27.018,
+      "end": 27.2739
+    },
+    {
+      "word": "activities",
+      "start": 27.317,
+      "end": 27.6579
+    },
+    {
+      "word": "are",
+      "start": 27.829,
+      "end": 27.9566
+    },
+    {
+      "word": "optional.",
+      "start": 27.999,
+      "end": 28.575
+    },
+    {
+      "word": "Use",
+      "start": 28.81,
+      "end": 29.023
+    },
+    {
+      "word": "Today",
+      "start": 29.109,
+      "end": 29.365
+    },
+    {
+      "word": "for",
+      "start": 29.45,
+      "end": 29.5779
+    },
+    {
+      "word": "your",
+      "start": 29.621,
+      "end": 29.7059
+    },
+    {
+      "word": "schedule",
+      "start": 29.749,
+      "end": 30.1326
+    },
+    {
+      "word": "and",
+      "start": 30.218,
+      "end": 30.303
+    },
+    {
+      "word": "reminders.",
+      "start": 30.346,
+      "end": 31.007
+    },
+    {
+      "word": "Your",
+      "start": 31.37,
+      "end": 31.4979
+    },
+    {
+      "word": "household",
+      "start": 31.541,
+      "end": 31.8819
+    },
+    {
+      "word": "works",
+      "start": 31.967,
+      "end": 32.095
+    },
+    {
+      "word": "locally",
+      "start": 32.223,
+      "end": 32.5219
+    },
+    {
+      "word": "without",
+      "start": 32.693,
+      "end": 32.7779
+    },
+    {
+      "word": "an",
+      "start": 32.906,
+      "end": 33.0339
+    },
+    {
+      "word": "app",
+      "start": 33.077,
+      "end": 33.1619
+    },
+    {
+      "word": "account.",
+      "start": 33.29,
+      "end": 33.738
+    },
+    {
+      "word": "Family",
+      "start": 34.015,
+      "end": 34.3139
+    },
+    {
+      "word": "sharing",
+      "start": 34.442,
+      "end": 34.6126
+    },
+    {
+      "word": "and",
+      "start": 34.783,
+      "end": 34.911
+    },
+    {
+      "word": "iCloud",
+      "start": 34.954,
+      "end": 35.3379
+    },
+    {
+      "word": "are",
+      "start": 35.423,
+      "end": 35.4659
+    },
+    {
+      "word": "optional,",
+      "start": 35.509,
+      "end": 36.021
+    },
+    {
+      "word": "and",
+      "start": 36.191,
+      "end": 36.2766
+    },
+    {
+      "word": "can",
+      "start": 36.319,
+      "end": 36.447
+    },
+    {
+      "word": "be",
+      "start": 36.49,
+      "end": 36.575
+    },
+    {
+      "word": "set",
+      "start": 36.618,
+      "end": 36.746
+    },
+    {
+      "word": "up",
+      "start": 36.789,
+      "end": 36.831
+    },
+    {
+      "word": "later.",
+      "start": 36.874,
+      "end": 37.3275283446712
+    },
+    {
+      "word": "<end>",
+      "start": 37.564081632653064,
+      "end": 37.564081632653064
+    }
+  ],
+  "engine": "orca",
+  "request": {
+    "text": "Welcome to Nam Illam. Choose Create a new home if you are starting fresh. If your family invited you, join that existing home instead of creating a duplicate. Enter a home name such as Our Home. This is a label inside the app, not your street address or a login account. Then choose Create my home. Your new home starts empty. Open Pantry to record what you have, Shopping for what you need, or Expenses to record a purchase. The setup activities are optional. Use Today for your schedule and reminders. Your household works locally without an app account. Family sharing and iCloud are optional, and can be set up later.",
+    "voiceId": "4270665fc47f44aa989c093bb3dc2b99",
+    "language": "en",
+    "speed": 1
+  }
+}

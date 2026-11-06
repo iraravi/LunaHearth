@@ -45,3 +45,42 @@ Published at https://neuralluna.com/help-videos/narrated/ on 2026-11-06.
 All 41 public assets returned HTTP 200; all ten MP4 lengths match local files.
 HTTP byte ranges are supported for seeking. Each local MP4 passed full audio/video
 decoding. The public player and chapter navigation were checked in the browser.
+
+## Janet motion revision — 2026-11-06
+
+The user approved Janet's sample and then requested animated Home → Pantry and
+Home → Shopping navigation. Two continuous narrations were generated with the
+approved voice ID `4270665fc47f44aa989c093bb3dc2b99`, returning engine `orca`.
+HeyGen stopped the third request for insufficient credit. The user explicitly
+chose to keep only the two completed Janet guides; no retry or further synthesis
+was made. The other eight guides retain their original narration.
+
+Rebuild without new speech calls:
+
+```
+python animate.py
+python library.py
+```
+
+`voice-janet/` preserves original MP3s, exact submitted text, provider word timing,
+request IDs, scene/caption timelines and technical validation. No API credentials
+or expiring media URLs are committed. `animate.py` uses immutable screenshot
+assets and an absolute, deterministic narration clock. Speech stays at 1.0x:
+connected-kitchen is 84.297 seconds; create-home is 37.564 seconds. No dialogue is
+cut to force the old 120/60-second runtimes.
+
+The visual direction retains black/white/yellow, one teaching headline, and real
+app screenshots. Guided tap rings identify actual Home cards and toolbar controls;
+push transitions illustrate opening those screens. These are animated screenshot
+walkthroughs, not live interaction recordings. Captions follow provider word
+intervals checked token-by-token against each submitted script, rather than
+estimated character durations. Chapter buttons use the actual scene starts.
+
+New `*-janet.mp4`, `.jpg` and `.vtt` files retain the old exports for rollback.
+The player labels Janet versus original narration explicitly. Validation includes
+full decoding, 48 kHz AAC/H.264 checks, encoded loudness/peak measurements,
+caption coverage and representative transition frames. No new app code changed,
+so the app build/test suite was not rerun for this media revision. Full subjective
+audio listening review was not performed; the user approved the voice sample.
+
+Deployment status: prepared; final upload awaits an unlocked Mac.

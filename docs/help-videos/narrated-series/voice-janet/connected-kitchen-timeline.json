@@ -1,0 +1,220 @@
+{
+  "title": "One purchase. Everything connected.",
+  "duration": 84.29714285714286,
+  "voice": "Janet - Warm & Approachable",
+  "engine": "orca",
+  "speed": 1,
+  "listening_review": "not_performed",
+  "timing_source": "HeyGen word timestamps, token-by-token checked against submitted script",
+  "scenes": [
+    {
+      "image": "Pantry",
+      "title": "Start with what\nyou already have.",
+      "route": "Home \u2192 Pantry",
+      "narration": "Start in Pantry. Check what you already have before shopping. Open an item to review its amount or mark it running low. Your pantry reflects what you record.",
+      "start": 0,
+      "spoken_start": 0.256,
+      "end": 10.325
+    },
+    {
+      "image": "Shopping-Add",
+      "title": "Buy what\nyou actually need.",
+      "route": "Home \u2192 Shopping \u2192 Add item",
+      "narration": "Open Shopping and add what is missing. Enter the item name, then an amount or store if useful. This is your shopping list, not extra pantry stock yet.",
+      "start": 10.325,
+      "spoken_start": 10.325,
+      "end": 19.651
+    },
+    {
+      "image": "overview",
+      "title": "Bring the receipt\ninto the same flow.",
+      "route": "Home \u2192 Expenses \u2192 Scan receipt",
+      "narration": "After buying, open Expenses and scan the receipt. Use a clear photo with all item lines and the total. The scan is a draft. Nothing is saved just by scanning.",
+      "start": 19.651,
+      "spoken_start": 19.651,
+      "end": 29.756
+    },
+    {
+      "image": "overview",
+      "title": "Give the expense\na careful check.",
+      "route": "Receipt review \u2192 Record in Expenses",
+      "narration": "Review the store, purchase date, total and currency. Keep Record in Expenses selected if you want the receipt recorded there. Correct mistakes against the original receipt before saving.",
+      "start": 29.756,
+      "spoken_start": 29.756,
+      "end": 40.541
+    },
+    {
+      "image": "selection",
+      "title": "Choose what\ngoes into Pantry.",
+      "route": "Receipt review \u2192 Pantry selection",
+      "narration": "Choose Add all for eligible items, or tap individual cards. Select food you keep at home. Leave meals eaten out, gifts and services unselected. Check each selected quantity.",
+      "start": 40.541,
+      "spoken_start": 40.541,
+      "end": 52.459
+    },
+    {
+      "image": "ReceiptMatches",
+      "title": "Connect the\nshopping matches.",
+      "route": "Receipt item \u2192 Quantity & matches",
+      "narration": "Open Quantity and matches for each receipt item. Review its Shopping item selection. Choose the matching pending item when appropriate, or save it as a new bought item.",
+      "start": 52.459,
+      "spoken_start": 52.459,
+      "end": 61.987
+    },
+    {
+      "image": "confirmation",
+      "title": "Save the purchase\nonce.",
+      "route": "Save receipt \u2192 Review \u2192 Save",
+      "narration": "Review the final choices, then save and update pantry. If you already recorded this purchase, link the recent matching purchase when offered. That keeps its pantry amount from being added twice.",
+      "start": 61.987,
+      "spoken_start": 61.987,
+      "end": 73.053
+    },
+    {
+      "image": "Expenses",
+      "title": "Check all\nthree places.",
+      "route": "Expenses \u00b7 Shopping \u00b7 Pantry",
+      "narration": "Now check Expenses for spending, Shopping for the bought items, and Pantry for selected stock. Saving an expense alone does not add pantry items. You choose those updates during review.",
+      "start": 73.053,
+      "spoken_start": 73.053,
+      "end": 84.29714285714286
+    }
+  ],
+  "captions": [
+    {
+      "start": 0.256,
+      "end": 4.181,
+      "text": "Start in Pantry. Check what you already have before shopping."
+    },
+    {
+      "start": 4.181,
+      "end": 7.979,
+      "text": "Open an item to review its amount or mark it running low."
+    },
+    {
+      "start": 7.979,
+      "end": 10.325,
+      "text": "Your pantry reflects what you record."
+    },
+    {
+      "start": 10.325,
+      "end": 12.654,
+      "text": "Open Shopping and add what is missing."
+    },
+    {
+      "start": 12.654,
+      "end": 16.238,
+      "text": "Enter the item name, then an amount or store if useful."
+    },
+    {
+      "start": 16.238,
+      "end": 19.651,
+      "text": "This is your shopping list, not extra pantry stock yet."
+    },
+    {
+      "start": 19.651,
+      "end": 22.894,
+      "text": "After buying, open Expenses and scan the receipt."
+    },
+    {
+      "start": 22.894,
+      "end": 26.087,
+      "text": "Use a clear photo with all item lines and the total."
+    },
+    {
+      "start": 26.087,
+      "end": 29.756,
+      "text": "The scan is a draft. Nothing is saved just by scanning."
+    },
+    {
+      "start": 29.756,
+      "end": 33.34,
+      "text": "Review the store, purchase date, total and currency."
+    },
+    {
+      "start": 33.34,
+      "end": 36.37,
+      "text": "Keep Record in Expenses selected if you want the receipt recorded"
+    },
+    {
+      "start": 36.37,
+      "end": 40.541,
+      "text": "there. Correct mistakes against the original receipt before saving."
+    },
+    {
+      "start": 40.541,
+      "end": 44.936,
+      "text": "Choose Add all for eligible items, or tap individual cards."
+    },
+    {
+      "start": 44.936,
+      "end": 46.771,
+      "text": "Select food you keep at home."
+    },
+    {
+      "start": 46.771,
+      "end": 50.411,
+      "text": "Leave meals eaten out, gifts and services unselected."
+    },
+    {
+      "start": 50.411,
+      "end": 52.459,
+      "text": "Check each selected quantity."
+    },
+    {
+      "start": 52.459,
+      "end": 55.403,
+      "text": "Open Quantity and matches for each receipt item."
+    },
+    {
+      "start": 55.403,
+      "end": 57.579,
+      "text": "Review its Shopping item selection."
+    },
+    {
+      "start": 57.579,
+      "end": 60.566,
+      "text": "Choose the matching pending item when appropriate, or save it"
+    },
+    {
+      "start": 60.566,
+      "end": 64.249,
+      "text": "as a new bought item. Review the final choices, then save and"
+    },
+    {
+      "start": 64.249,
+      "end": 68.046,
+      "text": "update pantry. If you already recorded this purchase, link the"
+    },
+    {
+      "start": 68.046,
+      "end": 70.222,
+      "text": "recent matching purchase when offered."
+    },
+    {
+      "start": 70.222,
+      "end": 73.053,
+      "text": "That keeps its pantry amount from being added twice."
+    },
+    {
+      "start": 73.053,
+      "end": 76.552,
+      "text": "Now check Expenses for spending, Shopping for the bought items,"
+    },
+    {
+      "start": 76.552,
+      "end": 78.813,
+      "text": "and Pantry for selected stock."
+    },
+    {
+      "start": 78.813,
+      "end": 82.141,
+      "text": "Saving an expense alone does not add pantry items."
+    },
+    {
+      "start": 82.141,
+      "end": 84.29714285714286,
+      "text": "You choose those updates during review."
+    }
+  ]
+}
