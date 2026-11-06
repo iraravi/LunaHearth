@@ -1,0 +1,43 @@
+{
+  "clips": [
+    {
+      "asset": "assets/scene-1.mp4",
+      "video_id": "384d12ec28244e0baf75ff21b0adfd20",
+      "model": "heygen-video-1",
+      "seed": 1586680834,
+      "duration": 10,
+      "source_dimensions": [
+        768,
+        1344
+      ]
+    },
+    {
+      "asset": "assets/scene-2.mp4",
+      "video_id": "a51266dbddbf4ca495f9d35f38fd47d4",
+      "model": "heygen-video-1",
+      "seed": 2247767055,
+      "duration": 10,
+      "source_dimensions": [
+        768,
+        1344
+      ]
+    },
+    {
+      "asset": "assets/scene-3.mp4",
+      "video_id": "7fcdc354dfae4aa386b25f614285be7f",
+      "model": "heygen-video-1",
+      "seed": 761504443,
+      "duration": 10,
+      "source_dimensions": [
+        768,
+        1344
+      ]
+    }
+  ],
+  "voice_id": "4270665fc47f44aa989c093bb3dc2b99",
+  "voice": "Janet - Warm & Approachable",
+  "music": "Original synthesized instrumental in render.py; no external samples",
+  "status": "Review cut; full animated scan replacement blocked by HeyGen free-video allowance",
+  "rejected_source": "scene-3 seconds 0-5: incorrect phone orientation; not present in export",
+  "actual_app_screen": "../narrated-series/assets/confirmation.png"
+}

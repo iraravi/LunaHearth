@@ -1,0 +1,318 @@
+{
+  "duration": 20.48,
+  "request_id": "99a96152129845eda6c9094645237a9c",
+  "word_timestamps": [
+    {
+      "word": "<start>",
+      "start": 0,
+      "end": 0
+    },
+    {
+      "word": "Welcome",
+      "start": 0.256,
+      "end": 0.64
+    },
+    {
+      "word": "to",
+      "start": 0.683,
+      "end": 0.8107
+    },
+    {
+      "word": "Nam",
+      "start": 0.853,
+      "end": 0.981
+    },
+    {
+      "word": "Illam.",
+      "start": 1.024,
+      "end": 1.515
+    },
+    {
+      "word": "A",
+      "start": 1.749,
+      "end": 1.92
+    },
+    {
+      "word": "new",
+      "start": 1.963,
+      "end": 2.0907
+    },
+    {
+      "word": "day",
+      "start": 2.133,
+      "end": 2.261
+    },
+    {
+      "word": "starts",
+      "start": 2.304,
+      "end": 2.517
+    },
+    {
+      "word": "at",
+      "start": 2.645,
+      "end": 2.688
+    },
+    {
+      "word": "home.",
+      "start": 2.731,
+      "end": 3.157
+    },
+    {
+      "word": "Check",
+      "start": 3.413,
+      "end": 3.669
+    },
+    {
+      "word": "what",
+      "start": 3.755,
+      "end": 3.84
+    },
+    {
+      "word": "needs",
+      "start": 3.883,
+      "end": 4.0107
+    },
+    {
+      "word": "doing,",
+      "start": 4.139,
+      "end": 4.523
+    },
+    {
+      "word": "see",
+      "start": 4.736,
+      "end": 4.9067
+    },
+    {
+      "word": "what’s",
+      "start": 4.949,
+      "end": 5.163
+    },
+    {
+      "word": "in",
+      "start": 5.205,
+      "end": 5.248
+    },
+    {
+      "word": "your",
+      "start": 5.291,
+      "end": 5.333
+    },
+    {
+      "word": "pantry,",
+      "start": 5.376,
+      "end": 5.867
+    },
+    {
+      "word": "and",
+      "start": 6.016,
+      "end": 6.272
+    },
+    {
+      "word": "add",
+      "start": 6.315,
+      "end": 6.485
+    },
+    {
+      "word": "what’s",
+      "start": 6.571,
+      "end": 6.741
+    },
+    {
+      "word": "missing",
+      "start": 6.784,
+      "end": 6.912
+    },
+    {
+      "word": "to",
+      "start": 7.083,
+      "end": 7.168
+    },
+    {
+      "word": "your",
+      "start": 7.211,
+      "end": 7.296
+    },
+    {
+      "word": "shopping",
+      "start": 7.339,
+      "end": 7.5947
+    },
+    {
+      "word": "list.",
+      "start": 7.68,
+      "end": 8.192
+    },
+    {
+      "word": "Pick",
+      "start": 8.533,
+      "end": 8.704
+    },
+    {
+      "word": "it",
+      "start": 8.747,
+      "end": 8.832
+    },
+    {
+      "word": "up",
+      "start": 8.875,
+      "end": 8.917
+    },
+    {
+      "word": "at",
+      "start": 8.96,
+      "end": 9.003
+    },
+    {
+      "word": "the",
+      "start": 9.045,
+      "end": 9.088
+    },
+    {
+      "word": "shop,",
+      "start": 9.131,
+      "end": 9.515
+    },
+    {
+      "word": "then",
+      "start": 9.685,
+      "end": 9.813
+    },
+    {
+      "word": "scan",
+      "start": 9.899,
+      "end": 10.1547
+    },
+    {
+      "word": "your",
+      "start": 10.24,
+      "end": 10.325
+    },
+    {
+      "word": "receipt.",
+      "start": 10.368,
+      "end": 10.83
+    },
+    {
+      "word": "Review",
+      "start": 10.994,
+      "end": 11.335
+    },
+    {
+      "word": "and",
+      "start": 11.463,
+      "end": 11.591
+    },
+    {
+      "word": "confirm",
+      "start": 11.634,
+      "end": 12.0179
+    },
+    {
+      "word": "to",
+      "start": 12.189,
+      "end": 12.274
+    },
+    {
+      "word": "record",
+      "start": 12.317,
+      "end": 12.4446
+    },
+    {
+      "word": "your",
+      "start": 12.701,
+      "end": 12.8286
+    },
+    {
+      "word": "spending",
+      "start": 12.871,
+      "end": 13.0419
+    },
+    {
+      "word": "and",
+      "start": 13.298,
+      "end": 13.511
+    },
+    {
+      "word": "update",
+      "start": 13.554,
+      "end": 13.895
+    },
+    {
+      "word": "your",
+      "start": 13.938,
+      "end": 13.9806
+    },
+    {
+      "word": "pantry.",
+      "start": 14.023,
+      "end": 14.749
+    },
+    {
+      "word": "Your",
+      "start": 15.09,
+      "end": 15.303
+    },
+    {
+      "word": "day,",
+      "start": 15.346,
+      "end": 15.73
+    },
+    {
+      "word": "your",
+      "start": 15.943,
+      "end": 16.0286
+    },
+    {
+      "word": "shopping,",
+      "start": 16.071,
+      "end": 16.626
+    },
+    {
+      "word": "your",
+      "start": 16.839,
+      "end": 16.967
+    },
+    {
+      "word": "home—a",
+      "start": 17.01,
+      "end": 17.119
+    },
+    {
+      "word": "little",
+      "start": 17.906,
+      "end": 17.991
+    },
+    {
+      "word": "more",
+      "start": 18.119,
+      "end": 18.247
+    },
+    {
+      "word": "together.",
+      "start": 18.29,
+      "end": 18.93
+    },
+    {
+      "word": "Let’s",
+      "start": 19.314,
+      "end": 19.527
+    },
+    {
+      "word": "get",
+      "start": 19.57,
+      "end": 19.6126
+    },
+    {
+      "word": "started.",
+      "start": 19.655,
+      "end": 20.252
+    },
+    {
+      "word": "<end>",
+      "start": 20.48,
+      "end": 20.48
+    }
+  ],
+  "engine": "orca",
+  "script": "Welcome to Nam Illam. A new day starts at home. Check what needs doing, see what’s in your pantry, and add what’s missing to your shopping list. Pick it up at the shop, then scan your receipt. Review and confirm to record your spending and update your pantry. Your day, your shopping, your home—a little more together. Let’s get started."
+}

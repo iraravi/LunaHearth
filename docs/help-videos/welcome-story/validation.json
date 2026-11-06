@@ -1,0 +1,24 @@
+{
+  "full_decode": "passed",
+  "duration_seconds": 22.5,
+  "dimensions": [
+    720,
+    1280
+  ],
+  "fps": 24,
+  "subtitle_token_coverage": "all provider tokens preserved",
+  "listening_review": "not_performed",
+  "visual_review": "1-second samples of sources and final export",
+  "audio_measurements": {
+    "input_i": "-16.56",
+    "input_tp": "-1.46",
+    "input_lra": "7.00",
+    "input_thresh": "-27.87",
+    "output_i": "-16.04",
+    "output_tp": "-1.50",
+    "output_lra": "2.50",
+    "output_thresh": "-27.06",
+    "normalization_type": "dynamic",
+    "target_offset": "0.04"
+  }
+}

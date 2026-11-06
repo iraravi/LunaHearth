@@ -1,0 +1,113 @@
+{
+  "duration": 22.5,
+  "voice_offset": 0.5,
+  "voice_speed": 1,
+  "captions": [
+    {
+      "start": 0.756,
+      "end": 2.0149999999999997,
+      "text": "Welcome to Nam Illam."
+    },
+    {
+      "start": 2.249,
+      "end": 3.657,
+      "text": "A new day starts at home."
+    },
+    {
+      "start": 3.913,
+      "end": 5.023,
+      "text": "Check what needs doing,"
+    },
+    {
+      "start": 5.236,
+      "end": 6.367,
+      "text": "see what\u2019s in your pantry,"
+    },
+    {
+      "start": 6.516,
+      "end": 7.796,
+      "text": "and add what\u2019s missing to your"
+    },
+    {
+      "start": 7.839,
+      "end": 8.692,
+      "text": "shopping list."
+    },
+    {
+      "start": 9.033,
+      "end": 10.015,
+      "text": "Pick it up at the shop,"
+    },
+    {
+      "start": 10.185,
+      "end": 11.33,
+      "text": "then scan your receipt."
+    },
+    {
+      "start": 11.494,
+      "end": 13.3286,
+      "text": "Review and confirm to record your"
+    },
+    {
+      "start": 13.371,
+      "end": 15.249,
+      "text": "spending and update your pantry."
+    },
+    {
+      "start": 15.59,
+      "end": 16.23,
+      "text": "Your day,"
+    },
+    {
+      "start": 16.442999999999998,
+      "end": 17.126,
+      "text": "your shopping,"
+    },
+    {
+      "start": 17.339,
+      "end": 19.43,
+      "text": "your home\u2014a little more together."
+    },
+    {
+      "start": 19.814,
+      "end": 20.752,
+      "text": "Let\u2019s get started."
+    }
+  ],
+  "shots": [
+    {
+      "asset": "scene-1",
+      "in": 0,
+      "out": 3.5,
+      "start": 0
+    },
+    {
+      "asset": "scene-1",
+      "in": 4,
+      "out": 8.5,
+      "start": 3.5
+    },
+    {
+      "asset": "scene-2",
+      "in": 1,
+      "out": 3,
+      "start": 8
+    },
+    {
+      "asset": "real-app-review",
+      "start": 10,
+      "end": 15
+    },
+    {
+      "asset": "scene-3",
+      "in": 5,
+      "out": 10,
+      "start": 15
+    },
+    {
+      "asset": "end-graphic",
+      "start": 20,
+      "end": 22.5
+    }
+  ]
+}
