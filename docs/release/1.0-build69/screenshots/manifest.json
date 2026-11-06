@@ -1,0 +1,133 @@
+{
+  "capture_date": "2026-11-01",
+  "build": 69,
+  "source": "testAppStoreScreenshots; fictional sample household",
+  "screenshots": [
+    {
+      "file": "screenshots/ipad-13/Store-01-Today.png",
+      "width": 2064,
+      "height": 2752,
+      "mode": "RGB",
+      "sha256": "177cc2994abc120019e052b305da90bd61cbb76ad6ba601a45f1dca6652fbe85"
+    },
+    {
+      "file": "screenshots/ipad-13/Store-02-Home.png",
+      "width": 2064,
+      "height": 2752,
+      "mode": "RGB",
+      "sha256": "3fbc85ea6a384726d6dab23a67b56c63cf62a60ee5a596370f1167f7e9378a18"
+    },
+    {
+      "file": "screenshots/ipad-13/Store-03-Shopping.png",
+      "width": 2064,
+      "height": 2752,
+      "mode": "RGB",
+      "sha256": "4b78d0c1d69b6f56bd6853562269cd9f421629d4fc9ca143bddf1617ddb5971b"
+    },
+    {
+      "file": "screenshots/ipad-13/Store-04-Pantry.png",
+      "width": 2064,
+      "height": 2752,
+      "mode": "RGB",
+      "sha256": "f99a4d341618028d7ab53fdddf5b04434121def08b7305249ec77891afbe12d5"
+    },
+    {
+      "file": "screenshots/ipad-13/Store-05-Calendar.png",
+      "width": 2064,
+      "height": 2752,
+      "mode": "RGB",
+      "sha256": "ba3b1474dc2854db90f0ba4543b98ff38750ff06c19be1db4576073a23fa6b89"
+    },
+    {
+      "file": "screenshots/ipad-13/Store-06-Expenses.png",
+      "width": 2064,
+      "height": 2752,
+      "mode": "RGB",
+      "sha256": "03ca02ee5dce597df700c5ae002bce2c2c938e317547ec2f2ac3a1d8cf110c16"
+    },
+    {
+      "file": "screenshots/iphone-duo/Store-01-Today.png",
+      "width": 1398,
+      "height": 2034,
+      "mode": "RGB",
+      "sha256": "fa79de03624103397aa83faabed79340feb99941e6ed7caa552b901c88026826"
+    },
+    {
+      "file": "screenshots/iphone-duo/Store-02-Home.png",
+      "width": 1398,
+      "height": 2034,
+      "mode": "RGB",
+      "sha256": "17f9892181188194d42ff150d7cbaf8835395f6adea7302fd9f1ee71acdfba77"
+    },
+    {
+      "file": "screenshots/iphone-duo/Store-03-Shopping.png",
+      "width": 1398,
+      "height": 2034,
+      "mode": "RGB",
+      "sha256": "1b08e7c4ee5162c371507aefc28ae2de8fae3e0655a15b36957be974d8604e91"
+    },
+    {
+      "file": "screenshots/iphone-duo/Store-04-Pantry.png",
+      "width": 1398,
+      "height": 2034,
+      "mode": "RGB",
+      "sha256": "9c5a8855ae0dc13072522d60c2fbaaca4a2b02865de2b6982bed22ceefa213c5"
+    },
+    {
+      "file": "screenshots/iphone-duo/Store-05-Calendar.png",
+      "width": 1398,
+      "height": 2034,
+      "mode": "RGB",
+      "sha256": "dd4a95da6f3b8d56adc07e0b35e1c37b9722c416f0b6f8e59cc1bf2e2b14a4f9"
+    },
+    {
+      "file": "screenshots/iphone-duo/Store-06-Expenses.png",
+      "width": 1398,
+      "height": 2034,
+      "mode": "RGB",
+      "sha256": "32a70a25cdb567d7cf8103894a712ba1012af44a18c6905567d7d2e0aa2c1886"
+    },
+    {
+      "file": "screenshots/iphone-medium/Store-01-Today.png",
+      "width": 1206,
+      "height": 2622,
+      "mode": "RGB",
+      "sha256": "52f22129c572c799292cc809514e7660e79bfa0c653366c449237b7d9a7a1bdb"
+    },
+    {
+      "file": "screenshots/iphone-medium/Store-02-Home.png",
+      "width": 1206,
+      "height": 2622,
+      "mode": "RGB",
+      "sha256": "11220397d0bc0aab909a089f3e144139a3db0b0a5a33d9e924c03ec548883eac"
+    },
+    {
+      "file": "screenshots/iphone-medium/Store-03-Shopping.png",
+      "width": 1206,
+      "height": 2622,
+      "mode": "RGB",
+      "sha256": "d46a2ba16a58907c7c5210123f839446478ffdb3bf4c3c0ebb252f070d4a276f"
+    },
+    {
+      "file": "screenshots/iphone-medium/Store-04-Pantry.png",
+      "width": 1206,
+      "height": 2622,
+      "mode": "RGB",
+      "sha256": "cf8b2a7a698329dec9f7dbb3e433b675e07eedba9c54ba2df9a5b20c2df67c5b"
+    },
+    {
+      "file": "screenshots/iphone-medium/Store-05-Calendar.png",
+      "width": 1206,
+      "height": 2622,
+      "mode": "RGB",
+      "sha256": "b2253a0a616e04220834651833d4a704dfe441b0cfee9beafc91a6e724a8d32b"
+    },
+    {
+      "file": "screenshots/iphone-medium/Store-06-Expenses.png",
+      "width": 1206,
+      "height": 2622,
+      "mode": "RGB",
+      "sha256": "9a9e3c494e837b39c1006f8302d1d445bde51a84465227270c664e9ea60e65e0"
+    }
+  ]
+}
