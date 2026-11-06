@@ -62,7 +62,7 @@ struct QuickAddView: View {
                 }.listRowBackground(Color.clear)
                 Section {
                     if !fixedKind { Picker("Add", selection: $draft.kind) {
-                        ForEach(EntryKind.allCases) { kind in Label(kind == .task ? "Reminder" : kind == .grocery ? "Shopping item" : kind.rawValue, systemImage: kind.symbol).tag(kind) }
+                        ForEach(EntryKind.availableForQuickAdd) { kind in Label(kind == .task ? "Reminder" : kind == .grocery ? "Shopping item" : kind.rawValue, systemImage: kind.symbol).tag(kind) }
                     }.accessibilityIdentifier("quickAdd.kind").disabled(draft.recordID != nil) }
                     TextField(draft.kind == .warranty ? "Provider / warranty name" : "Name or title", text: $draft.title)
                         .accessibilityIdentifier("quickAdd.title").focused($focusedField, equals: .title)

@@ -3,6 +3,8 @@ import Foundation
 enum EntryKind: String, CaseIterable, Identifiable, Sendable {
     case event = "Event", task = "Task", grocery = "Grocery", meal = "Meal"
     case floor = "Floor", room = "Room", asset = "Home Item", warranty = "Warranty", maintenance = "Maintenance"
+    /// Presentation only: saved records and sync remain available for future releases.
+    static var availableForQuickAdd: [EntryKind] { [.event, .task, .grocery, .meal] }
     var id: String { rawValue }
     var symbol: String {
         switch self {

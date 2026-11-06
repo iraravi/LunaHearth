@@ -34,12 +34,6 @@ struct HouseholdSharingView: View {
             if sharing.working { ProgressView("Working with iCloud…") }
             if let message = sharing.message { Section { Text(message).accessibilityIdentifier("sharing.status") } }
             conflictSection
-            if !sharing.layoutProposals.isEmpty {
-                Section("Incoming room layout") {
-                    ForEach(sharing.layoutProposals, id: \.id) { record in ConflictVersionView(title: "From iCloud", record: record) }
-                    NavigationLink("Adjust this device’s room layout") { HomeLayoutView() }
-                }
-            }
             homePicker
             if let configuration = repository.syncConfiguration, configuration.isOwner {
                 Section {

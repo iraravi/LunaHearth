@@ -1,18 +1,10 @@
 import SwiftUI
 
-/// Two independent, scrollable areas keep household actions beside the saved home.
+/// Two independent, scrollable areas keep household actions beside a household overview.
 struct HomeWorkspaceDashboard: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Binding var showingSetup: Bool
-    @Binding var showingSpaces: Bool
-    @Binding var floorID: UUID?
-    @Binding var angle: Double
-    @Binding var elevation: Double
-    @Binding var editingRoom: Bool
     @Binding var scanning: Bool
-    @Binding var initialized: Bool
-    private var rooms: [Room] { repository.rooms.filter { $0.floorID == floorID } }
-    private var planned: [LayoutRoom] { rooms.compactMap(\.layoutRoom) }
 
     var body: some View {
         GeometryReader { geometry in
@@ -41,9 +33,6 @@ struct HomeWorkspaceDashboard: View {
                         NavigationLink { PurchaseHistoryView() } label: {
                             card("Purchases", detail: "Your purchase history", symbol: "bag", color: AppTheme.slate)
                         }.accessibilityIdentifier("home.purchases")
-                        NavigationLink { HomeAlertsView() } label: {
-                            card("Home care", detail: "Maintenance & warranties", symbol: "wrench.and.screwdriver", color: AppTheme.sage)
-                        }.accessibilityIdentifier("home.care")
                         if let homeID = repository.household?.id {
                             HomeSetupGuideCard(householdID: homeID) { showingSetup = true }
                         }
@@ -58,69 +47,21 @@ struct HomeWorkspaceDashboard: View {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("YOUR HOME").font(.caption.weight(.semibold)).tracking(2).foregroundStyle(.secondary)
                             Text(repository.household?.name ?? "Your home").font(AppTheme.displayTitle)
-                            Text("\(repository.rooms.count) \(repository.rooms.count == 1 ? "room" : "rooms") · \(repository.assets.count) \(repository.assets.count == 1 ? "belonging" : "belongings")")
+                            Text("Your kitchen, plans and spending in one place.")
                                 .font(.subheadline).foregroundStyle(.secondary)
                         }
-                        Picker("Floor", selection: $floorID) {
-                            Text("Unassigned rooms").tag(nil as UUID?)
-                            ForEach(repository.floors) { Text($0.name).tag(Optional($0.id)) }
-                        }.accessibilityIdentifier("home.workspace.floor")
-                        if planned.isEmpty {
-                            VStack(spacing: 18) {
-                                Image(systemName: "house.and.flag").font(.system(size: 64, weight: .ultraLight))
-                                    .foregroundStyle(AppTheme.sage).accessibilityHidden(true)
-                                Text("Make room for your home.").font(AppTheme.sectionTitle)
-                                Text(rooms.isEmpty ? "Add your first room to start a layout." : "Set room dimensions in the floor plan to see them here.")
-                                    .font(.subheadline).foregroundStyle(.secondary)
-                            }.multilineTextAlignment(.center).frame(maxWidth: .infinity, minHeight: 250)
-                                .padding(20).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 24))
-                                .accessibilityIdentifier("home.workspace.empty")
-                        } else {
-                            OrbitingHomePreview(rooms: planned, angle: $angle, elevation: $elevation)
-                                .frame(height: max(250, min(420, geometry.size.height * 0.48)))
-                            HStack {
-                                Text("Drag to rotate · \(planned.count) \(planned.count == 1 ? "room" : "rooms") in view").font(.caption).foregroundStyle(.secondary)
-                                Spacer()
-                                Button("Reset view", systemImage: "arrow.counterclockwise") { angle = 35; elevation = 35 }
-                                    .font(.caption).frame(minHeight: 44)
-                            }
+                        TodayResidence().frame(maxHeight: 300)
+                        Text("A little order. More room for living.")
+                            .font(AppTheme.sectionTitle)
+                        Text("Use the actions alongside to check your pantry, plan meals, scan receipts or review your household spending.")
+                            .font(.body).foregroundStyle(.secondary)
+                        if let homeID = repository.household?.id {
+                            HomeSetupGuideCard(householdID: homeID) { showingSetup = true }
                         }
-                        ViewThatFits(in: .horizontal) {
-                            HStack(spacing: 12) { roomActions }
-                            VStack(alignment: .leading, spacing: 12) { roomActions }
-                        }
-                        Button { showingSpaces = true } label: {
-                            card("Rooms & belongings", detail: "Open your home workspace", symbol: "square.grid.2x2", color: AppTheme.sage)
-                        }.accessibilityIdentifier("home.spaces")
-                        ForEach(rooms) { room in
-                            NavigationLink { RoomDetailView(room: room) } label: {
-                                HStack {
-                                    Image(systemName: "door.left.hand.open").foregroundStyle(AppTheme.sage)
-                                    Text(room.name).font(.headline)
-                                    Spacer()
-                                    Image(systemName: "chevron.right").accessibilityHidden(true)
-                                }.padding(16).frame(maxWidth: .infinity, minHeight: 52)
-                                    .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
-                            }.accessibilityIdentifier("home.room.\(room.id)")
-                        }
-                        Text("Your saved room measurements. An approximate layout, not a construction or safety plan.")
-                            .font(.caption).foregroundStyle(.secondary)
                     }.padding(.bottom, 24)
                 }.frame(maxWidth: .infinity).accessibilityIdentifier("home.workspace.scene")
             }.padding(.horizontal, 24).padding(.top, 16)
         }.accessibilityIdentifier("home.workspace")
-            .onAppear {
-                if !initialized { floorID = repository.floors.first?.id; initialized = true }
-            }
-
-    }
-
-    @ViewBuilder private var roomActions: some View {
-        Button("Add room", systemImage: "plus") { editingRoom = true }
-            .buttonStyle(.borderedProminent).tint(AppTheme.ink).foregroundStyle(AppTheme.canvas)
-            .controlSize(.large).accessibilityIdentifier("home.addRoom")
-        NavigationLink { HomeLayoutView() } label: { Label("Floor plan", systemImage: "square.3.layers.3d") }
-            .buttonStyle(.bordered).controlSize(.large).accessibilityIdentifier("home.layout")
     }
 
     private func card(_ title: String, detail: String, symbol: String, color: Color) -> some View {

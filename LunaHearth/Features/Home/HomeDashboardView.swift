@@ -4,23 +4,14 @@ struct HomeView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var textSize
     @Environment(\.horizontalSizeClass) private var sizeClass
-    @State private var addingRoom = false
     @State private var quickAdding = false
     @State private var showingSetup = false
-    @State private var showingSpaces = false
-    @State private var workspaceFloorID: UUID?
-    @State private var workspaceAngle = 35.0
-    @State private var workspaceElevation = 35.0
-    @State private var workspaceInitialized = false
-    @State private var editingLayoutRoom = false
     @State private var scanningReceipt = false
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
                 if HomeWorkspaceLayout.isExpanded(width: geometry.size.width, accessibilityText: textSize.isAccessibilitySize) {
-                    HomeWorkspaceDashboard(showingSetup: $showingSetup, showingSpaces: $showingSpaces,
-                                           floorID: $workspaceFloorID, angle: $workspaceAngle, elevation: $workspaceElevation,
-                                           editingRoom: $editingLayoutRoom, scanning: $scanningReceipt, initialized: $workspaceInitialized)
+                    HomeWorkspaceDashboard(showingSetup: $showingSetup, scanning: $scanningReceipt)
                 } else {
                     compactDashboard
                 }
@@ -30,23 +21,11 @@ struct HomeView: View {
                 .navigationDestination(isPresented: $showingSetup) {
                     if let homeID = repository.household?.id { HomeSetupGuideView(householdID: homeID) }
                 }
-                .onChange(of: repository.household?.id) { _, _ in
-                    workspaceFloorID = repository.floors.first?.id
-                    workspaceAngle = 35; workspaceElevation = 35
-                    workspaceInitialized = false
-                    editingLayoutRoom = false; scanningReceipt = false
-                }
-                .onChange(of: repository.floors.map(\.id)) { _, ids in
-                    if let workspaceFloorID, !ids.contains(workspaceFloorID) { self.workspaceFloorID = ids.first }
-                }
                 .toolbar { Button("Quick add", systemImage: "plus") { quickAdding = true } }
-                .fullScreenCover(isPresented: $showingSpaces) { HomeSpacesView(isWorkspace: true) }
-                .sheet(isPresented: $editingLayoutRoom) { RoomLayoutEditor(roomID: nil, floorID: workspaceFloorID) }
                 .sheet(isPresented: $scanningReceipt) {
                     if let homeID = repository.household?.id { ReceiptImportView(householdID: homeID) }
                 }
                 .sheet(isPresented: $quickAdding) { QuickAddView() }
-                .sheet(isPresented: $addingRoom) { QuickAddView(kind: .room, parentID: repository.floors.count == 1 ? repository.floors.first?.id : nil, fixedKind: true) }
         }
     }
     private var compactDashboard: some View {
@@ -92,28 +71,10 @@ struct HomeView: View {
                             .contentShape(Rectangle())
                     }.accessibilityIdentifier("home.tasks")
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("Your spaces").font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
-                        spacesLink.accessibilityIdentifier("home.spaces")
-                        ViewThatFits(in: .horizontal) {
-                            HStack(spacing: 24) { roomActions }
-                            VStack(alignment: .leading, spacing: 8) { roomActions }
-                        }
-                        if !repository.rooms.isEmpty {
-                            ScrollView(.horizontal) {
-                                HStack(spacing: 12) {
-                                    ForEach(repository.rooms) { room in
-                                        NavigationLink { RoomDetailView(room: room) } label: { Label(room.name, systemImage: "door.left.hand.open").padding(14).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16)) }.accessibilityIdentifier("home.room.\(room.id)")
-                                    }
-                                }
-                            }.scrollIndicators(.hidden)
-                        }
-                    }
-                    VStack(alignment: .leading, spacing: 14) {
-                        Text("Spending & home care").font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
+                        Text("Spending").font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
                         TodayAlignedCards(columns: textSize.isAccessibilitySize || sizeClass != .regular ? 1 : 3) {
                             NavigationLink { ExpensesView() } label: { HomeUtilityTile(title: "Expenses", detail: "Receipts & monthly spending", symbol: "chart.bar.xaxis", accent: AppTheme.plum) }.accessibilityIdentifier("home.expenses")
                             NavigationLink { PurchaseHistoryView() } label: { HomeUtilityTile(title: "Purchases", detail: "Your purchase history", symbol: "bag", accent: AppTheme.slate) }.accessibilityIdentifier("home.purchases")
-                            NavigationLink { HomeAlertsView() } label: { HomeUtilityTile(title: "Home care", detail: "Maintenance & warranties", symbol: "wrench.and.screwdriver", accent: AppTheme.sage) }.accessibilityIdentifier("home.care")
                         }
                     }
                     NavigationLink { ConnectedDemoView() } label: {
@@ -122,32 +83,8 @@ struct HomeView: View {
                 }.padding(20).frame(maxWidth: 1000).frame(maxWidth: .infinity)
             }
     }
-    @ViewBuilder private var spacesLink: some View {
-        if sizeClass == .regular {
-            Button { showingSpaces = true } label: { spacesCard }
-        } else {
-            NavigationLink { HomeSpacesView() } label: { spacesCard }
-        }
-    }
-
-    private var spacesCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Image("WelcomeResidence").resizable().scaledToFill().frame(height: 145).clipped().clipShape(RoundedRectangle(cornerRadius: 18)).accessibilityHidden(true)
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Rooms & belongings").font(.title3.bold())
-                    Text("\(repository.rooms.count) rooms · \(repository.assets.count) items").font(.subheadline).foregroundStyle(.secondary)
-                }
-                Spacer(); Image(systemName: "chevron.right").accessibilityHidden(true)
-            }
-        }.padding(16).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18)).contentShape(Rectangle())
-    }
-
-    @ViewBuilder private var roomActions: some View {
-        Button { addingRoom = true } label: { Label("Add a room", systemImage: "plus").frame(minHeight: 44) }.accessibilityIdentifier("home.addRoom")
-        NavigationLink { HomeLayoutView() } label: { Label("2D / 3D floor plan", systemImage: "square.3.layers.3d").frame(minHeight: 44) }.accessibilityIdentifier("home.layout")
-    }
 }
+
 private struct HomeFoodTile: View {
     @Environment(\.dynamicTypeSize) private var textSize
     let title: String

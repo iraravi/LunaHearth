@@ -151,13 +151,6 @@ private struct MorePreferencesView: View {
     @State private var error: String?
     var body: some View {
         SettingsDetailPage(title: "Preferences", subtitle: "Small choices for a calmer home.", symbol: "slider.horizontal.3", accent: AppTheme.plum) {
-            SettingsDetailCard(title: "Warranty alerts", symbol: "bell.badge", accent: AppTheme.plum) {
-                Text("Show expiring warranties this far ahead.").font(.subheadline).foregroundStyle(.secondary)
-                Picker("Remind me before expiry", selection: $horizon) {
-                    ForEach([7, 30, 60], id: \.self) { Text("\($0) days").tag($0) }
-                }.pickerStyle(.menu).accessibilityIdentifier("more.warrantyHorizon")
-                    .frame(minHeight: 44)
-            }
             SettingsDetailCard(title: "Getting started", symbol: "sparkles", accent: AppTheme.clay) {
                 Text("Explore the ways your household connects.").font(.subheadline).foregroundStyle(.secondary)
                 if let homeID = repository.household?.id {

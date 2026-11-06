@@ -31,7 +31,6 @@ struct HomeSetupGuideView: View {
                         .accessibilityIdentifier("guide.finished")
                     Text("\(1 + progress.completed.count) completed · \(progress.skipped.count) left for later. Revisit any step below.").font(.subheadline).foregroundStyle(.secondary)
                     NavigationLink { MealIdeasView() } label: { Label("Explore meal ideas", systemImage: "fork.knife").frame(minHeight: 44) }
-                    NavigationLink { HomeSpacesView() } label: { Label("Explore rooms & belongings", systemImage: "house").frame(minHeight: 44) }
                 }
                 VStack(alignment: .leading, spacing: 16) {
                     if !textSize.isAccessibilitySize { WelcomePhotograph(name: selected.art, height: 170).accessibilityHidden(true) }

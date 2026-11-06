@@ -78,7 +78,7 @@ enum HouseholdHelpTopic: String, CaseIterable, Identifiable, Sendable {
             [
                 HelpStep(title: "Start in your kitchen", detail: "Pantry is what you have. Shopping is what you need to buy. Meals connects them when you review a plan.", symbol: "cabinet"),
                 HelpStep(title: "Keep purchases together", detail: "Open Expenses to add purchases, scan receipts and see monthly totals.", symbol: "receipt"),
-                HelpStep(title: "Explore rooms when ready", detail: "Rooms & belongings holds your appliances, items and home care. A floor plan or room scan is optional.", symbol: "door.left.hand.open")
+                HelpStep(title: "Keep spending together", detail: "Use Expenses to review receipts and amounts. Purchases keeps your shopping history in one place.", symbol: "receipt")
             ]
         case .pantry:
             [

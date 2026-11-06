@@ -7,7 +7,6 @@ struct TodayView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var section: TodayWorkspaceSection = .day
     @State private var priority: TodayPriority = .buy
-    @AppStorage("warranty.horizon") private var warrantyHorizon = 30
     @State private var adding = false
 
     var body: some View {
@@ -33,14 +32,6 @@ struct TodayView: View {
     private func dashboard(at now: Date, wide: Bool, height: CGFloat) -> some View {
         let events = repository.events(on: now)
         let dueTasks = repository.dueTasks(on: now)
-        let plans = repository.maintenance.filter {
-            guard let due = $0.nextDueAt, let horizon = Calendar.current.date(byAdding: .day, value: 7, to: now) else { return false }
-            return due <= horizon
-        }.sorted { ($0.nextDueAt ?? .distantFuture) < ($1.nextDueAt ?? .distantFuture) }
-        let warranties = repository.warranties.filter {
-            guard let end = $0.endDate, let horizon = Calendar.current.date(byAdding: .day, value: warrantyHorizon, to: now) else { return false }
-            return end >= Calendar.current.startOfDay(for: now) && end <= horizon
-        }.sorted { ($0.endDate ?? .distantFuture) < ($1.endDate ?? .distantFuture) }
         let attention = TodayAttentionData(repository: repository, personal: personal, now: now)
         let day = HouseholdDay(now).key
         let facts = TodayBriefFacts(shoppingNeededNow: attention.shopping.count,
@@ -48,7 +39,7 @@ struct TodayView: View {
                                    pantryDatesToCheck: attention.dates.count,
                                    pantryPastExpiry: attention.dates.filter { InventoryRules.expiryState($0.expiryDay, today: day) == .past }.count,
                                    lowStockIngredients: attention.restock.count, eventsToday: events.count,
-                                   remindersDue: dueTasks.count, homeCareAlerts: plans.count + warranties.count)
+                                   remindersDue: dueTasks.count, homeCareAlerts: 0)
         return ScrollView {
             (wide ? AnyLayout(HStackLayout(alignment: .top, spacing: 28)) : AnyLayout(VStackLayout(alignment: .leading, spacing: 24))) {
                 ScrollView {
@@ -79,14 +70,10 @@ struct TodayView: View {
                             VStack(spacing: 0) {
                                 overviewLink("Shopping", detail: "\(attention.shopping.count) needed now", symbol: "basket", section: .shopping)
                                 Divider()
-                                overviewLink("Home care", detail: "\(plans.count + warranties.count) alerts", symbol: "house", section: .home)
-                                Divider()
                                 overviewLink("Meals", detail: "\(repository.meals(on: now).count) planned today", symbol: "fork.knife", section: .meals)
                             }.padding(.horizontal, 18).background(TodayTheme.surface, in: RoundedRectangle(cornerRadius: 18))
                         case .shopping:
                             TodayPriorities(now: now, wide: false, selection: $priority)
-                        case .home:
-                            homeCareCard(plans: plans, warranties: warranties)
                         case .meals:
                             mealsCard(now: now)
                         }
@@ -121,31 +108,6 @@ struct TodayView: View {
             if dueTasks.isEmpty { quiet("No reminders due or overdue.") }
             ForEach(dueTasks.prefix(3)) { TaskRow(task: $0) }
             NavigationLink { PlanningListView(kind: .task) } label: { link("All reminders & chores") }
-        }
-    }
-
-    private func homeCareCard(plans: [MaintenancePlan], warranties: [Warranty]) -> some View {
-        TodayCard {
-            TodayPanelHeading(title: "Home care", detail: "\(plans.count + warranties.count) upcoming alerts")
-            if plans.isEmpty && warranties.isEmpty { quiet("No upcoming maintenance or warranty alerts.") }
-            ForEach(plans.prefix(3)) { plan in
-                NavigationLink { MaintenanceDetailView(plan: plan) } label: {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text(plan.title).font(.subheadline.weight(.semibold))
-                        if let due = plan.nextDueAt {
-                            Text("\(repository.assetName(plan.assetID)) · Due \(due.formatted(date: .abbreviated, time: .omitted))")
-                                .font(.caption).foregroundStyle(TodayTheme.muted)
-                        }
-                    }.frame(maxWidth: .infinity, alignment: .leading)
-                }.buttonStyle(.plain)
-            }
-            ForEach(warranties.prefix(2)) { warranty in
-                VStack(alignment: .leading, spacing: 5) {
-                    Label(repository.assetName(warranty.assetID), systemImage: "clock.badge.exclamationmark").font(.subheadline.weight(.medium))
-                    if let end = warranty.endDate { Text("Warranty ends \(end.formatted(date: .abbreviated, time: .omitted))").font(.caption).foregroundStyle(TodayTheme.muted) }
-                }
-            }
-            NavigationLink { HomeAlertsView() } label: { link("See home care") }
         }
     }
 

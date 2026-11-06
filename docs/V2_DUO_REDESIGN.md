@@ -53,3 +53,19 @@ Navigation and category state live above adaptive layout changes. Validation cov
 Follow-up refinements: replace the temporary house drawing with `TodayResidenceV2`, a transparent generated architectural illustration. Unify all 33 base semantic color assets across Today, Home, Calendar, Shopping, Inventory, Expenses, onboarding and forms. Today delegates to AppTheme so its palette cannot diverge. Category/event/status colors remain semantic accents. A unit test checks matching feature palettes and a minimum 4.5:1 body-text/action contrast in both light and dark appearances.
 
 Validation: simulator builds, 292 existing Swift Testing tests plus the performance test, targeted Today UI tests, app-wide dark screen survey, final palette/contrast unit test, light navigation and final Duo dark navigation passed. Evidence and result-bundle paths: `docs/validation/2026-11-06-today-v2/README.md`.
+
+## November 6 scope decision: hide spaces and home care
+
+The owner requested hiding Home care, Warranties, rooms and floors in v2.
+Today no longer presents home-care navigation or counts in its daily brief.
+Home keeps pantry, shopping, meals, reminders, receipts, expenses and purchases;
+the expansive panel shows a household overview instead of the floor plan.
+Quick Add offers events, reminders, groceries and meals. Home-item creation is
+also omitted because its room/belongings destination is hidden. Setup, sharing
+and preferences no longer link to room layout or warranty settings.
+
+Affected entities: HomeFloor, Room, HomeAsset, Warranty and MaintenancePlan.
+Their persistence and sync remain unchanged; no records are deleted or migrated.
+This is an offline presentation change with no new permissions or networking.
+The live v1 release is unchanged. Legacy room/home-care UI tests describe the
+previous release; v2 validation uses the hidden-feature navigation check instead.
