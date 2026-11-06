@@ -37,3 +37,7 @@ Affected entities are existing household, floor, room, asset, expense, receipt l
 - Compact flow and large-text flow remain fully usable with no clipped actions.
 - Test existing 1.0 records through an update to v2 without resetting data.
 - UI tests and captured images prove behavior; compile success alone is not visual acceptance.
+
+## Baseline validation — 6 November 2026
+
+Version-only baseline 2.0.0 (71) generated with XcodeGen. Simulator build and 292 unit tests in 53 suites passed on the available iPhone 18 Pro / iOS 27.2 simulator. Results: `/tmp/namillam-v2-baseline.xcresult`. No redesigned UI is implemented or visually accepted yet. Prior local website/release artifacts and two modified screenshot scripts were preserved outside these commits pending their own review.
