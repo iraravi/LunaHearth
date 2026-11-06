@@ -31,12 +31,37 @@ final class VisualFlowTests: XCTestCase {
         app.terminate()
     }
 
+    func testTodayWorkspaceNavigation() { todayWorkspaceNavigation(dark: false, large: false) }
+    func testTodayWorkspaceDark() { todayWorkspaceNavigation(dark: true, large: false) }
+    func testTodayWorkspaceAccessibility() { todayWorkspaceNavigation(dark: true, large: true) }
+
+    private func todayWorkspaceNavigation(dark: Bool, large: Bool) {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-today"]
+            + (dark ? ["--dark"] : []) + (large ? ["--large-text", "--reduce-motion"] : [])
+        app.launch()
+        XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 15))
+        capture("V2-Today-\(dark ? "Dark" : "Light")-\(large ? "Large" : "Standard")", app: app)
+        for (section, destination) in [("shopping", "today.personalShopping"), ("home", "See home care"), ("meals", "Family week"), ("day", "Open calendar")] {
+            tapVisible("today.section.\(section)", app: app)
+            XCTAssertTrue(app.buttons["today.section.\(section)"].isSelected)
+            let action = app.buttons[destination].firstMatch
+            reveal(action, app: app)
+            XCTAssertTrue(action.isHittable, "The selected workspace must have an accessible action")
+        }
+        app.buttons["today.quickAdd"].tap()
+        XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5))
+        app.buttons["Cancel"].firstMatch.tap()
+        app.terminate()
+    }
+
     func testTodayPlanningRetainsSelectionDuringRotation() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
         XCUIDevice.shared.orientation = .portrait
         defer { XCUIDevice.shared.orientation = .portrait }
         app.launch()
+        tapVisible("today.section.shopping", app: app)
         let restock = app.buttons["today.priority.restock"]
         XCTAssertTrue(restock.waitForExistence(timeout: 10))
         restock.tap()
@@ -1173,6 +1198,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 5))
         let appearance = landscape ? "Landscape" : largeText ? "Large" : dark ? "Dark" : "Light"
         capture("97-Today-\(appearance)", app: app)
+        tapVisible("today.section.shopping", app: app)
         if interactive {
             tapVisible("today.buy.Milk", app: app)
             // The fixture has an expired milk pack; a new purchase stays separate.
@@ -1216,6 +1242,7 @@ final class VisualFlowTests: XCTestCase {
     func testTodayEmptyState() {
         let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch(); createHousehold(app)
+        tapVisible("today.section.shopping", app: app)
         XCTAssertTrue(app.staticTexts["No shopping needed now. Later items stay on your list."].exists)
         tapVisible("today.summarize", app: app)
         XCTAssertEqual(app.staticTexts["today.briefText"].label, "Nothing needs attention in your saved lists today.")
@@ -2077,6 +2104,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.tabBars.buttons["Today"].waitForExistence(timeout: 10))
         app.tabBars.buttons["Today"].tap()
         capture("Assignment-Entry-Review", app: app)
+        tapVisible("today.section.shopping", app: app)
         tapVisible("today.personalShopping", app: app)
         tapVisible("shopping.personalMember", app: app)
         app.buttons["Ravi"].tap()
@@ -2106,6 +2134,7 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("shopping.buyer", app: app); app.buttons["Kira"].tap()
         app.buttons["quickAdd.save"].tap()
         app.tabBars.buttons["Today"].tap()
+        tapVisible("today.section.shopping", app: app)
         tapVisible("today.personalShopping", app: app)
         tapVisible("shopping.personalMember", app: app); app.buttons["Kira"].tap()
         XCTAssertTrue(app.staticTexts["shopping.personalCount"].waitForExistence(timeout: 5))

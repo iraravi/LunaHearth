@@ -1,6 +1,6 @@
 # Nam Illam v2: two-pane workspace
 
-Status: planned; implementation and visual acceptance pending.
+Status: Today workspace implemented for review; Home and the remaining workspaces are still planned.
 Owner direction, 6 November 2026: use both left and right sides effectively on expansive Duo layouts, with professional UI and safe updates for existing live users.
 
 ## Interaction contract
@@ -41,3 +41,15 @@ Affected entities are existing household, floor, room, asset, expense, receipt l
 ## Baseline validation — 6 November 2026
 
 Version-only baseline 2.0.0 (71) generated with XcodeGen. Simulator build and 292 unit tests in 53 suites passed on the available iPhone 18 Pro / iOS 27.2 simulator. Results: `/tmp/namillam-v2-baseline.xcresult`. No redesigned UI is implemented or visually accepted yet. Prior local website/release artifacts and two modified screenshot scripts were preserved outside these commits pending their own review.
+
+## Today workspace — 6 November 2026
+
+The owner requested a complete redesign of “Your day, in focus” with a cleaner, modern presentation inspired by the supplied Tesla reference. Today now uses a household overview and section navigation beside a focused content pane. The decorative house is an original generated 3D illustration bundled in the app. It requires no network request or runtime dependency; it does not represent the household’s saved rooms.
+
+Affected existing entities: household, events, tasks, groceries, pantry inventory, maintenance plans, warranties and meals. This is presentation-only: no data model, migration, networking, permission, sync, or ownership change. All existing local actions and optional on-device summary behavior remain. The live v1 tag is unchanged.
+
+Navigation and category state live above adaptive layout changes. Validation covers the width boundary, accessibility collapse, section destinations, Quick Add, rotation and light/dark/large text. Results are recorded after execution below.
+
+Follow-up refinements: replace the temporary house drawing with `TodayResidenceV2`, a transparent generated architectural illustration. Unify all 33 base semantic color assets across Today, Home, Calendar, Shopping, Inventory, Expenses, onboarding and forms. Today delegates to AppTheme so its palette cannot diverge. Category/event/status colors remain semantic accents. A unit test checks matching feature palettes and a minimum 4.5:1 body-text/action contrast in both light and dark appearances.
+
+Validation: simulator builds, 292 existing Swift Testing tests plus the performance test, targeted Today UI tests, app-wide dark screen survey, final palette/contrast unit test, light navigation and final Duo dark navigation passed. Evidence and result-bundle paths: `docs/validation/2026-11-06-today-v2/README.md`.

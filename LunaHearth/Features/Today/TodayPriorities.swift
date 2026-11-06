@@ -37,13 +37,13 @@ struct TodayPriorities: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(PersonalShopping.self) private var personal
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-    @State private var selection: TodayPriority = .buy
+    @Binding var selection: TodayPriority
     @State private var expanded: TodayPriority?
     var body: some View {
         let data = TodayAttentionData(repository: repository, personal: personal, now: now)
         VStack(alignment: .leading, spacing: 12) {
             (dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4)) : AnyLayout(HStackLayout(spacing: 8))) {
-                Text("What needs attention").font(.title3.bold())
+                Text("Pantry & shopping").font(.title3.bold())
                 if !dynamicTypeSize.isAccessibilitySize { Spacer(minLength: 8) }
                 NavigationLink { PersonalShoppingView() } label: {
                     Label(data.memberName ?? "For you", systemImage: "person.crop.circle")

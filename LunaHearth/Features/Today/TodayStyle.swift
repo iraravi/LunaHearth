@@ -1,22 +1,21 @@
 import SwiftUI
 
 enum TodayTheme {
-    static let canvas = Color("TodayCanvas")
-    static let surface = Color("TodaySurface")
-    static let ink = Color("TodayInk")
-    static let muted = Color("TodayMuted")
-    static let accent = Color("TodayAccent")
-    static let hero = Color("TodayHero")
-    static let brief = Color("TodayBrief")
+    static let canvas = AppTheme.canvas
+    static let surface = AppTheme.surface
+    static let ink = AppTheme.ink
+    static let muted = AppTheme.muted
+    static let accent = AppTheme.accent
+    static let hero = AppTheme.secondarySurface
+    static let brief = AppTheme.surface
 }
 
 struct TodayCard<Content: View>: View {
     @ViewBuilder var content: Content
     var body: some View {
         VStack(alignment: .leading, spacing: 14) { content }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading).padding(20)
+            .frame(maxWidth: .infinity, alignment: .topLeading).padding(20)
             .background(TodayTheme.surface, in: RoundedRectangle(cornerRadius: 18))
-            .hearthCardOutline(TodayTheme.ink)
     }
 }
 
@@ -34,9 +33,18 @@ struct TodayHero: View {
     let household: String
     let wide: Bool
     var body: some View {
-        HearthEditorialHeader(eyebrow: now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()),
-                              title: "Your day, in focus.", subtitle: household, artwork: "WelcomeResidence")
-            .accessibilityIdentifier("today.hero")
+        VStack(alignment: .leading, spacing: 8) {
+            Text(now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
+                .font(.subheadline).foregroundStyle(TodayTheme.muted)
+            Text(household).font(.system(.largeTitle, design: .default).weight(.bold))
+                .accessibilityAddTraits(.isHeader)
+                .fixedSize(horizontal: false, vertical: true)
+            if wide && !typeSize.isAccessibilitySize {
+                TodayResidence().frame(height: 150).frame(maxWidth: .infinity).padding(.vertical, 4)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityIdentifier("today.hero")
     }
 }
 
@@ -119,21 +127,15 @@ struct TodayAlignedCards: Layout {
     }
 }
 
-struct TodayIllustratedHeading: View {
+struct TodayPanelHeading: View {
     let title: String
     let detail: String
-    let art: String
-    @Environment(\.dynamicTypeSize) private var typeSize
     var body: some View {
-        HStack(spacing: 14) {
-            VStack(alignment: .leading, spacing: 6) {
-                Text(title).font(.title3.bold()).accessibilityAddTraits(.isHeader)
-                Text(detail).font(.caption).foregroundStyle(TodayTheme.muted)
-            }.frame(maxWidth: .infinity, alignment: .leading)
-            if !typeSize.isAccessibilitySize {
-                Image(art).resizable().scaledToFill().frame(width: 76, height: 76)
-                    .clipped().clipShape(RoundedRectangle(cornerRadius: 16)).allowsHitTesting(false).accessibilityHidden(true)
-            }
+        HStack(alignment: .firstTextBaseline) {
+            Text(title).font(.headline).accessibilityAddTraits(.isHeader)
+            Spacer(minLength: 12)
+            Text(detail).font(.caption).foregroundStyle(TodayTheme.muted)
+                .multilineTextAlignment(.trailing)
         }.padding(.bottom, 4)
     }
 }

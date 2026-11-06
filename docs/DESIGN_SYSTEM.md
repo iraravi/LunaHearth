@@ -42,37 +42,17 @@ An asset has one clear detail page where warranty, maintenance, documents, and p
 
 Four tabs are used under ADR-041: Today, Calendar, Home and More. Home provides reminders, shopping and meals; Today keeps contextual shortcuts.
 
-## 4. Today composition
+## 4. Today composition (v2)
 
-Preferred order:
+Today is a focused household workspace. Neutral white/charcoal surfaces, system typography, clear selected controls and restrained transitions replace the editorial banner and repeated artwork.
 
-```text
-TODAY                                      +
-Friday, Sep 11
-
-FAMILY
-9:00 AM   Work                         Ravi
-3:00 PM   School activity              Kira
-6:30 PM   Dinner                       Family
-
-TO DO
-○ Pick up prescription
-○ Change upstairs AC filter
-
-HOME
-⚠ Dishwasher warranty ends in 21 days
-  Refrigerator filter due tomorrow
-
-TONIGHT
-Dinner        Chicken curry
-Shopping      7 open items
-```
-
-Rules:
-- no more than 3–5 items per summary section before “View all”
-- urgent states use icon + text, never color only
-- do not show charts on Today in MVP
-- Quick Add remains visible in toolbar
+- Expanded windows (720 points or wider at standard text sizes): household/date and section controls on the left; selected content on the right. Both panes scroll independently.
+- Compact windows: household/date, section controls, then selected content in one scrolling page. Accessibility text uses vertical section buttons and a single column.
+- Sections: Today (schedule, due reminders and counts linking to shopping, care and meals), Shopping (buy/use soon/restock), Home care (maintenance/warranties), Meals (today and preparation).
+- These are local Today sections, not additional root tabs. Existing destination screens and local data actions remain available.
+- The bundled 3D house illustration is decorative and hidden from VoiceOver; it does not claim to represent the user’s floor plan or connected-device status.
+- Selection survives resizing. Quick Add stays in the toolbar. Reduced Motion disables selection transitions. Never convey urgency or selection through color alone.
+- Show at most 3–5 records per summary, with a clear link to the full destination. Empty sections retain an action. The daily brief keeps its local fallback and explicit AI action.
 
 ## 5. Calendar composition
 
@@ -573,3 +553,7 @@ Home uses two independently scrolling panes when at least 650 points are availab
 The scene renders only rooms with saved dimensions, one floor at a time. Empty or unmeasured floors explain how to create the layout. Drag rotation and accessible rotation/tilt actions use the existing local renderer. Narrow windows and accessibility text sizes keep the original stacked Home screen. Editor presentation, floor and camera state live above the layout switch so an open room or receipt sheet survives resizing. This is geometry-based adaptation, not hinge detection.
 
 Affected entities are household, floor, room, home asset, inventory, grocery and task presentation. No business-rule, schema, permission, network, CloudKit or privacy changes. All content and actions use existing local repositories. Build and visual test evidence are recorded separately in the release status; physical folding and VoiceOver require device checks.
+
+## v2 shared palette
+
+Use the same semantic canvas, surface, ink, muted text and action colors across all features. Canvas is neutral gray in light mode and charcoal in dark mode; surfaces are white/raised charcoal; primary actions and selection are black/white with the opposite foreground. Feature-specific asset names are compatibility aliases with matching values, checked by ThemeContrastTests. Color remains useful for category artwork, people/events and warning/error states. Do not introduce feature-specific cream/green page backgrounds.

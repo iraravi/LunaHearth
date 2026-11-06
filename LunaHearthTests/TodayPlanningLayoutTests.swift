@@ -4,8 +4,8 @@ import Testing
 struct TodayPlanningLayoutTests {
     @Test func planningRequiresRoomForBothPanels() {
         #expect(!TodayPlanningLayout.isExpanded(width: 390, accessibilityText: false))
-        #expect(!TodayPlanningLayout.isExpanded(width: 849, accessibilityText: false))
-        #expect(TodayPlanningLayout.isExpanded(width: 850, accessibilityText: false))
+        #expect(!TodayPlanningLayout.isExpanded(width: 719, accessibilityText: false))
+        #expect(TodayPlanningLayout.isExpanded(width: 720, accessibilityText: false))
         #expect(TodayPlanningLayout.isExpanded(width: 1200, accessibilityText: false))
     }
     @Test func accessibilityAndInvalidSizesStayStacked() {
