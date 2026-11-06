@@ -916,6 +916,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["inventory.save"].tap()
         app.navigationBars.buttons.firstMatch.tap()
         XCTAssertTrue(app.staticTexts["2 of 7 steps reviewed"].waitForExistence(timeout: 5))
+        tapVisible("guide.next", app: app)
         for _ in 0..<5 { tapVisible("guide.skip", app: app) }
         XCTAssertTrue(app.staticTexts["7 of 7 steps reviewed"].exists)
         XCTAssertTrue(app.staticTexts["2 completed · 5 left for later. Revisit any step below."].exists)
@@ -1023,6 +1024,69 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["pantryPhoto.success"].waitForExistence(timeout: 5))
     }
 
+    func testPrimaryNavigationRoundTrips() { primaryNavigationRoundTrips(wide: false) }
+    func testPrimaryNavigationRoundTripsWide() { primaryNavigationRoundTrips(wide: true) }
+
+    private func primaryNavigationRoundTrips(wide: Bool) {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--dark", "--reduce-motion"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 15))
+        app.buttons["Home"].firstMatch.tap()
+        if wide { XCUIDevice.shared.orientation = .landscapeLeft }
+        defer { XCUIDevice.shared.orientation = .portrait }
+        for (route, title) in [("inventory", "Groceries at home"), ("shopping", "Groceries"),
+                               ("expenses", "Expenses"), ("tasks", "Tasks & Chores"), ("meals", "Meal ideas")] {
+            tapVisible("home.\(route)", app: app)
+            XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 5))
+            if route == "meals" {
+                tapVisible("meals.addManually", app: app)
+                XCTAssertTrue(app.textFields["quickAdd.title"].waitForExistence(timeout: 5))
+                app.buttons["Cancel"].firstMatch.tap()
+                XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 5))
+                app.buttons["Calendar"].firstMatch.tap()
+                XCTAssertTrue(app.navigationBars["Calendar"].waitForExistence(timeout: 5))
+                app.buttons["Home"].firstMatch.tap()
+                XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 5), "Tab switching preserves the current destination")
+            }
+            app.navigationBars.buttons.firstMatch.tap()
+            XCTAssertTrue(app.navigationBars["Home"].waitForExistence(timeout: 5))
+        }
+        app.buttons["Calendar"].firstMatch.tap()
+        tapVisible("calendar.next", app: app)
+        tapVisible("calendar.week", app: app)
+        XCTAssertTrue(app.navigationBars["Family week"].waitForExistence(timeout: 5))
+        let start = app.datePickers["familyWeek.start"].value as? String
+        XCTAssertNotNil(start)
+        tapVisible("Breakfast, lunch & dinner planner", app: app)
+        XCTAssertTrue(app.navigationBars["Weekly meals"].waitForExistence(timeout: 5))
+        XCTAssertEqual(app.datePickers.firstMatch.value as? String, start)
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["Family week"].waitForExistence(timeout: 5))
+        app.navigationBars.buttons.firstMatch.tap()
+        XCTAssertTrue(app.navigationBars["Calendar"].waitForExistence(timeout: 5))
+    }
+
+    func testSetupActivitiesOpenDirectlyAndReturn() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
+        app.launch(); createHousehold(app)
+        app.buttons["Home"].firstMatch.tap()
+        tapVisible("home.setupGuide", app: app)
+        for (step, title) in [("meals", "Meal ideas"), ("pantry", "Groceries at home"),
+                              ("shopping", "Groceries"), ("receipts", "Expenses"),
+                              ("planning", "Tasks & Chores"), ("sharing", "Family")] {
+            tapVisible("guide.step.\(step)", app: app)
+            XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 5))
+            app.navigationBars.buttons.firstMatch.tap()
+            XCTAssertTrue(app.navigationBars["Getting started"].waitForExistence(timeout: 5))
+            // Returning must not reset the selected activity to the first unfinished one.
+            tapVisible("guide.open.\(step)", app: app)
+            XCTAssertTrue(app.navigationBars[title].waitForExistence(timeout: 5))
+            app.navigationBars.buttons.firstMatch.tap()
+        }
+    }
+
     func testGuidedSetupLargeText() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--large-text", "--dark"]
@@ -1066,7 +1130,8 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertFalse(app.buttons["more.welcome"].exists)
         capture("More-Redesign", app: app)
         tapVisible("more.preferences", app: app)
-        XCTAssertTrue(app.buttons["more.warrantyHorizon"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["more.setupGuide"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["more.warrantyHorizon"].exists, "Warranty controls remain hidden in v2")
         capture("Preferences-Cards", app: app)
         app.navigationBars.buttons.firstMatch.tap()
         tapVisible("more.privacy", app: app)

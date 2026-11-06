@@ -55,9 +55,6 @@ struct HomeWorkspaceDashboard: View {
                             .font(AppTheme.sectionTitle)
                         Text("Use the actions alongside to check your pantry, plan meals, scan receipts or review your household spending.")
                             .font(.body).foregroundStyle(.secondary)
-                        if let homeID = repository.household?.id {
-                            HomeSetupGuideCard(householdID: homeID) { showingSetup = true }
-                        }
                     }.padding(.bottom, 24)
                 }.frame(maxWidth: .infinity).accessibilityIdentifier("home.workspace.scene")
             }.padding(.horizontal, 24).padding(.top, 16)

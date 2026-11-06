@@ -11,6 +11,10 @@ struct FamilyWeekView: View {
     @State private var error: String?
     private var days: [Date] { WeeklyMealRules.days(from: start) }
 
+    init(start: Date = .now) {
+        _start = State(initialValue: Calendar.current.startOfDay(for: start))
+    }
+
     var body: some View {
         GeometryReader { geometry in
             let wide = geometry.size.width >= 700 && !typeSize.isAccessibilitySize
@@ -35,7 +39,7 @@ struct FamilyWeekView: View {
                         }
                     }
                     shoppingCard
-                    NavigationLink { WeeklyMealPlannerView() } label: {
+                    NavigationLink { WeeklyMealPlannerView(start: start) } label: {
                         Label("Breakfast, lunch & dinner planner", systemImage: "fork.knife").frame(minHeight: 44)
                     }
                     Text("Household plans only. Undated tasks and shopping stay in their lists. Personal Apple calendars remain in Calendar’s connected calendars section.")

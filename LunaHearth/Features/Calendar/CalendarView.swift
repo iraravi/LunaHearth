@@ -8,6 +8,7 @@ struct CalendarAgendaView: View {
     @Environment(AppleConnections.self) private var connections
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var selectedDate = Date.now
     @State private var appointmentDraft: AppointmentDraft?
     @State private var memberID: UUID?
@@ -28,7 +29,7 @@ struct CalendarAgendaView: View {
                                 Text(selectedDate, format: .dateTime.weekday(.wide).month(.wide).day())
                                     .font(.subheadline).foregroundStyle(.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading)
-                            Button { showingMonth.toggle() } label: {
+                            Button { withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { showingMonth.toggle() } } label: {
                                 Image(systemName: "calendar").frame(width: 44, height: 44)
 
                             }.hearthGlassButton().accessibilityLabel("Choose date").accessibilityIdentifier("calendar.month")
@@ -44,7 +45,7 @@ struct CalendarAgendaView: View {
                         if showingMonth { monthPicker.frame(maxWidth: 420) }
                         memberFilters
                     }
-                    NavigationLink { FamilyWeekView() } label: {
+                    NavigationLink { FamilyWeekView(start: selectedDate) } label: {
                         HStack { Label("Family week", systemImage: "calendar.badge.clock"); Spacer(); Image(systemName: "chevron.right") }
                             .font(.subheadline.weight(.semibold)).padding(16).frame(minHeight: 52)
                             .background(AppTheme.slate.opacity(0.07), in: RoundedRectangle(cornerRadius: 18)).contentShape(Rectangle())

@@ -7,6 +7,7 @@ struct MealIdeasView: View {
     @Environment(\.dynamicTypeSize) private var typeSize
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var day = Calendar.current.date(byAdding: .day, value: 1, to: .now) ?? .now
     @AppStorage("mealIdeas.cookingStyle") private var styleRaw = ""
     private var cookingStyle: MealCookingStyle? { MealCookingStyle(rawValue: styleRaw) }
@@ -53,6 +54,9 @@ struct MealIdeasView: View {
                     DatePicker("Plan for", selection: $day, in: Calendar.current.startOfDay(for: .now)..., displayedComponents: .date)
                     Text("\(names.count) saved packs considered · check actual amounts and pack labels.").font(.footnote).foregroundStyle(.secondary)
                 }
+                Button { draft = EntryDraft(kind: .meal, date: day) } label: {
+                    Label("Add a meal", systemImage: "plus").frame(minHeight: 44)
+                }.buttonStyle(.bordered).accessibilityIdentifier("meals.addManually")
                 VStack(alignment: .leading, spacing: 10) {
                     Toggle(isOn: Binding(get: { reminderEnabled }, set: { value in
                         changingReminder = true
@@ -88,9 +92,8 @@ struct MealIdeasView: View {
                         }
                     }
                 }
-                NavigationLink { WeeklyMealPlannerView() } label: { Label("Plan the week", systemImage: "calendar") }.frame(minHeight: 44).accessibilityIdentifier("meals.week")
+                NavigationLink { WeeklyMealPlannerView(start: day) } label: { Label("Plan the week", systemImage: "calendar") }.frame(minHeight: 44).accessibilityIdentifier("meals.week")
                 NavigationLink("View saved meal plans") { PlanningListView(kind: .meal, initialDay: day) }.frame(minHeight: 44)
-                Button("Add meal manually") { draft = EntryDraft(kind: .meal, date: day) }.frame(minHeight: 44)
             }.padding(20).frame(maxWidth: 1000).frame(maxWidth: .infinity)
         }.background(AppTheme.canvas).tint(accent)
             .toolbar { ToolbarItemGroup(placement: .keyboard) { Spacer(); Button("Done") { contextFocused = false }.accessibilityIdentifier("meals.keyboardDone") } }
@@ -112,7 +115,13 @@ struct MealIdeasView: View {
             .onChange(of: repository.household?.id) { _, _ in reset(); draft = nil }
             .onDisappear { generation?.cancel(); generating = false }
             .saveError($error)
-            .onChange(of: result != nil) { _, ready in if ready { scroll.scrollTo("meal.results", anchor: .top) } }
+            .onChange(of: result != nil) { _, ready in
+                if ready {
+                    withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.25)) {
+                        scroll.scrollTo("meal.results", anchor: .top)
+                    }
+                }
+            }
         }
     }
     private func reset() { generationID = UUID(); generation?.cancel(); generating = false; result = nil }

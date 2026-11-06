@@ -8,6 +8,8 @@ struct HomeSetupGuideView: View {
     @AppStorage private var skipped: String
     @AppStorage private var dismissed: Bool
     @State private var selected: HomeSetupStep = .pantry
+    @State private var openedStep: HomeSetupStep?
+    @State private var initialized = false
     init(householdID: UUID) {
         _completed = AppStorage(wrappedValue: "", HomeSetupProgress.storageKey(householdID: householdID, field: "completed"))
         _skipped = AppStorage(wrappedValue: "", HomeSetupProgress.storageKey(householdID: householdID, field: "skipped"))
@@ -17,7 +19,6 @@ struct HomeSetupGuideView: View {
         HomeSetupProgress(savedCompleted: completed, savedSkipped: skipped, observed: repository.setupMilestones)
     }
     var body: some View {
-        ScrollViewReader { proxy in
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 VStack(alignment: .leading, spacing: 12) {
@@ -37,7 +38,7 @@ struct HomeSetupGuideView: View {
                     Text("Optional activity \(HomeSetupStep.allCases.firstIndex(of: selected).map { $0 + 1 } ?? 1) of \(HomeSetupStep.allCases.count)").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
                     Text(selected.title).font(.system(.title2, design: .serif, weight: .regular))
                     Text(selected.explanation).font(.body).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-                    NavigationLink { destination(selected) } label: {
+                    Button { openedStep = selected } label: {
                         Label(selected.action, systemImage: selected.symbol).font(.headline).frame(minHeight: 44)
                     }.accessibilityIdentifier("guide.open.\(selected.rawValue)")
                     if progress.completed.contains(selected) {
@@ -59,7 +60,7 @@ struct HomeSetupGuideView: View {
                         Divider()
                         Button {
                             selected = step
-                            proxy.scrollTo("guide.detail", anchor: .top)
+                            openedStep = step
                         } label: {
                             HStack(alignment: .top, spacing: 12) {
                                 Image(systemName: progress.completed.contains(step) ? "checkmark.circle.fill" : "\(index + 2).circle")
@@ -70,7 +71,7 @@ struct HomeSetupGuideView: View {
                                         .font(.caption).foregroundStyle(.secondary)
                                 }
                                 Spacer(minLength: 0)
-                                if step == selected { Image(systemName: "chevron.right").accessibilityHidden(true) }
+                                Image(systemName: "chevron.right").accessibilityHidden(true)
                             }.frame(maxWidth: .infinity, minHeight: 44, alignment: .leading).padding(16).contentShape(Rectangle())
                         }.buttonStyle(.plain).accessibilityIdentifier("guide.step.\(step.rawValue)")
                             .accessibilityValue(step == selected ? "Selected" : "")
@@ -85,9 +86,15 @@ struct HomeSetupGuideView: View {
             }.padding(20).frame(maxWidth: 760).frame(maxWidth: .infinity)
         }.background(WelcomeStyle.canvas).foregroundStyle(WelcomeStyle.ink).tint(WelcomeStyle.ink)
             .navigationTitle("Getting started").navigationBarTitleDisplayMode(.inline)
-            .onAppear { rememberCompleted(); selected = progress.next ?? .pantry }
+            .navigationDestination(item: $openedStep) { step in destination(step) }
+            .onAppear {
+                rememberCompleted()
+                if !initialized {
+                    selected = progress.next ?? .pantry
+                    initialized = true
+                }
+            }
             .onChange(of: repository.setupMilestones) { _, _ in rememberCompleted() }
-        }
     }
     private func rememberCompleted() { completed = HomeSetupProgress.encode(progress.completed) }
     @ViewBuilder private func destination(_ step: HomeSetupStep) -> some View {
