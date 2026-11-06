@@ -1,0 +1,11 @@
+Version 2.0 beta: refreshed Today and consistent light/dark colours across the app.
+
+Please test:
+- Today priorities and navigation on iPhone and wider iPad/Duo layouts, including large text.
+- Home, Pantry, Shopping and Expenses controls in light and dark mode.
+- Receipt scans: compare the amount and currency with the original receipt, choose pantry items, review and confirm before saving.
+- Linking a receipt to an existing purchase without adding stock twice.
+- Existing household data after updating, offline use and relaunch.
+
+Rooms, floors, Home care and Warranties are hidden in this beta. Existing saved records are preserved.
+The new welcome video is still in production and is not included in this build.
