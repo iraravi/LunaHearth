@@ -102,9 +102,13 @@ final class LocalHouseholdRepository: HouseholdRepository {
     }
 
     func makeBackup(refresh: Bool = true) throws -> HouseholdBackup {
+        try makeRecordBackup(refresh: refresh, includingFiles: false)
+    }
+
+    func makeRecordBackup(refresh: Bool = true, includingFiles: Bool) throws -> HouseholdBackup {
         if refresh { try reload() }
         guard let household else { throw BackupError.invalidBackup }
-        guard documents.isEmpty, rooms.allSatisfy({ $0.roomPlanAssetPath == nil }) else {
+        guard includingFiles || (documents.isEmpty && rooms.allSatisfy({ $0.roomPlanAssetPath == nil })) else {
             throw BackupError.attachmentsUnsupported
         }
         var records = [try BackupCodec.record(household)]

@@ -115,7 +115,7 @@ struct OnboardingView: View {
                     .disabled(started && name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 if !started {
                     NavigationLink("Join an existing home") { JoinExistingHomeView() }.frame(minHeight: 44).accessibilityIdentifier("setup.join")
-                    NavigationLink("Restore from iCloud") { BackupView(onRestore: onCreated) }.frame(minHeight: 44).accessibilityIdentifier("setup.restore")
+                    NavigationLink("Restore a backup") { BackupView(onRestore: onCreated) }.frame(minHeight: 44).accessibilityIdentifier("setup.restore")
                 }
                 Text("Private by default · No account needed").font(.caption).foregroundStyle(WelcomeStyle.muted)
             }

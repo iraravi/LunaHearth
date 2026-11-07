@@ -398,3 +398,6 @@ Build 47 adds optional PurchaseEntry.receiptLineKey for durable receipt reconcil
 
 ### Public operational configuration (ADR 049)
 A new public CloudKit record type `LHAppConfiguration` uses a fixed `ios-current` record ID and one bounded versioned `payload` String. It describes publisher-controlled feature availability and plain text only; it is not a household entity. No householdID, member identifier, migration, backup format change, private/shared schema field or SwiftData table is introduced. Device-local UserDefaults caches the validated value and refresh timestamps. Production schema deployment and permission validation remain required separately.
+
+### Portable file backups (ADR 050)
+No SwiftData schema change. PortableBackup v1 wraps existing BackupCodec records with DocumentRecord metadata and encrypted attachment bytes. Device paths are replaced by UUID-based paths at restore; document hashes are recomputed. Files never enter SwiftData blobs. Restored homes are local-only and retain stable record IDs. Empty-store restore only; original records are never overwritten. See `PORTABLE_BACKUP_FORMAT.md`.

@@ -20,6 +20,12 @@ struct BackupView: View {
     var body: some View {
         List {
             Section {
+                NavigationLink { PortableBackupView(onRestore: onRestore) } label: {
+                    Label("Encrypted file backup", systemImage: "lock.doc")
+                }.accessibilityIdentifier("backup.file")
+                Text("Export or restore without iCloud. Keep a password-protected copy on a computer or external drive.").font(.footnote).foregroundStyle(.secondary)
+            }
+            Section {
                 ScreenIntro(eyebrow: "Private iCloud storage", title: "A copy of home.",
                             subtitle: "Save a backup to your Apple Account, then restore it when setting up another device.")
                     .padding(.vertical, 12)
@@ -67,7 +73,7 @@ struct BackupView: View {
                     }.accessibilityIdentifier("backup.restore").disabled(busy)
                 }
             }
-        }.hearthList().navigationTitle("iCloud backup").navigationBarTitleDisplayMode(.inline)
+        }.hearthList().navigationTitle("Backups").navigationBarTitleDisplayMode(.inline)
             .confirmationDialog("Delete private iCloud backups?", isPresented: $confirmDelete, titleVisibility: .visible) {
                 Button("Delete backups", role: .destructive) { deleteBackups() }
             } message: { Text("Permanently deletes all Nam Illam manual backup generations currently stored in this Apple Account, including older snapshots. You cannot restore them afterward. Local homes, live household sync and Apple Reminders are unchanged.") }

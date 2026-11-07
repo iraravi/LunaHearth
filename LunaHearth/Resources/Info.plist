@@ -12,6 +12,16 @@
     <key>CFBundleName</key><string>$(PRODUCT_NAME)</string>
     <key>CFBundlePackageType</key><string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
     <key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
+    <key>UTExportedTypeDeclarations</key>
+    <array><dict>
+        <key>UTTypeIdentifier</key><string>com.neuralluna.household-backup</string>
+        <key>UTTypeDescription</key><string>Encrypted household backup</string>
+        <key>UTTypeConformsTo</key><array><string>public.data</string></array>
+        <key>UTTypeTagSpecification</key><dict>
+            <key>public.filename-extension</key><array><string>nlbackup</string></array>
+            <key>public.mime-type</key><string>application/vnd.neuralluna.household-backup</string>
+        </dict>
+    </dict></array>
     <key>CFBundleURLTypes</key>
     <array><dict><key>CFBundleURLName</key><string>com.neuralluna.lunahearth.task</string>
     <key>CFBundleURLSchemes</key><array><string>lunahearth</string></array></dict></array>

@@ -2527,13 +2527,56 @@ final class VisualFlowTests: XCTestCase {
         }
     }
 
+    func testEncryptedBackupEntryAndPasswordConfirmation() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--dark"]
+        app.launch()
+        XCTAssertTrue(app.buttons["More"].firstMatch.waitForExistence(timeout: 15))
+        app.buttons["More"].firstMatch.tap()
+        tapVisible("more.privacy", app: app)
+        tapVisible("more.backup", app: app)
+        tapVisible("backup.file", app: app)
+        let export = app.buttons["backup.file.export"]
+        XCTAssertTrue(export.waitForExistence(timeout: 5))
+        XCTAssertFalse(export.isEnabled)
+        let password = app.secureTextFields["backup.file.password"]
+        password.tap(); password.typeText("test backup phrase")
+        XCTAssertFalse(export.isEnabled)
+        let confirmation = app.secureTextFields["backup.file.confirmPassword"]
+        confirmation.tap(); confirmation.typeText("test backup phrase")
+        XCTAssertTrue(export.isEnabled)
+        capture("Encrypted-Backup-Dark", app: app)
+        export.tap()
+        let cancel = app.buttons["Cancel"].firstMatch
+        XCTAssertTrue(cancel.waitForExistence(timeout: 15))
+        capture("Encrypted-Backup-Files-Export", app: app)
+        cancel.tap()
+        XCTAssertTrue(export.waitForExistence(timeout: 5))
+        XCTAssertFalse(export.isEnabled)
+        app.terminate()
+    }
+
+    func testEncryptedRestoreAvailableWithoutCreatingHome() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing"]
+        app.launch()
+        XCTAssertTrue(app.buttons["setup.restore"].waitForExistence(timeout: 15))
+        app.buttons["setup.restore"].tap()
+        tapVisible("backup.file", app: app)
+        XCTAssertTrue(app.buttons["backup.file.choose"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["backup.file.restore"].exists)
+        capture("Encrypted-Backup-Restore", app: app)
+        app.terminate()
+    }
+
     func testSetupRestoreAndCloudUnavailableKeepLocalHome() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready"]
         app.launch()
         XCTAssertTrue(app.buttons["setup.start"].waitForExistence(timeout: 10))
         app.buttons["setup.restore"].tap()
-        app.buttons["backup.find"].tap()
+        tapVisible("backup.find", app: app)
+        reveal(app.staticTexts["backup.status"], app: app, identifier: "backup.status")
         XCTAssertTrue(app.staticTexts["backup.status"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["backup.status"].label.contains("unavailable"))
         app.navigationBars.buttons.element(boundBy: 0).tap()
@@ -2549,8 +2592,9 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("more.privacy", app: app)
         tapVisible("more.backup", app: app)
         capture("25-iCloud-Backup", app: app)
-        app.buttons["backup.upload"].tap()
+        tapVisible("backup.upload", app: app)
         app.buttons["Save backup"].tap()
+        reveal(app.staticTexts["backup.status"], app: app, identifier: "backup.status")
         XCTAssertTrue(app.staticTexts["backup.status"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["backup.status"].label.contains("unavailable"))
         app.tabBars.buttons["Home"].tap()
