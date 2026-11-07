@@ -13,3 +13,9 @@ Internal testing only. No external beta review or public App Store submission re
 ## Public release request — November 7, 2026
 
 User authorized submission of 2.0.0 (72) for public App Store review and release. Prepared updated description, What's New and review notes in `app-store/`; these are local drafts and have not been saved to App Store Connect. The Distribution page redirected to sign-in with `authResult=FAILED`. User sign-in is required to continue creating/updating the public version, checking screenshots, selecting build 72 and submitting. No public submission has been made. Intended release setting: automatic after approval.
+
+### Signed-in continuation
+
+Created the public 2.0.0 version at `/apps/6811447245/distribution/ios/version/inflight`, selected build 72 (not 71), and saved it. Automatic release after approval is selected, with immediate release to all users and existing ratings retained. Six iPhone medium-display and six iPad 13-inch screenshots carried over; the Duo slot is empty. Screenshot content still needs validation against v2 before submission.
+
+Native coordinate interaction failed with `noWindowsAvailable`; AX clicks work but text replacement via paste/setValue did not change the fields. User asked to unlock the Mac and bring Safari forward. The new description, What's New and reviewer notes remain local drafts. No Add for Review or Submit for Review action performed.
