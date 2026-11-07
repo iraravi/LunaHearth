@@ -1,0 +1,1 @@
+Navigation improvements: open each Getting started activity and return with Back. Check that the selected activity remains selected. Try manual meal entry and cancel. Check Calendar → Family week → meal planner keeps your date. Switch tabs and rotate the device while navigating. Check dark mode, large text and Reduce Motion. Existing household data should remain unchanged.
