@@ -1,0 +1,28 @@
+A little order. More room for living.
+
+Nam Illam brings everyday household planning into one place on iPhone and iPad.
+
+YOUR DAY, IN FOCUS
+See household appointments, reminders, shopping and pantry items that need attention. Use Today, Calendar, Home and More to move between your household activities.
+
+A CONNECTED KITCHEN
+Keep a shopping list with stores, quantities and assigned buyers. When you buy something, choose whether to stock your pantry. Track amounts, low stock and the expiry dates you enter.
+
+RECEIPTS AND SPENDING
+Scan a receipt, review the extracted details and record a purchase. Choose explicitly which items should update your pantry. Keep monthly expense totals alongside your household records.
+
+PLAN WHAT TO COOK
+Explore pantry-based meal ideas and review a weekly meal plan. Add missing ingredients to shopping and check what is already on your list. Manual meal entry is also available.
+
+HELP WHEN YOU NEED IT
+Find searchable FAQs, setup guides and troubleshooting steps inside the app, including offline.
+
+OPTIONAL APPLE CONNECTIONS
+Share your home through iCloud. Choose which appointments to send to Apple Calendar, and connect selected Apple Reminders lists if you want to.
+
+LOCAL FIRST
+Core household records work offline without a Nam Illam login. On-device intelligence is an optional enhancement; availability depends on the device, OS and Apple Intelligence settings. Review extracted receipt and photo details before saving. Pantry photo recognition uses supported on-device image capabilities, with readable-label scanning and manual entry as fallbacks.
+
+iCloud sharing needs compatible Apple accounts and available iCloud storage. Expiry dates are user-entered records, not a food-safety assessment.
+
+Meal and AI suggestions can be incomplete or incorrect. Check ingredient labels, allergens and preparation instructions. The app does not assess food safety or provide medical or dietary advice. Expense totals reflect the records you save; verify them against original receipts. Sync and notifications may be delayed.

@@ -1,0 +1,5 @@
+Nam Illam 2.0.0 (72) updates the existing local-first household organizer. No app account or sign-in is required. Create a home on first launch; core manual features work offline.
+
+Suggested review: Home → Getting started → Plan a meal opens Meal ideas directly. Add a meal manually or review optional suggestions before saving. Calendar → Family week → meal planner carries the selected date. Home also opens Pantry, Shopping, Expenses and Reminders. Scan a receipt or enter an expense manually, review amounts and item names, and choose explicitly whether to update pantry items.
+
+This update redesigns Today/Home, improves adaptive layouts and navigation, and hides rooms, floors, home care and warranties while preserving existing records. No new data collection, permissions, account system or backend was introduced. Optional Apple Calendar, Reminders and iCloud sharing remain user-controlled. On-device intelligence has manual fallbacks; camera scans also support photo import. Meal suggestions are ideas, not recipes or food-safety advice.

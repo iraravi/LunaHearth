@@ -1,0 +1,9 @@
+A clearer view of your household day.
+
+• Redesigned Today and Home screens with improved layouts for wider displays.
+• More consistent light and dark appearances.
+• Getting started activities open directly, with clearer back navigation.
+• Easier manual meal entry and improved date continuity across calendar and meal planning.
+• Refined navigation for large text and Reduce Motion.
+
+This version focuses on everyday planning, pantry, shopping, meals and expenses. Room, floor, home-care and warranty screens are temporarily hidden; existing saved records are preserved.

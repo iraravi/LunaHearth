@@ -9,3 +9,7 @@ Prepared November 6, 2026 on `codex/v2-duo-redesign`, source `cd06a95` (navigati
 - Apple processing completed. Assigned build 2.0.0 (72) to the existing LunaHearth Beta internal group and verified its status is Testing, expires in 90 days. Group shows 4 testers and 17 builds. Tester device installation is not yet verified.
 
 Internal testing only. No external beta review or public App Store submission requested or performed for this build.
+
+## Public release request — November 7, 2026
+
+User authorized submission of 2.0.0 (72) for public App Store review and release. Prepared updated description, What's New and review notes in `app-store/`; these are local drafts and have not been saved to App Store Connect. The Distribution page redirected to sign-in with `authResult=FAILED`. User sign-in is required to continue creating/updating the public version, checking screenshots, selecting build 72 and submitting. No public submission has been made. Intended release setting: automatic after approval.
