@@ -19,3 +19,11 @@ User authorized submission of 2.0.0 (72) for public App Store review and release
 Created the public 2.0.0 version at `/apps/6811447245/distribution/ios/version/inflight`, selected build 72 (not 71), and saved it. Automatic release after approval is selected, with immediate release to all users and existing ratings retained. Six iPhone medium-display and six iPad 13-inch screenshots carried over; the Duo slot is empty. Screenshot content still needs validation against v2 before submission.
 
 Native coordinate interaction failed with `noWindowsAvailable`; AX clicks work but text replacement via paste/setValue did not change the fields. User asked to unlock the Mac and bring Safari forward. The new description, What's New and reviewer notes remain local drafts. No Add for Review or Submit for Review action performed.
+
+### Metadata saved and screenshot capture — November 7
+
+Saved the updated public description, What’s New and reviewer notes in App Store Connect and verified the field values. Version remains Prepare for Submission, with build 72 attached. No review submission has occurred.
+
+Captured six fresh screenshots each on iPhone 18 Pro (1206 × 2622), iPad Pro 13-inch M5 (2064 × 2752), and iPhone Duo (1398 × 2034), using the existing testAppStoreScreenshots UI test and fictional Maple House data. All three capture tests passed. Reviewed all 18 images; files in screenshots/ are unchanged simulator captures. Result bundles: /tmp/namillam-build72-store/{iphone,ipad,duo}.xcresult.
+
+Upload is still pending. Safari native pointer input reports noWindowsAvailable; the upload picker ignores keyboard navigation despite text entry having recovered temporarily. Closed the picker without removing the existing screenshots. The inherited screenshots must be replaced and all Media Manager sizes checked before Add for Review and final submission. No claims that these new screenshots are already uploaded.
