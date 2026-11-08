@@ -10,3 +10,7 @@ Archive/upload and tester assignment pending verification. No public App Store s
 ## Upload verified
 
 Archive succeeded at /tmp/NamIllam-2.0.1-Build75.xcarchive. Bundle version/build and strict signature verified. Xcode Organizer TestFlight Internal Only upload completed. App Store Connect shows 2.0.1 (75), Processing, created November 8 at 10:47 AM. Tester assignment remains pending processing.
+
+## Processing complete; assignment awaiting Mac access
+
+App Store Connect now shows build 75 Internal, Ready to Test, expires in 90 days, with no group assigned. The build link AX action did not navigate; coordinate fallback returned noWindowsAvailable. Requested unlock/Safari foreground. Do not report tester access yet. No build 75 What to Test text has been saved remotely.
