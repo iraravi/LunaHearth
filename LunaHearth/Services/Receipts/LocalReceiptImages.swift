@@ -27,6 +27,7 @@ actor LocalReceiptImages: ReceiptImageStorage {
     }
     func save(_ pages: [Data], home: UUID, purchase: UUID) throws {
         guard (1...4).contains(pages.count), pages.allSatisfy({ !$0.isEmpty && $0.count <= 1_000_000 }) else { throw ReceiptImportError.tooLarge }
+        try validateImages(pages)
         let target = url(home: home, purchase: purchase)
         try FileManager.default.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true,
             attributes: [.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication])
@@ -40,7 +41,21 @@ actor LocalReceiptImages: ReceiptImageStorage {
         guard values.isRegularFile == true, let size = values.fileSize, size <= 4_100_000 else { throw ReceiptImportError.tooLarge }
         let pages = try PropertyListDecoder().decode([Data].self, from: Data(contentsOf: target))
         guard (1...4).contains(pages.count), pages.allSatisfy({ $0.count <= 1_000_000 }) else { throw ReceiptImportError.tooLarge }
+        try validateImages(pages)
         return pages
+    }
+    private func validateImages(_ pages: [Data]) throws {
+        for page in pages {
+            guard !page.isEmpty,
+                  let source = CGImageSourceCreateWithData(page as CFData, [kCGImageSourceShouldCache: false] as CFDictionary),
+                  CGImageSourceGetType(source) as String? == UTType.jpeg.identifier,
+                  let properties = CGImageSourceCopyPropertiesAtIndex(source, 0, nil) as? [CFString: Any],
+                  let width = properties[kCGImagePropertyPixelWidth] as? Int,
+                  let height = properties[kCGImagePropertyPixelHeight] as? Int,
+                  width > 0, height > 0, width <= 1600, height <= 1600 else {
+                throw ReceiptImportError.unreadable
+            }
+        }
     }
     func removeAll() throws {
         if FileManager.default.fileExists(atPath: root.path) { try FileManager.default.removeItem(at: root) }

@@ -75,7 +75,8 @@ struct ReceiptImportView: View {
                 else if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt") {
                     #if DEBUG
                     if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-images") {
-                        let data = UIGraphicsImageRenderer(size: CGSize(width: 400, height: 600)).jpegData(withCompressionQuality: 0.65) { context in
+                        let format = UIGraphicsImageRendererFormat(); format.scale = 1
+                        let data = UIGraphicsImageRenderer(size: CGSize(width: 400, height: 600), format: format).jpegData(withCompressionQuality: 0.65) { context in
                             UIColor.white.setFill(); context.fill(CGRect(x: 0, y: 0, width: 400, height: 600))
                             ("TEST MARKET\nMilk 4.00\nTOTAL 4.00" as NSString).draw(at: CGPoint(x: 30, y: 40), withAttributes: [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 24)])
                         }
@@ -562,7 +563,8 @@ private struct ReceiptReviewRow: View {
             let context = aiContext
             let name = line.name
             let snapshot = Array(pending.prefix(60)).map { ReceiptShoppingApproval(groceryID: $0.id, receiptName: name, shoppingName: $0.name) }
-            defer { aiRequested = false }
+            // A cancelled request must not clear a replacement request's loading state.
+            defer { if !Task.isCancelled && context == aiContext { aiRequested = false } }
             do {
                 let result = try await comparer.compareReceipt(name: name, candidates: snapshot.map(\.shoppingName))
                 try Task.checkCancellation()

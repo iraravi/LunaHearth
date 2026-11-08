@@ -47,9 +47,9 @@ enum PantryVisualRules {
     static func category(_ name: String) -> PantryCategory {
         let words = visualWords(name)
         // More specific preparations take precedence over their source ingredient.
-        if !words.isDisjoint(with: ["oil", "ghee", "sugar", "jaggery", "salt", "tea", "coffee", "honey", "sauce", "vinegar", "water", "juice"]) { return .essentials }
+        if !words.isDisjoint(with: ["oil", "ghee", "sugar", "jaggery", "salt", "tea", "coffee", "honey", "sauce", "vinegar", "water", "juice", "stock", "broth", "bouillon"]) { return .essentials }
         if !words.isDisjoint(with: ["flour", "rice", "pasta", "oats", "rava", "ragi", "bread", "atta", "besan", "poha", "quinoa", "millet", "noodles"]) { return .grains }
-        if !words.isDisjoint(with: ["cumin", "coriander", "fenugreek", "mustard", "turmeric", "chilli", "chillies", "pepper", "masala", "cardamom", "cinnamon", "cloves", "tamarind"]) && !words.contains("leaves") && !words.contains("fresh") { return .spices }
+        if !words.isDisjoint(with: ["cumin", "coriander", "fenugreek", "mustard", "turmeric", "chilli", "chillies", "pepper", "masala", "cardamom", "cinnamon", "cloves", "tamarind", "seasoning", "rub"]) && !words.contains("leaves") && !words.contains("fresh") { return .spices }
         if !words.isDisjoint(with: ["dal", "lentils", "beans", "chickpea", "rajma", "peas"]) { return .pulses }
         if !words.isDisjoint(with: ["mutton", "lamb", "goat", "chicken", "beef", "pork", "turkey", "duck", "fish", "salmon", "tuna", "prawn", "prawns", "shrimp", "crab"]) && words.isDisjoint(with: ["milk", "egg", "vegan", "vegetarian", "plant", "style", "flavour", "flavor"]) { return .meat }
         if !words.isDisjoint(with: ["milk", "yogurt", "curd", "paneer", "cheese", "butter", "egg", "cream"]) { return .chilled }

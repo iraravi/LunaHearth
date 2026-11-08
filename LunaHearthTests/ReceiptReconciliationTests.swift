@@ -163,4 +163,47 @@ import Testing
         #expect(!IngredientMatching.same("Mutton", "Premium mutton leg"))
     }
 
+    @Test func twoReceiptRowsCannotClaimOneReviewedShoppingItem() throws {
+        let repo = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
+        try repo.createHousehold(name: "Home", owner: "Owner", members: [])
+        try repo.add(EntryDraft(kind: .grocery, title: "Mutton"))
+        let item = try #require(repo.groceries.first), home = try #require(repo.household?.id)
+        var lines = ReceiptRules.scan(text: "MUTTON LEG 12.00\nMUTTON CHOPS 8.00").lines
+        #expect(lines.count == 2)
+        for index in lines.indices { lines[index].groceryID = item.id }
+        #expect(throws: ReceiptImportError.changedMatch) {
+            try repo.importReceipt(lines, householdID: home, storeName: "Shop", expense: expense, receiptKey: ReceiptRules.hash("two cuts"))
+        }
+        #expect(!item.isCompleted && repo.purchases.isEmpty && repo.inventory.isEmpty && repo.expenses.isEmpty)
+    }
+
+    @Test func completedShoppingItemInvalidatesEarlierAIApprovalAtomically() throws {
+        let repo = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
+        try repo.createHousehold(name: "Home", owner: "Owner", members: [])
+        try repo.add(EntryDraft(kind: .grocery, title: "Milk"))
+        let item = try #require(repo.groceries.first), home = try #require(repo.household?.id)
+        var lines = ReceiptRules.scan(text: "BRAND WHOLE MILK 1GAL 4.00\nBananas 3.00").lines
+        lines[0].groceryID = item.id
+        lines[0].reviewedShoppingMatch = ReceiptShoppingApproval(groceryID: item.id, receiptName: lines[0].name, shoppingName: item.name)
+        item.isCompleted = true
+        try repo.context.save()
+        #expect(throws: ReceiptImportError.changedMatch) {
+            try repo.importReceipt(lines, householdID: home, storeName: "Shop", expense: expense, receiptKey: ReceiptRules.hash("stale completion"))
+        }
+        #expect(repo.purchases.isEmpty && repo.inventory.isEmpty && repo.expenses.isEmpty)
+    }
+
+    @Test func recentPurchaseWindowIncludesSevenDaysButNotEightAcrossDST() {
+        for (receiptDay, purchasedDay, included) in [
+            ("2026-03-10", "2026-03-03", true), ("2026-03-10", "2026-03-02", false),
+            ("2026-11-04", "2026-10-28", true), ("2026-11-04", "2026-10-27", false),
+            ("2026-11-04", "2026-11-11", true), ("2026-11-04", "2026-11-12", false)
+        ] {
+            let purchase = ReceiptPurchaseCandidate(id: UUID(), name: "Mutton", quantity: "", merchant: "", day: purchasedDay, alreadyLinked: false)
+            #expect(!ReceiptPurchaseMatching.candidates(name: "Premium mutton leg", day: receiptDay, purchases: [purchase]).isEmpty == included)
+        }
+        let invalid = ReceiptPurchaseCandidate(id: UUID(), name: "Milk", quantity: "", merchant: "", day: "2026-02-30", alreadyLinked: false)
+        #expect(ReceiptPurchaseMatching.candidates(name: "Milk", day: "2026-03-01", purchases: [invalid]).isEmpty)
+    }
+
 }
