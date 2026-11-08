@@ -2746,6 +2746,22 @@ final class VisualFlowTests: XCTestCase {
         capture("05-Tasks-Light", app: app)
     }
 
+    func testColorfulHomeIconsLightAndDark() {
+        for dark in [false, true] {
+            let app = XCUIApplication()
+            app.launchArguments = ["--ui-testing", "--ui-testing-pantry"] + (dark ? ["--dark"] : [])
+            app.launch()
+            app.buttons["Home"].firstMatch.tap()
+            let pantry = app.buttons["home.inventory"].firstMatch
+            reveal(pantry, app: app)
+            XCTAssertTrue(pantry.isHittable)
+            capture("Colorful-Home-\(dark ? "Dark" : "Light")", app: app)
+            pantry.tap()
+            XCTAssertTrue(app.buttons["inventory.scanReceipt"].waitForExistence(timeout: 5))
+            app.terminate()
+        }
+    }
+
     func testHomeWorkspaceDark() throws { try homeWorkspace(dark: true) }
     func testHomeWorkspaceLight() throws { try homeWorkspace(dark: false) }
 

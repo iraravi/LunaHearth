@@ -63,7 +63,7 @@ struct HomeWorkspaceDashboard: View {
 
     private func card(_ title: String, detail: String, symbol: String, color: Color) -> some View {
         HStack(alignment: .center, spacing: 14) {
-            Image(systemName: symbol).font(.title2).foregroundStyle(color).frame(width: 30).accessibilityHidden(true)
+            FeatureIllustration(symbol: symbol, size: 62)
             VStack(alignment: .leading, spacing: 6) {
                 Text(title).font(.headline)
                 Text(detail).font(.subheadline).foregroundStyle(.secondary)

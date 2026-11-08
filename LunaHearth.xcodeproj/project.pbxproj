@@ -265,6 +265,7 @@
 		F2EB42ECBCEF8B46130C40A9 /* JoinExistingHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2D41F2338C185A8A524428E /* JoinExistingHomeView.swift */; };
 		F353A9713E649DF1F9E7E2F6 /* WeeklyMealTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75D6899FF16CEE4FDFCE1863 /* WeeklyMealTests.swift */; };
 		F37708F53650196BD1CF1756 /* InventoryItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5327FB8FAF3819A6A96426 /* InventoryItem.swift */; };
+		F610AD8102648D32A6D3A0CC /* FeatureIllustration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3217099408699023C1666237 /* FeatureIllustration.swift */; };
 		F67A952CB8107E270F101DC9 /* OnDevicePantryPhotoScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1AF83B19F0153DBCA1714A /* OnDevicePantryPhotoScanner.swift */; };
 		F6BCA2F25A9F6A67639661E1 /* MealCooking.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3C291D28769E31EB42E608E /* MealCooking.swift */; };
 		F70EDDCCBFE0A0CBB3584DD3 /* MealSuggestionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14C2F9D2CB0CFB948E525F1 /* MealSuggestionTests.swift */; };
@@ -349,6 +350,7 @@
 		30C164BB99D7AC0E9BFB0ED9 /* ReceiptCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptCamera.swift; sourceTree = "<group>"; };
 		310A83244A5C8BB5D5B78466 /* ListsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListsView.swift; sourceTree = "<group>"; };
 		318F155F8335229694131EB2 /* PantryQuantityInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryQuantityInput.swift; sourceTree = "<group>"; };
+		3217099408699023C1666237 /* FeatureIllustration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureIllustration.swift; sourceTree = "<group>"; };
 		3400F6ED5E73E209DF1E9991 /* ShoppingShelfCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingShelfCard.swift; sourceTree = "<group>"; };
 		395C282EAE99A369B5CC374A /* ShoppingEntryRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingEntryRulesTests.swift; sourceTree = "<group>"; };
 		39C5C6E22BAFD1AF1008474F /* LocalHouseholdRepository+PortableBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalHouseholdRepository+PortableBackup.swift"; sourceTree = "<group>"; };
@@ -1106,6 +1108,7 @@
 			children = (
 				5AFC392E6BC44514B5A6EEF2 /* AppTheme.swift */,
 				0C0ACA03FC5DDEEFFC69AE7D /* FeatureCanvas.swift */,
+				3217099408699023C1666237 /* FeatureIllustration.swift */,
 				2BA2C7E44A2888564E51BD30 /* HearthGlass.swift */,
 				B2E1F55B96AA15E995EEBD38 /* HouseholdToggleStyle.swift */,
 				F26AEB2D3538B5A4D3BF8138 /* PurchaseFeedback.swift */,
@@ -1486,6 +1489,7 @@
 				09A6CC651E7827EB8F5EFD97 /* FamilyWeekView.swift in Sources */,
 				A89AB87000DB38DA4EA58AF9 /* FeatureAvailabilityModifier.swift in Sources */,
 				DDC4829A69DBD18EDD47380F /* FeatureCanvas.swift in Sources */,
+				F610AD8102648D32A6D3A0CC /* FeatureIllustration.swift in Sources */,
 				9F16F3AD23E4A30F0A860CDE /* ForegroundRefreshLoop.swift in Sources */,
 				60BD2068C52B27EC036E760B /* GroceryOrganizationControls.swift in Sources */,
 				7513C1444D682C68B1178B63 /* GroceryToolsSheet.swift in Sources */,

@@ -174,7 +174,7 @@ struct TodayView: View {
     private func overviewLink(_ title: String, detail: String, symbol: String, section destination: TodayWorkspaceSection) -> some View {
         Button { withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { section = destination } } label: {
             HStack(spacing: 14) {
-                Image(systemName: symbol).font(.title3).frame(width: typeSize.isAccessibilitySize ? nil : 24)
+                FeatureIllustration(symbol: symbol, size: 48)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title).font(.subheadline.weight(.semibold))
                     Text(detail).font(.caption).foregroundStyle(TodayTheme.muted)

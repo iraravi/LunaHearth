@@ -38,15 +38,15 @@ struct HomeView: View {
                         Text("Your kitchen").font(AppTheme.sectionTitle).accessibilityAddTraits(.isHeader)
                         TodayAlignedCards(columns: textSize.isAccessibilitySize ? 1 : 2) {
                             NavigationLink { InventoryView() } label: {
-                                HomeFoodTile(title: "Pantry", purpose: "What you have", count: "\(repository.inventory.filter { !$0.isUsedUp }.count) packs at home", art: "EditorialPantry", accent: InventoryTheme.accent, surface: AppTheme.surface)
+                                HomeFoodTile(title: "Pantry", purpose: "What you have", count: "\(repository.inventory.filter { !$0.isUsedUp }.count) packs at home", accent: InventoryTheme.accent, surface: AppTheme.surface)
                             }.accessibilityIdentifier("home.inventory")
                             NavigationLink { ShoppingListView() } label: {
-                                HomeFoodTile(title: "Shopping", purpose: "What to buy", count: "\(repository.groceries.filter { !$0.isCompleted }.count) items to buy", art: "WelcomeTable", accent: ShoppingTheme.accent, surface: AppTheme.surface)
+                                HomeFoodTile(title: "Shopping", purpose: "What to buy", count: "\(repository.groceries.filter { !$0.isCompleted }.count) items to buy", accent: ShoppingTheme.accent, surface: AppTheme.surface)
                             }.accessibilityIdentifier("home.shopping")
                         }
                         NavigationLink { MealIdeasView() } label: {
                             HStack(spacing: 18) {
-                                Image(systemName: "fork.knife").font(.system(size: 26, weight: .light)).foregroundStyle(AppTheme.clay).accessibilityHidden(true)
+                                FeatureIllustration(symbol: "fork.knife", size: 64)
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text("Meals").font(.title3.bold())
                                     Text("Meal ideas & plans from your pantry").font(.subheadline).foregroundStyle(.secondary)
@@ -58,7 +58,7 @@ struct HomeView: View {
                     }
                     NavigationLink { PlanningListView(kind: .task) } label: {
                         HStack(spacing: 16) {
-                            Image(systemName: "checklist").font(.title).foregroundStyle(AppTheme.slate).accessibilityHidden(true)
+                            FeatureIllustration(symbol: "checklist", size: 64)
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("Reminders").font(.title3.bold())
                                 Text("\(repository.tasks.filter { !$0.isCompleted }.count) open \(repository.tasks.filter { !$0.isCompleted }.count == 1 ? "task" : "tasks") · Your household to-dos")
@@ -90,15 +90,13 @@ private struct HomeFoodTile: View {
     let title: String
     let purpose: String
     let count: String
-    let art: String
     let accent: Color
     let surface: Color
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if !textSize.isAccessibilitySize {
-            GeometryReader { geometry in
-                Image(art).resizable().scaledToFill().frame(width: geometry.size.width, height: 110).clipped().clipShape(RoundedRectangle(cornerRadius: 16))
-            }.frame(height: 110).accessibilityHidden(true)
+            FeatureIllustration(symbol: title == "Pantry" ? "cabinet" : "basket", size: 104)
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
             Text(title).font(AppTheme.sectionTitle).foregroundStyle(accent)
             Text(purpose).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
@@ -114,7 +112,7 @@ private struct HomeUtilityTile: View {
     let accent: Color
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Image(systemName: symbol).font(.title2).foregroundStyle(accent).accessibilityHidden(true)
+            FeatureIllustration(symbol: symbol, size: 72)
             Text(title).font(.headline)
             Text(detail).font(.subheadline).foregroundStyle(.secondary)
         }.padding(20).frame(maxWidth: .infinity, minHeight: 110, alignment: .topLeading).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18)).hearthCardOutline(accent)

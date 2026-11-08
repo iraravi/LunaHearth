@@ -116,10 +116,7 @@ private struct MoreSymbol: View {
     let symbol: String
     let accent: Color
     var body: some View {
-        Image(systemName: symbol).font(.system(size: 21, weight: .medium))
-            .foregroundStyle(accent).frame(width: 44, height: 44)
-            .background(accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 13))
-            .accessibilityHidden(true)
+        FeatureIllustration(symbol: symbol, size: 44)
     }
 }
 private struct MoreDestinationRow: View {

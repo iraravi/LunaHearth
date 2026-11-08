@@ -43,12 +43,7 @@ private enum IllustrationPalette {
 struct HearthIcon: View {
     let symbol: String
     var body: some View {
-        Image(systemName: symbol)
-            .font(.title3.weight(.semibold))
-            .foregroundStyle(IllustrationPalette.color(for: symbol))
-            .frame(width: 46, height: 46)
-            .background(IllustrationPalette.color(for: symbol).opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
-            .accessibilityHidden(true)
+        FeatureIllustration(symbol: symbol, size: 46)
     }
 }
 
