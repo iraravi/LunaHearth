@@ -135,10 +135,6 @@ struct InventoryView: View {
         }
         let visible = matching.filter { selectedCategory == nil || InventoryShelf.category($0, hints: categoryHints) == selectedCategory }
         return Group {
-            if virtualView {
-                VirtualPantryView(items: visible, now: now, open: { editing = $0 }, add: { adding = true },
-                                  scan: { scanningReceipt = true }, tools: { showingTools = true })
-            } else {
             List {
             pantryHeader(active: active, matching: matching)
             if visible.isEmpty {
@@ -176,7 +172,9 @@ struct InventoryView: View {
                 NavigationLink { ShoppingListView() } label: { Label("Open shopping list", systemImage: "cart") }
             } footer: { Text("Dates come from the pack details you enter. Missing dates stay unknown. Inventory works offline and syncs with your home when iCloud is enabled.") }
         }
-            }
+        }
+        .fullScreenCover(isPresented: $virtualView) {
+            VirtualPantryView(items: active, exit: { virtualView = false })
         }
         .scrollContentBackground(.hidden).background(InventoryTheme.canvas).tint(InventoryTheme.accent)
         .householdHelp(.pantry)

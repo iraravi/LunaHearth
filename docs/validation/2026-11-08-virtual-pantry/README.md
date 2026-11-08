@@ -2,7 +2,11 @@
 
 Native SwiftUI optional view for Pantry, enabled by default with a persistent List/Virtual toolbar switch. The original shelf/list view, filtering, search, scan and edit workflows remain available. No root tab added.
 
-## Design and interaction
+## Current full-screen design
+
+Virtual mode is presented as a full-screen cover on compact and expansive devices. The image fills the available screen; no app rail, search, headings, item captions, badges or details panel appears. Closed doors retain the small glass window; tap anywhere on the doors to open. Inside, only actual food icons appear, and tapping one presents the existing pack editor within the cover. Small icon controls provide List, storage selection, Close, and pagination when needed. VoiceOver retains item names and quantities. Empty inventory shows empty shelves. Normal mode retains search, add, receipt scanning and other workflows. Virtual mode browses active packs without inheriting hidden normal-view filters.
+
+## Earlier design and interaction (superseded by full-screen layout)
 
 Bundled generated photorealistic empty refrigerator interior, overlaid with saved item illustrations and labels; empty sections contain no demonstration groceries. Native metallic doors start closed. Tap Open fridge/freezer to reveal saved contents with brief translucent cold mist; Close hides contents and clears the selected pack. Changing storage sections resets the doors to closed. No repeating movie, particle timer or remote rendering. Reduce Motion preserves explicit opening/closing but skips animation/mist; accessibility text uses a scalable item list instead of fixed-size shelf labels. Tap a pack to edit on compact screens, or inspect it in the right-hand detail panel on wide layouts. The detail panel links to existing quantity, restock and used-up controls in the pack editor.
 
@@ -37,3 +41,7 @@ Follow-up validation passed: 332 Swift Testing tests plus performance XCTest; al
 The right-hand closed fridge/freezer door has a small tinted window with a metallic border and reflective highlight. It renders up to three actual saved food icons as a decorative preview; no item controls are exposed until opening. Empty inventory produces an empty window. Uses bundled artwork and SwiftUI, without networking, permissions or additional assets. Reviewed active Duo display screenshot: `duo-closed-glass.png`.
 
 Glass-window validation: simulator build passed; 332 Swift Testing tests, performance XCTest, and Duo light/dark open-close/edit/list UI flows passed. Result: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-35-46--0600.xcresult`.
+
+## Full-screen validation
+
+XcodeGen and simulator build passed. All 332 Swift Testing tests plus performance XCTest passed in `/tmp/pantry-full-final-tests.log`; that combined run was interrupted after a UI selector failed on duplicate underlying/foreground List buttons. The UI helper now targets the hittable foreground control. Full-screen container accessibility containment was corrected so child controls keep distinct identifiers. Final Duo light, dark, and accessibility/Reduce Motion UI runs all passed: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-45-29--0600.xcresult`. Flows cover closed/open/close/reopen, pack editing, storage menu, list exit and reentry. Active-display visual evidence: `duo-fullscreen-open.png`, `duo-fullscreen-closed.png`. This follow-up was verified on Duo; no new compact-device run or physical-device profiling. Not uploaded to TestFlight.

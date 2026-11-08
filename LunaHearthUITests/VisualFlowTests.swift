@@ -2784,7 +2784,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.inventory", app: app)
         let virtual = app.descendants(matching: .any)["inventory.virtual"].firstMatch
-        if !virtual.waitForExistence(timeout: 3) { app.buttons["inventory.viewMode"].tap() }
+        if !virtual.waitForExistence(timeout: 3) { tapVisible("inventory.viewMode", app: app) }
         XCTAssertTrue(virtual.waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["inventory.item.Milk"].exists)
         capture("Virtual-Pantry-Closed", app: app)
@@ -2801,16 +2801,14 @@ final class VisualFlowTests: XCTestCase {
         }
         XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["Cancel"].firstMatch.tap()
-        if large {
-            tapVisible("inventory.virtual.storage", app: app)
-            app.buttons["Cupboard"].firstMatch.tap()
-        } else { tapVisible("inventory.virtual.zone.cupboard", app: app) }
+        tapVisible("inventory.virtual.storage", app: app)
+        app.buttons["Cupboard"].firstMatch.tap()
         XCTAssertTrue(app.buttons["inventory.item.Rice"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["inventory.item.Milk"].exists)
-        app.buttons["inventory.viewMode"].tap()
+        tapVisible("inventory.viewMode", app: app)
         XCTAssertFalse(virtual.exists)
         XCTAssertTrue(app.buttons["inventory.scanReceipt"].waitForExistence(timeout: 5))
-        app.buttons["inventory.viewMode"].tap()
+        tapVisible("inventory.viewMode", app: app)
         XCTAssertTrue(virtual.waitForExistence(timeout: 5))
         app.terminate()
     }
