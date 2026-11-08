@@ -14,3 +14,7 @@ Archive succeeded at /tmp/NamIllam-2.0.1-Build75.xcarchive. Bundle version/build
 ## Processing complete; assignment awaiting Mac access
 
 App Store Connect now shows build 75 Internal, Ready to Test, expires in 90 days, with no group assigned. The build link AX action did not navigate; coordinate fallback returned noWindowsAvailable. Requested unlock/Safari foreground. Do not report tester access yet. No build 75 What to Test text has been saved remotely.
+
+## Internal testing verified
+
+Rebound Safari and used the internal group Builds page (AX links worked despite coordinate input failure). Selected build 75 in Add Build to Group and completed Add. Verified LunaHearth Beta: Internal Group, 4 Testers, 20 Builds, with 2.0.1 (75) Internal showing Testing and expiry in 90 days. No public submission performed. What to Test remains in the local release file; no remote text update claimed.
