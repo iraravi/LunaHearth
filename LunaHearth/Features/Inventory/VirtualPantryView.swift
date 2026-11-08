@@ -20,7 +20,7 @@ struct VirtualPantryView: View {
         GeometryReader { geometry in
             ZStack {
                 if hasDoors {
-                    Image("VirtualFridgeInterior").resizable().accessibilityHidden(true)
+                    Image("VirtualFridgeOpen").resizable().accessibilityHidden(true)
                 } else { cupboard }
                 if contentsVisible {
                     let displayed = Array(visible[VirtualPantryRules.pageRange(page: page, itemCount: visible.count)])
@@ -31,9 +31,9 @@ struct VirtualPantryView: View {
                                 .shadow(color: .black.opacity(0.2), radius: 5, y: 5)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity).contentShape(Rectangle())
                         }.buttonStyle(.plain)
-                            .frame(width: geometry.size.width * 0.24, height: geometry.size.height * 0.15)
+                            .frame(width: geometry.size.width * 0.24, height: max(44, geometry.size.height * (hasDoors ? 0.11 : 0.15)))
                             .position(x: geometry.size.width * (0.23 + Double(index % 3) * 0.27),
-                                      y: geometry.size.height * (0.23 + Double(index / 3) * 0.17))
+                                      y: geometry.size.height * ((hasDoors ? 0.15 : 0.23) + Double(index / 3) * (hasDoors ? 0.12 : 0.17)))
                             .accessibilityLabel(item.name)
                             .accessibilityValue(item.quantityText ?? "Amount not set")
                             .accessibilityIdentifier("inventory.item.\(item.name)")
@@ -44,11 +44,11 @@ struct VirtualPantryView: View {
                         .frame(height: geometry.size.height * 0.15).offset(y: geometry.size.height * 0.2)
                         .allowsHitTesting(false).accessibilityHidden(true)
                     Button(action: toggleDoors) {
-                        HStack(spacing: 1) {
+                        HStack(spacing: 0) {
                             door(left: true).rotation3DEffect(.degrees(opened ? -100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .leading)
                             door(left: false).rotation3DEffect(.degrees(opened ? 100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .trailing)
-                        }.contentShape(Rectangle())
-                    }.buttonStyle(.plain).opacity(opened ? 0 : 1)
+                        }.frame(height: geometry.size.height * 0.665).contentShape(Rectangle())
+                    }.buttonStyle(.plain).frame(maxHeight: .infinity, alignment: .top).opacity(opened ? 0 : 1)
                         .allowsHitTesting(!opened).accessibilityHidden(opened)
                         .accessibilityLabel("Open \(zone.title.lowercased())")
                         .accessibilityIdentifier("inventory.virtual.open")
@@ -110,41 +110,23 @@ struct VirtualPantryView: View {
         withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.85)) { opened.toggle() }
     }
     private func door(left: Bool) -> some View {
-        RoundedRectangle(cornerRadius: 10).fill(LinearGradient(colors: [.init(white: 0.78), .init(white: 0.96), .init(white: 0.63)], startPoint: .leading, endPoint: .trailing))
-            .overlay(alignment: left ? .trailing : .leading) {
-                Capsule().fill(.gray.gradient).frame(width: 7, height: 110).padding(14)
-            }
-            .overlay {
-                if !left {
-                    GeometryReader { geometry in
-                        doorWindow
-                            .frame(width: geometry.size.width * 0.62, height: geometry.size.height * 0.25)
-                            .position(x: geometry.size.width * 0.56, y: geometry.size.height * 0.24)
+        GeometryReader { geometry in
+            Image("VirtualFridgeClosed").resizable()
+                .frame(width: geometry.size.width * 2, height: geometry.size.height / 0.665)
+                .offset(x: left ? 0 : -geometry.size.width)
+                .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
+                .clipped()
+                .overlay {
+                    if !left {
+                        VStack(spacing: 16) {
+                            ForEach(Array(visible.prefix(3))) { item in
+                                Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
+                                    .font(.system(size: min(36, geometry.size.width * 0.12)))
+                            }
+                        }.opacity(0.38).accessibilityHidden(true)
                     }
                 }
-            }
-    }
-    /// Decorative glimpse only: no hidden item controls behind the closed door.
-    private var doorWindow: some View {
-        ZStack {
-            Image("VirtualFridgeInterior").resizable()
-            VStack(spacing: 8) {
-                ForEach(Array(visible.prefix(3))) { item in
-                    Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
-                        .font(.system(size: 20))
-                }
-            }
-            Color.black.opacity(0.3)
-            LinearGradient(stops: [.init(color: .white.opacity(0.42), location: 0),
-                                   .init(color: .clear, location: 0.42),
-                                   .init(color: .white.opacity(0.12), location: 0.48),
-                                   .init(color: .clear, location: 0.55)],
-                           startPoint: .topLeading, endPoint: .bottomTrailing)
         }
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color(white: 0.22), lineWidth: 4))
-        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(.white.opacity(0.35), lineWidth: 1))
-        .accessibilityHidden(true).allowsHitTesting(false)
     }
     private var cupboard: some View {
         GeometryReader { proxy in

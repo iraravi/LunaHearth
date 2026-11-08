@@ -45,3 +45,9 @@ Glass-window validation: simulator build passed; 332 Swift Testing tests, perfor
 ## Full-screen validation
 
 XcodeGen and simulator build passed. All 332 Swift Testing tests plus performance XCTest passed in `/tmp/pantry-full-final-tests.log`; that combined run was interrupted after a UI selector failed on duplicate underlying/foreground List buttons. The UI helper now targets the hittable foreground control. Full-screen container accessibility containment was corrected so child controls keep distinct identifiers. Final Duo light, dark, and accessibility/Reduce Motion UI runs all passed: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-45-29--0600.xcresult`. Flows cover closed/open/close/reopen, pack editing, storage menu, list exit and reentry. Active-display visual evidence: `duo-fullscreen-open.png`, `duo-fullscreen-closed.png`. This follow-up was verified on Duo; no new compact-device run or physical-device profiling. Not uploaded to TestFlight.
+
+## Realistic French-door artwork follow-up
+
+Replaced flat generated-in-code metal doors with original photorealistic closed/open assets: dark glass, dispenser, metal drawers, and empty door bins. Upper door halves animate independently; lower drawers remain decorative. Food icons are still generated from saved packs, never baked into backgrounds. Built-in imagegen prompts and asset paths are in `ARTWORK.md`. Active Duo screenshots: `duo-realistic-closed.png`, `duo-realistic-open.png`.
+
+Validation: XcodeGen/build passed; 332 Swift Testing tests, performance XCTest, and Duo light/dark full-screen UI flows passed. Result: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-50-46--0600.xcresult`. No TestFlight upload.
