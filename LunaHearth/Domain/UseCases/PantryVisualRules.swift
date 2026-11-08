@@ -83,6 +83,7 @@ enum PantryVisualRules {
             ("cucumber", "🥒", .produce), ("carrot", "🥕", .produce),
             ("garlic", "🧄", .produce), ("lemon", "🍋", .produce),
             ("egg", "🥚", .chilled), ("cheese", "🧀", .chilled),
+            ("paneer", "🧀", .chilled), ("yogurt", "🥣", .chilled), ("curd", "🥣", .chilled),
             ("butter", "🧈", .chilled), ("milk", "🥛", .chilled)
         ]
         for (word, icon, matchingCategory) in icons where category == matchingCategory {

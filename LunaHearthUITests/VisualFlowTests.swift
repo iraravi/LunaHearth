@@ -2773,6 +2773,41 @@ final class VisualFlowTests: XCTestCase {
         capture("05-Tasks-Light", app: app)
     }
 
+    func testVirtualPantryLight() { virtualPantry(dark: false, large: false) }
+    func testVirtualPantryDark() { virtualPantry(dark: true, large: false) }
+    func testVirtualPantryAccessibility() { virtualPantry(dark: true, large: true) }
+    private func virtualPantry(dark: Bool, large: Bool) {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-virtual-pantry"]
+            + (dark ? ["--dark"] : []) + (large ? ["--large-text", "--reduce-motion"] : [])
+        app.launch()
+        app.buttons["Home"].firstMatch.tap()
+        tapVisible("home.inventory", app: app)
+        let virtual = app.descendants(matching: .any)["inventory.virtual"].firstMatch
+        if !virtual.waitForExistence(timeout: 3) { app.buttons["inventory.viewMode"].tap() }
+        XCTAssertTrue(virtual.waitForExistence(timeout: 5))
+        capture("Virtual-Pantry-\(dark ? "Dark" : "Light")-\(large ? "Large" : "Standard")", app: app)
+        tapVisible("inventory.item.Milk", app: app)
+        if app.buttons["inventory.virtual.edit"].waitForExistence(timeout: 2) {
+            capture("Virtual-Pantry-Selected-Pack", app: app)
+            app.buttons["inventory.virtual.edit"].tap()
+        }
+        XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5))
+        app.buttons["Cancel"].firstMatch.tap()
+        if large {
+            tapVisible("inventory.virtual.storage", app: app)
+            app.buttons["Cupboard"].firstMatch.tap()
+        } else { tapVisible("inventory.virtual.zone.cupboard", app: app) }
+        XCTAssertTrue(app.buttons["inventory.item.Rice"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["inventory.item.Milk"].exists)
+        app.buttons["inventory.viewMode"].tap()
+        XCTAssertFalse(virtual.exists)
+        XCTAssertTrue(app.buttons["inventory.scanReceipt"].waitForExistence(timeout: 5))
+        app.buttons["inventory.viewMode"].tap()
+        XCTAssertTrue(virtual.waitForExistence(timeout: 5))
+        app.terminate()
+    }
+
     func testColorfulHomeIconsLightAndDark() {
         for dark in [false, true] {
             let app = XCUIApplication()

@@ -17,6 +17,7 @@ struct InventoryView: View {
     @State private var editing: InventoryItem?
     @State private var search = ""
     @State private var filter = "home"
+    @AppStorage("inventory.virtualView") private var virtualView = true
     @AppStorage("inventory.shelfView") private var shelfView = true
     @State private var selectedCategory: PantryCategory?
     @State private var categoryHints: [String: PantryCategory] = [:]
@@ -133,7 +134,12 @@ struct InventoryView: View {
             IngredientMatching.matchesSearch($0.name, query: search)
         }
         let visible = matching.filter { selectedCategory == nil || InventoryShelf.category($0, hints: categoryHints) == selectedCategory }
-        return List {
+        return Group {
+            if virtualView {
+                VirtualPantryView(items: visible, now: now, open: { editing = $0 }, add: { adding = true },
+                                  scan: { scanningReceipt = true }, tools: { showingTools = true })
+            } else {
+            List {
             pantryHeader(active: active, matching: matching)
             if visible.isEmpty {
                 ContentUnavailableView(filter == "home" && search.isEmpty ? "Start with what you have" : "Nothing here yet", systemImage: "cabinet",
@@ -170,12 +176,19 @@ struct InventoryView: View {
                 NavigationLink { ShoppingListView() } label: { Label("Open shopping list", systemImage: "cart") }
             } footer: { Text("Dates come from the pack details you enter. Missing dates stay unknown. Inventory works offline and syncs with your home when iCloud is enabled.") }
         }
+            }
+        }
         .scrollContentBackground(.hidden).background(InventoryTheme.canvas).tint(InventoryTheme.accent)
         .householdHelp(.pantry)
         .navigationTitle("Groceries at home").navigationBarTitleDisplayMode(.inline)
         .searchable(text: $search, prompt: "Find an ingredient")
         .onChange(of: search) { _, _ in selectedCategory = nil }
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(virtualView ? "List view" : "Virtual pantry", systemImage: virtualView ? "list.bullet" : "refrigerator") {
+                    virtualView.toggle()
+                }.accessibilityIdentifier("inventory.viewMode")
+            }
             if !typeSize.isAccessibilitySize {
             ToolbarItem(placement: .topBarTrailing) { Button("Scan receipt", systemImage: "doc.viewfinder") { scanningReceipt = true }.labelStyle(.iconOnly).accessibilityLabel("Scan receipt").accessibilityIdentifier("inventory.scanReceipt") }
             ToolbarItem(placement: .primaryAction) { Button("Add item", systemImage: "plus") { adding = true }.labelStyle(.iconOnly).accessibilityLabel("Add inventory item").accessibilityIdentifier("inventory.add") }
