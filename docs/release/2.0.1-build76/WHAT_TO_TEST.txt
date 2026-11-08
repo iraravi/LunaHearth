@@ -1,0 +1,1 @@
+Updated native sans-serif headings and neutral icons in light and dark mode. Check Home, Today, Meals and More, including large text. Receipt review retains clear Purchase details, item-level Pantry choices and a single Save action.
