@@ -171,7 +171,10 @@ private struct MorePreferencesView: View {
             .confirmationDialog("Delete all household records on this device? This cannot be undone.", isPresented: $confirmReset, titleVisibility: .visible) {
                 #if DEBUG
                 Button("Delete Local Household", role: .destructive) {
-                    do { try repository.resetLocalData() } catch { self.error = userFacingError(error) }
+                    Task {
+                        do { try repository.resetLocalData(); try await LocalReceiptImages().removeAll() }
+                        catch { self.error = userFacingError(error) }
+                    }
                 }
                 #endif
             }

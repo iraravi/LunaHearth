@@ -1867,6 +1867,38 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertEqual(amount.value as? String, "6.48")
     }
 
+    func testOptionalReceiptImageDarkMode() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-receipt", "--ui-testing-receipt-images", "--dark"]
+        app.launch(); createHousehold(app)
+        app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
+        tapVisible("inventory.scanReceipt", app: app)
+        let keep = app.switches["receipt.keepImages"].firstMatch
+        reveal(keep, app: app)
+        XCTAssertEqual(keep.value as? String, "0")
+        keep.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
+        XCTAssertEqual(keep.value as? String, "1")
+        capture("Receipt-Image-OptIn-Dark", app: app)
+        app.buttons["receipt.confirm"].tap()
+        app.buttons["receipt.saveWithoutInventory"].firstMatch.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 10))
+        tapVisible("receipt.purchaseDetails", app: app)
+        tapVisible("purchase.receiptImages", app: app)
+        XCTAssertTrue(app.buttons["Open receipt image"].waitForExistence(timeout: 10))
+        app.buttons["Open receipt image"].tap()
+        XCTAssertTrue(app.navigationBars["Receipt image"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Zoom in"].exists)
+        app.buttons["Zoom in"].tap()
+        XCTAssertTrue(app.buttons["Fit to screen"].exists)
+        app.buttons["Fit to screen"].tap()
+        capture("Receipt-Saved-Image", app: app)
+        app.buttons["Done"].firstMatch.tap()
+        tapVisible("Remove saved image", app: app)
+        app.buttons["Remove image"].firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["No saved receipt image"].waitForExistence(timeout: 5))
+        app.terminate()
+    }
+
     func testReceiptReviewAndImport() { receiptReview(largeText: false) }
     func testReceiptReviewDarkMode() { receiptReview(largeText: false, dark: true) }
     func testReceiptReviewLargeText() { receiptReview(largeText: true) }

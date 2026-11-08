@@ -19,10 +19,17 @@ struct ReceiptImportView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var textSize
+    @State private var receiptImages: [Data] = []
+    @State private var keepImages = false
+    @State private var previewIncomplete = false
+    @State private var savingImages = false
+    @State private var imageSaveID: UUID?
+    @State private var showingImages = false
+    private let imageStorage: any ReceiptImageStorage = LocalReceiptImages()
     @State private var photos: [PhotosPickerItem] = []
     @State private var camera = false
     @State private var scanSession = ReceiptScanSession()
-    private var busy: Bool { scanSession.isReading }
+    private var busy: Bool { scanSession.isReading || savingImages }
     @State private var lines: [ReceiptLine] = []
     @State private var sourceText = ""
     @State private var store = ""
@@ -46,6 +53,91 @@ struct ReceiptImportView: View {
 
     var body: some View {
         NavigationStack {
+            styledReceiptList
+            .sheet(isPresented: $camera) {
+                ReceiptCamera(completed: { data in camera = false; startCameraScan(data) },
+                    failed: { message in camera = false; error = message }, cancelled: { camera = false })
+            }
+            .onChange(of: recordingExpense) { _, enabled in if !enabled { for index in lines.indices { lines[index].amount = "" } } }
+            .onChange(of: photos) { _, value in startPhotoScan(value) }
+            .sheet(isPresented: $showingImages) { ReceiptImageViewer(pages: receiptImages) }
+            .interactiveDismissDisabled(savingImages)
+            .task(id: imageSaveID) {
+                guard let id = imageSaveID else { return }
+                defer { savingImages = false; imageSaveID = nil }
+                do { try await imageStorage.save(receiptImages, home: householdID, purchase: id) }
+                catch { self.error = "Purchase saved, but its image could not be stored. Your original photo is unchanged. Free some storage and scan it again if you want to keep a copy." }
+            }
+            .onDisappear { scanSession.cancel(); cancelDecoding() }
+            .onChange(of: repository.household?.id) { _, id in if id != householdID { dismiss() } }
+            .task {
+                if let sampleImage { expenseDraft.currency = "USD"; startScan([sampleImage]) }
+                else if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt") {
+                    #if DEBUG
+                    if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-images") {
+                        let data = UIGraphicsImageRenderer(size: CGSize(width: 400, height: 600)).jpegData(withCompressionQuality: 0.65) { context in
+                            UIColor.white.setFill(); context.fill(CGRect(x: 0, y: 0, width: 400, height: 600))
+                            ("TEST MARKET\nMilk 4.00\nTOTAL 4.00" as NSString).draw(at: CGPoint(x: 30, y: 40), withAttributes: [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 24)])
+                        }
+                        var scan = ReceiptRules.scan(text: "TEST MARKET\nMilk 4.00\nTOTAL 4.00")
+                        scan.previewImages = [data]; apply(scan); return
+                    }
+                    if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-mutton") {
+                        apply(ReceiptRules.scan(text: "TEST MARKET\nPREMIUM MUTTON LEG 12.00\nTOTAL 12.00"))
+                        return
+                    }
+                    #endif
+                    apply(ReceiptRules.scan(text: "FRESH MARKET\nCurd 3.99\n2 x Bananas 2.49\nTOTAL 6.48"))
+                }
+            }
+            .sheet(isPresented: $confirmingSave) { saveReview }
+            .alert("Receipt needs attention", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
+                Button("OK", role: .cancel) { error = nil }
+            } message: { Text(error ?? "Please try again.") }
+            #if DEBUG
+            .modifier(UITestAppearance())
+            #endif
+        }
+    }
+    private var styledReceiptList: some View {
+            receiptList
+            .contentMargins(.top, 8, for: .scrollContent).listSectionSpacing(12)
+            .scrollContentBackground(.hidden).background(ShoppingTheme.canvas).tint(ShoppingTheme.accent)
+            .householdHelp(.receipts)
+        .featureAvailability(.receipts).navigationTitle("Receipt").navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() }.disabled(savingImages) }
+                ToolbarItem(placement: .confirmationAction) {
+                    if outcome == nil && (publicStatus.configuration?.allows(.receipts) ?? true) {
+                        Button(recordingExpense ? "Save receipt" : "Add \(selected)") { reviewSave() }
+                            .disabled(sourceText.isEmpty || busy || decoding || (selected == 0 && !recordingExpense)).accessibilityIdentifier("receipt.confirm")
+                    }
+                }
+            }
+    }
+    private func startPhotoScan(_ value: [PhotosPickerItem]) {
+                guard !value.isEmpty else { return }
+                cancelDecoding()
+                scanSession.start(operation: {
+                    let scanner = VisionReceiptScanner()
+                    var pages: [String] = []
+                    var previews: [Data] = []
+                    for photo in value {
+                        try Task.checkCancellation()
+                        guard let data = try await photo.loadTransferable(type: Data.self) else { throw ReceiptImportError.unreadable }
+                        guard data.count <= 20_000_000 else { throw ReceiptImportError.tooLarge }
+                        pages.append(try await scanner.scan(imageData: data).text)
+                        if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
+                    }
+                    try Task.checkCancellation()
+                    var result = ReceiptRules.scan(text: pages.joined(separator: "\n"))
+                    result.previewImages = previews
+                    result.previewIncomplete = previews.count != pages.count
+                    return result
+                }, completed: { scan in apply(scan); photos = [] },
+                   failed: { message in error = message; photos = [] })
+    }
+    private var receiptList: some View {
             List {
                 if sourceText.isEmpty {
                 Section {
@@ -68,12 +160,12 @@ struct ReceiptImportView: View {
                             NavigationLink { PurchaseDetailView(purchaseID: savedPurchaseID) } label: { Label("View purchase", systemImage: "bag") }
                                 .accessibilityIdentifier("receipt.purchaseDetails")
                         }
-                        Button("Done") { dismiss() }
+                        Button("Done") { dismiss() }.disabled(savingImages)
                     }
                 } else {
                     if sourceText.isEmpty {
                         Section { scanControls } footer: {
-                            Text("Use up to four pages from one receipt. Photos are not retained or uploaded by Nam Illam.")
+                            Text("Use up to four pages from one receipt. Photos are kept only if you choose Keep receipt image. Saved copies stay on this device.")
                         }
                     }
                     if busy {
@@ -90,6 +182,7 @@ struct ReceiptImportView: View {
                                                currency: expenseDraft.currency,
                                                unavailableIDs: Set(lines.filter { repository.receiptLineImported($0.id) }.map(\.id)))
                         }.listRowBackground(Color.clear)
+                        imageOptions
                         Section { ReviewSafetyNotice(context: .receipt) }
                         Section {
                             Toggle("Record in Expenses", isOn: $recordingExpense).accessibilityIdentifier("receipt.recordExpense")
@@ -147,63 +240,22 @@ struct ReceiptImportView: View {
                     }
                 }
             }
-            .contentMargins(.top, 8, for: .scrollContent).listSectionSpacing(12)
-            .scrollContentBackground(.hidden).background(ShoppingTheme.canvas).tint(ShoppingTheme.accent)
-            .householdHelp(.receipts)
-        .featureAvailability(.receipts).navigationTitle("Receipt").navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
-                ToolbarItem(placement: .confirmationAction) {
-                    if outcome == nil && (publicStatus.configuration?.allows(.receipts) ?? true) {
-                        Button(recordingExpense ? "Save receipt" : "Add \(selected)") { reviewSave() }
-                            .disabled(sourceText.isEmpty || busy || decoding || (selected == 0 && !recordingExpense)).accessibilityIdentifier("receipt.confirm")
-                    }
-                }
-            }
-            .sheet(isPresented: $camera) {
-                ReceiptCamera(completed: { data in camera = false; startCameraScan(data) },
-                    failed: { message in camera = false; error = message }, cancelled: { camera = false })
-            }
-            .onChange(of: recordingExpense) { _, enabled in if !enabled { for index in lines.indices { lines[index].amount = "" } } }
-            .onChange(of: photos) { _, value in
-                guard !value.isEmpty else { return }
-                cancelDecoding()
-                scanSession.start(operation: {
-                    let scanner = VisionReceiptScanner()
-                    var pages: [String] = []
-                    for photo in value {
-                        try Task.checkCancellation()
-                        guard let data = try await photo.loadTransferable(type: Data.self) else { throw ReceiptImportError.unreadable }
-                        guard data.count <= 20_000_000 else { throw ReceiptImportError.tooLarge }
-                        pages.append(try await scanner.scan(imageData: data).text)
-                    }
-                    try Task.checkCancellation()
-                    return ReceiptRules.scan(text: pages.joined(separator: "\n"))
-                }, completed: { scan in apply(scan); photos = [] },
-                   failed: { message in error = message; photos = [] })
-            }
-            .onDisappear { scanSession.cancel(); cancelDecoding() }
-            .onChange(of: repository.household?.id) { _, id in if id != householdID { dismiss() } }
-            .task {
-                if let sampleImage { expenseDraft.currency = "USD"; startScan([sampleImage]) }
-                else if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt") {
-                    #if DEBUG
-                    if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-mutton") {
-                        apply(ReceiptRules.scan(text: "TEST MARKET\nPREMIUM MUTTON LEG 12.00\nTOTAL 12.00"))
-                        return
-                    }
-                    #endif
-                    apply(ReceiptRules.scan(text: "FRESH MARKET\nCurd 3.99\n2 x Bananas 2.49\nTOTAL 6.48"))
-                }
-            }
-            .sheet(isPresented: $confirmingSave) { saveReview }
-            .alert("Receipt needs attention", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
-                Button("OK", role: .cancel) { error = nil }
-            } message: { Text(error ?? "Please try again.") }
-            #if DEBUG
-            .modifier(UITestAppearance())
-            #endif
-        }
+    }
+    private var imageSizeLabel: String {
+        let count = receiptImages.reduce(0) { total, data in total + data.count }
+        return ByteCountFormatter.string(fromByteCount: Int64(count), countStyle: .file)
+    }
+    @ViewBuilder private var imageOptions: some View {
+                        if !receiptImages.isEmpty || previewIncomplete {
+                            Section("Receipt image") {
+                                Button("View scanned receipt", systemImage: "photo") { showingImages = true }.disabled(receiptImages.isEmpty)
+                                Toggle("Keep receipt image", isOn: $keepImages).disabled(selected == 0 || previewIncomplete).accessibilityIdentifier("receipt.keepImages")
+                                if previewIncomplete { Text("Some pages could not be prepared within the image limit. Scan again to save a complete copy; your extracted items are still available.").font(.caption) }
+                                if selected == 0 { Text("Select at least one purchased item to keep the image in Purchase history.").font(.caption) }
+                                Text("Compressed copy: \(imageSizeLabel). Local to this device; not shared through iCloud or included in encrypted exports. You can remove it from Purchase details.")
+                                    .font(.caption).foregroundStyle(.secondary)
+                            }
+                        }
     }
     private var saveReview: some View {
         NavigationStack {
@@ -256,13 +308,18 @@ struct ReceiptImportView: View {
             let encoder = ReceiptCameraEncoder()
             let scanner = VisionReceiptScanner()
             var pages: [String] = []
+                    var previews: [Data] = []
             for image in images {
                 try Task.checkCancellation()
                 let data = try await encoder.encode(image)
                 pages.append(try await scanner.scan(imageData: data).text)
+                        if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
             }
             try Task.checkCancellation()
-            return ReceiptRules.scan(text: pages.joined(separator: "\n"))
+            var result = ReceiptRules.scan(text: pages.joined(separator: "\n"))
+                    result.previewImages = previews
+                    result.previewIncomplete = previews.count != pages.count
+                    return result
         }, completed: { apply($0) }, failed: { error = $0 })
     }
     private func startScan(_ images: [Data]) {
@@ -274,16 +331,22 @@ struct ReceiptImportView: View {
         // Each attempt owns its scanner so cancelled Vision work cannot queue a retry behind it.
         let scanner = VisionReceiptScanner()
         var pages: [String] = []
+                    var previews: [Data] = []
         for data in images {
             try Task.checkCancellation()
             pages.append(try await scanner.scan(imageData: data).text)
+                        if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
         }
         try Task.checkCancellation()
-        return ReceiptRules.scan(text: pages.joined(separator: "\n"))
+        var result = ReceiptRules.scan(text: pages.joined(separator: "\n"))
+                    result.previewImages = previews
+                    result.previewIncomplete = previews.count != pages.count
+                    return result
     }
     private func apply(_ scan: ReceiptScan) {
         cancelDecoding(); proposals = [:]; decodeMessage = nil
         sourceText = scan.text; lines = scan.lines
+        receiptImages = scan.previewImages; keepImages = false; previewIncomplete = scan.previewIncomplete
         expenseDraft.amount = ExpenseRules.receiptTotal(scan.text) ?? ""
         expenseDraft.merchant = String(scan.text.components(separatedBy: .newlines).first?.prefix(200) ?? "")
         expenseDetails = true
@@ -338,6 +401,9 @@ struct ReceiptImportView: View {
                 expense: recordingExpense ? expenseDraft : nil, receiptKey: key)
             let purchaseID = ReceiptRules.groceryID(home: householdID, key: "purchase|" + key)
             if repository.purchases.contains(where: { $0.purchaseID == purchaseID }) { savedPurchaseID = purchaseID }
+            if keepImages && selected > 0 && !receiptImages.isEmpty {
+                savingImages = true; imageSaveID = purchaseID
+            }
             if recordingExpense {
                 if let saved = repository.expenses.first(where: { $0.receiptKey == key }) {
                     onExpenseSaved?(String(saved.day.prefix(7)), saved.currencyCode)
@@ -357,6 +423,21 @@ private struct ReceiptReviewRow: View {
     let proposal: ReceiptNameProposal?
     let alreadyImported: Bool
     @Environment(LocalHouseholdRepository.self) private var repository
+    @Environment(\.aiAvailability) private var aiAvailability
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @State private var aiRequested = false
+    @State private var aiSuggestions: [ReceiptShoppingApproval] = []
+    @State private var aiMessage: String?
+    private let comparer: any ReceiptShoppingComparisonService = OnDeviceIngredientComparisonService()
+    private var aiContext: [String] {
+        [repository.household?.id.uuidString ?? "", line.name, String(line.included), String(alreadyImported)]
+            + pending.sorted { $0.id.uuidString < $1.id.uuidString }.map { "\($0.id)|\($0.name)" }
+    }
+    private var currentAISuggestions: [ReceiptShoppingApproval] {
+        aiSuggestions.filter { suggestion in pending.contains {
+            suggestion.validates(id: $0.id, receipt: line.name, shopping: $0.name)
+        } }
+    }
     private var pending: [GroceryItem] { repository.groceries.filter { !$0.isCompleted && $0.purchaseDisposition != "inventory" && $0.receiptImportKey == nil } }
     private var shoppingMatches: [GroceryItem] { pending.filter { ReceiptPurchaseMatching.possibleMatch(receipt: line.name, requested: $0.name) } }
     private var matches: [InventoryItem] { repository.inventory.filter { InventoryRules.canRestock(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay) && IngredientMatching.same($0.name, line.name) } }
@@ -401,6 +482,25 @@ private struct ReceiptReviewRow: View {
                         }
                     }
                 }
+                if !alreadyImported && !pending.isEmpty && aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiDuplicates) ?? true) {
+                    Button(aiRequested ? "Finding matches…" : "Find matches with AI", systemImage: "sparkles") {
+                        aiRequested = true
+                    }.disabled(aiRequested).frame(minHeight: 44)
+                        .accessibilityIdentifier("receipt.aiMatch.\(line.id)")
+                    if let aiMessage { Text(aiMessage).font(.caption).foregroundStyle(.secondary) }
+                }
+                if aiRequested { Button("Cancel AI matching") { aiRequested = false }.frame(minHeight: 44) }
+                ForEach(currentAISuggestions, id: \.groceryID) { suggestion in
+                    if let item = pending.first(where: { $0.id == suggestion.groceryID }) {
+                        Button {
+                            line.reviewedShoppingMatch = suggestion
+                            line.groceryID = suggestion.groceryID
+                        } label: {
+                            Label("\(line.groceryID == item.id ? "Confirmed" : "Confirm AI match"): \(item.name) · \(repository.memberName(item.assignedMemberID))", systemImage: "sparkles")
+                        }.buttonStyle(.borderless).frame(minHeight: 44)
+                            .accessibilityIdentifier("receipt.acceptAIMatch.\(item.id)")
+                    }
+                }
                 Toggle("Add to pantry", isOn: $line.addToInventory)
                     .accessibilityIdentifier("receipt.inventory.\(line.name)")
                 Text(line.addToInventory ? (matches.isEmpty ? "New pantry item" : "Restock existing pack") : "Purchase only")
@@ -415,6 +515,10 @@ private struct ReceiptReviewRow: View {
                     .accessibilityIdentifier("receipt.quantity.\(line.id)")
                 Picker("Shopping item", selection: $line.groceryID) {
                     Text("Save as a new bought item").tag(nil as UUID?)
+                    if let approval = line.reviewedShoppingMatch, line.groceryID == approval.groceryID,
+                       !shoppingMatches.contains(where: { $0.id == approval.groceryID }) {
+                        Text("Reviewed: \(approval.shoppingName)").tag(Optional(approval.groceryID))
+                    }
                     ForEach(shoppingMatches) { item in
                         Text("\(item.name)\(item.quantityText.map { " · \($0)" } ?? "")").tag(Optional(item.id))
                     }
@@ -453,8 +557,27 @@ private struct ReceiptReviewRow: View {
             }
         }
         .listRowBackground(ShoppingTheme.surface)
+        .task(id: aiRequested ? aiContext : []) {
+            guard aiRequested else { return }
+            let context = aiContext
+            let name = line.name
+            let snapshot = Array(pending.prefix(60)).map { ReceiptShoppingApproval(groceryID: $0.id, receiptName: name, shoppingName: $0.name) }
+            defer { aiRequested = false }
+            do {
+                let result = try await comparer.compareReceipt(name: name, candidates: snapshot.map(\.shoppingName))
+                try Task.checkCancellation()
+                guard context == aiContext else { return }
+                aiSuggestions = IngredientComparison.validated(result.matchingIndices, count: snapshot.count).map { snapshot[$0] }
+                aiMessage = result.usedModel ? "Review each suggestion against the receipt. AI can be wrong. Up to 60 shopping items checked; quantities are not verified." : "AI is unavailable right now. Existing offline matches still work."
+                if result.usedModel && aiSuggestions.isEmpty { aiMessage = "No additional matches found. You can edit the item name or keep it as a new purchase." }
+            } catch { if !Task.isCancelled { aiMessage = "Couldn’t compare items. Try again or use the offline matches." } }
+        }
+        .onChange(of: line.groceryID) { _, id in
+            if line.reviewedShoppingMatch?.groceryID != id { line.reviewedShoppingMatch = nil }
+        }
         .onChange(of: purchaseDay) { _, _ in line.existingPurchaseID = nil; line.confirmedNewPurchase = false }
         .onChange(of: line.name) { _, name in
+            aiSuggestions = []; aiMessage = nil; line.reviewedShoppingMatch = nil
             line.existingPurchaseID = nil; line.confirmedNewPurchase = false
             let shopping = pending.filter { ReceiptPurchaseMatching.possibleMatch(receipt: name, requested: $0.name) }
             if let id = line.groceryID, !shopping.contains(where: { $0.id == id }) { line.groceryID = nil }

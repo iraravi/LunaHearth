@@ -4,6 +4,31 @@ import Testing
 @testable import LunaHearth
 
 @MainActor struct ReceiptReconciliationTests {
+    @Test func aiShoppingLinkNeedsExactReviewedSnapshotAndPreservesAssignment() throws {
+        let repo = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
+        try repo.createHousehold(name: "Home", owner: "Sam", members: [("Kim", .adult)])
+        let home = try #require(repo.household?.id)
+        let member = try #require(repo.members.first { $0.displayName == "Kim" })
+        var draft = EntryDraft(kind: .grocery, title: "Milk"); draft.memberID = member.id
+        try repo.add(draft)
+        let item = try #require(repo.groceries.first)
+        var lines = ReceiptRules.scan(text: "BRAND WHOLE MILK 1GAL 4.00").lines
+        lines[0].groceryID = item.id
+        let key = ReceiptRules.hash("ai-reviewed")
+        #expect(throws: ReceiptImportError.changedMatch) { try repo.importReceipt(lines, householdID: home, storeName: "Market", receiptKey: key) }
+        lines[0].reviewedShoppingMatch = ReceiptShoppingApproval(groceryID: item.id, receiptName: "Old receipt label", shoppingName: item.name)
+        #expect(throws: ReceiptImportError.changedMatch) { try repo.importReceipt(lines, householdID: home, storeName: "Market", receiptKey: key) }
+        lines[0].reviewedShoppingMatch = ReceiptShoppingApproval(groceryID: item.id, receiptName: lines[0].name, shoppingName: "Old shopping label")
+        #expect(throws: ReceiptImportError.changedMatch) { try repo.importReceipt(lines, householdID: home, storeName: "Market", receiptKey: key) }
+        #expect(repo.purchases.isEmpty && repo.inventory.isEmpty)
+        lines[0].reviewedShoppingMatch = ReceiptShoppingApproval(groceryID: item.id, receiptName: lines[0].name, shoppingName: item.name)
+        #expect(try repo.importReceipt(lines, householdID: home, storeName: "Market", receiptKey: key) == 1)
+        #expect(item.assignedMemberID == member.id && item.name == "Milk" && item.isCompleted)
+        #expect(repo.inventory.count == 1 && repo.purchases.count == 1)
+        #expect(try repo.importReceipt(lines, householdID: home, storeName: "Market", receiptKey: key) == 0)
+        #expect(repo.inventory.count == 1)
+    }
+
     private func setup() throws -> LocalHouseholdRepository {
         let repo = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
         try repo.createHousehold(name: "Receipt audit", owner: "Owner", members: [])

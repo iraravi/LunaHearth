@@ -47,3 +47,7 @@ Independently generated with Python `hashlib.pbkdf2_hmac('sha256', password.enco
 ## User flow
 
 More → Privacy & data → Manage backups → Encrypted file backup → password + confirmation → Export → choose Files destination. During setup: Restore a backup → Encrypted file backup → choose file → enter password → Unlock and preview → confirm Restore. Core export/import works offline; choosing a remote Files provider may require that provider's network/storage. There is no password recovery. Keep a copy off the original phone.
+
+### Optional receipt image limitation
+
+Device-local compressed receipt images introduced in November 2026 are sidecars, not DocumentRecord attachments. Version 1 portable exports do not contain these copies. Receipt review discloses this before opting in; the purchase/expense/shopping records remain exportable. Keep originals separately when retention matters.

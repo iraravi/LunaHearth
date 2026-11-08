@@ -53,6 +53,7 @@ struct InventoryShelf: View {
         case .spices: AppTheme.rose
         case .produce: AppTheme.sage
         case .chilled: AppTheme.slate
+        case .meat: AppTheme.clay
         case .essentials: AppTheme.plum
         case .other: .gray
         }

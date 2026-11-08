@@ -8,6 +8,8 @@ protocol ReceiptScanningService: Sendable {
 struct ReceiptScan: Sendable {
     let text: String
     let lines: [ReceiptLine]
+    var previewImages: [Data] = []
+    var previewIncomplete = false
 }
 
 struct ReceiptLine: Identifiable, Sendable {
@@ -20,6 +22,7 @@ struct ReceiptLine: Identifiable, Sendable {
     var addToInventory = true
     var groceryID: UUID?
     var inventoryID: UUID?
+    var reviewedShoppingMatch: ReceiptShoppingApproval?
     /// Review-only selection; a match links evidence without repeating any stock action.
     var existingPurchaseID: UUID?
     var confirmedNewPurchase = false

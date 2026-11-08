@@ -1,7 +1,7 @@
 import Foundation
 
 enum PantryCategory: String, CaseIterable, Identifiable, Codable, Sendable {
-    case grains, pulses, spices, produce, chilled, essentials, other
+    case grains, pulses, spices, produce, chilled, meat, essentials, other
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -10,6 +10,7 @@ enum PantryCategory: String, CaseIterable, Identifiable, Codable, Sendable {
         case .spices: "Spices"
         case .produce: "Fruit & vegetables"
         case .chilled: "Dairy & eggs"
+        case .meat: "Meat & seafood"
         case .essentials: "Everyday essentials"
         case .other: "Other items"
         }
@@ -21,6 +22,7 @@ enum PantryCategory: String, CaseIterable, Identifiable, Codable, Sendable {
         case .spices: "🌶️"
         case .produce: "🥬"
         case .chilled: "🥛"
+        case .meat: "🥩"
         case .essentials: "🫙"
         case .other: "📦"
         }
@@ -49,6 +51,7 @@ enum PantryVisualRules {
         if !words.isDisjoint(with: ["flour", "rice", "pasta", "oats", "rava", "ragi", "bread", "atta", "besan", "poha", "quinoa", "millet", "noodles"]) { return .grains }
         if !words.isDisjoint(with: ["cumin", "coriander", "fenugreek", "mustard", "turmeric", "chilli", "chillies", "pepper", "masala", "cardamom", "cinnamon", "cloves", "tamarind"]) && !words.contains("leaves") && !words.contains("fresh") { return .spices }
         if !words.isDisjoint(with: ["dal", "lentils", "beans", "chickpea", "rajma", "peas"]) { return .pulses }
+        if !words.isDisjoint(with: ["mutton", "lamb", "goat", "chicken", "beef", "pork", "turkey", "duck", "fish", "salmon", "tuna", "prawn", "prawns", "shrimp", "crab"]) && words.isDisjoint(with: ["milk", "egg", "vegan", "vegetarian", "plant", "style", "flavour", "flavor"]) { return .meat }
         if !words.isDisjoint(with: ["milk", "yogurt", "curd", "paneer", "cheese", "butter", "egg", "cream"]) { return .chilled }
         if !words.isDisjoint(with: ["tomato", "potato", "onion", "leaves", "cilantro", "coconut", "banana", "apple", "orange", "lemon", "carrot", "spinach", "garlic", "ginger", "grape", "strawberry", "watermelon", "mango", "pineapple", "avocado", "broccoli", "cucumber", "lettuce"]) { return .produce }
         return .other

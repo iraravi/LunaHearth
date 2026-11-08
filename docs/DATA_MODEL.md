@@ -401,3 +401,7 @@ A new public CloudKit record type `LHAppConfiguration` uses a fixed `ios-current
 
 ### Portable file backups (ADR 050)
 No SwiftData schema change. PortableBackup v1 wraps existing BackupCodec records with DocumentRecord metadata and encrypted attachment bytes. Device paths are replaced by UUID-based paths at restore; document hashes are recomputed. Files never enter SwiftData blobs. Restored homes are local-only and retain stable record IDs. Empty-store restore only; original records are never overwritten. See `PORTABLE_BACKUP_FORMAT.md`.
+
+## Optional local receipt image copies — November 2026
+
+Receipt review can retain a compressed local-only image copy outside SwiftData, under ReceiptImages/<household UUID>/<purchase UUID>.plist. This is a device-local purchase attachment, not a syncable domain entity: no CloudKit record keys or schema changes. Only explicitly selected copies persist; transient scan previews remain in memory. Purchase details loads copies on demand and removes them independently of purchase/expense/inventory records. Confirmed full local reset also removes the receipt-image directory. These sidecars are not included by PortableBackup v1 or manual CloudKit backup; the UI and privacy text disclose this. Category-only record cleanup does not currently erase sidecars; full reset/app-data removal clears remaining copies.

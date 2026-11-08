@@ -52,8 +52,10 @@ struct DangerZoneView: View {
                     .textInputAutocapitalization(.characters).autocorrectionDisabled()
                 Button("Cancel", role: .cancel) { }
                 Button("Delete & return to setup", role: .destructive) {
-                    do { try repository.resetLocalData() }
-                    catch { self.error = userFacingError(error) }
+                    Task {
+                        do { try repository.resetLocalData(); try await LocalReceiptImages().removeAll() }
+                        catch { self.error = userFacingError(error) }
+                    }
                 }.disabled(resetConfirmation != "DELETE")
             } message: {
                 Text("Type DELETE to remove all local household records on this device. iCloud backups and Apple Calendar or Reminders stay unchanged.")

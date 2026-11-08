@@ -124,6 +124,10 @@ private struct PurchaseDetailContent: View {
     }
     private func summary(_ first: PurchaseEntry) -> some View {
         VStack(alignment: .leading, spacing: 16) {
+            NavigationLink { SavedReceiptImagesView(home: first.householdID, purchase: purchaseID) } label: {
+                Label("Saved receipt image", systemImage: "photo").frame(minHeight: 44)
+            }.accessibilityIdentifier("purchase.receiptImages")
+
             HStack(alignment: .top, spacing: 12) {
                 Image(systemName: "receipt").font(.title).foregroundStyle(ExpenseTheme.accent)
                     .padding(12).background(ExpenseTheme.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 16)).accessibilityHidden(true)

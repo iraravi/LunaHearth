@@ -42,3 +42,17 @@ enum ReceiptPurchaseMatching {
         }.sorted { ($0.day, $0.id.uuidString) > ($1.day, $1.id.uuidString) }
     }
 }
+
+/// Transient confirmation bound to the exact labels reviewed, never persisted as model authority.
+struct ReceiptShoppingApproval: Sendable, Equatable {
+    let groceryID: UUID
+    let receiptName: String
+    let shoppingName: String
+    func validates(id: UUID, receipt: String, shopping: String) -> Bool {
+        groceryID == id && receiptName == receipt && shoppingName == shopping
+    }
+}
+
+protocol ReceiptShoppingComparisonService: Sendable {
+    func compareReceipt(name: String, candidates: [String]) async throws -> IngredientComparison
+}

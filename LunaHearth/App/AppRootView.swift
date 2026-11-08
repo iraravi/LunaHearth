@@ -60,6 +60,7 @@ struct AppRootView: View {
             }
         }
         .background(AppTheme.canvas).tint(AppTheme.accent)
+        .toggleStyle(HouseholdToggleStyle())
         .scrollContentBackground(.hidden)
         .task(id: scenePhase) {
             guard scenePhase == .active else { return }
