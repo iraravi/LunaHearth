@@ -58,10 +58,10 @@ struct VirtualPantryView: View {
                     }
                 }
                 if hasDoors {
-                    if coldStorage && !reduceMotion {
+                    if coldStorage && opened && !reduceMotion {
                         ZStack {
                             ForEach(0..<3) { layer in
-                                Ellipse().fill(Color(red: 0.87, green: 0.94, blue: 1).opacity(mist ? 0.6 : 0))
+                                Ellipse().fill(Color(red: 0.87, green: 0.94, blue: 1).opacity(mist ? 0.24 : 0))
                                     .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.28)
                                     .blur(radius: 25)
                                     .offset(x: Double(layer - 1) * geometry.size.width * 0.16,
@@ -102,7 +102,7 @@ struct VirtualPantryView: View {
             try? await Task.sleep(for: .milliseconds(550))
             guard !Task.isCancelled else { return }
             withAnimation(.easeInOut(duration: 0.4)) { itemsRevealed = true }
-            withAnimation(.easeOut(duration: 1.2)) { mist = false }
+            // Keep gentle mist visible until the fridge closes or the storage zone changes.
         }
         .onChange(of: zone) { _, _ in page = 0; opened = hingeState.interiorVisible ?? opened; mist = false }
         .onChange(of: visible.map(\.id)) { _, ids in

@@ -67,7 +67,7 @@ Final checks: regular iPhone 18 Pro normal-pantry UI test passed (`/tmp/NamIllam
 - Fridge and Pantry are the primary storage menu choices; Freezer and Other remain secondary so existing locations remain reachable.
 - Pantry uses original charcoal slab-door artwork and an empty warm-white fitted interior with metal shelves and pull-out baskets. No wood.
 - Food illustrations use shelf contact coordinates and contact shadows instead of centered floating placement.
-- Refrigerated zones briefly show cold mist before revealing items. Closing or changing zones cancels pending reveals. Reduce Motion skips the mist and delay.
+- Refrigerated zones show cold mist before revealing items, then retain a gentle mist while open. Closing or changing zones cancels pending reveals. Reduce Motion skips the mist and delay.
 - Inventory add/edit exposes Fridge and Pantry choices in a visible Store in section. The existing optional location field remains editable for freezer/custom storage; existing values are preserved. No schema changes or network access. Receipt review and purchase-sheet storage controls are unchanged in this follow-up.
 - Affected entity: InventoryItem.location, through the existing InventoryDraft save path. Visual posture changes never write household data.
 
