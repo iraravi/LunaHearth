@@ -10,12 +10,18 @@ struct ConnectionsView: View {
                 if connections.calendarEnabled {
                     if connections.calendarSources.isEmpty { Text("No calendars available. Refresh or check access in Settings.").foregroundStyle(.secondary) }
                     ForEach(connections.calendarSources) { source in
+                        VStack(alignment: .leading, spacing: 8) {
+                        sourceLabel(source)
                         Picker(selection: Binding(get: { connections.calendarChoices[source.id] ?? .hidden }, set: { connections.chooseCalendar(source.id, privacy: $0) })) {
-                            Text("Hidden").tag(CalendarPrivacy.hidden)
+                            Text("Not shown in app").tag(CalendarPrivacy.hidden)
                             Text("Busy only").tag(CalendarPrivacy.busyOnly)
                             Text("Event titles").tag(CalendarPrivacy.details)
-                        } label: { sourceLabel(source) }
+                        } label: { Text("Show in app") }
+                        .pickerStyle(.menu)
+                        .accessibilityLabel("Display for \(source.title), \(source.account)")
                         .accessibilityIdentifier("connections.calendar.\(source.id)")
+                        }.padding(.vertical, 8)
+                        Divider()
                     }
                     Button("Disconnect Calendar", role: .destructive) { connections.disconnect(.calendar) }
                 } else {
@@ -24,7 +30,7 @@ struct ConnectionsView: View {
                 }
                 if let error = connections.calendarError { Text(error).foregroundStyle(.secondary).accessibilityIdentifier("connections.calendar.error") }
 
-                Text("Selected events appear in Calendar on this device. Busy only hides event titles. These events are not copied into household storage or iCloud backups.").font(.footnote).foregroundStyle(.secondary)
+                Text("Sending an appointment to Apple Calendar is separate from displaying Apple calendars here. Choose Event titles or Busy only for each calendar you want to see. Selected events appear in Calendar on this device. Busy only hides event titles. These events are not copied into household storage or iCloud backups.").font(.footnote).foregroundStyle(.secondary)
             }
             SettingsDetailCard(title: "Apple Reminders", symbol: "checklist", accent: AppTheme.slate) {
                 Text("Optional access to your existing Apple lists. Household reminders and shopping live in Nam Illam and work without this connection.").font(.subheadline).foregroundStyle(.secondary)

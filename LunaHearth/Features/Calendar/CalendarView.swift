@@ -14,6 +14,7 @@ struct CalendarAgendaView: View {
     @State private var memberID: UUID?
     @State private var showingMonth = false
     @State private var settings = false
+    @State private var addingTask = false
 
     init(date: Date = .now) { _selectedDate = State(initialValue: date) }
 
@@ -22,6 +23,40 @@ struct CalendarAgendaView: View {
             let wide = geometry.size.width >= 700 && !typeSize.isAccessibilitySize
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
+                    if wide {
+                        HStack(alignment: .top, spacing: 24) {
+                            dayControls.frame(width: 280)
+                            dayAgenda(wide: true).frame(maxWidth: .infinity)
+                        }
+                    } else {
+                        dayControls
+                        dayAgenda(wide: false)
+                    }
+                }.padding(20).frame(maxWidth: 1200).frame(maxWidth: .infinity)
+            }.background(AppTheme.canvas)
+        }
+        .tint(AppTheme.slate)
+        .householdHelp(.calendar)
+        .navigationTitle("Calendar").navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            Button("Calendar settings", systemImage: "slider.horizontal.3") { settings = true }.accessibilityIdentifier("calendar.settings")
+            Button("Add appointment", systemImage: "plus") { appointmentDraft = AppointmentDraft(start: selectedDate, end: selectedDate.addingTimeInterval(3600), memberID: memberID) }.accessibilityIdentifier("calendar.add") }
+        .sheet(item: $appointmentDraft) { AppointmentEditorView(draft: $0) }
+        .sheet(isPresented: $addingTask) { QuickAddView(draft: taskDraft) }
+        .sheet(isPresented: $settings) { CalendarSettingsView() }
+        .task(id: "\(selectedDate.timeIntervalSince1970)-\(connections.revision)") { await connections.refreshEvents(on: selectedDate) }
+        .refreshable { await connections.refreshEvents(on: selectedDate) }
+    }
+
+    private var taskDraft: EntryDraft {
+        var draft = EntryDraft(kind: .task, date: selectedDate)
+        draft.memberID = memberID
+        draft.hasDate = true
+        return draft
+    }
+
+    private var dayControls: some View {
+        VStack(alignment: .leading, spacing: 20) {
                     VStack(alignment: .leading, spacing: 16) {
                         HStack(alignment: .center) {
                             VStack(alignment: .leading, spacing: 4) {
@@ -43,6 +78,8 @@ struct CalendarAgendaView: View {
                             Spacer()
                         }.hearthGlassButton() }
                         if showingMonth { monthPicker.frame(maxWidth: 420) }
+                        Button("Add a task", systemImage: "checklist") { addingTask = true }
+                            .frame(minHeight: 44).accessibilityIdentifier("calendar.addTask")
                         memberFilters
                     }
                     NavigationLink { FamilyWeekView(start: selectedDate) } label: {
@@ -50,24 +87,17 @@ struct CalendarAgendaView: View {
                             .font(.subheadline.weight(.semibold)).padding(16).frame(minHeight: 52)
                             .background(AppTheme.slate.opacity(0.07), in: RoundedRectangle(cornerRadius: 18)).contentShape(Rectangle())
                     }.buttonStyle(.plain).accessibilityIdentifier("calendar.week")
+        }
+    }
+
+    private func dayAgenda(wide: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
                     CalendarFamilyBoard(date: selectedDate, memberID: memberID, wide: wide) { id in
                         appointmentDraft = AppointmentDraft(start: selectedDate, end: selectedDate.addingTimeInterval(3600), memberID: id)
                     }
                     appleCalendars
 
-                }.padding(20).frame(maxWidth: 1200).frame(maxWidth: .infinity)
-            }.background(AppTheme.canvas)
         }
-        .tint(AppTheme.slate)
-        .householdHelp(.calendar)
-        .navigationTitle("Calendar").navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            Button("Calendar settings", systemImage: "slider.horizontal.3") { settings = true }.accessibilityIdentifier("calendar.settings")
-            Button("Add appointment", systemImage: "plus") { appointmentDraft = AppointmentDraft(start: selectedDate, end: selectedDate.addingTimeInterval(3600), memberID: memberID) }.accessibilityIdentifier("calendar.add") }
-        .sheet(item: $appointmentDraft) { AppointmentEditorView(draft: $0) }
-        .sheet(isPresented: $settings) { CalendarSettingsView() }
-        .task(id: "\(selectedDate.timeIntervalSince1970)-\(connections.revision)") { await connections.refreshEvents(on: selectedDate) }
-        .refreshable { await connections.refreshEvents(on: selectedDate) }
     }
 
     private var monthPicker: some View {
@@ -107,7 +137,8 @@ struct CalendarAgendaView: View {
 
     private var appleCalendars: some View {
         VStack(alignment: .leading, spacing: 16) {
-            DisclosureGroup {
+            VStack(alignment: .leading, spacing: 12) {
+                Label("Apple Calendar · On this device", systemImage: "calendar").font(.headline)
                 VStack(alignment: .leading, spacing: 14) {
                     NavigationLink("Choose connected calendars") { ConnectionsView() }
                         .accessibilityIdentifier("calendar.connections").frame(minHeight: 44)
@@ -125,10 +156,13 @@ struct CalendarAgendaView: View {
                                 .accessibilityIdentifier("calendar.external.\(event.id)")
                         }
                         if let error = connections.calendarError { Text(error).font(.footnote).foregroundStyle(.secondary) }
-                        else if connections.events.isEmpty { Text("No selected Apple events on this day.").foregroundStyle(.secondary) }
+                        else if connections.events.isEmpty {
+                            Text(connections.calendarChoices.values.contains { $0 != .hidden } ? "No Apple events on this day." : "Choose which Apple calendars to display. Sending an appointment to Apple does not turn on calendar display.")
+                                .foregroundStyle(.secondary)
+                        }
                     }
                 }.padding(.top, 12)
-            } label: { Label("Apple Calendar", systemImage: "calendar") }
+            }
                 .padding(18).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18))
         }
     }

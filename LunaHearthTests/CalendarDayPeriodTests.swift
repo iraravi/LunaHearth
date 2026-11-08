@@ -19,3 +19,19 @@ struct CalendarDayPeriodTests {
         #expect(CalendarDayPeriod.period(start: start, on: tomorrow, calendar: calendar) == .morning)
     }
 }
+
+struct CalendarTaskVisibilityTests {
+    @Test func backlogAndUndatedWorkAppearOnlyToday() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "America/Chicago"))
+        let now = try #require(calendar.date(from: DateComponents(year: 2026, month: 11, day: 1, hour: 12)))
+        let yesterday = try #require(calendar.date(byAdding: .day, value: -1, to: now))
+        let tomorrow = try #require(calendar.date(byAdding: .day, value: 1, to: now))
+        #expect(CalendarTaskVisibility.includes(due: yesterday, completed: false, day: now, now: now, calendar: calendar))
+        #expect(!CalendarTaskVisibility.includes(due: yesterday, completed: true, day: now, now: now, calendar: calendar))
+        #expect(CalendarTaskVisibility.includes(due: nil, completed: false, day: now, now: now, calendar: calendar))
+        #expect(!CalendarTaskVisibility.includes(due: nil, completed: false, day: tomorrow, now: now, calendar: calendar))
+        #expect(!CalendarTaskVisibility.includes(due: tomorrow, completed: false, day: now, now: now, calendar: calendar))
+        #expect(CalendarTaskVisibility.includes(due: tomorrow, completed: true, day: tomorrow, now: now, calendar: calendar))
+    }
+}

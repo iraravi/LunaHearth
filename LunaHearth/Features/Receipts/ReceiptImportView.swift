@@ -187,6 +187,12 @@ struct ReceiptImportView: View {
             .task {
                 if let sampleImage { expenseDraft.currency = "USD"; startScan([sampleImage]) }
                 else if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt") {
+                    #if DEBUG
+                    if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-mutton") {
+                        apply(ReceiptRules.scan(text: "TEST MARKET\nPREMIUM MUTTON LEG 12.00\nTOTAL 12.00"))
+                        return
+                    }
+                    #endif
                     apply(ReceiptRules.scan(text: "FRESH MARKET\nCurd 3.99\n2 x Bananas 2.49\nTOTAL 6.48"))
                 }
             }
@@ -352,6 +358,7 @@ private struct ReceiptReviewRow: View {
     let alreadyImported: Bool
     @Environment(LocalHouseholdRepository.self) private var repository
     private var pending: [GroceryItem] { repository.groceries.filter { !$0.isCompleted && $0.purchaseDisposition != "inventory" && $0.receiptImportKey == nil } }
+    private var shoppingMatches: [GroceryItem] { pending.filter { ReceiptPurchaseMatching.possibleMatch(receipt: line.name, requested: $0.name) } }
     private var matches: [InventoryItem] { repository.inventory.filter { InventoryRules.canRestock(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay) && IngredientMatching.same($0.name, line.name) } }
     private var candidates: [ReceiptPurchaseCandidate] { repository.receiptPurchaseCandidates(name: line.name, day: purchaseDay) }
     var body: some View {
@@ -382,6 +389,18 @@ private struct ReceiptReviewRow: View {
             if line.included {
                 if !candidates.isEmpty { purchaseReview }
                 if line.existingPurchaseID == nil {
+                if !shoppingMatches.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Match your shopping", systemImage: "cart").font(.headline)
+                        Text("Confirm which request this receipt fulfils. The family assignment and shopping name are kept.").font(.caption).foregroundStyle(.secondary)
+                        ForEach(shoppingMatches) { item in
+                            Button { line.groceryID = line.groceryID == item.id ? nil : item.id } label: {
+                                Label("\(item.name) · \(repository.memberName(item.assignedMemberID))", systemImage: line.groceryID == item.id ? "checkmark.circle.fill" : "circle")
+                                    .frame(minHeight: 44)
+                            }.buttonStyle(.borderless).accessibilityIdentifier("receipt.match.\(item.id)")
+                        }
+                    }
+                }
                 Toggle("Add to pantry", isOn: $line.addToInventory)
                     .accessibilityIdentifier("receipt.inventory.\(line.name)")
                 Text(line.addToInventory ? (matches.isEmpty ? "New pantry item" : "Restock existing pack") : "Purchase only")
@@ -396,7 +415,7 @@ private struct ReceiptReviewRow: View {
                     .accessibilityIdentifier("receipt.quantity.\(line.id)")
                 Picker("Shopping item", selection: $line.groceryID) {
                     Text("Save as a new bought item").tag(nil as UUID?)
-                    ForEach(pending) { item in
+                    ForEach(shoppingMatches) { item in
                         Text("\(item.name)\(item.quantityText.map { " · \($0)" } ?? "")").tag(Optional(item.id))
                     }
                 }.accessibilityIdentifier("receipt.shopping.\(line.id)")
@@ -434,17 +453,12 @@ private struct ReceiptReviewRow: View {
             }
         }
         .listRowBackground(ShoppingTheme.surface)
-        .onChange(of: line.groceryID) { _, id in
-            if let item = pending.first(where: { $0.id == id }), !IngredientMatching.same(item.name, line.name) {
-                line.name = item.name
-            }
-        }
         .onChange(of: purchaseDay) { _, _ in line.existingPurchaseID = nil; line.confirmedNewPurchase = false }
         .onChange(of: line.name) { _, name in
             line.existingPurchaseID = nil; line.confirmedNewPurchase = false
-            let shopping = pending.filter { IngredientMatching.same($0.name, name) }
+            let shopping = pending.filter { ReceiptPurchaseMatching.possibleMatch(receipt: name, requested: $0.name) }
             if let id = line.groceryID, !shopping.contains(where: { $0.id == id }) { line.groceryID = nil }
-            if line.groceryID == nil, shopping.count == 1 { line.groceryID = shopping.first?.id }
+            if line.groceryID == nil, shopping.count == 1, let item = shopping.first, IngredientMatching.same(item.name, name) { line.groceryID = item.id }
             line.inventoryID = matches.count == 1 ? matches.first?.id : nil
         }
     }
@@ -452,7 +466,7 @@ private struct ReceiptReviewRow: View {
         VStack(alignment: .leading, spacing: 10) {
             Label("Already bought?", systemImage: "bag.badge.questionmark")
                 .font(.headline)
-            Text("A recent purchase matches. Link it to avoid adding stock twice.")
+            Text("These recent purchases may match. Review the name, store and quantity before linking. Linking keeps the earlier pantry decision and avoids adding stock twice.")
                 .font(.caption).foregroundStyle(.secondary)
             ForEach(candidates) { candidate in
                 if candidate.alreadyLinked {
@@ -465,7 +479,7 @@ private struct ReceiptReviewRow: View {
                         HStack {
                             Image(systemName: line.existingPurchaseID == candidate.id ? "checkmark.circle.fill" : "circle")
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Use recorded purchase").font(.subheadline.weight(.semibold))
+                                Text("Link \(candidate.name)").font(.subheadline.weight(.semibold))
                                 Text([candidate.quantity, candidate.merchant, candidate.day].filter { !$0.isEmpty }.joined(separator: " · "))
                                     .font(.caption).foregroundStyle(.secondary)
                             }

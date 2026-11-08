@@ -12,8 +12,12 @@ extension LocalHouseholdRepository {
         try commit {
             let store = try resolveStore(draft.storeName, householdID: home)
             item.name = try HouseholdRules.requiredName(draft.name)
-            item.quantityText = draft.measuredUnit.flatMap { unit in PantryAmount.number(draft.measuredAmount).map { PantryAmount(amount: $0, unit: unit).text } } ?? InventoryRules.optional(draft.quantity);
-            if draft.measuredUnit != nil { item.isUsedUp = PantryAmount.number(draft.measuredAmount) == 0 }; item.packDetails = InventoryRules.optional(draft.packDetails)
+            if let unit = draft.measuredUnit {
+                let amount = PantryAmount.number(draft.measuredAmount)
+                item.quantityText = amount.map { PantryAmount(amount: $0, unit: unit).text }
+                if let amount { item.isUsedUp = amount == 0 }
+            } else { item.quantityText = InventoryRules.optional(draft.quantity) }
+            item.packDetails = InventoryRules.optional(draft.packDetails)
             item.storeID = store?.id; item.storeName = store?.displayName
             item.location = InventoryRules.optional(draft.location)
             item.packedDay = draft.hasPackedDate ? HouseholdDay(draft.packedDate).key : nil

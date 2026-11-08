@@ -379,6 +379,66 @@ final class VisualFlowTests: XCTestCase {
         capture("Storage-Recovery", app: app)
     }
 
+    func testReceiptMuttonLandscape() {
+        XCUIDevice.shared.orientation = .landscapeLeft
+        defer { XCUIDevice.shared.orientation = .portrait }
+        testReceiptMuttonMatchesAssignedShoppingAndNameOnlyPackSaves()
+    }
+
+    func testReceiptMuttonMatchesAssignedShoppingAndNameOnlyPackSaves() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-receipt", "--ui-testing-receipt-mutton", "--dark"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
+        tapVisible("inventory.scanReceipt", app: app)
+        let match = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "receipt.match.")).firstMatch
+        reveal(match, app: app)
+        XCTAssertTrue(match.waitForExistence(timeout: 5))
+        XCTAssertTrue(match.label.contains("Mutton"))
+        match.tap()
+        let stock = app.switches["receipt.inventory.PREMIUM MUTTON LEG"].firstMatch
+        reveal(stock, app: app)
+        stock.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
+        XCTAssertEqual(stock.value as? String, "1")
+        capture("Receipt-Mutton-Match", app: app)
+        app.buttons["receipt.confirm"].tap()
+        tapVisible("receipt.saveWithInventory", app: app)
+        XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
+        app.buttons["Close"].firstMatch.tap()
+        tapVisible("inventory.item.PREMIUM MUTTON LEG", app: app)
+        tapVisible("inventory.details", app: app)
+        tapVisible("inventory.amountUnit", app: app)
+        app.buttons["lb"].firstMatch.tap()
+        capture("Pantry-Optional-Amount", app: app)
+        app.buttons["inventory.save"].tap()
+        XCTAssertFalse(app.alerts["Couldn't save"].exists)
+        XCTAssertTrue(app.buttons["inventory.add"].waitForExistence(timeout: 5))
+    }
+
+    func testCalendarNamesAndFamilyTasksLandscape() {
+        XCUIDevice.shared.orientation = .landscapeLeft
+        defer { XCUIDevice.shared.orientation = .portrait }
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-calendar", "--ui-testing-assignments", "--ui-testing-reminder-sync", "--dark"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Calendar"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Calendar"].firstMatch.tap()
+        tapVisible("calendar.member.Ravi", app: app)
+        let task = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "task.toggle.")).firstMatch
+        reveal(task, app: app)
+        XCTAssertTrue(task.label.contains("Take bins out"))
+        capture("Calendar-Family-Tasks", app: app)
+        tapVisible("calendar.connections", app: app)
+        tapVisible("connections.calendar.connect", app: app)
+        XCTAssertTrue(app.staticTexts["Family plans"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["Test iCloud"].exists)
+        capture("Calendar-Named-Sources", app: app)
+        tapVisible("connections.calendar.test-calendar", app: app)
+        app.buttons["Event titles"].firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["Family plans"].exists)
+    }
+
     func testReceiptLinksBoughtItemWithoutRestocking() { receiptLink(largeText: false) }
     func testReceiptLinkLargeText() { receiptLink(largeText: true) }
     private func receiptLink(largeText: Bool) {

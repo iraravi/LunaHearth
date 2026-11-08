@@ -7,7 +7,7 @@ actor UITestPlanningService: ApplePlanningService, ReminderDeliveryService {
     private var items: [UUID: AppleReminder] = [:]
     func requestAccess(_ access: PlanningAccess) {}
     func sources(_ access: PlanningAccess) -> [ApplePlanningSource] {
-        access == .reminders ? [ApplePlanningSource(id: "test-list", title: "Test household", account: "Test account", writable: true)] + Array(standardLists.values) : []
+        access == .reminders ? [ApplePlanningSource(id: "test-list", title: "Test household", account: "Test account", writable: true)] + Array(standardLists.values) : [ApplePlanningSource(id: "test-calendar", title: "Family plans", account: "Test iCloud", writable: true), ApplePlanningSource(id: "test-work", title: "Work", account: "Test work account", writable: false)]
     }
     func createStandardReminderList(usingListID: String, title: String) -> ApplePlanningSource {
         let list = ApplePlanningSource(id: title, title: title, account: "Test account", writable: true)

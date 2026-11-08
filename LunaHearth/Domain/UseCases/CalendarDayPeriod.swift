@@ -20,3 +20,12 @@ enum CalendarDayPeriod: String, CaseIterable, Sendable {
         }
     }
 }
+
+/// Calendar tasks show their due day; unfinished backlog and undated work belong to Today.
+enum CalendarTaskVisibility {
+    static func includes(due: Date?, completed: Bool, day: Date, now: Date = .now, calendar: Calendar = .current) -> Bool {
+        guard let due else { return !completed && calendar.isDate(day, inSameDayAs: now) }
+        if calendar.isDate(due, inSameDayAs: day) { return true }
+        return !completed && calendar.isDate(day, inSameDayAs: now) && due < calendar.startOfDay(for: day)
+    }
+}

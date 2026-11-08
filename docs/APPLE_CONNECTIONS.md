@@ -30,3 +30,7 @@ More → Connections → Calendar offers individual calendar choices: hidden, bu
 ## Notes and sharing
 
 More → Connections → Share to Notes opens a temporary text draft. Apple's share sheet lets the user choose Notes or another destination. This does not read or synchronize the Notes library.
+
+## November 2026 calendar display correction
+
+Calendar export and calendar display are independent choices. Connections now always renders the source name and account outside the privacy picker. “Not shown in app” replaces the ambiguous standalone “Hidden” label; existing hidden/busy/details values are preserved. Choose Event titles or Busy only to display a source. The family board now includes assigned local tasks alongside appointments, with open backlog and undated tasks on Today. It does not silently import Apple Reminders or assign private Apple events to household members.

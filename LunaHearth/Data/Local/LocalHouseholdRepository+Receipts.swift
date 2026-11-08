@@ -40,7 +40,7 @@ extension LocalHouseholdRepository {
             }
             guard candidates.isEmpty || line.confirmedNewPurchase else { throw ReceiptImportError.reviewPurchase }
             if let id = line.groceryID {
-                guard pending.contains(where: { $0.id == id && IngredientMatching.same($0.name, line.name) }), claimed.insert(id).inserted else { throw ReceiptImportError.changedMatch }
+                guard pending.contains(where: { $0.id == id && ReceiptPurchaseMatching.possibleMatch(receipt: line.name, requested: $0.name) }), claimed.insert(id).inserted else { throw ReceiptImportError.changedMatch }
             }
             if let day = line.expiryDay {
                 guard ShoppingEntryRules.date(for: day) != nil else { throw InventoryError.invalidDateOrder }

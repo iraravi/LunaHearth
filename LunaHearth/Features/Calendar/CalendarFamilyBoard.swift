@@ -18,13 +18,23 @@ struct CalendarFamilyBoard: View {
         }
     }
 
+    private func tasks(for id: UUID?) -> [HouseholdTask] {
+        repository.tasks.filter { task in
+            let owner = repository.members.contains { $0.id == task.assignedMemberID } ? task.assignedMemberID : nil
+            return owner == id && CalendarTaskVisibility.includes(due: task.dueAt, completed: task.isCompleted, day: date)
+        }.sorted {
+            if $0.isCompleted != $1.isCompleted { return !$0.isCompleted }
+            return ($0.dueAt ?? .distantFuture, $0.id.uuidString) < ($1.dueAt ?? .distantFuture, $1.id.uuidString)
+        }
+    }
+
     var body: some View {
         LazyVGrid(columns: wide ? [GridItem(.adaptive(minimum: 320), spacing: 16, alignment: .top)] : [GridItem(.flexible(), alignment: .top)], alignment: .leading, spacing: 16) {
             ForEach(members) { member in
                 personColumn(name: member.displayName, id: member.id,
                              events: repository.events(on: date).filter { $0.assignedMemberID == member.id })
             }
-            if memberID == nil && (!unassigned.isEmpty || members.isEmpty) {
+            if memberID == nil && (!unassigned.isEmpty || !tasks(for: nil).isEmpty || members.isEmpty) {
                 personColumn(name: "Household", id: nil, events: unassigned)
             }
         }
@@ -32,12 +42,13 @@ struct CalendarFamilyBoard: View {
 
     private func personColumn(name: String, id: UUID?, events: [FamilyEvent]) -> some View {
         let tint = CalendarPersonStyle.color(id)
+        let assignedTasks = tasks(for: id)
         return VStack(alignment: .leading, spacing: 18) {
             HStack(spacing: 12) {
                 CalendarPersonAvatar(name: name, id: id)
                 VStack(alignment: .leading, spacing: 4) {
                     Text(name).font(.title2.weight(.semibold)).fixedSize(horizontal: false, vertical: true)
-                    Text(events.count == 1 ? "1 appointment" : "\(events.count) appointments")
+                    Text("\(events.count) plans · \(assignedTasks.filter { !$0.isCompleted }.count) open tasks")
                         .font(.caption).foregroundStyle(.secondary)
                 }.frame(maxWidth: .infinity, alignment: .leading)
                 Button { add(id) } label: {
@@ -46,12 +57,20 @@ struct CalendarFamilyBoard: View {
                 }.buttonStyle(.plain).accessibilityLabel("Add appointment for \(name)")
                     .accessibilityIdentifier("calendar.addMember.\(name)")
             }
-            if events.isEmpty {
+            if events.isEmpty && assignedTasks.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Label("An open day", systemImage: "sun.horizon").font(.headline)
-                    Text("Plans for \(name) will appear here.").font(.subheadline).foregroundStyle(.secondary)
+                    Text("Appointments and assigned tasks for \(name) appear here.").font(.subheadline).foregroundStyle(.secondary)
                 }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
                     .background(AppTheme.surface.opacity(0.75), in: RoundedRectangle(cornerRadius: 20))
+            }
+            if !assignedTasks.isEmpty {
+                Label("Tasks & reminders", systemImage: "checklist").font(.subheadline.weight(.semibold))
+                    .accessibilityAddTraits(.isHeader)
+                ForEach(assignedTasks) { task in
+                    TaskRow(task: task).padding(14).frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 16))
+                }
             }
             ForEach(CalendarDayPeriod.allCases, id: \.self) { period in
                 let appointments = events.filter { CalendarDayPeriod.period(start: $0.startAt, on: date) == period }

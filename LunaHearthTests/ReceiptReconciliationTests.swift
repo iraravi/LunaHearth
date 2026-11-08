@@ -95,4 +95,47 @@ import Testing
         #expect(ReceiptPurchaseMatching.candidates(name: "Cumin", day: "2026-09-20", purchases: [item]).isEmpty)
         #expect(ReceiptPurchaseMatching.candidates(name: "Milk", day: "2026-09-14", purchases: [item]).isEmpty)
     }
+    @Test func genericMuttonRequestLinksAfterReviewWithoutLosingAssignment() throws {
+        let repo = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
+        try repo.createHousehold(name: "Home", owner: "Alex", members: [("Sam", .adult)])
+        let home = try #require(repo.household?.id), member = try #require(repo.members.first?.id)
+        var draft = EntryDraft(kind: .grocery, title: "Mutton", memberID: member, quantity: "1 lb", storeName: "Original shop")
+        draft.quantityUnit = .custom
+        try repo.add(draft)
+        let grocery = try #require(repo.groceries.first)
+        var lines = ReceiptRules.scan(text: "PREMIUM MUTTON LEG 12.00").lines
+        #expect(lines.count == 1)
+        lines[0].groceryID = grocery.id; lines[0].addToInventory = true
+        try repo.importReceipt(lines, householdID: home, storeName: "Actual shop")
+        #expect(repo.groceries.count == 1 && grocery.isCompleted)
+        #expect(grocery.name == "Mutton" && grocery.assignedMemberID == member)
+        #expect(repo.inventory.first?.name == "PREMIUM MUTTON LEG")
+        #expect(repo.purchases.count == 1)
+        #expect(try repo.importReceipt(lines, householdID: home, storeName: "Actual shop") == 0)
+        #expect(repo.inventory.count == 1)
+    }
+
+    @Test func previouslyBoughtGenericMuttonIsOfferedWithoutDoubleStocking() throws {
+        let repo = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
+        try repo.createHousehold(name: "Home", owner: "", members: [])
+        try repo.add(EntryDraft(kind: .grocery, title: "Mutton", quantity: "1 lb"))
+        try repo.recordPurchase(try #require(repo.groceries.first), addToInventory: false)
+        var lines = ReceiptRules.scan(text: "PREMIUM MUTTON LEG 12.00").lines
+        let candidates = repo.receiptPurchaseCandidates(name: lines[0].name, day: HouseholdDay(.now).key)
+        #expect(candidates.count == 1)
+        let home = try #require(repo.household?.id)
+        #expect(throws: ReceiptImportError.reviewPurchase) { try repo.importReceipt(lines, householdID: home, storeName: "Another shop") }
+        lines[0].existingPurchaseID = candidates.first?.id
+        try repo.importReceipt(lines, householdID: home, storeName: "Another shop")
+        #expect(repo.purchases.count == 1 && repo.groceries.count == 1 && repo.inventory.isEmpty)
+    }
+
+    @Test func receiptSuggestionsKeepMeaningfulFormsAndSpeciesSeparate() {
+        #expect(ReceiptPurchaseMatching.possibleMatch(receipt: "PREMIUM MUTTON LEG", requested: "Mutton"))
+        for pair in [("Mutton leg", "Mutton chops"), ("Mutton gravy", "Mutton"), ("Mutton leg", "Lamb"), ("Cumin powder", "Cumin"), ("Almond milk", "Milk"), ("Chicken feed", "Chicken")] {
+            #expect(!ReceiptPurchaseMatching.possibleMatch(receipt: pair.0, requested: pair.1))
+        }
+        #expect(!IngredientMatching.same("Mutton", "Premium mutton leg"))
+    }
+
 }

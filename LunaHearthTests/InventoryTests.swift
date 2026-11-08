@@ -264,4 +264,24 @@ import Testing
         try reopened.reload()
         #expect(reopened.inventory.first?.sourceGroceryID == item.id)
     }
+    @Test func optionalMeasuredAmountDoesNotPreventNameOnlySave() throws {
+        let repo = try repo()
+        var draft = InventoryDraft(); draft.name = "PREMIUM MUTTON LEG"; draft.measuredUnit = .lb
+        let id = try repo.saveInventory(draft)
+        let item = try #require(repo.inventory.first)
+        #expect(item.quantityText == nil && !item.isUsedUp)
+        draft.measuredAmount = "1.5"
+        try repo.saveInventory(draft, editing: id)
+        #expect(item.quantityText == "1.5 lb")
+        draft.measuredAmount = ""
+        try repo.saveInventory(draft, editing: id)
+        #expect(item.quantityText == nil && !item.isUsedUp)
+        draft.measuredAmount = "invalid"
+        #expect(throws: MealCookingError.self) { try repo.saveInventory(draft, editing: id) }
+        #expect(item.quantityText == nil)
+        draft.measuredAmount = "0"
+        try repo.saveInventory(draft, editing: id)
+        #expect(item.isUsedUp && item.quantityText == "0 lb")
+    }
+
 }

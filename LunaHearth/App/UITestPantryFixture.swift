@@ -23,6 +23,9 @@ import Foundation
             try repository.add(EntryDraft(kind: .grocery, title: "Curd", quantity: "1 tub"))
             if let item = repository.groceries.first { try repository.recordPurchase(item, addToInventory: true) }
         }
+        if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-mutton") {
+            try repository.add(EntryDraft(kind: .grocery, title: "Mutton", memberID: repository.members.first?.id, quantity: "1 lb"))
+        }
         let milkOffset = ProcessInfo.processInfo.arguments.contains("--ui-testing-duplicate-milk") || ProcessInfo.processInfo.arguments.contains("--ui-testing-fresh-milk") ? 1 : -1
         for (name, offset, low) in [("Milk", milkOffset, false), ("Paneer", 2, false), ("Rice", 90, true)] {
             var draft = InventoryDraft(); draft.name = name; draft.quantity = name == "Rice" ? "500 g" : "1 pack"

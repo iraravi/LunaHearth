@@ -36,7 +36,7 @@ enum InventoryRules {
     }
     static func validate(_ draft: InventoryDraft) throws {
         _ = try HouseholdRules.requiredName(draft.name)
-        if draft.measuredUnit != nil, PantryAmount.number(draft.measuredAmount) == nil { throw MealCookingError.amount }
+        if draft.measuredUnit != nil, optional(draft.measuredAmount) != nil, PantryAmount.number(draft.measuredAmount) == nil { throw MealCookingError.amount }
         guard [draft.quantity, draft.packDetails, draft.storeName, draft.location].allSatisfy({ $0.count <= 200 }) else { throw InventoryError.longDetail }
         if draft.hasPackedDate && draft.hasExpiryDate,
            HouseholdDay(draft.expiryDate).key < HouseholdDay(draft.packedDate).key { throw InventoryError.invalidDateOrder }
