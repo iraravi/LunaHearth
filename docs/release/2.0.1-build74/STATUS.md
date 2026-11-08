@@ -13,3 +13,11 @@ Signed archive succeeded at /tmp/NamIllam-2.0.1-Build74.xcarchive. Verified bund
 ## Apple processing complete; assignment blocked
 
 App Store Connect now shows Build 74 Internal, Ready to Test, expires in 90 days, with no assigned group. Native coordinate input reports noWindowsAvailable; requested that user unlock Mac and bring Safari forward. Build-specific What to Test and internal LunaHearth Beta assignment have not yet been saved. Do not report testers have access until verified.
+
+## Internal distribution verified
+
+After user restored Mac access, assigned build 74 to LunaHearth Beta. Build detail showed Group (1): LunaHearth Beta, Internal, 4 testers. Returned to iOS Builds and independently verified Build 74 Internal: Testing, expires in 90 days, LunaHearth Beta, 4 invites. No public submission or external group assignment performed.
+
+Build URL: https://appstoreconnect.apple.com/teams/278f79ef-d215-47fc-82e0-b88d1239f11b/apps/6811447245/testflight/ios/be8cf66c-2213-4f03-83c0-2499271a07e9
+
+What to Test text remains local in WHAT_TO_TEST.txt: Safari text input attempts did not persist and Save stayed disabled. Tester access is verified independently; installation on tester devices has not been observed.
