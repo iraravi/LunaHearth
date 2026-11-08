@@ -10,8 +10,8 @@ enum AppTheme {
     static let cardCornerRadius: CGFloat = 18
     static let sectionSpacing: CGFloat = 16
     static let contentPadding: CGFloat = 20
-    static let displayTitle = Font.system(.largeTitle, design: .serif, weight: .regular)
-    static let sectionTitle = Font.system(.title2, design: .serif, weight: .regular)
+    static let displayTitle = Font.system(.largeTitle, design: .default, weight: .bold)
+    static let sectionTitle = Font.system(.title2, design: .default, weight: .bold)
     // Legacy semantic accent name; use blue instead of pale green for controls and labels.
     static let sage = Color("IllustrationBlue")
     static let clay = Color("IllustrationOrange")
@@ -19,27 +19,6 @@ enum AppTheme {
     static let plum = Color("IllustrationPurple")
     static let rose = Color("IllustrationCoral")
     static let ochre = Color("HearthOchre")
-}
-
-/// Decorative category accents; navigation and primary actions stay black and white.
-enum IllustrationPalette {
-    static func color(for symbol: String) -> Color {
-        Color(assetName(for: symbol))
-    }
-
-    /// Category color is decorative; the adjacent label always identifies the destination.
-    static func assetName(for symbol: String) -> String {
-        switch symbol {
-        case let value where value.contains("calendar") || value.contains("clock") || value.contains("shield"):
-            "IllustrationBlue"
-        case let value where value.contains("basket") || value.contains("cart") || value.contains("carrot") || value.contains("fork"):
-            "IllustrationOrange"
-        case let value where value.contains("chart") || value.contains("receipt") || value.contains("doc") || value.contains("book"):
-            "IllustrationPurple"
-        default:
-            "IllustrationCoral"
-        }
-    }
 }
 
 struct HearthIcon: View {
@@ -145,7 +124,7 @@ struct SummaryMetric: View {
     let symbol: String
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Image(systemName: symbol).font(.subheadline.weight(.semibold)).foregroundStyle(IllustrationPalette.color(for: symbol)).accessibilityHidden(true)
+            Image(systemName: symbol).font(.subheadline.weight(.semibold)).foregroundStyle(AppTheme.ink).accessibilityHidden(true)
             Text(count, format: .number).font(.system(.title2, design: .default, weight: .bold)).foregroundStyle(AppTheme.ink)
             Text(title).font(.caption).foregroundStyle(AppTheme.muted)
         }.frame(maxWidth: .infinity, alignment: .leading).padding(16)
