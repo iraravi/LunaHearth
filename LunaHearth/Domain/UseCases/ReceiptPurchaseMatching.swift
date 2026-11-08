@@ -15,7 +15,7 @@ enum ReceiptPurchaseMatching {
     /// A suggestion for explicit review, not interchangeable pantry identity.
     /// Only permit known qualifiers and cuts around a generic meat request.
     static func possibleMatch(receipt: String, requested: String) -> Bool {
-        if IngredientMatching.same(receipt, requested) { return true }
+        if IngredientMatching.same(receipt, requested) || ReceiptNameRules.compactMatch(receipt, requested) { return true }
         let qualifiers: Set<String> = ["premium", "fresh", "organic", "frozen"]
         func words(_ name: String) -> [String] {
             IngredientMatching.normalized(name).split(separator: " ").map(String.init).filter { !qualifiers.contains($0) }

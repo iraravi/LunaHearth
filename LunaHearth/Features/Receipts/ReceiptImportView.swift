@@ -370,6 +370,10 @@ struct ReceiptImportView: View {
     private func apply(_ scan: ReceiptScan) {
         cancelDecoding(); proposals = [:]; decodeMessage = nil
         sourceText = scan.text; lines = scan.lines
+        let savedNames = repository.groceries.map(\.name) + repository.inventory.map(\.name)
+        for line in lines {
+            if let proposal = ReceiptNameRules.savedProposal(for: line, names: savedNames) { proposals[line.id] = proposal }
+        }
         receiptImages = scan.previewImages; keepImages = false; previewIncomplete = scan.previewIncomplete
         expenseDraft.amount = ExpenseRules.receiptTotal(scan.text) ?? ""
         expenseDraft.merchant = String(scan.text.components(separatedBy: .newlines).first?.prefix(200) ?? "")
@@ -400,7 +404,9 @@ struct ReceiptImportView: View {
                 let result = try await decoder.decode(inputs)
                 try Task.checkCancellation()
                 guard decodeGeneration == generation, repository.household?.id == householdID else { return }
-                proposals = Dictionary(uniqueKeysWithValues: result.proposals.map { ($0.id, $0) })
+                for proposal in result.proposals where proposals[proposal.id]?.fromSavedItem != true {
+                    proposals[proposal.id] = proposal
+                }
                 decodeMessage = result.message
             } catch is CancellationError {} catch {
                 if decodeGeneration == generation, repository.household?.id == householdID {
@@ -469,6 +475,9 @@ private struct ReceiptItemOverview: View {
                     .frame(width: 40, height: 44).background(Color.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 VStack(alignment: .leading, spacing: 5) {
                     Text(line.name.isEmpty ? "New item" : line.name).font(.headline).foregroundStyle(.primary)
+                    if let proposal, ReceiptNameRules.canApply(proposal, to: line) {
+                        Text("Suggested: \(proposal.name)").font(.subheadline).foregroundStyle(.secondary)
+                    }
                     Text(status).font(.caption).foregroundStyle(needsReview ? Color.orange : Color.secondary)
                     if !line.quantity.isEmpty { Text(line.quantity).font(.caption).foregroundStyle(.secondary) }
                 }
@@ -535,8 +544,8 @@ private struct ReceiptReviewRow: View {
             }
             if let proposal, !alreadyImported, ReceiptNameRules.canApply(proposal, to: line) {
                 VStack(alignment: .leading, spacing: 6) {
-                    Label(proposal.name, systemImage: "sparkles").font(.headline)
-                    Text("Suggested from “\(proposal.original)”").font(.caption).foregroundStyle(.secondary)
+                    Label(proposal.name, systemImage: proposal.fromSavedItem ? "link" : "sparkles").font(.headline)
+                    Text(proposal.fromSavedItem ? "Matches a saved name. Confirm it is the same product as “\(proposal.original)”." : "Suggested from “\(proposal.original)”").font(.caption).foregroundStyle(.secondary)
                     Button("Use suggested name") { line.name = proposal.name }
                         .frame(minHeight: 44).buttonStyle(.borderless)
                         .accessibilityIdentifier("receipt.acceptName.\(line.id)")
