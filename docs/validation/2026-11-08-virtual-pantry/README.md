@@ -31,3 +31,9 @@ Final UI evidence: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-28-
 The fridge no longer opens automatically. Closed contents are removed from the interactive and accessibility item tree. Open/close controls are also available with accessibility text sizes. No data, schema, or networking changes. Simulator build passed; updated UI regression checks cover closed contents, open, close, reopen, edit, and list switching.
 
 Follow-up validation passed: 332 Swift Testing tests plus performance XCTest; all three Duo light, dark, and accessibility UI tests. Result: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-31-09--0600.xcresult`.
+
+## Closed-door glass window
+
+The right-hand closed fridge/freezer door has a small tinted window with a metallic border and reflective highlight. It renders up to three actual saved food icons as a decorative preview; no item controls are exposed until opening. Empty inventory produces an empty window. Uses bundled artwork and SwiftUI, without networking, permissions or additional assets. Reviewed active Duo display screenshot: `duo-closed-glass.png`.
+
+Glass-window validation: simulator build passed; 332 Swift Testing tests, performance XCTest, and Duo light/dark open-close/edit/list UI flows passed. Result: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-35-46--0600.xcresult`.

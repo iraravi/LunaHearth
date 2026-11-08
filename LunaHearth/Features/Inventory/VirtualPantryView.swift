@@ -185,6 +185,37 @@ struct VirtualPantryView: View {
             .overlay(alignment: left ? .trailing : .leading) {
                 Capsule().fill(.gray.gradient).frame(width: 7, height: 110).padding(14)
             }
+            .overlay {
+                if !left {
+                    GeometryReader { geometry in
+                        doorWindow
+                            .frame(width: geometry.size.width * 0.62, height: geometry.size.height * 0.25)
+                            .position(x: geometry.size.width * 0.56, y: geometry.size.height * 0.24)
+                    }
+                }
+            }
+    }
+    /// Decorative glimpse only: no hidden item controls behind the closed door.
+    private var doorWindow: some View {
+        ZStack {
+            Image("VirtualFridgeInterior").resizable().scaledToFill()
+            VStack(spacing: 8) {
+                ForEach(Array(visible.prefix(3))) { item in
+                    Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
+                        .font(.system(size: 20))
+                }
+            }
+            Color.black.opacity(0.3)
+            LinearGradient(stops: [.init(color: .white.opacity(0.42), location: 0),
+                                   .init(color: .clear, location: 0.42),
+                                   .init(color: .white.opacity(0.12), location: 0.48),
+                                   .init(color: .clear, location: 0.55)],
+                           startPoint: .topLeading, endPoint: .bottomTrailing)
+        }
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color(white: 0.22), lineWidth: 4))
+        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(.white.opacity(0.35), lineWidth: 1))
+        .accessibilityHidden(true).allowsHitTesting(false)
     }
     private var cupboard: some View {
         GeometryReader { proxy in
