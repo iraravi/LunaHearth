@@ -295,3 +295,11 @@ Receipt scan results now present a transient visual summary with the recognized 
 ## November 2026 reviewed receipt matching
 
 Receipt reconciliation now suggests known qualifier/cut variants such as PREMIUM MUTTON LEG for a generic Mutton shopping request, offline. This is a review-only candidate rule, separate from ingredient identity used for pantry merging and cooking. Non-exact links require explicit selection; different species, specific cuts and preparations are not broadly merged. Original shopping assignment/name/ID are preserved and receipt names are no longer overwritten by shopping selection. Recent bought-item candidates use the same rule and still require link-versus-new review to prevent duplicate stock. No generative model or new network processing is required.
+
+## Personal and family daily brief — November 2026
+
+Today now presents saved plans, due/overdue tasks and shopping needed now for each household member, with the selected device member first as You. Unassigned work appears under Shared home. Choose who you are reuses the existing local member preference, not authentication. Selecting yourself does not hide the family's shopping from the brief totals; personal shopping filters elsewhere remain unchanged. Completed shopping/tasks and future tasks are excluded using existing rules. Each category previews two labels with a remaining count.
+
+Affected entities are HouseholdMember, FamilyEvent, HouseholdTask and GroceryItem, read locally only. Named details render deterministically and update from the repository without AI, connectivity or extra permissions. The optional AI summary still receives only TodayBriefFacts aggregate counts; names, task titles and calendar content are not added to its prompt. No schema, CloudKit or ownership changes. Empty member sections describe only saved records, not a claim that the person is free.
+
+Validation: XcodeGen generation and iPhone 18 Pro iOS 27.2 simulator build passed; six TodayAttentionTests (including the family assignment regression) and the Today large-text/Reduce Motion navigation UI test passed. Log: /tmp/namillam-family-brief.log. No public release or TestFlight upload.

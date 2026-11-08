@@ -201,3 +201,42 @@ struct TodayPriorityItems: View {
         }.frame(maxWidth: .infinity, minHeight: 54, alignment: .leading).contentShape(Rectangle())
     }
 }
+
+/// Local presentation only. Personal labels never enter TodayBriefFacts or the model.
+@MainActor struct TodayFamilyBrief {
+    struct Person: Identifiable {
+        let id: UUID?
+        let name: String
+        let isYou: Bool
+        let plans: [String]
+        let tasks: [String]
+        let shopping: [String]
+    }
+    let people: [Person]
+    let shopping: [AssignedShoppingItem]
+
+    init(repository: LocalHouseholdRepository, selectedMemberID: UUID?, now: Date) {
+        let members = repository.members
+        let knownIDs = Set(members.map(\.id))
+        let selected = selectedMemberID.flatMap { knownIDs.contains($0) ? $0 : nil }
+        let events = repository.events(on: now).sorted { ($0.startAt, $0.id.uuidString) < ($1.startAt, $1.id.uuidString) }
+        let tasks = repository.dueTasks(on: now).sorted { ($0.dueAt ?? .distantFuture, $0.id.uuidString) < ($1.dueAt ?? .distantFuture, $1.id.uuidString) }
+        let groceries = repository.groceries.filter { !$0.isCompleted }
+        shopping = TodayAttentionRules.shopping(groceries.map {
+            AssignedShoppingItem(id: $0.id, name: $0.name, quantity: $0.quantityText ?? "", store: "", later: $0.neededLater == true, day: $0.plannedDay)
+        }, today: HouseholdDay(now).key)
+        let needed = Set(shopping.map(\.id))
+        func owner(_ id: UUID?) -> UUID? { id.flatMap { knownIDs.contains($0) ? $0 : nil } }
+        func person(_ id: UUID?, _ name: String) -> Person {
+            Person(id: id, name: name, isYou: id != nil && id == selected,
+                   plans: events.filter { owner($0.assignedMemberID) == id }.map(\.title),
+                   tasks: tasks.filter { owner($0.assignedMemberID) == id }.map(\.title),
+                   shopping: groceries.filter { needed.contains($0.id) && owner($0.assignedMemberID) == id }
+                    .sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }.map(\.name))
+        }
+        people = members.sorted {
+            if ($0.id == selected) != ($1.id == selected) { return $0.id == selected }
+            return ($0.displayName, $0.id.uuidString) < ($1.displayName, $1.id.uuidString)
+        }.map { person($0.id, $0.displayName) } + [person(nil, "Shared home")]
+    }
+}

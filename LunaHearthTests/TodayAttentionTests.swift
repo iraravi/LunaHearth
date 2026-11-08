@@ -11,6 +11,38 @@ struct TodayAttentionTests {
         TodayPantryItem(id: UUID(), name: name, expiryDay: expiry, isUsedUp: used, isLowStock: low)
     }
 
+    @MainActor @Test func familyBriefKeepsEveryoneAndSharedWorkWhenYouAreSelected() throws {
+        let repository = LocalHouseholdRepository(container: try LocalStoreConfiguration.makeContainer(inMemory: true))
+        try repository.createHousehold(name: "Home", owner: "Ravi", members: [("Kira", .adult)])
+        let ravi = try #require(repository.members.first { $0.displayName == "Ravi" })
+        let kira = try #require(repository.members.first { $0.displayName == "Kira" })
+        var grocery = EntryDraft(kind: .grocery, title: "Mutton"); grocery.memberID = kira.id
+        try repository.add(grocery)
+        try repository.add(EntryDraft(kind: .grocery, title: "Milk"))
+        let now = Date.now
+        var task = EntryDraft(kind: .task, title: "Call school")
+        task.memberID = ravi.id; task.hasDate = true; task.date = now.addingTimeInterval(-86400)
+        try repository.add(task)
+        var future = EntryDraft(kind: .task, title: "Next week")
+        future.memberID = kira.id; future.hasDate = true; future.date = now.addingTimeInterval(604800)
+        try repository.add(future)
+        var event = EntryDraft(kind: .event, title: "School pickup")
+        event.memberID = kira.id; event.date = now; event.endDate = now.addingTimeInterval(60)
+        try repository.add(event)
+        let brief = TodayFamilyBrief(repository: repository, selectedMemberID: ravi.id, now: now)
+        #expect(brief.people.first?.isYou == true)
+        #expect(brief.people.first?.tasks == ["Call school"])
+        let wife = try #require(brief.people.first { $0.id == kira.id })
+        #expect(wife.shopping == ["Mutton"])
+        #expect(wife.plans == ["School pickup"])
+        #expect(wife.tasks.isEmpty)
+        #expect(brief.people.last?.shopping == ["Milk"])
+        #expect(brief.shopping.count == 2)
+        let unknown = TodayFamilyBrief(repository: repository, selectedMemberID: UUID(), now: now)
+        #expect(!unknown.people.contains { $0.isYou })
+        #expect(unknown.shopping.count == 2)
+    }
+
     @Test func shoppingPrioritizesOverdueAndLeavesUndatedLaterAlone() {
         let items = [shopping("Now"), shopping("Tomorrow", later: true, day: "2026-09-14"),
                      shopping("Today", later: true, day: "2026-09-13"), shopping("Old", later: true, day: "2026-09-11"),

@@ -52,6 +52,7 @@ struct TodayBriefCard: View {
     @Environment(PublicConfigurationStore.self) private var publicStatus
     @Environment(\.aiAvailability) private var aiAvailability
     let facts: TodayBriefFacts
+    let family: TodayFamilyBrief
     @State private var brief: TodayBrief?
     @State private var requested = false
     @State private var running = false
@@ -60,7 +61,7 @@ struct TodayBriefCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             HStack {
-                Label("Your daily brief", systemImage: "sparkles").font(.subheadline.weight(.semibold))
+                Label("You & your family", systemImage: "sparkles").font(.subheadline.weight(.semibold))
                 Spacer(minLength: 8)
                 if aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiBriefs) ?? true) {
                 Button { requested = true } label: {
@@ -71,6 +72,27 @@ struct TodayBriefCard: View {
                     .accessibilityIdentifier("today.summarize")
                 }
             }
+            ForEach(family.people) { person in
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(person.isYou ? "You · \(person.name)" : person.name)
+                        .font(.subheadline.weight(.semibold)).accessibilityAddTraits(.isHeader)
+                    if person.plans.isEmpty && person.tasks.isEmpty && person.shopping.isEmpty {
+                        Text("No plans, due tasks or shopping saved for today.")
+                            .font(.caption).foregroundStyle(TodayTheme.muted)
+                    } else {
+                        briefLine("Plans", items: person.plans)
+                        briefLine("Due tasks", items: person.tasks)
+                        briefLine("Shopping", items: person.shopping)
+                    }
+                }.fixedSize(horizontal: false, vertical: true)
+                    .accessibilityIdentifier("today.brief.person.\(person.id?.uuidString ?? "shared")")
+            }
+            NavigationLink { PersonalShoppingView() } label: {
+                Label("Choose who you are", systemImage: "person.crop.circle")
+                    .font(.caption).frame(minHeight: 44)
+            }.accessibilityIdentifier("today.brief.identity")
+            Divider()
+            Text("Around the home").font(.subheadline.weight(.semibold))
             Text(brief?.text ?? facts.fallback).font(.subheadline).foregroundStyle(TodayTheme.muted)
                 .fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("today.briefText")
             if let brief {
@@ -91,6 +113,13 @@ struct TodayBriefCard: View {
                 } catch { if !Task.isCancelled { brief = TodayBrief(text: facts.fallback, usedModel: false) } }
             }
             .onChange(of: facts) { _, _ in brief = nil; requested = false }
+    }
+    @ViewBuilder private func briefLine(_ title: String, items: [String]) -> some View {
+        if !items.isEmpty {
+            let preview = items.prefix(2).joined(separator: "; ")
+            Text("\(title): \(preview)\(items.count > 2 ? " · +\(items.count - 2) more" : "")")
+                .font(.subheadline).foregroundStyle(TodayTheme.muted)
+        }
     }
 }
 

@@ -34,8 +34,9 @@ struct TodayView: View {
         let dueTasks = repository.dueTasks(on: now)
         let attention = TodayAttentionData(repository: repository, personal: personal, now: now)
         let day = HouseholdDay(now).key
-        let facts = TodayBriefFacts(shoppingNeededNow: attention.shopping.count,
-                                   shoppingOverdue: attention.shopping.filter { TodayAttentionRules.isOverdue($0, today: day) }.count,
+        let family = TodayFamilyBrief(repository: repository, selectedMemberID: repository.household.flatMap { personal.memberID($0.id) }, now: now)
+        let facts = TodayBriefFacts(shoppingNeededNow: family.shopping.count,
+                                   shoppingOverdue: family.shopping.filter { TodayAttentionRules.isOverdue($0, today: day) }.count,
                                    pantryDatesToCheck: attention.dates.count,
                                    pantryPastExpiry: attention.dates.filter { InventoryRules.expiryState($0.expiryDay, today: day) == .past }.count,
                                    lowStockIngredients: attention.restock.count, eventsToday: events.count,
@@ -46,7 +47,7 @@ struct TodayView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         TodayHero(now: now, household: repository.household?.name ?? "Your home", wide: wide)
                         if wide { sectionPicker(vertical: true) }
-                        if wide { TodayBriefCard(facts: facts) }
+                        if wide { TodayBriefCard(facts: facts, family: family) }
                     }.padding(.bottom, 8)
                 }
                 .scrollDisabled(!wide)
@@ -77,7 +78,7 @@ struct TodayView: View {
                         case .meals:
                             mealsCard(now: now)
                         }
-                        if !wide { TodayBriefCard(facts: facts) }
+                        if !wide { TodayBriefCard(facts: facts, family: family) }
                     }.padding(.bottom, 24)
                 }
                 .scrollDisabled(!wide)
