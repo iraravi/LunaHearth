@@ -4,7 +4,7 @@ enum VirtualPantryZone: String, CaseIterable, Identifiable, Sendable {
     case fridge, freezer, cupboard, other
     var id: String { rawValue }
     var title: String {
-        switch self { case .fridge: "Fridge"; case .freezer: "Freezer"; case .cupboard: "Cupboard"; case .other: "Other" }
+        switch self { case .fridge: "Fridge"; case .freezer: "Freezer"; case .cupboard: "Pantry"; case .other: "Other" }
     }
 }
 
@@ -23,6 +23,19 @@ enum VirtualPantryRules {
         case .grains, .pulses, .spices, .essentials: return .cupboard
         case .other: return .other
         }
+    }
+    /// Top contact surfaces measured from the bundled artwork, not item center positions.
+    static func shelfSurface(row: Int, zone: VirtualPantryZone) -> Double {
+        let surfaces: [Double]
+        switch zone {
+        case .fridge, .freezer: surfaces = [0.300, 0.488, 0.672]
+        case .cupboard: surfaces = [0.314, 0.517, 0.729]
+        case .other: surfaces = [0.31, 0.48, 0.65]
+        }
+        return surfaces[min(2, max(0, row))]
+    }
+    static func showsColdMist(zone: VirtualPantryZone, reduceMotion: Bool) -> Bool {
+        !reduceMotion && (zone == .fridge || zone == .freezer)
     }
     static func pageCount(itemCount: Int) -> Int { max(1, (max(0, itemCount) + 8) / 9) }
     static func pageRange(page: Int, itemCount: Int) -> Range<Int> {

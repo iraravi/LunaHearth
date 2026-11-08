@@ -17,3 +17,13 @@ Use case: precise-object-edit. Edit the generated unbranded fridge image immedia
 ## Integration
 
 Output geometry measured visually: top door region ends at 66.5% height; central shelf levels about 20%, 32.5%, 44.7%. SwiftUI positions food icons to these levels and clips each half of the closed image into independently animated upper doors. The bottom drawers are decorative; controls still expose storage selection and the existing editor. Runtime stays native and offline. Original earlier interior asset retained for existing references.
+
+## Modular pantry assets
+
+Generated original assets copied to `VirtualCupboardClosed.imageset/cupboard.png` and `VirtualCupboardOpen.imageset/cupboard.png`. No household data supplied. Final output files were `exec-210e6a8e-9b74-4bd1-8060-d429a5f826cc.png` (closed) and `exec-c6272e94-7370-40e1-bdf5-e58c64bde1a0.png` (open).
+
+Closed prompt: Photorealistic modular kitchen pantry CLOSED exterior, straight-on orthographic portrait 2:3. Entire image filled edge to edge by TWO full-height smooth matte dark charcoal lacquered metal slab doors, seam exactly at 50% width. Sleek thin brushed stainless vertical handles either side of the center at mid-height, subtle realistic soft reflections and fine seams, premium contemporary kitchen. No room or margins, no wood or grain, no brown, no glass, no food, no text, labels, logos or UI. Flat flush slab doors without decorative panels. Matched pair for an app whose open state has a warm-white fitted pantry interior and metal pull-out baskets.
+
+Final open edit prompt: Remove ALL wood and wood grain: replace both wooden door inner faces and every wooden trim with smooth MATTE DARK CHARCOAL painted metal. Preserve the warm-white modular interior, the two white shelves with brushed-metal edges, both empty pull-out wire baskets, hinges, rails, exact composition and shelf positions. Neutral white lighting, not yellow/brown. Everything empty. Photorealistic, no writing, labels, logos or UI. The final image must contain absolutely no wood anywhere.
+
+Food remains native illustrative symbols over empty artwork, not photographs of the user's actual products. Shelf contact positions use normalized coordinates so they follow the scene size.

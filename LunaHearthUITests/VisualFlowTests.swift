@@ -2811,7 +2811,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["Cancel"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["Cancel"].firstMatch.tap()
         tapVisible("inventory.virtual.storage", app: app)
-        app.buttons["Cupboard"].firstMatch.tap()
+        app.buttons["Pantry"].firstMatch.tap()
         XCTAssertTrue(app.buttons["inventory.item.Rice"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.buttons["inventory.item.Milk"].exists)
         tapVisible("inventory.viewMode", app: app)

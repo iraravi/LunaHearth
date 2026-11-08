@@ -239,6 +239,23 @@ struct InventoryEditor: View {
                     Toggle("Running low", isOn: $draft.isLowStock).accessibilityIdentifier("inventory.lowStock")
                     Text("Mark this when supplies are low. Restocking clears it; stock use is reviewed when you cook.").font(.caption).foregroundStyle(InventoryTheme.muted)
                 }.listRowBackground(InventoryTheme.surface)
+                Section {
+                    HStack {
+                        Button("Fridge", systemImage: "refrigerator") { draft.location = "Fridge" }
+                            .accessibilityIdentifier("inventory.storage.fridge")
+                            .accessibilityAddTraits(draft.location == "Fridge" ? .isSelected : [])
+                        Spacer()
+                        Button("Pantry", systemImage: "cabinet") { draft.location = "Pantry" }
+                            .accessibilityIdentifier("inventory.storage.pantry")
+                            .accessibilityAddTraits(draft.location == "Pantry" ? .isSelected : [])
+                    }.buttonStyle(.bordered)
+                    TextField("Not set · or enter another location", text: $draft.location)
+                        .focused($focused, equals: .location)
+                        .accessibilityLabel("Storage location")
+                        .accessibilityIdentifier("inventory.location")
+                } header: { Text("Store in") } footer: {
+                    Text("Choose where this pack belongs in your virtual view. You can change it later.")
+                }.listRowBackground(InventoryTheme.surface)
                 if !draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !candidates.isEmpty {
                     Section {
                         ForEach(matches) { match in
@@ -265,7 +282,6 @@ struct InventoryEditor: View {
                     DisclosureGroup {
                         PantryQuantityInput(amount: $draft.measuredAmount, unit: $draft.measuredUnit, custom: $draft.quantity, focused: $quantityFocused)
                         TextField("Pack size / brand", text: $draft.packDetails).focused($focused, equals: .pack).accessibilityIdentifier("inventory.pack")
-                        TextField("Storage · e.g. pantry or fridge", text: $draft.location).focused($focused, equals: .location).accessibilityIdentifier("inventory.location")
                         TextField("Store", text: $draft.storeName).focused($focused, equals: .store).accessibilityIdentifier("inventory.store")
                         ShoppingStoreBrowseButton(store: $draft.storeName)
                         Toggle("Packed date", isOn: $draft.hasPackedDate).accessibilityIdentifier("inventory.hasPackedDate")

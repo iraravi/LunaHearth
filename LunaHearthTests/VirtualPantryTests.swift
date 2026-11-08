@@ -2,6 +2,26 @@ import Testing
 @testable import LunaHearth
 
 struct VirtualPantryTests {
+    @Test func shelfContactsFollowArtworkAndStayWithinScene() {
+        for zone in VirtualPantryZone.allCases {
+            let levels = (0..<3).map { VirtualPantryRules.shelfSurface(row: $0, zone: zone) }
+            #expect(levels == levels.sorted())
+            #expect(levels.allSatisfy { $0 > 0 && $0 < 1 })
+        }
+        #expect(VirtualPantryRules.shelfSurface(row: 0, zone: .fridge) == 0.300)
+        #expect(VirtualPantryRules.shelfSurface(row: 2, zone: .cupboard) == 0.729)
+    }
+    @Test func coldMistOnlyForRefrigeratedZonesWithoutReducedMotion() {
+        #expect(VirtualPantryRules.showsColdMist(zone: .fridge, reduceMotion: false))
+        #expect(VirtualPantryRules.showsColdMist(zone: .freezer, reduceMotion: false))
+        #expect(!VirtualPantryRules.showsColdMist(zone: .cupboard, reduceMotion: false))
+        #expect(!VirtualPantryRules.showsColdMist(zone: .fridge, reduceMotion: true))
+    }
+    @Test func explicitPrimaryStorageChoicesOverrideAutomaticGrouping() {
+        #expect(VirtualPantryRules.zone(name: "Milk", location: "Pantry") == .cupboard)
+        #expect(VirtualPantryRules.zone(name: "Rice", location: "Fridge") == .fridge)
+        #expect(VirtualPantryZone.cupboard.title == "Pantry")
+    }
     @Test func savedLocationOverridesVisualCategory() {
         #expect(VirtualPantryRules.zone(name: "Rice", location: "Freezer drawer") == .freezer)
         #expect(VirtualPantryRules.zone(name: "Milk", location: "Garage shelf") == .other)
