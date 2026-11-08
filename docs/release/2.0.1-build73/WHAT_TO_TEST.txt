@@ -1,0 +1,13 @@
+Nam Illam 2.0.1 (73) beta
+
+Please update without deleting the app and confirm existing household data remains available.
+
+1. Assign Mutton to a family member in Shopping, scan a receipt labelled Premium Mutton Leg, review the match and confirm it. Check the assignment is preserved and stock/expense is not duplicated on rescan.
+2. Save a pantry item with no measured quantity, then with a valid quantity. Check meat, dairy, stock/broth and seasoning categories.
+3. Review scanned names, prices and totals before saving. Try optional on-device AI matching on a supported device and manually review suggestions. Core receipt review should work when AI is unavailable.
+4. Keep receipt image is optional and off initially. Test save, reopen, zoom and remove. Saved images are local only and are not included in CloudKit sync or the portable backup.
+5. Check Calendar source names/privacy choices, family task filters, and Today summaries. On two real family devices, verify sharing and assignment notification delivery with permissions enabled.
+6. Check blue On/Off switches, colorful icons and large text in light/dark mode.
+7. On Duo, specifically test receipt sheet scrolling and all save actions. Simulator verification of this flow remains unresolved; report any inaccessible controls.
+
+This is a beta validation build, not a public App Store release.
