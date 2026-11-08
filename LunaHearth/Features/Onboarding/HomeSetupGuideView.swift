@@ -22,7 +22,7 @@ struct HomeSetupGuideView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
                 VStack(alignment: .leading, spacing: 12) {
-                    Text(progress.isFinished ? "Make yourself at home." : "A few small steps. A calmer day.").font(.system(.title2, design: .serif, weight: .regular))
+                    Text(progress.isFinished ? "Make yourself at home." : "A few small steps. A calmer day.").font(.system(.title2, design: .default, weight: .bold))
                     Text("Your home is ready. These activities are optional. Open one, add your own information and save, then return here. You can use the app without finishing this checklist.")
                         .font(.subheadline).foregroundStyle(.secondary)
                     SetupProgressIndicator(progress: progress)
@@ -36,7 +36,7 @@ struct HomeSetupGuideView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     if !textSize.isAccessibilitySize { WelcomePhotograph(name: selected.art, height: 170).accessibilityHidden(true) }
                     Text("Optional activity \(HomeSetupStep.allCases.firstIndex(of: selected).map { $0 + 1 } ?? 1) of \(HomeSetupStep.allCases.count)").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
-                    Text(selected.title).font(.system(.title2, design: .serif, weight: .regular))
+                    Text(selected.title).font(.system(.title2, design: .default, weight: .bold))
                     Text(selected.explanation).font(.body).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                     Button { openedStep = selected } label: {
                         Label(selected.action, systemImage: selected.symbol).font(.headline).frame(minHeight: 44)

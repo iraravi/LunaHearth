@@ -7,7 +7,7 @@ enum WelcomeStyle {
     static let muted = Color("WelcomeMuted")
     static let accent = Color("WelcomeAccent")
     static let surface = Color("WelcomeSurface")
-    static let heading = Font.system(.largeTitle, design: .serif, weight: .regular)
+    static let heading = Font.system(.largeTitle, design: .default, weight: .bold)
 }
 
 struct WelcomePhotograph: View {

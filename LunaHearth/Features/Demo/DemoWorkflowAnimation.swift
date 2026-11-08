@@ -114,13 +114,13 @@ struct DemoWorkflowAnimation: View {
                 .font(.system(size: 10, weight: .semibold)).tracking(1).foregroundStyle(AppTheme.sage)
             switch scene {
             case 0:
-                Text("The little details,\nready to review.").font(.system(size: 23, weight: .medium, design: .serif))
+                Text("The little details,\nready to review.").font(.system(size: 23, weight: .medium, design: .default))
                 sampleRow("Rice", value: "$5.00", symbol: "checkmark.circle")
                 sampleRow("Curd", value: "$3.00", symbol: "checkmark.circle")
                 Divider()
                 Text("5 items · USD 16.00").font(.system(size: 13, weight: .semibold))
             case 1:
-                Text("$16.00").font(.system(size: 42, weight: .medium, design: .serif))
+                Text("$16.00").font(.system(size: 42, weight: .medium, design: .default))
                 Text("One reviewed purchase").font(.system(size: 14)).foregroundStyle(.secondary)
                 HStack(alignment: .bottom, spacing: 9) {
                     ForEach([28.0, 45, 35, 62, 48].indices, id: \.self) { i in
@@ -130,17 +130,17 @@ struct DemoWorkflowAnimation: View {
                 }.frame(height: 65)
                 Text("Illustrative spending chart").font(.system(size: 10)).foregroundStyle(.secondary)
             case 2:
-                Text("Five fewer things\nto remember.").font(.system(size: 23, weight: .medium, design: .serif))
+                Text("Five fewer things\nto remember.").font(.system(size: 23, weight: .medium, design: .default))
                 ForEach(["Rice", "Curd", "Carrots"], id: \.self) { name in
                     sampleRow(name, value: "Bought", symbol: "checkmark.circle.fill")
                 }
             case 3:
-                Text("Welcome to\nyour pantry.").font(.system(size: 23, weight: .medium, design: .serif))
+                Text("Welcome to\nyour pantry.").font(.system(size: 23, weight: .medium, design: .default))
                 sampleRow("Curd", value: "Stock updated", symbol: "cabinet")
                 sampleRow("Pack dates", value: "You choose", symbol: "calendar")
                 Text("Review amounts, units and existing packs.").font(.system(size: 12)).foregroundStyle(.secondary)
             default:
-                Text("Curd rice").font(.system(size: 29, weight: .medium, design: .serif))
+                Text("Curd rice").font(.system(size: 29, weight: .medium, design: .default))
                 Text("A starting point from your pantry").font(.system(size: 13)).foregroundStyle(.secondary)
                 sampleRow("Rice + curd", value: "At home", symbol: "checkmark.circle")
                 Text("5 PM · time to plan tomorrow").font(.system(size: 12, weight: .medium))

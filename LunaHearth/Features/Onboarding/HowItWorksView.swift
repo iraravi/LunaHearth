@@ -64,7 +64,7 @@ struct HowItWorksView: View {
         VStack(alignment: .leading, spacing: 18) {
             Text(chapter.shortTitle.uppercased()).font(.caption.weight(.medium)).tracking(2)
                 .foregroundStyle(WelcomeStyle.accent)
-            Text(chapter.title).font(textSize.isAccessibilitySize ? .system(.title2, design: .serif) : WelcomeStyle.heading).fixedSize(horizontal: false, vertical: true)
+            Text(chapter.title).font(textSize.isAccessibilitySize ? .system(.title2, design: .default) : WelcomeStyle.heading).fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader).accessibilityFocused($titleFocused)
                 .accessibilityIdentifier("tour.title")
             Text(chapter.detail).font(.body).foregroundStyle(WelcomeStyle.muted)

@@ -10,8 +10,8 @@ enum AppTheme {
     static let cardCornerRadius: CGFloat = 18
     static let sectionSpacing: CGFloat = 16
     static let contentPadding: CGFloat = 20
-    static let displayTitle = Font.system(.largeTitle, design: .serif, weight: .regular)
-    static let sectionTitle = Font.system(.title2, design: .serif, weight: .regular)
+    static let displayTitle = Font.system(.largeTitle, design: .default, weight: .bold)
+    static let sectionTitle = Font.system(.title2, design: .default, weight: .bold)
     static let sage = Color("IllustrationGreen")
     static let clay = Color("IllustrationOrange")
     static let slate = Color("IllustrationBlue")
