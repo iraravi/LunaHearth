@@ -557,3 +557,9 @@ Affected entities are household, floor, room, home asset, inventory, grocery and
 ## v2 shared palette
 
 Use the same semantic canvas, surface, ink, muted text and action colors across all features. Canvas is neutral gray in light mode and charcoal in dark mode; surfaces are white/raised charcoal; primary actions and selection are black/white with the opposite foreground. Feature-specific asset names are compatibility aliases with matching values, checked by ThemeContrastTests. Color remains useful for category artwork, people/events and warning/error states. Do not introduce feature-specific cream/green page backgrounds.
+
+## Native form simplification (November 2026)
+
+Feature tiles use red/orange SF Symbols on subtle warm surfaces in both appearances. Meals uses native horizontally paged suggestion cards with real pantry availability and a review-before-save action. Planning reminders are secondary expandable settings. Expense notes/refunds start collapsed for new records and open when an existing record contains them. Calendar source selection is searchable and expandable. Today separates My day from Family and places aggregate counts in an optional Household overview. Receipt item review precedes optional retained-image and raw-text details.
+
+This is presentation-only: existing household, expense, meal, and calendar-choice persistence is unchanged. No React, web view, runtime package, network model, new permissions, or schema changes are introduced.

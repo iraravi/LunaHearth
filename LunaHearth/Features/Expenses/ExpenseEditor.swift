@@ -10,6 +10,7 @@ struct ExpenseEditor: View {
     @State private var draft: ExpenseDraft
     @State private var error: String?
     @State private var removing = false
+    @State private var showExtras = false
     init(item: HouseholdExpense? = nil, currency: String? = nil, purchase: PurchaseEntry? = nil, onSave: @escaping (String, String) -> Void = { _, _ in }) {
         self.item = item; self.purchase = purchase; self.onSave = onSave
         var initial = item.map(ExpenseDraft.init) ?? ExpenseDraft()
@@ -24,14 +25,12 @@ struct ExpenseEditor: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Label(item == nil ? "A little detail. A clearer month." : "Purchase details", systemImage: "creditcard")
-                        .font(.headline).foregroundStyle(ExpenseTheme.accent)
-                }.listRowBackground(Color.clear)
                 ExpenseFields(draft: $draft)
                 Section {
-                    Toggle("This is a refund", isOn: $draft.isRefund)
-                    TextField("Notes (optional)", text: $draft.notes, axis: .vertical).lineLimit(2...5)
+                    DisclosureGroup("Notes & refund", isExpanded: $showExtras) {
+                        Toggle("This is a refund", isOn: $draft.isRefund)
+                        TextField("Notes (optional)", text: $draft.notes, axis: .vertical).lineLimit(2...5)
+                    }
                 } footer: { Text("The total includes tax and discounts. This record is shared with your household when iCloud sharing is enabled.") }
                 if let item {
                     Section {
@@ -63,7 +62,7 @@ struct ExpenseEditor: View {
                         do { try repository.deleteExpense(item); dismiss() } catch { self.error = userFacingError(error) }
                     }
                 } message: { Text("It will be removed from household reports and synced devices. Shopping and inventory stay unchanged.") }
-                .onAppear { openedHome = repository.household?.id }
+                .onAppear { openedHome = repository.household?.id; showExtras = draft.isRefund || !draft.notes.isEmpty }
                 .onChange(of: repository.household?.id) { _, id in if id != openedHome { dismiss() } }
                 .saveError($error)
                 #if DEBUG

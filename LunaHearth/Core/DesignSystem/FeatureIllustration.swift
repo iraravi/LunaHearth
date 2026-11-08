@@ -1,29 +1,21 @@
 import SwiftUI
 
-/// Original-color bundled artwork; never tinted or inverted by a feature theme.
-/// Text beside the image supplies the accessible action name.
+/// Native decorative symbols; adjacent text supplies the accessible action name.
 struct FeatureIllustration: View {
     let symbol: String
     var size: CGFloat = 56
-    private var asset: String? {
-        switch symbol {
-        case "cabinet", "cabinet.fill": "FeaturePantryV1"
-        case "basket", "basket.fill", "cart", "cart.fill", "bag", "bag.fill": "FeatureShoppingV1"
-        case "checklist", "checkmark.circle", "bell", "list.bullet": "FeatureRemindersV1"
-        case "receipt", "doc.viewfinder": "FeatureReceiptsV1"
-        case "fork.knife": "FeatureMealsV1"
-        case "chart.bar.xaxis", "chart.bar", "creditcard": "FeatureExpensesV1"
-        default: nil
-        }
-    }
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
-        Group {
-            if let asset {
-                Image(asset).renderingMode(.original).resizable().scaledToFit()
-            } else {
-                Image(systemName: symbol).symbolRenderingMode(.multicolor)
-                    .font(.system(size: size * 0.5, weight: .medium)).foregroundStyle(.blue)
+        Image(systemName: symbol)
+            .symbolRenderingMode(.hierarchical)
+            .font(.system(size: size * 0.43, weight: .semibold))
+            .foregroundStyle(colorScheme == .dark ? Color.orange : Color(red: 0.76, green: 0.15, blue: 0.1))
+            .frame(width: size, height: size)
+            .background {
+                RoundedRectangle(cornerRadius: size * 0.28)
+                    .fill(LinearGradient(colors: [Color.red.opacity(0.16), Color.orange.opacity(0.09)], startPoint: .topLeading, endPoint: .bottomTrailing))
             }
-        }.frame(width: size, height: size).accessibilityHidden(true)
+            .accessibilityHidden(true)
     }
 }

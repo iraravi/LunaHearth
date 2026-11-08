@@ -3,13 +3,18 @@ import SwiftUI
 struct ConnectionsView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @State private var saveError: String?
+    @State private var calendarSearch = ""
     @Environment(AppleConnections.self) private var connections
     var body: some View {
         SettingsDetailPage(title: "Connections", subtitle: "Choose what connects to your day.", symbol: "app.connected.to.app.below.fill", accent: AppTheme.slate) {
             SettingsDetailCard(title: "Apple Calendar", symbol: "calendar", accent: AppTheme.slate) {
                 if connections.calendarEnabled {
                     if connections.calendarSources.isEmpty { Text("No calendars available. Refresh or check access in Settings.").foregroundStyle(.secondary) }
-                    ForEach(connections.calendarSources) { source in
+                    DisclosureGroup("Choose calendars (\(connections.calendarSources.count))") {
+                        TextField("Find a calendar", text: $calendarSearch)
+                            .textFieldStyle(.roundedBorder)
+                            .accessibilityIdentifier("connections.calendar.search")
+                    ForEach(connections.calendarSources.filter { calendarSearch.isEmpty || $0.title.localizedCaseInsensitiveContains(calendarSearch) || $0.account.localizedCaseInsensitiveContains(calendarSearch) }) { source in
                         VStack(alignment: .leading, spacing: 8) {
                         sourceLabel(source)
                         Picker(selection: Binding(get: { connections.calendarChoices[source.id] ?? .hidden }, set: { connections.chooseCalendar(source.id, privacy: $0) })) {
@@ -22,6 +27,7 @@ struct ConnectionsView: View {
                         .accessibilityIdentifier("connections.calendar.\(source.id)")
                         }.padding(.vertical, 8)
                         Divider()
+                    }
                     }
                     Button("Disconnect Calendar", role: .destructive) { connections.disconnect(.calendar) }
                 } else {

@@ -54,6 +54,8 @@ struct TodayBriefCard: View {
     let facts: TodayBriefFacts
     let family: TodayFamilyBrief
     @State private var brief: TodayBrief?
+    @State private var showFamily = false
+    @State private var showOverview = false
     @State private var requested = false
     @State private var running = false
     private let service: any TodayBriefService = OnDeviceTodayBriefService()
@@ -61,10 +63,10 @@ struct TodayBriefCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 9) {
             HStack {
-                Label("You & your family", systemImage: "sparkles").font(.subheadline.weight(.semibold))
+                Label("Today at a glance", systemImage: "sun.max").font(.subheadline.weight(.semibold))
                 Spacer(minLength: 8)
                 if aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiBriefs) ?? true) {
-                Button { requested = true } label: {
+                Button { showOverview = true; requested = true } label: {
                     if running { ProgressView().accessibilityLabel("Summarizing") }
                     else { Text("Summarize").font(.caption.weight(.semibold)) }
                 }.frame(minWidth: 44, minHeight: 44).buttonStyle(.plain)
@@ -72,7 +74,11 @@ struct TodayBriefCard: View {
                     .accessibilityIdentifier("today.summarize")
                 }
             }
-            ForEach(family.people) { person in
+            Picker("Whose day", selection: $showFamily) {
+                Text("My day").tag(false)
+                Text("Family").tag(true)
+            }.pickerStyle(.segmented).accessibilityIdentifier("today.brief.scope")
+            ForEach(family.people.filter { showFamily || $0.isYou || $0.id == nil }) { person in
                 VStack(alignment: .leading, spacing: 5) {
                     Text(person.isYou ? "You · \(person.name)" : person.name)
                         .font(.subheadline.weight(.semibold)).accessibilityAddTraits(.isHeader)
@@ -92,13 +98,14 @@ struct TodayBriefCard: View {
                     .font(.caption).frame(minHeight: 44)
             }.accessibilityIdentifier("today.brief.identity")
             Divider()
-            Text("Around the home").font(.subheadline.weight(.semibold))
+            DisclosureGroup("Household overview", isExpanded: $showOverview) {
             Text(brief?.text ?? facts.fallback).font(.subheadline).foregroundStyle(TodayTheme.muted)
                 .fixedSize(horizontal: false, vertical: true).accessibilityIdentifier("today.briefText")
             if let brief {
                 Text(brief.usedModel ? "AI overview may be wrong or incomplete. Check the saved records for details." : "Saved-list summary · On-device AI isn’t available right now.")
                     .font(.caption).foregroundStyle(TodayTheme.muted)
                     .accessibilityIdentifier("today.briefSource")
+            }
             }
         }.padding(.horizontal, 18).padding(.vertical, 10)
             .background(TodayTheme.brief, in: RoundedRectangle(cornerRadius: 20))

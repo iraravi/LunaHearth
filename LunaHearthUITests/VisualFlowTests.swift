@@ -431,6 +431,7 @@ final class VisualFlowTests: XCTestCase {
         capture("Calendar-Family-Tasks", app: app)
         tapVisible("calendar.connections", app: app)
         tapVisible("connections.calendar.connect", app: app)
+        tapVisible("Choose calendars (2)", app: app)
         XCTAssertTrue(app.staticTexts["Family plans"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["Test iCloud"].exists)
         capture("Calendar-Named-Sources", app: app)
@@ -673,6 +674,7 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("meals.suggest", app: app)
         XCTAssertTrue(app.descendants(matching: .any)["reviewSafety.meal"].firstMatch.exists)
         let review = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Review and plan")).firstMatch
+        XCTAssertTrue(app.scrollViews["meals.carousel"].waitForExistence(timeout: 10))
         XCTAssertTrue(review.waitForExistence(timeout: 10))
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", "Your extra notes were not applied")).firstMatch.exists)
         for _ in 0..<4 { if review.isHittable { break }; app.swipeUp() }
@@ -1427,6 +1429,7 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("today.section.shopping", app: app)
         XCTAssertTrue(app.staticTexts["No shopping needed now. Later items stay on your list."].exists)
         tapVisible("today.summarize", app: app)
+        tapVisible("Household overview", app: app)
         XCTAssertEqual(app.staticTexts["today.briefText"].label, "Nothing needs attention in your saved lists today.")
         app.buttons["today.quickAdd"].tap()
         XCTAssertTrue(app.textFields["quickAdd.title"].waitForExistence(timeout: 5))

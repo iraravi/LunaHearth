@@ -5,6 +5,7 @@ struct MealIdeasView: View {
     @Environment(\.aiAvailability) private var aiAvailability
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.horizontalSizeClass) private var sizeClass
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -23,19 +24,18 @@ struct MealIdeasView: View {
     @State private var generationID = UUID()
     private let service: any MealSuggestionService = OnDeviceMealSuggestionService()
     private let reminders: any MealPlanningReminderService = MealPlanningReminder()
-    private var accent: Color { AppTheme.sage }
+    private var accent: Color { Color(red: 0.8, green: 0.18, blue: 0.12) }
     private var names: [String] {
         repository.inventory.filter { MealSuggestionRules.available(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay, plannedDay: HouseholdDay(day).key) }.map(\.name).sorted()
     }
-    private var columns: [GridItem] { typeSize.isAccessibilitySize ? [GridItem(.flexible())] : [GridItem(.adaptive(minimum: 290), spacing: 16)] }
     var body: some View {
         ScrollViewReader { scroll in
         ScrollView {
             VStack(alignment: .leading, spacing: 22) {
-                HearthArtwork(name: "WelcomeTable", height: 150)
+                HearthArtwork(name: "WelcomeTable", height: 190)
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("From your pantry to your table.").font(AppTheme.sectionTitle)
-                    Text("Plan tomorrow, or find something for today.").foregroundStyle(.secondary)
+                    Text("What’s cooking?").font(AppTheme.sectionTitle)
+                    Text("Start with what you have. Make something you love.").foregroundStyle(.secondary)
                     Picker("What do you like to cook?", selection: $styleRaw) {
                         Text("Choose a cooking style").tag("")
                         ForEach(MealCookingStyle.allCases) { style in Text(style.rawValue).tag(style.rawValue) }
@@ -57,13 +57,6 @@ struct MealIdeasView: View {
                 Button { draft = EntryDraft(kind: .meal, date: day) } label: {
                     Label("Add a meal", systemImage: "plus").frame(minHeight: 44)
                 }.buttonStyle(.bordered).accessibilityIdentifier("meals.addManually")
-                VStack(alignment: .leading, spacing: 10) {
-                    Toggle(isOn: Binding(get: { reminderEnabled }, set: { value in
-                        changingReminder = true
-                        Task { do { try await reminders.setEnabled(value); reminderEnabled = await reminders.enabled() } catch { self.error = error.localizedDescription }; changingReminder = false }
-                    })) { Label("Plan tomorrow at 5 PM", systemImage: "clock") }.disabled(changingReminder).accessibilityIdentifier("meals.reminder")
-                    Text("Daily reminder on this device, at local time. Open it to get meal ideas.").font(.footnote).foregroundStyle(.secondary)
-                }.padding(20).background(.background, in: RoundedRectangle(cornerRadius: 18))
                 HStack {
                     Button { generate() } label: { Label(generating ? "Finding ideas…" : "Get suggestions now", systemImage: "sparkles").padding(.vertical, 6) }
                         .hearthGlassButton(prominent: true, glassInLight: false).disabled(generating || cookingStyle == nil).accessibilityIdentifier("meals.suggest")
@@ -73,10 +66,16 @@ struct MealIdeasView: View {
                 if let result {
                     Text(result.message).font(.subheadline).foregroundStyle(.secondary).id("meal.results")
                     if result.ideas.isEmpty { ContentUnavailableView("No matching ideas yet", systemImage: "fork.knife", description: Text("Try adding more pantry ingredients, or plan a meal yourself below.")) }
-                    LazyVGrid(columns: columns, alignment: .leading, spacing: 16) {
+                    ScrollView(.horizontal) {
+                    LazyHStack(alignment: .top, spacing: 18) {
                         ForEach(result.ideas) { idea in
                             VStack(alignment: .leading, spacing: 12) {
-                                Label(idea.name, systemImage: "fork.knife.circle.fill").font(.title3.bold())
+                                HStack {
+                                    FeatureIllustration(symbol: "fork.knife", size: 76)
+                                    Spacer()
+                                    Text("PANTRY IDEAS").font(.caption.weight(.bold)).foregroundStyle(.secondary)
+                                }
+                                Text(idea.name).font(.title2.bold()).fixedSize(horizontal: false, vertical: true)
                                 Text(idea.ingredients.joined(separator: " · ")).font(.subheadline)
                                 let missing = idea.missing(from: names)
                                 let toBuy = missing.filter { !repository.mealIngredientAvailability($0).inShopping }
@@ -84,13 +83,29 @@ struct MealIdeasView: View {
                                 else if !toBuy.isEmpty { Label("Need to buy: \(toBuy.joined(separator: ", "))", systemImage: "basket").font(.subheadline) }
                                 let shoppingNames = idea.ingredients.filter { repository.mealIngredientAvailability($0).inShopping }
                                 if !shoppingNames.isEmpty { Label("Already in shopping: \(shoppingNames.joined(separator: ", "))", systemImage: "checklist").font(.subheadline) }
-                                Button("Review & plan") {
+                                Button("Plan meal") {
                                     draft = EntryDraft(kind: .meal, title: idea.name, date: day)
                                     draft?.mealIngredients = idea.ingredients.joined(separator: "\n")
                                 }.buttonStyle(.bordered).frame(minHeight: 44).accessibilityLabel("Review and plan \(idea.name)")
-                            }.frame(maxWidth: .infinity, alignment: .leading).padding(20).background(.background, in: RoundedRectangle(cornerRadius: 18))
+                            }.padding(24)
+                            .containerRelativeFrame(.horizontal, count: sizeClass == .regular && !typeSize.isAccessibilitySize ? 2 : 1, spacing: 18)
+                            .background(.background, in: RoundedRectangle(cornerRadius: 28))
+                            .overlay(RoundedRectangle(cornerRadius: 28).stroke(accent.opacity(0.2)))
                         }
-                    }
+                    }.scrollTargetLayout()
+                    }.scrollTargetBehavior(.viewAligned)
+                    .scrollIndicators(.visible)
+                    .accessibilityIdentifier("meals.carousel")
+                    Text("Swipe to explore meal ideas. Review ingredients before saving.").font(.footnote).foregroundStyle(.secondary)
+                }
+                DisclosureGroup("Planning reminder") {
+                VStack(alignment: .leading, spacing: 10) {
+                    Toggle(isOn: Binding(get: { reminderEnabled }, set: { value in
+                        changingReminder = true
+                        Task { do { try await reminders.setEnabled(value); reminderEnabled = await reminders.enabled() } catch { self.error = error.localizedDescription }; changingReminder = false }
+                    })) { Label("Plan tomorrow at 5 PM", systemImage: "clock") }.disabled(changingReminder).accessibilityIdentifier("meals.reminder")
+                    Text("Daily reminder on this device, at local time. Open it to get meal ideas.").font(.footnote).foregroundStyle(.secondary)
+                }.padding(20).background(.background, in: RoundedRectangle(cornerRadius: 18))
                 }
                 NavigationLink { WeeklyMealPlannerView(start: day) } label: { Label("Plan the week", systemImage: "calendar") }.frame(minHeight: 44).accessibilityIdentifier("meals.week")
                 NavigationLink("View saved meal plans") { PlanningListView(kind: .meal, initialDay: day) }.frame(minHeight: 44)

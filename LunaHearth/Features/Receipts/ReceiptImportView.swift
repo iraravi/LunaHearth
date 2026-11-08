@@ -183,7 +183,6 @@ struct ReceiptImportView: View {
                                                currency: expenseDraft.currency,
                                                unavailableIDs: Set(lines.filter { repository.receiptLineImported($0.id) }.map(\.id)))
                         }.listRowBackground(Color.clear)
-                        imageOptions
                         Section { ReviewSafetyNotice(context: .receipt) }
                         Section {
                             Toggle("Record in Expenses", isOn: $recordingExpense).accessibilityIdentifier("receipt.recordExpense")
@@ -200,17 +199,6 @@ struct ReceiptImportView: View {
                                         Text("Check date, total & currency").font(.caption).foregroundStyle(.secondary)
                                     }
                                 }
-                            }
-                        }
-                        Section("Receipt details") {
-                            DisclosureGroup("Already marked this purchase bought?") {
-                                Text("Recent matching purchases appear beside each receipt item. Link an existing purchase to keep its pantry amount unchanged, or confirm a new purchase.").font(.caption).foregroundStyle(.secondary)
-                                NavigationLink("Open purchase history") { PurchaseHistoryView() }
-                            }
-                            if !recordingExpense { ExpenseMerchantField(merchant: $store, placeholder: "Store (optional)", identifier: "receipt.store") }
-                            DisclosureGroup("Receipt text & rescan") {
-                                scanControls
-                                Text(sourceText).font(.caption).textSelection(.enabled)
                             }
                         }
                         if lines.isEmpty {
@@ -238,6 +226,19 @@ struct ReceiptImportView: View {
                         ForEach($lines) { $line in
                             ReceiptReviewRow(line: $line, purchaseDay: HouseholdDay(recordingExpense ? expenseDraft.date : .now).key, currency: recordingExpense ? expenseDraft.currency : nil, proposal: proposals[line.id], alreadyImported: repository.receiptLineImported(line.id))
                         }
+                        imageOptions
+                        Section("Receipt details") {
+                            DisclosureGroup("Already marked this purchase bought?") {
+                                Text("Recent matching purchases appear beside each receipt item. Link an existing purchase to keep its pantry amount unchanged, or confirm a new purchase.").font(.caption).foregroundStyle(.secondary)
+                                NavigationLink("Open purchase history") { PurchaseHistoryView() }
+                            }
+                            if !recordingExpense { ExpenseMerchantField(merchant: $store, placeholder: "Store (optional)", identifier: "receipt.store") }
+                            DisclosureGroup("Receipt text & rescan") {
+                                scanControls
+                                Text(sourceText).font(.caption).textSelection(.enabled)
+                            }
+                        }
+
                     }
                 }
             }
