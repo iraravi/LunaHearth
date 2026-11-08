@@ -69,3 +69,11 @@ Their persistence and sync remain unchanged; no records are deleted or migrated.
 This is an offline presentation change with no new permissions or networking.
 The live v1 release is unchanged. Legacy room/home-care UI tests describe the
 previous release; v2 validation uses the hidden-feature navigation check instead.
+
+## Living home — 8 November 2026
+
+Today adds a native SwiftUI scene with a task noticeboard, a shopping bag and an interactive miniature fridge. The task tile reports existing due/overdue tasks, shopping reports all incomplete household shopping items, and pantry reports active inventory packs. The drawings are illustrative, not a scanned model of the home. Empty states show no invented items. Tapping the fridge toggles a local preview; the separate Fridge & pantry action opens the existing inventory workflow. Tasks and Shopping open their existing lists.
+
+On expansive layouts, schedule/reminders/family briefing remain in the left pane and the scene sits in the right workspace. Compact and accessibility layouts stack the content. The preview door animates on interaction, counts trigger short icon effects, and the open fridge reuses the bounded mist layer. Reduce Motion removes door/count animation and retains static haze. All controls have labels and accessibility identifiers; scene decoration is hidden from VoiceOver.
+
+Entities read: HouseholdTask, GroceryItem and InventoryItem. This is presentation-only, with no schema changes, new permissions, backend or household data transmitted. Changes still occur through established local-first screens. Opening the preview never edits inventory or marks a task/purchase complete. This is a local development change, not a TestFlight upload.

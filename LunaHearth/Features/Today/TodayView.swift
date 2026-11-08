@@ -47,17 +47,23 @@ struct TodayView: View {
                     VStack(alignment: .leading, spacing: 24) {
                         TodayHero(now: now, household: repository.household?.name ?? "Your home", wide: wide)
                         if wide { sectionPicker(vertical: true) }
-                        if wide { TodayBriefCard(facts: facts, family: family) }
+                        if wide {
+                            scheduleCard(events: events)
+                            remindersCard(dueTasks: dueTasks)
+                            TodayBriefCard(facts: facts, family: family)
+                        }
+                        if !wide { livingHome(dueTasks: dueTasks, expanded: false) }
                     }.padding(.bottom, 8)
                 }
                 .scrollDisabled(!wide)
                 .fixedSize(horizontal: false, vertical: !wide)
-                .frame(maxWidth: wide ? 320 : .infinity)
+                .frame(maxWidth: wide ? 360 : .infinity)
                 .frame(height: wide ? max(0, height - 40) : nil)
                 .accessibilityIdentifier("today.overview")
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 20) {
+                        if wide { livingHome(dueTasks: dueTasks, expanded: true) }
                         if !wide { sectionPicker(vertical: false) }
                         VStack(alignment: .leading, spacing: 6) {
                             Text(section.title).font(.system(.largeTitle, design: .default).weight(.bold))
@@ -66,8 +72,10 @@ struct TodayView: View {
                         }.frame(maxWidth: .infinity, alignment: .leading)
                         switch section {
                         case .day:
-                            scheduleCard(events: events)
-                            remindersCard(dueTasks: dueTasks)
+                            if !wide {
+                                scheduleCard(events: events)
+                                remindersCard(dueTasks: dueTasks)
+                            }
                             VStack(spacing: 0) {
                                 overviewLink("Shopping", detail: "\(attention.shopping.count) needed now", symbol: "basket", section: .shopping)
                                 Divider()
@@ -90,6 +98,13 @@ struct TodayView: View {
         }
         .scrollBounceBehavior(.basedOnSize)
         .id(repository.household?.id)
+    }
+
+    private func livingHome(dueTasks: [HouseholdTask], expanded: Bool) -> some View {
+        TodayLivingHome(tasks: dueTasks,
+                        shopping: repository.groceries.filter { !$0.isCompleted },
+                        inventory: repository.inventory.filter { !$0.isUsedUp },
+                        expanded: expanded)
     }
 
     private func scheduleCard(events: [FamilyEvent]) -> some View {

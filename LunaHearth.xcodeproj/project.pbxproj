@@ -125,6 +125,7 @@
 		6D910E121106347EAE0C40D7 /* TodayPlanningLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B38DDA962D6E1B8A05F4D6E /* TodayPlanningLayoutTests.swift */; };
 		6D9C559AD97092FBEA22570D /* HouseholdCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90A1880C0547877E4A92EA /* HouseholdCleanup.swift */; };
 		6F0384BDEA780DBF9265F909 /* IngredientMatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BB550B1D3BEDBC727B1F51 /* IngredientMatching.swift */; };
+		703ACF4E917527A72DCAB97D /* TodayLivingHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FB040DE7C2F4958A0C3F53 /* TodayLivingHome.swift */; };
 		714DCFF966BB5F86B8DA0D5A /* ExpenseMerchantField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D006DAD0DA85BD7946EC4E /* ExpenseMerchantField.swift */; };
 		7411EAD6B0F15B5AC465A785 /* HouseholdSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411ED1CCD9AA5D7A0BFD49CA /* HouseholdSharingTests.swift */; };
 		741BE8727AEDCB6EA1A4CDB3 /* InvitationDeliveryStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C9E0DECF5EE0D86A024E28 /* InvitationDeliveryStatus.swift */; };
@@ -382,6 +383,7 @@
 		47423F638027A6E472462D12 /* HomeWorkspaceDashboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeWorkspaceDashboard.swift; sourceTree = "<group>"; };
 		4769772E49F9CD4B8516B625 /* ReceiptNameDecoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptNameDecoding.swift; sourceTree = "<group>"; };
 		47F8F5A1D4EAFB40AEA1FDB5 /* HomeDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeDashboardView.swift; sourceTree = "<group>"; };
+		47FB040DE7C2F4958A0C3F53 /* TodayLivingHome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayLivingHome.swift; sourceTree = "<group>"; };
 		48DAE0009BC357DD99DAABBF /* VirtualPantryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualPantryView.swift; sourceTree = "<group>"; };
 		49C9E0DECF5EE0D86A024E28 /* InvitationDeliveryStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvitationDeliveryStatus.swift; sourceTree = "<group>"; };
 		4AA763FD2AE392FF6501D13F /* PurchaseEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseEntry.swift; sourceTree = "<group>"; };
@@ -881,6 +883,7 @@
 			isa = PBXGroup;
 			children = (
 				5A54E291E5D30DD2B92311DE /* PersonalShoppingView.swift */,
+				47FB040DE7C2F4958A0C3F53 /* TodayLivingHome.swift */,
 				3F87CC2256AC1D9C2B4981F5 /* TodayPriorities.swift */,
 				06C52AAEBCB7478DA5D0A4C5 /* TodayStyle.swift */,
 				99AA8484EC2670204C2CC384 /* TodayView.swift */,
@@ -1667,6 +1670,7 @@
 				0CDEE6DAB82CD27C188F0ACD /* SystemCalendarDelivery.swift in Sources */,
 				DBAA2C97B19524ECAFF9CC5C /* TaskDetailView.swift in Sources */,
 				0B30828D856A30561DD63B83 /* TodayAttention.swift in Sources */,
+				703ACF4E917527A72DCAB97D /* TodayLivingHome.swift in Sources */,
 				7803BEB35F241843DFA5FBE5 /* TodayPlanningLayout.swift in Sources */,
 				B50D22709AA4D5BBFF846854 /* TodayPriorities.swift in Sources */,
 				75F02BCFE41BB777D83FC907 /* TodayStyle.swift in Sources */,

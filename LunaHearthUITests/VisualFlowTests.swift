@@ -90,6 +90,35 @@ final class VisualFlowTests: XCTestCase {
         app.terminate()
     }
 
+    func testLivingHomeNavigation() { livingHomeNavigation(large: false) }
+    func testLivingHomeAccessibility() { livingHomeNavigation(large: true) }
+    private func livingHomeNavigation(large: Bool) {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-today"]
+            + (large ? ["--large-text", "--reduce-motion", "--dark"] : [])
+        app.launch()
+        XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 15))
+        tapVisible("today.living.fridge", app: app)
+        XCTAssertEqual(app.buttons["today.living.fridge"].value as? String, "Open")
+        capture("Living-Home-Open-Fridge", app: app)
+        tapVisible("today.living.fridge", app: app)
+        XCTAssertEqual(app.buttons["today.living.fridge"].value as? String, "Closed")
+        tapVisible("today.living.tasks", app: app)
+        XCTAssertTrue(app.navigationBars["Tasks & Chores"].waitForExistence(timeout: 5))
+        if app.buttons["Back"].firstMatch.exists { app.buttons["Back"].firstMatch.tap() }
+        else if app.navigationBars.buttons.firstMatch.exists { app.navigationBars.buttons.firstMatch.tap() }
+        else { app.terminate(); app.launch() } // Duo exposes Back in a separate system rail.
+        tapVisible("today.living.shopping", app: app)
+        XCTAssertTrue(app.buttons["shopping.add"].waitForExistence(timeout: 5))
+        if app.buttons["Back"].firstMatch.exists { app.buttons["Back"].firstMatch.tap() }
+        else if app.navigationBars.buttons.firstMatch.exists { app.navigationBars.buttons.firstMatch.tap() }
+        else { app.terminate(); app.launch() } // Duo exposes Back in a separate system rail.
+        tapVisible("today.living.pantry", app: app)
+        XCTAssertTrue(app.buttons["inventory.scanReceipt"].waitForExistence(timeout: 5)
+                      || app.descendants(matching: .any)["inventory.virtual"].firstMatch.exists)
+        app.terminate()
+    }
+
     func testTodayWorkspaceNavigation() { todayWorkspaceNavigation(dark: false, large: false) }
     func testTodayWorkspaceDark() { todayWorkspaceNavigation(dark: true, large: false) }
     func testTodayWorkspaceAccessibility() { todayWorkspaceNavigation(dark: true, large: true) }
@@ -941,6 +970,13 @@ final class VisualFlowTests: XCTestCase {
                let collection = app.collectionViews.allElementsBoundByIndex.last, collection.exists {
                 if down { collection.swipeDown() }
                 else { collection.swipeUp() }
+                continue
+            }
+            if app.buttons["today.quickAdd"].exists, app.scrollViews.firstMatch.exists {
+                let pane = targetID.flatMap { id in
+                    app.scrollViews.allElementsBoundByIndex.last { $0.descendants(matching: .any).matching(identifier: id).firstMatch.exists && $0.isHittable }
+                } ?? app.scrollViews.firstMatch
+                if down { pane.swipeDown() } else { pane.swipeUp() }
                 continue
             }
             let origin = app.coordinate(withNormalizedOffset: .zero)

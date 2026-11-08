@@ -160,7 +160,7 @@ struct VirtualPantryView: View {
 
 /// A bounded 30 fps atmospheric layer, mounted only while a refrigerated door is open.
 /// Reduce Motion keeps the same visible haze without movement.
-private struct FridgeMistView: View {
+struct FridgeMistView: View {
     let reduceMotion: Bool
     var body: some View {
         TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { timeline in
