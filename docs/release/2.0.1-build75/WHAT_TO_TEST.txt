@@ -1,0 +1,7 @@
+Receipt and purchase redesign
+
+Scan a receipt and review the compact overview. Open Purchase details to check the store, date and total. Tap an item to choose Add to existing pack, Keep a separate pack, or Purchase only.
+
+For a purchase already recorded, choose Attach receipt and confirm that pantry stock stays unchanged. For newly bought stock, check the quantity and expiry before saving.
+
+Please try light and dark appearance and the expanded Duo layout.
