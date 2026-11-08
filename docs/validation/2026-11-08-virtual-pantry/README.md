@@ -4,7 +4,7 @@ Native SwiftUI optional view for Pantry, enabled by default with a persistent Li
 
 ## Design and interaction
 
-Bundled generated photorealistic empty refrigerator interior, overlaid with saved item illustrations and labels; empty sections contain no demonstration groceries. Native metallic doors open once when the view appears, with brief translucent cold mist. No repeating movie, particle timer or remote rendering. Reduce Motion skips doors/mist; accessibility text uses a scalable item list instead of fixed-size shelf labels. Tap a pack to edit on compact screens, or inspect it in the right-hand detail panel on wide layouts. The detail panel links to existing quantity, restock and used-up controls in the pack editor.
+Bundled generated photorealistic empty refrigerator interior, overlaid with saved item illustrations and labels; empty sections contain no demonstration groceries. Native metallic doors start closed. Tap Open fridge/freezer to reveal saved contents with brief translucent cold mist; Close hides contents and clears the selected pack. Changing storage sections resets the doors to closed. No repeating movie, particle timer or remote rendering. Reduce Motion preserves explicit opening/closing but skips animation/mist; accessibility text uses a scalable item list instead of fixed-size shelf labels. Tap a pack to edit on compact screens, or inspect it in the right-hand detail panel on wide layouts. The detail panel links to existing quantity, restock and used-up controls in the pack editor.
 
 Fridge/Freezer/Cupboard/Other are visual groups. Explicit saved locations take precedence; unrecognized locations stay Other. Otherwise existing offline food categories suggest a visual section. This does not set or change storage locations and is not storage/food-safety advice. Dates, low-stock state and quantities remain the user's saved data. Packs stay separate; nine items per visual page, with bounded pagination and clamping after changes. Search and existing filters apply to both views.
 
@@ -25,3 +25,9 @@ Affected entities: InventoryItem, read-only rendering; all writes use existing I
 Full suite evidence: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-25-40--0600.xcresult`.
 Final visual checks: `duo-dark.png`, `duo-light.png`.
 Final UI evidence: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-28-45--0600.xcresult`.
+
+## Manual door interaction follow-up
+
+The fridge no longer opens automatically. Closed contents are removed from the interactive and accessibility item tree. Open/close controls are also available with accessibility text sizes. No data, schema, or networking changes. Simulator build passed; updated UI regression checks cover closed contents, open, close, reopen, edit, and list switching.
+
+Follow-up validation passed: 332 Swift Testing tests plus performance XCTest; all three Duo light, dark, and accessibility UI tests. Result: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-31-09--0600.xcresult`.

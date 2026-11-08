@@ -18,6 +18,8 @@ struct VirtualPantryView: View {
         items.filter { VirtualPantryRules.zone(name: $0.name, location: $0.location) == zone }
             .sorted { ($0.name, $0.id.uuidString) < ($1.name, $1.id.uuidString) }
     }
+    private var hasDoors: Bool { zone == .fridge || zone == .freezer }
+    private var contentsVisible: Bool { !hasDoors || opened }
     private var selected: InventoryItem? { visible.first { $0.id == selectedID } }
     var body: some View {
         GeometryReader { geometry in
@@ -40,18 +42,15 @@ struct VirtualPantryView: View {
             }
         }
         .accessibilityIdentifier("inventory.virtual")
-        .task {
-            guard !opened else { return }
-            if reduceMotion { opened = true; return }
-            try? await Task.sleep(for: .milliseconds(180))
-            guard !Task.isCancelled else { return }
-            withAnimation(.easeInOut(duration: 1.15)) { opened = true }
+        .task(id: opened) {
+            mist = false
+            guard opened, !reduceMotion else { return }
             withAnimation(.easeOut(duration: 0.45)) { mist = true }
             try? await Task.sleep(for: .milliseconds(1000))
             guard !Task.isCancelled else { return }
             withAnimation(.easeOut(duration: 1)) { mist = false }
         }
-        .onChange(of: zone) { _, _ in page = 0; selectedID = nil }
+        .onChange(of: zone) { _, _ in page = 0; selectedID = nil; opened = false; mist = false }
         .onChange(of: visible.map(\.id)) { _, ids in
             page = min(page, VirtualPantryRules.pageCount(itemCount: ids.count) - 1)
             if let selectedID, !ids.contains(selectedID) { self.selectedID = nil }
@@ -93,7 +92,7 @@ struct VirtualPantryView: View {
         VStack(spacing: 12) {
             if typeSize.isAccessibilitySize {
                 // Avoid fixed-size visual labels at accessibility sizes.
-                ForEach(visible) { item in
+                ForEach(contentsVisible ? visible : []) { item in
                     Button { selectedID = item.id; open(item) } label: {
                         Label(item.name, systemImage: "shippingbox").frame(maxWidth: .infinity, minHeight: 54, alignment: .leading)
                     }.accessibilityIdentifier("inventory.item.\(item.name)")
@@ -105,14 +104,14 @@ struct VirtualPantryView: View {
                             Image("VirtualFridgeInterior").resizable().scaledToFill()
                                 .frame(width: proxy.size.width, height: proxy.size.height).clipped().accessibilityHidden(true)
                         } else { cupboard }
-                        let displayed = Array(visible[VirtualPantryRules.pageRange(page: page, itemCount: visible.count)])
+                        let displayed = contentsVisible ? Array(visible[VirtualPantryRules.pageRange(page: page, itemCount: visible.count)]) : []
                         ForEach(Array(displayed.enumerated()), id: \.element.id) { index, item in
                             itemButton(item, wide: wide, iconSize: min(40, proxy.size.width * 0.1))
                                 .frame(width: proxy.size.width * 0.25, height: proxy.size.height * 0.16)
                                 .position(x: proxy.size.width * (0.23 + Double(index % 3) * 0.27),
                                           y: proxy.size.height * (0.23 + Double(index / 3) * 0.17))
                         }
-                        if visible.isEmpty {
+                        if visible.isEmpty && contentsVisible {
                             Text("No saved items here yet").font(.subheadline.weight(.semibold))
                                 .foregroundStyle(.black).padding(14).background(.white.opacity(0.95), in: RoundedRectangle(cornerRadius: 12))
                         }
@@ -121,16 +120,29 @@ struct VirtualPantryView: View {
                                 .frame(width: proxy.size.width * 0.9, height: proxy.size.height * 0.16)
                                 .offset(y: mist ? 80 : 170).allowsHitTesting(false).accessibilityHidden(true)
                         }
-                        if !reduceMotion {
+                        if hasDoors {
                             HStack(spacing: 1) {
                                 door(left: true).rotation3DEffect(.degrees(opened ? -100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .leading, perspective: 0.4)
                                 door(left: false).rotation3DEffect(.degrees(opened ? 100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .trailing, perspective: 0.4)
                             }.opacity(opened ? 0 : 1).allowsHitTesting(false).accessibilityHidden(true)
                         }
+                        if hasDoors && !opened {
+                            Button(action: toggleDoors) {
+                                Label("Open \(zone.title.lowercased())", systemImage: "hand.tap")
+                                    .font(.headline).foregroundStyle(.black).padding(14)
+                                    .background(.white, in: Capsule())
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity).contentShape(Rectangle())
+                            }.buttonStyle(.plain).accessibilityIdentifier("inventory.virtual.open")
+                        }
                     }.clipShape(RoundedRectangle(cornerRadius: 20))
                 }.aspectRatio(2.0 / 3.0, contentMode: .fit)
             }
-            if visible.count > 9 && !typeSize.isAccessibilitySize {
+            if hasDoors && (opened || typeSize.isAccessibilitySize) {
+                Button(opened ? "Close \(zone.title.lowercased())" : "Open \(zone.title.lowercased())", systemImage: "refrigerator") {
+                    toggleDoors()
+                }.frame(minHeight: 44).accessibilityIdentifier(opened ? "inventory.virtual.close" : "inventory.virtual.open")
+            }
+            if contentsVisible && visible.count > 9 && !typeSize.isAccessibilitySize {
                 HStack {
                     Button { page = max(0, page - 1) } label: { Image(systemName: "chevron.left").frame(width: 44, height: 44) }.disabled(page == 0).accessibilityLabel("Previous shelves")
                     Spacer()
@@ -141,6 +153,10 @@ struct VirtualPantryView: View {
                 }
             }
         }
+    }
+    private func toggleDoors() {
+        selectedID = nil
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.85)) { opened.toggle() }
     }
     private func itemButton(_ item: InventoryItem, wide: Bool, iconSize: CGFloat) -> some View {
         Button {
@@ -193,8 +209,8 @@ struct VirtualPantryView: View {
                     .frame(minHeight: 44).accessibilityIdentifier("inventory.virtual.edit")
                 Text("Open pack details to update quantities, restock or mark it used up.").font(.footnote).foregroundStyle(.secondary)
             } else {
-                Text(visible.isEmpty ? "Make room for your groceries" : "See what’s at home").font(AppTheme.sectionTitle)
-                Text(visible.isEmpty ? "Add a saved item to bring this space to life. Check the other sections for your existing groceries." : "Select a pack to see its amount, dates and details. Each saved pack stays separate.")
+                Text(!contentsVisible ? "Open your \(zone.title.lowercased())" : visible.isEmpty ? "Make room for your groceries" : "See what’s at home").font(AppTheme.sectionTitle)
+                Text(!contentsVisible ? "Tap the door to see your saved groceries inside." : visible.isEmpty ? "Add a saved item to bring this space to life. Check the other sections for your existing groceries." : "Select a pack to see its amount, dates and details. Each saved pack stays separate.")
                     .font(.body).foregroundStyle(.secondary)
             }
             Divider()

@@ -2786,6 +2786,13 @@ final class VisualFlowTests: XCTestCase {
         let virtual = app.descendants(matching: .any)["inventory.virtual"].firstMatch
         if !virtual.waitForExistence(timeout: 3) { app.buttons["inventory.viewMode"].tap() }
         XCTAssertTrue(virtual.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["inventory.item.Milk"].exists)
+        capture("Virtual-Pantry-Closed", app: app)
+        tapVisible("inventory.virtual.open", app: app)
+        XCTAssertTrue(app.buttons["inventory.item.Milk"].waitForExistence(timeout: 5))
+        tapVisible("inventory.virtual.close", app: app)
+        XCTAssertFalse(app.buttons["inventory.item.Milk"].exists)
+        tapVisible("inventory.virtual.open", app: app)
         capture("Virtual-Pantry-\(dark ? "Dark" : "Light")-\(large ? "Large" : "Standard")", app: app)
         tapVisible("inventory.item.Milk", app: app)
         if app.buttons["inventory.virtual.edit"].waitForExistence(timeout: 2) {
