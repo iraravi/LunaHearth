@@ -56,7 +56,7 @@ enum ReceiptRules {
         for (index, raw) in bounded.components(separatedBy: .newlines).enumerated() {
             let line = raw.trimmingCharacters(in: .whitespacesAndNewlines)
             guard line.count <= 250, !line.isEmpty else { continue }
-            let excluded = #"(?i)\b(subtotal|sub total|total|net amount|net payable|amount due|amount payable|tax|gst|cgst|sgst|igst|vat|cash|change|tender|balance|payment|visa|mastercard|debit|credit|savings|discount|coupon|refund|return|rounding|round off|loyalty|member|phone|tel|receipt|invoice|transaction|cashier|register|terminal)\b"#
+            let excluded = #"(?i)\b(amount|approved|subtotal|sub total|total|net amount|net payable|amount due|amount payable|tax|gst|cgst|sgst|igst|vat|cash|change|tender|balance|payment|visa|mastercard|debit|credit|savings|discount|coupon|refund|return|rounding|round off|loyalty|member|phone|tel|receipt|invoice|transaction|cashier|register|terminal)\b"#
             guard line.range(of: excluded, options: .regularExpression) == nil,
                   let price = line.range(of: #"(?i)(?:\s+|(?=[₹$€£]))[-−]?\s*(?:(?:₹|\$|€|£|INR\b|Rs\.?)\s*[-−]?\s*\d[\d,]*(?:\.\d{2})?|\d[\d,]*[.,]\d{2})\s*[A-Za-z]?$"#, options: .regularExpression) else { continue }
             // Refunds and discounts are never treated as newly purchased stock.
@@ -68,7 +68,7 @@ enum ReceiptRules {
                 quantity = "\(count) pieces"
                 name.removeSubrange(prefix)
             }
-            name = name.replacingOccurrences(of: #"^\d{4,}\s+"#, with: "", options: .regularExpression)
+            name = name.replacingOccurrences(of: #"^(?:[EA]\s+)?\d{4,}\s+"#, with: "", options: .regularExpression)
             guard name.rangeOfCharacter(from: .letters) != nil, (2...200).contains(name.count) else { continue }
             lines.append(ReceiptLine(id: hash("\(fingerprint)|\(index)"), name: name, quantity: quantity))
             if lines.count == 150 { break }
@@ -84,6 +84,7 @@ enum ReceiptRules {
                 } else { grouped[index].quantity = "" }
             } else { grouped.append(line) }
         }
+        CostcoReceiptDetails.apply(text: bounded, lines: &grouped)
         return ReceiptScan(text: bounded, lines: grouped)
     }
     static func hash(_ text: String) -> String {

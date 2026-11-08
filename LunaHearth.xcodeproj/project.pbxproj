@@ -204,6 +204,7 @@
 		B8310B937A1EE05C16C13F95 /* PantryTemplates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DD7FD5238F39C3808170697 /* PantryTemplates.swift */; };
 		B87C313F79DE1E92CEB4E3E8 /* LocalHouseholdRepository+Reminders.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E170550A79817176986EA12 /* LocalHouseholdRepository+Reminders.swift */; };
 		B8E02435ECF6A8CD58DC5BDE /* HomeWorkspaceDashboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47423F638027A6E472462D12 /* HomeWorkspaceDashboard.swift */; };
+		BA2620B16E48A0A051D62FE0 /* CostcoReceiptTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8C78AF7D163A1637AB62761 /* CostcoReceiptTests.swift */; };
 		BAA85858312F7D160F9BFE45 /* ShoppingListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB02C7C43A2F3466EA1A5A5 /* ShoppingListView.swift */; };
 		BD3888448401951E2045B94C /* SmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D98C4F40166D6C632BC04072 /* SmokeTests.swift */; };
 		BD5510DFCEF93986EF74E1CE /* AppleConnectionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 997C1EF46E5429D1070FC77E /* AppleConnectionsTests.swift */; };
@@ -215,6 +216,7 @@
 		C6DBE6B4EFEB7D4DCD62BE2A /* AIStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C2B46B0835A493E829C9CA /* AIStatusView.swift */; };
 		C72390AE061EFAC962F1E02A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71818E0DAF86BD299DDCCE1A /* HomeView.swift */; };
 		C765CEAE33C032D931894C07 /* ConnectedDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BD776A9835D3925C60ADD93 /* ConnectedDemoTests.swift */; };
+		C9EC98DDB9F392C069A81699 /* CostcoReceiptDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEE7C063E05D64131DE7A559 /* CostcoReceiptDetails.swift */; };
 		CB2E0EBFB3DC4C6BA55FDC1A /* PortableBackupFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 258D78351291B35C1E3DFCE9 /* PortableBackupFiles.swift */; };
 		CBFB08C41E300E61D151F521 /* LocalHouseholdRepository+Appointments.swift in Sources */ = {isa = PBXBuildFile; fileRef = C467C05867160208D0C3B52B /* LocalHouseholdRepository+Appointments.swift */; };
 		CC7284430E005ABD228135EB /* ShoppingSuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF3DA361B4BC919CF277CD3 /* ShoppingSuggestions.swift */; };
@@ -478,6 +480,7 @@
 		A506ED8C7A5524DE05A28783 /* InteractiveFloorPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveFloorPlan.swift; sourceTree = "<group>"; };
 		A6B64093FBE65367CB8E8210 /* PantryIdeasView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryIdeasView.swift; sourceTree = "<group>"; };
 		A7BD0AE51F7B29FF6A10BB0D /* ThemeContrastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeContrastTests.swift; sourceTree = "<group>"; };
+		A8C78AF7D163A1637AB62761 /* CostcoReceiptTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostcoReceiptTests.swift; sourceTree = "<group>"; };
 		AA22D6CAE216978078181687 /* PurchaseHistoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseHistoryTests.swift; sourceTree = "<group>"; };
 		AA2A2058A6B317D5FE3A8C0F /* HouseholdModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdModels.swift; sourceTree = "<group>"; };
 		AA6F5E5ADDF5EDE13895EF8E /* ReceiptScanSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptScanSessionTests.swift; sourceTree = "<group>"; };
@@ -500,6 +503,7 @@
 		BB078FBF31485807E11B1B25 /* ExistingInventoryPurchasePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingInventoryPurchasePicker.swift; sourceTree = "<group>"; };
 		BB410BC686EE0B479B4278AC /* AppleConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleConnections.swift; sourceTree = "<group>"; };
 		BC030D09EBE34A483AD0D4B2 /* CalendarExportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarExportSheet.swift; sourceTree = "<group>"; };
+		BEE7C063E05D64131DE7A559 /* CostcoReceiptDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CostcoReceiptDetails.swift; sourceTree = "<group>"; };
 		BFD042B01FF789E2CF28EFBA /* DangerZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DangerZoneView.swift; sourceTree = "<group>"; };
 		C335998282FEDA8F08DC1DD1 /* ConnectedDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDemoView.swift; sourceTree = "<group>"; };
 		C37A476647536CB37D908008 /* HouseholdSyncRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSyncRecords.swift; sourceTree = "<group>"; };
@@ -905,6 +909,7 @@
 				53BCC23EF9042B47786A40D5 /* AssignmentNotificationRoute.swift */,
 				8D2EAEE2C876AB201596FD2B /* CalendarDayPeriod.swift */,
 				166502EBF13B1F9EBA500787 /* ConnectedDemo.swift */,
+				BEE7C063E05D64131DE7A559 /* CostcoReceiptDetails.swift */,
 				5CD118ED42F304B530403D48 /* ExpenseRules.swift */,
 				CE80FC56024C97C91DD58E1D /* FamilyWeekRules.swift */,
 				81C93A226649AD62E715FE50 /* HomeSetupProgress.swift */,
@@ -1186,6 +1191,7 @@
 				D7D0EC0B527C95CE96B0D674 /* CalendarDeliveryTests.swift */,
 				2BD776A9835D3925C60ADD93 /* ConnectedDemoTests.swift */,
 				B3D1F79CD8DFD14959AA67A8 /* ConnectedPurchaseAuditTests.swift */,
+				A8C78AF7D163A1637AB62761 /* CostcoReceiptTests.swift */,
 				3A34481EDFB70B8C62C72D3A /* ExpenseTests.swift */,
 				5C2709B2BDEF6771CE1E1E78 /* FamilyWeekTests.swift */,
 				B360DCE5AD25591529C13345 /* ForegroundRefreshLoopTests.swift */,
@@ -1373,6 +1379,7 @@
 				5B2204C003852ED61C870859 /* CalendarDeliveryTests.swift in Sources */,
 				C765CEAE33C032D931894C07 /* ConnectedDemoTests.swift in Sources */,
 				4834538424DFC9C43F3B5FB0 /* ConnectedPurchaseAuditTests.swift in Sources */,
+				BA2620B16E48A0A051D62FE0 /* CostcoReceiptTests.swift in Sources */,
 				111C252C353E6DC5DE8D77CB /* ExpenseTests.swift in Sources */,
 				E92D9699205F5CF0AE127B3A /* FamilyWeekTests.swift in Sources */,
 				1B99F1541D57C7D006E36781 /* ForegroundRefreshLoopTests.swift in Sources */,
@@ -1473,6 +1480,7 @@
 				93835708D8051027EC57F596 /* ConnectedDemoView.swift in Sources */,
 				C68AEEEEDC2EA165FA7FAD9E /* ConnectedRemindersView.swift in Sources */,
 				B194DDE8FD66CEEAA69FF041 /* ConnectionsView.swift in Sources */,
+				C9EC98DDB9F392C069A81699 /* CostcoReceiptDetails.swift in Sources */,
 				810CA960326BFF4450E43368 /* DangerZoneView.swift in Sources */,
 				15AF4BF9857B0CFBCB4D18A3 /* DemoReceiptImage.swift in Sources */,
 				3DD136707C59D29D497878B6 /* DemoWorkflowAnimation.swift in Sources */,

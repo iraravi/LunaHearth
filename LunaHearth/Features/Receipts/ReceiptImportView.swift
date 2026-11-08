@@ -377,6 +377,7 @@ struct ReceiptImportView: View {
         if let currency = ExpenseRules.receiptCurrency(scan.text) { expenseDraft.currency = currency }
         for index in lines.indices {
             lines[index].addToInventory = false
+            if !recordingExpense { lines[index].amount = "" }
             let name = lines[index].name
             let shopping = repository.groceries.filter { !$0.isCompleted && $0.purchaseDisposition != "inventory" && $0.receiptImportKey == nil && IngredientMatching.same($0.name, name) }
             if shopping.count == 1 { lines[index].groceryID = shopping.first?.id }

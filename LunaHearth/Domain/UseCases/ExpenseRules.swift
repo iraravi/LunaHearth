@@ -93,10 +93,12 @@ enum ExpenseRules {
     /// Suggest only an explicitly labeled total; users confirm the complete receipt amount.
     static func receiptTotal(_ text: String) -> String? {
         let lines = String(text.prefix(40_000)).components(separatedBy: .newlines)
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines)
+                .replacingOccurrences(of: #"^[*★]+\s*"#, with: "", options: .regularExpression) }.filter { !$0.isEmpty }
         let labels = [
             #"(?i)^(grand\s+total|net\s+(total|amount|payable)|amount\s+(due|payable)|total\s+payable|bill\s+total)\b\s*[:=\-]?\s*"#,
-            #"(?i)^(total\s+amount|total)\b\s*[:=\-]?\s*"#
+            #"(?i)^(total\s+amount|total)\b\s*[:=\-]?\s*"#,
+            #"(?i)^amount\s*:\s*"#
         ]
         for pattern in labels {
             var amounts = Set<String>()
@@ -104,6 +106,9 @@ enum ExpenseRules {
                 guard let label = line.range(of: pattern, options: .regularExpression) else { continue }
                 let remainder = String(line[label.upperBound...])
                 let candidate = remainder.isEmpty && index + 1 < lines.count ? lines[index + 1] : remainder
+                // A dollar receipt with an unmarked integer total may have lost its decimal
+                // in OCR (e.g. white-on-black "95.97" read as "95197"). Do not invent cents.
+                if text.contains("$"), candidate.trimmingCharacters(in: .whitespaces).range(of: #"^\d+$"#, options: .regularExpression) != nil { continue }
                 if let amount = normalizedReceiptAmount(candidate) { amounts.insert(amount) }
             }
             // Conflicting totals need human review, never an arbitrary last-line choice.
