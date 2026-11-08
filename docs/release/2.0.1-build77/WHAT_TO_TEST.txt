@@ -1,0 +1,9 @@
+Please test the latest home and pantry experience.
+
+Today: choose Step inside your home. On Duo, fold to see the closed entrance and unfold to reveal the home interior. Check Tasks, Kitchen and Shopping navigation and return to the dashboard.
+
+Kitchen: switch between Fridge and Pantry, check stored items and fridge mist, and return to the normal inventory list. Verify light/dark mode and larger text.
+
+Receipts: check Costco repeated items, discounts, totals, product names and matching against Shopping. Review all amounts and matches before saving.
+
+Please report any incorrect inventory location, missing item, navigation issue, or unexpected change to existing household data.
