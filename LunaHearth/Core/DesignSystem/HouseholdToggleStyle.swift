@@ -9,6 +9,6 @@ struct HouseholdToggleStyle: ToggleStyle {
                 Text(configuration.isOn ? "On" : "Off")
                     .font(.caption).foregroundStyle(.secondary).accessibilityHidden(true)
             }
-        }.toggleStyle(SwitchToggleStyle(tint: .green))
+        }.toggleStyle(SwitchToggleStyle(tint: Color("ControlBlue")))
     }
 }

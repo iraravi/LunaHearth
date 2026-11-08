@@ -12,7 +12,8 @@ enum AppTheme {
     static let contentPadding: CGFloat = 20
     static let displayTitle = Font.system(.largeTitle, design: .default, weight: .bold)
     static let sectionTitle = Font.system(.title2, design: .default, weight: .bold)
-    static let sage = Color("IllustrationGreen")
+    // Legacy semantic accent name; use blue instead of pale green for controls and labels.
+    static let sage = Color("IllustrationBlue")
     static let clay = Color("IllustrationOrange")
     static let slate = Color("IllustrationBlue")
     static let plum = Color("IllustrationPurple")
@@ -28,7 +29,7 @@ private enum IllustrationPalette {
         case let value where value.contains("calendar") || value.contains("clock") || value.contains("drop"):
             name = "IllustrationBlue"
         case let value where value.contains("check") || value.contains("leaf") || value.contains("shield"):
-            name = "IllustrationGreen"
+            name = "IllustrationBlue"
         case let value where value.contains("basket") || value.contains("cart") || value.contains("carrot"):
             name = "IllustrationOrange"
         case let value where value.contains("fork") || value.contains("book") || value.contains("doc"):
