@@ -7,3 +7,7 @@ Prepared November 8, 2026 on codex/receipt-calendar-reliability, application sou
 - Command-line upload failed with account/keychain credential errors. Reauthenticated through Xcode and started upload from Organizer; awaiting completion at time of this entry.
 - Safari App Store Connect sign-in requires user two-factor verification before tester assignment can be completed.
 - WHAT_TO_TEST.txt includes outstanding physical Duo receipt scrolling and two-device family sharing/notification acceptance checks. These remain public-release gates.
+
+## Upload confirmed
+
+Xcode Organizer displayed “App upload complete” and “LunaHearth 2.0.1 (73) uploaded.” Upload succeeded through the GUI. Apple processing, build-specific notes and tester-group assignment are not yet verified because Safari is waiting for two-factor verification. The public App Store version is unchanged.
