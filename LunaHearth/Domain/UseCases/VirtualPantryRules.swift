@@ -34,8 +34,8 @@ enum VirtualPantryRules {
         }
         return surfaces[min(2, max(0, row))]
     }
-    static func showsColdMist(zone: VirtualPantryZone, reduceMotion: Bool) -> Bool {
-        !reduceMotion && (zone == .fridge || zone == .freezer)
+    static func showsColdMist(zone: VirtualPantryZone) -> Bool {
+        zone == .fridge || zone == .freezer
     }
     static func pageCount(itemCount: Int) -> Int { max(1, (max(0, itemCount) + 8) / 9) }
     static func pageRange(page: Int, itemCount: Int) -> Range<Int> {

@@ -11,11 +11,11 @@ struct VirtualPantryTests {
         #expect(VirtualPantryRules.shelfSurface(row: 0, zone: .fridge) == 0.300)
         #expect(VirtualPantryRules.shelfSurface(row: 2, zone: .cupboard) == 0.729)
     }
-    @Test func coldMistOnlyForRefrigeratedZonesWithoutReducedMotion() {
-        #expect(VirtualPantryRules.showsColdMist(zone: .fridge, reduceMotion: false))
-        #expect(VirtualPantryRules.showsColdMist(zone: .freezer, reduceMotion: false))
-        #expect(!VirtualPantryRules.showsColdMist(zone: .cupboard, reduceMotion: false))
-        #expect(!VirtualPantryRules.showsColdMist(zone: .fridge, reduceMotion: true))
+    @Test func coldMistOnlyForRefrigeratedZones() {
+        #expect(VirtualPantryRules.showsColdMist(zone: .fridge))
+        #expect(VirtualPantryRules.showsColdMist(zone: .freezer))
+        #expect(!VirtualPantryRules.showsColdMist(zone: .cupboard))
+        #expect(!VirtualPantryRules.showsColdMist(zone: .other))
     }
     @Test func explicitPrimaryStorageChoicesOverrideAutomaticGrouping() {
         #expect(VirtualPantryRules.zone(name: "Milk", location: "Pantry") == .cupboard)

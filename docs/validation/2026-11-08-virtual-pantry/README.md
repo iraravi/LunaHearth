@@ -67,8 +67,10 @@ Final checks: regular iPhone 18 Pro normal-pantry UI test passed (`/tmp/NamIllam
 - Fridge and Pantry are the primary storage menu choices; Freezer and Other remain secondary so existing locations remain reachable.
 - Pantry uses original charcoal slab-door artwork and an empty warm-white fitted interior with metal shelves and pull-out baskets. No wood.
 - Food illustrations use shelf contact coordinates and contact shadows instead of centered floating placement.
-- Refrigerated zones show cold mist before revealing items, then retain a gentle mist while open. Closing or changing zones cancels pending reveals. Reduce Motion skips the mist and delay.
+- Refrigerated zones show cold mist before revealing items, then retain a gentle mist while open. Closing or changing zones cancels pending reveals. Reduce Motion keeps static mist and skips the reveal delay.
 - Inventory add/edit exposes Fridge and Pantry choices in a visible Store in section. The existing optional location field remains editable for freezer/custom storage; existing values are preserved. No schema changes or network access. Receipt review and purchase-sheet storage controls are unchanged in this follow-up.
 - Affected entity: InventoryItem.location, through the existing InventoryDraft save path. Visual posture changes never write household data.
 
 Final verification: XcodeGen generation and simulator build succeeded. Full unit suite: 337 tests / 64 suites passed. Duo UI tests `testVirtualPantryAccessibility` and `testVirtualPantryLight` passed. Logs: `/tmp/pantry-final-build.log`, `/tmp/pantry-final-tests.log`. This work is not uploaded to TestFlight.
+
+Mist visibility correction: replaced near-white static ellipses with blue-grey/white drifting Canvas haze at a bounded 30 fps. The layer is mounted only for an open refrigerated zone. Reduce Motion pauses movement, retaining visible haze. No timer persists after leaving the view.

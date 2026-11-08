@@ -9,7 +9,6 @@ struct VirtualPantryView: View {
     @State private var zone: VirtualPantryZone = .fridge
     @State private var page = 0
     @State private var opened = false
-    @State private var mist = false
     @State private var itemsRevealed = false
     @State private var editing: InventoryItem?
     private var visible: [InventoryItem] {
@@ -58,16 +57,9 @@ struct VirtualPantryView: View {
                     }
                 }
                 if hasDoors {
-                    if coldStorage && opened && !reduceMotion {
-                        ZStack {
-                            ForEach(0..<3) { layer in
-                                Ellipse().fill(Color(red: 0.87, green: 0.94, blue: 1).opacity(mist ? 0.24 : 0))
-                                    .frame(width: geometry.size.width * 0.85, height: geometry.size.height * 0.28)
-                                    .blur(radius: 25)
-                                    .offset(x: Double(layer - 1) * geometry.size.width * 0.16,
-                                            y: geometry.size.height * (mist ? 0.12 : 0.34) + Double(layer) * 24)
-                            }
-                        }.allowsHitTesting(false).accessibilityHidden(true)
+                    if VirtualPantryRules.showsColdMist(zone: zone) && opened {
+                        FridgeMistView(reduceMotion: reduceMotion)
+                            .allowsHitTesting(false).accessibilityHidden(true)
                     }
                     ZStack {
                         HStack(spacing: 0) {
@@ -91,20 +83,18 @@ struct VirtualPantryView: View {
             withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.85)) { opened = showInterior }
         }
         .task(id: RevealKey(opened: opened, zone: zone.rawValue, reduceMotion: reduceMotion)) {
-            mist = false
             itemsRevealed = false
             guard opened || !hasDoors else { return }
-            guard VirtualPantryRules.showsColdMist(zone: zone, reduceMotion: reduceMotion) else {
+            guard coldStorage && !reduceMotion else {
                 itemsRevealed = true
                 return
             }
-            withAnimation(.easeOut(duration: 0.3)) { mist = true }
             try? await Task.sleep(for: .milliseconds(550))
             guard !Task.isCancelled else { return }
             withAnimation(.easeInOut(duration: 0.4)) { itemsRevealed = true }
             // Keep gentle mist visible until the fridge closes or the storage zone changes.
         }
-        .onChange(of: zone) { _, _ in page = 0; opened = hingeState.interiorVisible ?? opened; mist = false }
+        .onChange(of: zone) { _, _ in page = 0; opened = hingeState.interiorVisible ?? opened }
         .onChange(of: visible.map(\.id)) { _, ids in
             page = min(page, VirtualPantryRules.pageCount(itemCount: ids.count) - 1)
         }
@@ -165,5 +155,32 @@ struct VirtualPantryView: View {
                 }
             }
         }.accessibilityHidden(true)
+    }
+}
+
+/// A bounded 30 fps atmospheric layer, mounted only while a refrigerated door is open.
+/// Reduce Motion keeps the same visible haze without movement.
+private struct FridgeMistView: View {
+    let reduceMotion: Bool
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { timeline in
+            Canvas { context, size in
+                let time = reduceMotion ? 0 : timeline.date.timeIntervalSinceReferenceDate
+                context.addFilter(.blur(radius: 18))
+                for index in 0..<7 {
+                    let phase = Double(index) * 1.7
+                    let drift = sin(time * 0.65 + phase)
+                    let x = size.width * (0.08 + Double(index % 4) * 0.25 + drift * 0.045)
+                    let y = size.height * (0.54 + Double(index % 3) * 0.12 + cos(time * 0.45 + phase) * 0.025)
+                    let rect = CGRect(x: x - size.width * 0.25, y: y,
+                                      width: size.width * 0.52, height: size.height * 0.14)
+                    context.fill(Path(ellipseIn: rect), with: .radialGradient(
+                        Gradient(colors: [Color(red: 0.53, green: 0.69, blue: 0.78).opacity(0.40),
+                                          Color.white.opacity(0.52), .clear]),
+                        center: CGPoint(x: rect.midX, y: rect.midY),
+                        startRadius: 0, endRadius: rect.width * 0.5))
+                }
+            }
+        }
     }
 }
