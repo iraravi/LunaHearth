@@ -46,7 +46,7 @@ struct HomeView: View {
                         }
                         NavigationLink { MealIdeasView() } label: {
                             HStack(spacing: 18) {
-                                FeatureIllustration(symbol: "fork.knife", size: 64)
+                                FeatureIllustration(symbol: "fork.knife", size: 48)
                                 VStack(alignment: .leading, spacing: 5) {
                                     Text("Meals").font(.title3.bold())
                                     Text("Meal ideas & plans from your pantry").font(.subheadline).foregroundStyle(.secondary)
@@ -58,7 +58,7 @@ struct HomeView: View {
                     }
                     NavigationLink { PlanningListView(kind: .task) } label: {
                         HStack(spacing: 16) {
-                            FeatureIllustration(symbol: "checklist", size: 64)
+                            FeatureIllustration(symbol: "checklist", size: 48)
                             VStack(alignment: .leading, spacing: 5) {
                                 Text("Reminders").font(.title3.bold())
                                 Text("\(repository.tasks.filter { !$0.isCompleted }.count) open \(repository.tasks.filter { !$0.isCompleted }.count == 1 ? "task" : "tasks") · Your household to-dos")
@@ -95,8 +95,8 @@ private struct HomeFoodTile: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if !textSize.isAccessibilitySize {
-            FeatureIllustration(symbol: title == "Pantry" ? "cabinet" : "basket", size: 104)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+            FeatureIllustration(symbol: title == "Pantry" ? "cabinet" : "basket", size: 48)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             Text(title).font(AppTheme.sectionTitle).foregroundStyle(accent)
             Text(purpose).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
@@ -112,9 +112,9 @@ private struct HomeUtilityTile: View {
     let accent: Color
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            FeatureIllustration(symbol: symbol, size: 72)
+            FeatureIllustration(symbol: symbol, size: 48)
             Text(title).font(.headline)
             Text(detail).font(.subheadline).foregroundStyle(.secondary)
-        }.padding(20).frame(maxWidth: .infinity, minHeight: 110, alignment: .topLeading).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18)).hearthCardOutline(accent)
+        }.padding(20).frame(maxWidth: .infinity, minHeight: 110, alignment: .topLeading).background(AppTheme.surface, in: RoundedRectangle(cornerRadius: 18)).hearthCardOutline(AppTheme.ink)
     }
 }

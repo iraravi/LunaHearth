@@ -36,7 +36,7 @@ struct TodayHero: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(now.formatted(.dateTime.weekday(.wide).month(.abbreviated).day()))
                 .font(.subheadline).foregroundStyle(TodayTheme.muted)
-            Text(household).font(.system(.largeTitle, design: .default).weight(.bold))
+            Text(household).font(AppTheme.displayTitle)
                 .accessibilityAddTraits(.isHeader)
                 .fixedSize(horizontal: false, vertical: true)
             if wide && !typeSize.isAccessibilitySize {

@@ -24,12 +24,13 @@ struct ThemeContrastTests {
                     #expect(try color(prefix + role).isEqual(color("Hearth" + role)))
                 }
             }
-            for foreground in ["HearthInk", "HearthMuted", "HearthAccent"] {
-                for background in ["HearthCanvas", "HearthSurface"] {
+            for foreground in ["HearthInk", "HearthMuted", "HearthAccent", "IllustrationOrange", "IllustrationCoral", "IllustrationPurple", "IllustrationBlue"] {
+                for background in ["HearthCanvas", "HearthSurface", "HearthSecondary"] {
                     let first = try luminance(color(foreground))
                     let second = try luminance(color(background))
                     let ratio = (max(first, second) + 0.05) / (min(first, second) + 0.05)
-                    #expect(ratio >= 4.5, "\(foreground) on \(background), appearance \(style.rawValue): body text and actions need 4.5:1 contrast")
+                    let minimum = foreground.hasPrefix("Illustration") ? 3.0 : 4.5
+                    #expect(ratio >= minimum, "\(foreground) on \(background), appearance \(style.rawValue): text needs 4.5:1 and decorative symbols need 3:1 contrast")
                 }
             }
         }

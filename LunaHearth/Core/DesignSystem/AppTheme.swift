@@ -10,8 +10,8 @@ enum AppTheme {
     static let cardCornerRadius: CGFloat = 18
     static let sectionSpacing: CGFloat = 16
     static let contentPadding: CGFloat = 20
-    static let displayTitle = Font.system(.largeTitle, design: .default, weight: .bold)
-    static let sectionTitle = Font.system(.title2, design: .default, weight: .bold)
+    static let displayTitle = Font.system(.largeTitle, design: .serif, weight: .regular)
+    static let sectionTitle = Font.system(.title2, design: .serif, weight: .regular)
     // Legacy semantic accent name; use blue instead of pale green for controls and labels.
     static let sage = Color("IllustrationBlue")
     static let clay = Color("IllustrationOrange")
@@ -22,22 +22,23 @@ enum AppTheme {
 }
 
 /// Decorative category accents; navigation and primary actions stay black and white.
-private enum IllustrationPalette {
+enum IllustrationPalette {
     static func color(for symbol: String) -> Color {
-        let name: String
+        Color(assetName(for: symbol))
+    }
+
+    /// Category color is decorative; the adjacent label always identifies the destination.
+    static func assetName(for symbol: String) -> String {
         switch symbol {
-        case let value where value.contains("calendar") || value.contains("clock") || value.contains("drop"):
-            name = "IllustrationBlue"
-        case let value where value.contains("check") || value.contains("leaf") || value.contains("shield"):
-            name = "IllustrationBlue"
-        case let value where value.contains("basket") || value.contains("cart") || value.contains("carrot"):
-            name = "IllustrationOrange"
-        case let value where value.contains("fork") || value.contains("book") || value.contains("doc"):
-            name = "IllustrationPurple"
+        case let value where value.contains("calendar") || value.contains("clock") || value.contains("shield"):
+            "IllustrationBlue"
+        case let value where value.contains("basket") || value.contains("cart") || value.contains("carrot") || value.contains("fork"):
+            "IllustrationOrange"
+        case let value where value.contains("chart") || value.contains("receipt") || value.contains("doc") || value.contains("book"):
+            "IllustrationPurple"
         default:
-            name = "IllustrationCoral"
+            "IllustrationCoral"
         }
-        return Color(name)
     }
 }
 
@@ -70,7 +71,7 @@ struct ScreenIntro: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(eyebrow).font(.subheadline.weight(.medium)).foregroundStyle(AppTheme.muted)
-            Text(title).font(.system(.largeTitle, design: .default, weight: .bold)).foregroundStyle(AppTheme.ink)
+            Text(title).font(AppTheme.displayTitle).foregroundStyle(AppTheme.ink)
                 .fixedSize(horizontal: false, vertical: true)
             Text(subtitle).font(.subheadline).foregroundStyle(AppTheme.muted)
                 .fixedSize(horizontal: false, vertical: true)
