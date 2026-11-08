@@ -90,6 +90,36 @@ final class VisualFlowTests: XCTestCase {
         app.terminate()
     }
 
+    func testEnterInteractiveHome() { enterInteractiveHome(large: false) }
+    func testEnterInteractiveHomeAccessibility() { enterInteractiveHome(large: true) }
+    private func enterInteractiveHome(large: Bool) {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-today", "--reduce-motion"]
+            + (large ? ["--large-text", "--dark"] : [])
+        app.launch()
+        XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 15))
+        tapVisible("today.enterHome", app: app)
+        XCTAssertTrue(app.buttons["home.scene.exit"].waitForExistence(timeout: 5))
+        if app.buttons["home.scene.open"].exists { app.buttons["home.scene.open"].tap() }
+        XCTAssertTrue(app.buttons["home.scene.kitchen"].waitForExistence(timeout: 5))
+        capture("Interactive-Home-Interior", app: app)
+        for destination in ["tasks", "shopping", "kitchen"] {
+            app.buttons["home.scene.\(destination)"].tap()
+            if destination == "kitchen", app.buttons["inventory.viewMode"].waitForExistence(timeout: 3) {
+                // Switch from the virtual kitchen to its inventory list before returning home.
+                app.buttons.matching(identifier: "inventory.viewMode").allElementsBoundByIndex.last?.tap()
+                let virtual = app.descendants(matching: .any)["inventory.virtual"].firstMatch
+                XCTAssertTrue(virtual.waitForNonExistence(timeout: 5))
+            }
+            XCTAssertTrue(app.buttons["home.scene.return"].waitForExistence(timeout: 5))
+            app.buttons["home.scene.return"].tap()
+            XCTAssertTrue(app.buttons["home.scene.kitchen"].waitForExistence(timeout: 5))
+        }
+        app.buttons["home.scene.exit"].tap()
+        XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 5))
+        app.terminate()
+    }
+
     func testLivingHomeNavigation() { livingHomeNavigation(large: false) }
     func testLivingHomeAccessibility() { livingHomeNavigation(large: true) }
     private func livingHomeNavigation(large: Bool) {

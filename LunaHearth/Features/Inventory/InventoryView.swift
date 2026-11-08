@@ -6,6 +6,7 @@ enum InventoryTheme {
 }
 
 struct InventoryView: View {
+    var allowsVirtualView = true
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var hingeState: PantryHingeState = .unavailable
@@ -180,7 +181,7 @@ struct InventoryView: View {
         }
         }
         .background(PantryHingeObserver(update: receiveHinge))
-        .fullScreenCover(isPresented: Binding(get: { virtualView && hingeState.supportsVirtualPantry }, set: { virtualView = $0 })) {
+        .fullScreenCover(isPresented: Binding(get: { allowsVirtualView && virtualView && hingeState.supportsVirtualPantry }, set: { virtualView = $0 })) {
             VirtualPantryView(items: active, hingeState: hingeState, exit: { virtualView = false })
                 .background(PantryHingeObserver(update: receiveHinge))
         }
@@ -190,7 +191,7 @@ struct InventoryView: View {
         .searchable(text: $search, prompt: "Find an ingredient")
         .onChange(of: search) { _, _ in selectedCategory = nil }
         .toolbar {
-            if hingeState.supportsVirtualPantry {
+            if allowsVirtualView && hingeState.supportsVirtualPantry {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(virtualView ? "List view" : "Virtual pantry", systemImage: virtualView ? "list.bullet" : "refrigerator") {
                     virtualView.toggle()

@@ -8,6 +8,7 @@ struct TodayView: View {
     @State private var section: TodayWorkspaceSection = .day
     @State private var priority: TodayPriority = .buy
     @State private var adding = false
+    @State private var showingHome = false
 
     var body: some View {
         NavigationStack {
@@ -26,6 +27,7 @@ struct TodayView: View {
                 }
             }
             .sheet(isPresented: $adding) { QuickAddView(kind: .task) }
+            .fullScreenCover(isPresented: $showingHome) { InteractiveHomeView() }
         }
     }
 
@@ -104,7 +106,7 @@ struct TodayView: View {
         TodayLivingHome(tasks: dueTasks,
                         shopping: repository.groceries.filter { !$0.isCompleted },
                         inventory: repository.inventory.filter { !$0.isUsedUp },
-                        expanded: expanded)
+                        expanded: expanded, enterHome: { showingHome = true })
     }
 
     private func scheduleCard(events: [FamilyEvent]) -> some View {

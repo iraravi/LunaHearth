@@ -6,6 +6,7 @@ struct TodayLivingHome: View {
     let shopping: [GroceryItem]
     let inventory: [InventoryItem]
     let expanded: Bool
+    let enterHome: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var fridgeOpen = false
@@ -21,6 +22,19 @@ struct TodayLivingHome: View {
                 Image(systemName: "house").foregroundStyle(TodayTheme.muted).accessibilityHidden(true)
             }
             Text("A little more together.").font(.subheadline).foregroundStyle(TodayTheme.muted)
+            Button(action: enterHome) {
+                HStack {
+                    Image(systemName: "door.left.hand.open").font(.title2)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Step inside your home").font(.headline)
+                        Text("Kitchen, tasks and shopping").font(.caption)
+                    }
+                    Spacer()
+                    Image(systemName: "arrow.right")
+                }.padding(18).foregroundStyle(TodayTheme.canvas)
+                    .background(TodayTheme.ink, in: RoundedRectangle(cornerRadius: 20))
+            }.buttonStyle(.plain).accessibilityIdentifier("today.enterHome")
+
             (typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 14)) : AnyLayout(HStackLayout(alignment: .top, spacing: 14))) {
                 NavigationLink { PlanningListView(kind: .task) } label: {
                     VStack(alignment: .leading, spacing: 12) {
@@ -66,6 +80,7 @@ struct TodayLivingHome: View {
             }.background(TodayTheme.surface, in: RoundedRectangle(cornerRadius: 22))
                 .clipShape(RoundedRectangle(cornerRadius: 22))
         }.accessibilityElement(children: .contain).accessibilityIdentifier("today.livingHome")
+
     }
 
     private func tileLabel(_ title: String, detail: String) -> some View {

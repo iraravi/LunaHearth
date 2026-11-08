@@ -77,3 +77,7 @@ Today adds a native SwiftUI scene with a task noticeboard, a shopping bag and an
 On expansive layouts, schedule/reminders/family briefing remain in the left pane and the scene sits in the right workspace. Compact and accessibility layouts stack the content. The preview door animates on interaction, counts trigger short icon effects, and the open fridge reuses the bounded mist layer. Reduce Motion removes door/count animation and retains static haze. All controls have labels and accessibility identifiers; scene decoration is hidden from VoiceOver.
 
 Entities read: HouseholdTask, GroceryItem and InventoryItem. This is presentation-only, with no schema changes, new permissions, backend or household data transmitted. Changes still occur through established local-first screens. Opening the preview never edits inventory or marks a task/purchase complete. This is a local development change, not a TestFlight upload.
+
+## Optional interactive home entrance
+
+The Today living-home section now includes Step inside your home. This opens a full-screen illustrated interior with noticeboard, kitchen and shopping destinations wired to existing screens. Physical fold state controls the entry doors on supported Duo devices. Other devices get an explicit Open door control. Dashboard and Home view controls remain available; folding never discards an active destination or editor. Full scope, artwork prompt and validation are recorded in `docs/validation/2026-11-08-interactive-home/README.md`.
