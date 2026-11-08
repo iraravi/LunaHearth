@@ -440,6 +440,31 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Family plans"].exists)
     }
 
+    func testReceiptNewPurchaseCanKeepSeparatePantryPack() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-receipt", "--ui-testing-receipt-link"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap()
+        tapVisible("home.inventory", app: app)
+        tapVisible("inventory.scanReceipt", app: app)
+        tapVisible("receipt.newPurchase.Curd", app: app)
+        let pantry = app.switches["receipt.inventory.Curd"].firstMatch
+        reveal(pantry, app: app)
+        XCTAssertTrue(pantry.exists)
+        pantry.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        let separate = app.switches["receipt.separatePack.Curd"].firstMatch
+        reveal(separate, app: app)
+        XCTAssertTrue(separate.exists)
+        separate.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
+        XCTAssertTrue(app.staticTexts["Your existing pack, amount and expiry stay unchanged."].exists)
+        capture("Receipt-Separate-Pack-Review", app: app)
+        app.buttons["receipt.confirm"].tap()
+        XCTAssertTrue(app.buttons["receipt.saveWithInventory"].firstMatch.waitForExistence(timeout: 5))
+        app.buttons["receipt.saveWithInventory"].firstMatch.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
+    }
+
     func testReceiptLinksBoughtItemWithoutRestocking() { receiptLink(largeText: false) }
     func testReceiptLinkLargeText() { receiptLink(largeText: true) }
     private func receiptLink(largeText: Bool) {
@@ -451,6 +476,7 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         tapVisible("inventory.scanReceipt", app: app)
         XCTAssertTrue(app.buttons["receipt.confirm"].waitForExistence(timeout: 5))
+        tapVisible("Already recorded? Attach receipt", app: app)
         tapVisible("receipt.usePurchase.Curd", app: app)
         XCTAssertEqual(app.buttons["receipt.usePurchase.Curd"].value as? String, "Selected")
         capture("Receipt-Existing-Purchase", app: app)
@@ -912,6 +938,14 @@ final class VisualFlowTests: XCTestCase {
             }
             let down = target.map { $0.frame.midY < top } ?? false
             guard bounds.width > 0, bounds.height > 0 else { return }
+            // Let XCTest route receipt and pantry gestures to the foreground collection's display.
+            // App-relative coordinates can target the inactive display on Duo simulators.
+            if app.navigationBars["Receipt"].exists || app.navigationBars["Groceries at home"].exists,
+               let collection = app.collectionViews.allElementsBoundByIndex.last, collection.exists {
+                if down { collection.swipeDown() }
+                else { collection.swipeUp() }
+                continue
+            }
             let origin = app.coordinate(withNormalizedOffset: .zero)
             origin.withOffset(CGVector(dx: bounds.midX, dy: bounds.minY + bounds.height * (down ? 0.3 : 0.8)))
                 .press(forDuration: 0.05, thenDragTo: origin.withOffset(
@@ -1853,7 +1887,7 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("receipt.card.Curd", app: app)
         XCTAssertEqual(app.staticTexts["receipt.inventorySummary"].label, "Inventory items selected: 1")
         capture("Receipt-Visual-Selection", app: app)
-        let quantityMatches = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Quantity & matches")).firstMatch
+        let quantityMatches = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Quantity, price & expiry")).firstMatch
         reveal(quantityMatches, app: app)
         quantityMatches.tap()
         let shoppingMatch = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "receipt.shopping.")).firstMatch

@@ -75,6 +75,52 @@ import Testing
         #expect(throws: ReceiptImportError.alreadyExpensed) { try repo.importReceipt(rescanned, householdID: home, storeName: "Market") }
         #expect(repo.inventory.first?.quantityText == "2 l" && repo.expenses.count == 1)
     }
+    @Test func separateReceiptPackKeepsOldDatesAndAmountsAndSurvivesReplay() throws {
+        let repo = try setup(), home = try #require(repo.household?.id)
+        let old = try #require(repo.inventory.first)
+        old.purchasedDay = "2026-10-01"; old.expiryDay = "2099-01-01"
+        try repo.context.save()
+        var lines = ReceiptRules.scan(text: "Milk 6.00").lines
+        lines[0].quantity = "2 litres"
+        lines[0].confirmedNewPurchase = true
+        lines[0].keepSeparatePack = true
+        lines[0].expiryDay = "2099-02-01"
+        let key = ReceiptRules.hash("separate-pack")
+        let receiptExpense = expense
+        #expect(try repo.importReceipt(lines, householdID: home, storeName: "Market", expense: receiptExpense, receiptKey: key) == 1)
+        #expect(repo.inventory.count == 2)
+        #expect(old.quantityText == "1 litre" && old.purchasedDay == "2026-10-01" && old.expiryDay == "2099-01-01")
+        let added = try #require(repo.inventory.first { $0.id != old.id })
+        #expect(added.quantityText == "2 litres" && added.expiryDay == "2099-02-01")
+        #expect(added.purchasedDay == HouseholdDay(receiptExpense.date).key)
+        #expect(try repo.importReceipt(lines, householdID: home, storeName: "Market", expense: receiptExpense, receiptKey: key) == 0)
+        #expect(repo.inventory.count == 2 && repo.purchases.count == 2)
+    }
+
+    @Test func separatePackCannotAlsoTargetExistingInventory() throws {
+        let repo = try setup(), home = try #require(repo.household?.id)
+        var lines = ReceiptRules.scan(text: "Milk 6.00").lines
+        lines[0].confirmedNewPurchase = true
+        lines[0].keepSeparatePack = true
+        lines[0].inventoryID = repo.inventory.first?.id
+        #expect(throws: ReceiptImportError.changedMatch) { try repo.importReceipt(lines, householdID: home, storeName: "Market") }
+        #expect(repo.inventory.count == 1 && repo.purchases.count == 1 && repo.expenses.isEmpty)
+    }
+
+    @Test func newReceiptRestockPreservesOriginalPackDateButRecordsNewPurchaseDate() throws {
+        let repo = try setup(), home = try #require(repo.household?.id)
+        let pack = try #require(repo.inventory.first)
+        pack.purchasedDay = "2026-10-01"
+        try repo.context.save()
+        var lines = ReceiptRules.scan(text: "Milk 7.00").lines
+        lines[0].confirmedNewPurchase = true; lines[0].inventoryID = pack.id; lines[0].quantity = "1 litre"
+        let receiptExpense = expense
+        try repo.importReceipt(lines, householdID: home, storeName: "Market", expense: receiptExpense, receiptKey: ReceiptRules.hash("restock-dates"))
+        #expect(pack.purchasedDay == "2026-10-01" && pack.quantityText == "2 l")
+        let purchase = try #require(repo.purchases.first { $0.id == ReceiptRules.groceryID(home: home, key: "purchase-line|" + lines[0].id) })
+        #expect(purchase.day == HouseholdDay(receiptExpense.date).key)
+    }
+
     @Test func linkingConsumedPackDoesNotResurrectStockOrClearLowFlag() throws {
         let repo = try setup(), home = try #require(repo.household?.id)
         let item = try #require(repo.inventory.first)

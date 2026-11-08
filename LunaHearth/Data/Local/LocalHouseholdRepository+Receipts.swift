@@ -48,7 +48,9 @@ extension LocalHouseholdRepository {
             }
             if line.addToInventory {
                 let matches = active.filter { IngredientMatching.same($0.name, line.name) }
-                if let id = line.inventoryID {
+                if line.keepSeparatePack {
+                    guard line.inventoryID == nil else { throw ReceiptImportError.changedMatch }
+                } else if let id = line.inventoryID {
                     guard matches.contains(where: { $0.id == id }) else { throw ReceiptImportError.changedMatch }
                 } else if !matches.isEmpty { throw InventoryError.duplicateIngredient }
             }
@@ -108,8 +110,8 @@ extension LocalHouseholdRepository {
                 var stockedID: UUID?
                 var stockAction = "elsewhere"
                 if line.addToInventory {
-                    let match = line.inventoryID.flatMap { id in availableInventory.first { $0.id == id } }
-                        ?? availableInventory.first { IngredientMatching.same($0.name, line.name) }
+                    let match = line.keepSeparatePack ? nil : (line.inventoryID.flatMap { id in availableInventory.first { $0.id == id } }
+                        ?? availableInventory.first { IngredientMatching.same($0.name, line.name) })
                     if let match {
                         stockedID = match.id; stockAction = "restocked"
                         if let quantity = RestockQuantity.combined(existing: match.quantityText, purchased: line.quantity) { match.quantityText = quantity }

@@ -14,7 +14,7 @@ struct ShoppingPurchaseSheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
                     Text(item.name).font(AppTheme.sectionTitle)
-                    Text("Keep it at home, or finish without stocking it.").font(.subheadline).foregroundStyle(InventoryTheme.muted)
+                    Text("You bought this item. Choose how to update your pantry.").font(.subheadline).foregroundStyle(InventoryTheme.muted)
                     if repository.inventory.contains(where: { !$0.isUsedUp && IngredientMatching.same($0.name, item.name) && !InventoryRules.canRestock(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay) }) {
                         Text("An older pack is past expiry. This purchase will use a separate pack or another recorded pack; expired quantities stay separate.").font(.subheadline).foregroundStyle(InventoryTheme.muted)
                     }
@@ -30,7 +30,7 @@ struct ShoppingPurchaseSheet: View {
                             HStack(alignment: .top, spacing: 14) {
                                 Image(systemName: "checkmark.circle").font(.title2).frame(width: 32)
                                 VStack(alignment: .leading, spacing: 6) {
-                                    Text("Restock pack").font(.headline)
+                                    Text("Add to existing pack").font(.headline)
                                     Text(matches.count == 1 ? RestockQuantity.detail(existing: matches.first?.quantityText, purchased: item.quantityText) : "\(matches.count) saved packs match. Choose which one to restock.")
                                         .font(.subheadline).foregroundStyle(InventoryTheme.muted)
                                 }
@@ -38,11 +38,11 @@ struct ShoppingPurchaseSheet: View {
                             }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
                                 .background(InventoryTheme.surface, in: RoundedRectangle(cornerRadius: 20)).contentShape(Rectangle())
                         }.buttonStyle(.plain).foregroundStyle(InventoryTheme.accent).accessibilityIdentifier("shopping.keepInventory.existing")
-                        choice("New pack", detail: "Create another pack only if it needs its own amount or expiry date.", symbol: "plus.square.on.square", identifier: "shopping.separateInventory", inventory: true, separate: true)
+                        choice("Keep a separate pack", detail: "Leave the existing pack unchanged. The new pack keeps its own amount and expiry date.", symbol: "plus.square.on.square", identifier: "shopping.separateInventory", inventory: true, separate: true)
                     } else {
                         choice("Add to pantry", detail: "Mark this bought and add it to your pantry. You can add an expiry date later.", symbol: "shippingbox.and.arrow.backward", identifier: "shopping.purchaseInventory", inventory: true)
                     }
-                    choice("Purchase only", detail: "Mark this bought without adding it to your pantry—for gifts, meals out or items kept elsewhere.", symbol: "gift", identifier: "shopping.purchaseOnly", inventory: false)
+                    choice("Don’t add to pantry", detail: "Save this purchase and finish shopping. Your pantry stays unchanged.", symbol: "gift", identifier: "shopping.purchaseOnly", inventory: false)
                     Text("Changing shopping status later won’t remove a pack from inventory.").font(.caption).foregroundStyle(InventoryTheme.muted)
                 }.padding(24)
             }.background(InventoryTheme.canvas).tint(InventoryTheme.accent)

@@ -26,6 +26,8 @@ struct ReceiptLine: Identifiable, Sendable {
     /// Review-only selection; a match links evidence without repeating any stock action.
     var existingPurchaseID: UUID?
     var confirmedNewPurchase = false
+    /// Explicit review choice; never merge into an existing pack when true.
+    var keepSeparatePack = false
 }
 
 enum ReceiptImportError: LocalizedError {

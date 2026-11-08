@@ -196,7 +196,7 @@ struct ReceiptImportView: View {
                                         Text(expenseDraft.merchant.isEmpty ? "Receipt expense" : expenseDraft.merchant).font(.headline)
                                         Text("\(expenseDraft.currency) \(expenseDraft.amount.isEmpty ? "Enter total" : expenseDraft.amount) · \(expenseDraft.date.formatted(date: .abbreviated, time: .omitted))")
                                             .font(.subheadline).foregroundStyle(.secondary)
-                                        Text("Check date, total & currency").font(.caption).foregroundStyle(.secondary)
+                                        Text("Receipt date: \(expenseDraft.date.formatted(date: .abbreviated, time: .omitted)). Check it against the receipt.").font(.caption).foregroundStyle(.secondary)
                                     }
                                 }
                             }
@@ -471,7 +471,7 @@ private struct ReceiptReviewRow: View {
             }
             if line.included {
                 if !candidates.isEmpty { purchaseReview }
-                if line.existingPurchaseID == nil {
+                if line.existingPurchaseID == nil && (candidates.isEmpty || line.confirmedNewPurchase) {
                 if !shoppingMatches.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Label("Match your shopping", systemImage: "cart").font(.headline)
@@ -505,9 +505,34 @@ private struct ReceiptReviewRow: View {
                 }
                 Toggle("Add to pantry", isOn: $line.addToInventory)
                     .accessibilityIdentifier("receipt.inventory.\(line.name)")
-                Text(line.addToInventory ? (matches.isEmpty ? "New pantry item" : "Restock existing pack") : "Purchase only")
-                    .font(.caption).foregroundStyle(.secondary)
-                DisclosureGroup("Quantity & matches") {
+                if line.addToInventory {
+                    if matches.isEmpty {
+                        Text("A new pantry pack will be created.").font(.caption).foregroundStyle(.secondary)
+                    } else {
+                        Text("Already in your pantry").font(.subheadline.weight(.semibold))
+                        Toggle("Keep as a separate pack", isOn: Binding(get: { line.keepSeparatePack }, set: { separate in
+                            line.keepSeparatePack = separate
+                            line.inventoryID = separate ? nil : (matches.count == 1 ? matches.first?.id : nil)
+                        })).accessibilityIdentifier("receipt.separatePack.\(line.name)")
+                        if line.keepSeparatePack {
+                            Text("Your existing pack, amount and expiry stay unchanged.").font(.caption).foregroundStyle(.secondary)
+                        } else {
+                            Picker("Add to pack", selection: $line.inventoryID) {
+                                Text("Choose a pack").tag(nil as UUID?)
+                                ForEach(matches) { item in
+                                    Text("\(item.name) · \(item.quantityText ?? "Amount not set") · \(InventoryRules.expiryLabel(item.expiryDay, today: HouseholdDay(.now).key))").tag(Optional(item.id))
+                                }
+                            }.accessibilityIdentifier("receipt.restockPack.\(line.name)")
+                            Text(RestockQuantity.detail(existing: matches.first(where: { $0.id == line.inventoryID })?.quantityText, purchased: line.quantity))
+                                .font(.caption).foregroundStyle(.secondary)
+                            Text("The existing pack’s purchase date stays unchanged. This purchase is recorded separately in history.")
+                                .font(.caption).foregroundStyle(.secondary)
+                        }
+                    }
+                } else {
+                    Text("Save the purchase without changing pantry stock.").font(.caption).foregroundStyle(.secondary)
+                }
+                DisclosureGroup("Quantity, price & expiry") {
                 if let currency {
                     TextField("Line total in \(currency) (optional)", text: $line.amount).keyboardType(.decimalPad)
                         .accessibilityIdentifier("receipt.lineAmount.\(line.id)")
@@ -516,7 +541,7 @@ private struct ReceiptReviewRow: View {
                 TextField("Quantity (optional), e.g. 2 tubs", text: $line.quantity)
                     .accessibilityIdentifier("receipt.quantity.\(line.id)")
                 Picker("Shopping item", selection: $line.groceryID) {
-                    Text("Save as a new bought item").tag(nil as UUID?)
+                    Text("Not linked to a shopping request").tag(nil as UUID?)
                     if let approval = line.reviewedShoppingMatch, line.groceryID == approval.groceryID,
                        !shoppingMatches.contains(where: { $0.id == approval.groceryID }) {
                         Text("Reviewed: \(approval.shoppingName)").tag(Optional(approval.groceryID))
@@ -533,24 +558,10 @@ private struct ReceiptReviewRow: View {
                         Text("Use the date printed on the pack. For a restock, this updates the selected existing pack's expiry.").font(.caption).foregroundStyle(.secondary)
                     }
                 }
-                if line.addToInventory {
-                    if matches.isEmpty {
-                        Label("New pantry item", systemImage: "plus.circle").font(.caption)
-                    } else {
-                        Picker("Restock existing", selection: $line.inventoryID) {
-                            Text("Choose a saved pack").tag(nil as UUID?)
-                            ForEach(matches) { item in
-                                Text("\(item.name) · \(item.quantityText ?? "Amount not set") · \(InventoryRules.expiryLabel(item.expiryDay, today: HouseholdDay(.now).key))").tag(Optional(item.id))
-                            }
-                        }
-                    }
-                } else { Text("Mark bought only, for gifts or items kept elsewhere.").font(.caption).foregroundStyle(.secondary) }
-                if line.addToInventory && !matches.isEmpty {
-                    Text(RestockQuantity.detail(existing: matches.first(where: { $0.id == line.inventoryID })?.quantityText, purchased: line.quantity) + " Expiry changes only when you set it above.").font(.caption).foregroundStyle(.secondary)
+
                 }
-                }
-                } else {
-                    Label("Already recorded · pantry unchanged", systemImage: "checkmark.shield")
+                } else if line.existingPurchaseID != nil {
+                    Label("Receipt attached · pantry unchanged", systemImage: "checkmark.shield")
                         .font(.subheadline).accessibilityIdentifier("receipt.linked.\(line.name)")
                     if let currency {
                         TextField("Line total in \(currency) (optional)", text: $line.amount).keyboardType(.decimalPad)
@@ -585,44 +596,54 @@ private struct ReceiptReviewRow: View {
             let shopping = pending.filter { ReceiptPurchaseMatching.possibleMatch(receipt: name, requested: $0.name) }
             if let id = line.groceryID, !shopping.contains(where: { $0.id == id }) { line.groceryID = nil }
             if line.groceryID == nil, shopping.count == 1, let item = shopping.first, IngredientMatching.same(item.name, name) { line.groceryID = item.id }
+            line.keepSeparatePack = false
             line.inventoryID = matches.count == 1 ? matches.first?.id : nil
         }
     }
+    private func purchaseDateLabel(_ day: String) -> String {
+        ShoppingEntryRules.date(for: day)?.formatted(date: .abbreviated, time: .omitted) ?? day
+    }
     private var purchaseReview: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Label("Already bought?", systemImage: "bag.badge.questionmark")
-                .font(.headline)
-            Text("These recent purchases may match. Review the name, store and quantity before linking. Linking keeps the earlier pantry decision and avoids adding stock twice.")
+            Text("Have you recorded this purchase already?").font(.headline)
+            Text("Similar purchases exist in your history. Their dates below are previous purchases, not the date of this receipt.")
                 .font(.caption).foregroundStyle(.secondary)
-            ForEach(candidates) { candidate in
-                if candidate.alreadyLinked {
-                    Label("\(candidate.name) · \(candidate.day) · Receipt or expense already recorded", systemImage: "checkmark.circle")
-                        .font(.caption).foregroundStyle(.secondary)
-                } else {
-                    Button {
-                        line.existingPurchaseID = candidate.id; line.confirmedNewPurchase = false
-                    } label: {
-                        HStack {
-                            Image(systemName: line.existingPurchaseID == candidate.id ? "checkmark.circle.fill" : "circle")
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Link \(candidate.name)").font(.subheadline.weight(.semibold))
-                                Text([candidate.quantity, candidate.merchant, candidate.day].filter { !$0.isEmpty }.joined(separator: " · "))
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
-                            Spacer(minLength: 0)
-                        }.frame(minHeight: 44).contentShape(Rectangle())
-                    }.buttonStyle(.borderless).accessibilityIdentifier("receipt.usePurchase.\(line.name)")
-                        .accessibilityValue(line.existingPurchaseID == candidate.id ? "Selected" : "Not selected")
-                }
-            }
             Button {
                 line.existingPurchaseID = nil; line.confirmedNewPurchase = true
             } label: {
-                Label("This is a new purchase", systemImage: line.confirmedNewPurchase ? "checkmark.circle.fill" : "circle")
-                    .font(.subheadline).frame(minHeight: 44)
+                Label("Record this purchase", systemImage: line.confirmedNewPurchase ? "checkmark.circle.fill" : "circle")
+                    .font(.subheadline.weight(.semibold)).frame(minHeight: 44)
             }.buttonStyle(.borderless).accessibilityIdentifier("receipt.newPurchase.\(line.name)")
+            Text("Choose this if you bought more. You can use your existing pantry pack on the next step.")
+                .font(.caption).foregroundStyle(.secondary)
+            DisclosureGroup("Already recorded? Attach receipt") {
+                Text("Only choose the same purchase you previously marked bought. This will not add pantry stock again.")
+                    .font(.caption).foregroundStyle(.secondary)
+                ForEach(candidates) { candidate in
+                    if candidate.alreadyLinked {
+                        Label("\(candidate.name) · Previous purchase: \(purchaseDateLabel(candidate.day)) · Receipt already recorded", systemImage: "checkmark.circle")
+                            .font(.caption).foregroundStyle(.secondary)
+                    } else {
+                        Button {
+                            line.existingPurchaseID = candidate.id; line.confirmedNewPurchase = false
+                        } label: {
+                            HStack {
+                                Image(systemName: line.existingPurchaseID == candidate.id ? "checkmark.circle.fill" : "circle")
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Attach to \(candidate.name)").font(.subheadline.weight(.semibold))
+                                    Text("Previous purchase: \(purchaseDateLabel(candidate.day))").font(.caption)
+                                    Text([candidate.quantity, candidate.merchant].filter { !$0.isEmpty }.joined(separator: " · "))
+                                        .font(.caption).foregroundStyle(.secondary)
+                                }
+                                Spacer(minLength: 0)
+                            }.frame(minHeight: 44).contentShape(Rectangle())
+                        }.buttonStyle(.borderless).accessibilityIdentifier("receipt.usePurchase.\(line.name)")
+                            .accessibilityValue(line.existingPurchaseID == candidate.id ? "Selected" : "Not selected")
+                    }
+                }
+            }
             if line.existingPurchaseID == nil && !line.confirmedNewPurchase {
-                Text("Choose one before saving.").font(.caption.weight(.medium))
+                Text("Choose Record this purchase or attach to a previous purchase to continue.").font(.caption.weight(.medium))
             }
         }.padding(.vertical, 4)
     }
