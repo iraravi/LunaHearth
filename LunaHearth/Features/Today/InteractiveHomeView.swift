@@ -27,33 +27,56 @@ struct InteractiveHomeView: View {
                     Color(white: 0.10)
                     Image("LivingHomeInterior").resizable().scaledToFill()
                         .frame(width: geometry.size.width, height: geometry.size.height).clipped()
-                        .scaleEffect(entrance.isOpen ? 1 : 1.08)
                         .accessibilityHidden(true)
                     if entrance.isOpen { destinations(size: geometry.size) }
-                    HStack(spacing: 0) {
-                        frontDoor(left: true)
-                            .rotation3DEffect(.degrees(entrance.isOpen ? -100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .leading)
-                        frontDoor(left: false)
-                            .rotation3DEffect(.degrees(entrance.isOpen ? 100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .trailing)
-                    }.opacity(entrance.isOpen ? 0 : 1).allowsHitTesting(false).accessibilityHidden(true)
-                    if !entrance.isOpen {
-                        VStack(spacing: 14) {
-                            Text("Welcome home").font(.largeTitle.bold())
-                            if entrance.followsHinge {
-                                Text("Unfold to step inside").font(.headline)
-                            } else {
-                                Button("Open door", systemImage: "door.left.hand.open") {
-                                    withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.9)) { entrance.toggleManually() }
-                                }.buttonStyle(.borderedProminent).tint(.white).foregroundStyle(.black)
-                                    .accessibilityIdentifier("home.scene.open")
+                    ZStack {
+                        Image("LivingHomeExterior").resizable().scaledToFill()
+                            .frame(width: geometry.size.width, height: geometry.size.height).clipped()
+                        // Match the doorway in the square exterior artwork after aspect-fill cropping.
+                        let side = max(geometry.size.width, geometry.size.height)
+                        ZStack {
+                            Image("LivingHomeInterior").resizable().scaledToFill()
+                                .frame(width: side * 0.34, height: side * 0.55).clipped()
+                            HStack(spacing: 0) {
+                                doorLeaf(left: true, side: side)
+                                    .rotation3DEffect(.degrees(entrance.isOpen ? -100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .leading)
+                                doorLeaf(left: false, side: side)
+                                    .rotation3DEffect(.degrees(entrance.isOpen ? 100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .trailing)
                             }
-                        }.foregroundStyle(.white).padding(24)
-                            .background(.black.opacity(0.55), in: RoundedRectangle(cornerRadius: 24))
-                            .padding(24)
+                        }
+                        .frame(width: side * 0.34, height: side * 0.55)
+                        .offset(y: -side * 0.011)
+                    }
+                    .opacity(entrance.isOpen ? 0 : 1).allowsHitTesting(false).accessibilityHidden(true)
+                    if !entrance.isOpen && !entrance.followsHinge {
+                        Button {
+                            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.85)) {
+                                entrance.toggleManually()
+                            }
+                        } label: {
+                            Image(systemName: "door.left.hand.open").font(.title2)
+                                .foregroundStyle(.black).frame(width: 52, height: 52)
+                                .background(.white.opacity(0.95), in: Circle())
+                        }.buttonStyle(.plain)
+                            .accessibilityLabel("Open door")
+                            .accessibilityIdentifier("home.scene.open")
+                            .padding(.bottom, 32)
+                            .frame(maxHeight: .infinity, alignment: .bottom)
                     }
                 }.clipped()
             }
-            .navigationTitle("Your home").navigationBarTitleDisplayMode(.inline)
+            .ignoresSafeArea()
+            .statusBarHidden()
+            .toolbar(.hidden, for: .navigationBar)
+            .overlay(alignment: .topTrailing) {
+                Button { dismiss() } label: {
+                    Image(systemName: "xmark").font(.body.weight(.semibold))
+                        .foregroundStyle(.black).frame(width: 48, height: 48)
+                        .background(.white.opacity(0.95), in: Circle())
+                }.buttonStyle(.plain).padding(16)
+                    .accessibilityLabel("Dashboard")
+                    .accessibilityIdentifier("home.scene.exit")
+            }
             .navigationDestination(for: Destination.self) { destination in
                 Group {
                     switch destination {
@@ -62,6 +85,8 @@ struct InteractiveHomeView: View {
                     case .shopping: ShoppingListView()
                     }
                 }
+                .toolbar(.visible, for: .navigationBar)
+                .statusBarHidden(false)
                 // Returning home is explicit; posture updates never pop an editor or lose a draft.
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -70,15 +95,12 @@ struct InteractiveHomeView: View {
                     }
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button("Dashboard", systemImage: "list.bullet") { dismiss() }
-                        .accessibilityIdentifier("home.scene.exit")
-                }
-            }
+
         }
         .background(PantryHingeObserver { state in
-            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.9)) { entrance.observe(state) }
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.85)) {
+                entrance.observe(state)
+            }
         })
         .interactiveDismissDisabled()
     }
@@ -115,22 +137,14 @@ struct InteractiveHomeView: View {
         }.buttonStyle(.plain).accessibilityIdentifier("home.scene.\(value.rawValue)")
     }
 
-    private func frontDoor(left: Bool) -> some View {
-        GeometryReader { geometry in
-            ZStack {
-                LinearGradient(colors: [Color(white: left ? 0.22 : 0.18), Color(white: 0.08)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.1), lineWidth: 2).padding(18)
-                RoundedRectangle(cornerRadius: 5)
-                    .fill(LinearGradient(colors: [.white.opacity(0.16), .black.opacity(0.8)], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .frame(width: geometry.size.width * 0.48, height: geometry.size.height * 0.29)
-                    .overlay { RoundedRectangle(cornerRadius: 5).stroke(.white.opacity(0.25), lineWidth: 2) }
-                    .offset(y: -geometry.size.height * 0.22)
-                Capsule().fill(LinearGradient(colors: [.gray, .white, .gray], startPoint: .leading, endPoint: .trailing))
-                    .frame(width: 9, height: 92)
-                    .position(x: geometry.size.width * (left ? 0.84 : 0.16), y: geometry.size.height * 0.57)
-            }.overlay(alignment: left ? .trailing : .leading) { Color.black.frame(width: 2) }
-        }
+    private func doorLeaf(left: Bool, side: CGFloat) -> some View {
+        Image("LivingHomeExteriorDoors").resizable()
+            .frame(width: side, height: side)
+            .offset(x: -side * (left ? 0.33 : 0.50), y: -side * 0.214)
+            .frame(width: side * 0.17, height: side * 0.55, alignment: .topLeading)
+            .clipped()
     }
+
 }
 
 /// Keep the virtual kitchen in the home navigation stack rather than stacking full-screen covers.

@@ -92,9 +92,11 @@ final class VisualFlowTests: XCTestCase {
 
     func testEnterInteractiveHome() { enterInteractiveHome(large: false) }
     func testEnterInteractiveHomeAccessibility() { enterInteractiveHome(large: true) }
-    private func enterInteractiveHome(large: Bool) {
+    func testInteractiveHomeAnimatedEntrance() { enterInteractiveHome(large: false, reduceMotion: false) }
+    private func enterInteractiveHome(large: Bool, reduceMotion: Bool = true) {
         let app = XCUIApplication()
-        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-today", "--reduce-motion"]
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-today"]
+            + (reduceMotion ? ["--reduce-motion"] : [])
             + (large ? ["--large-text", "--dark"] : [])
         app.launch()
         XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 15))

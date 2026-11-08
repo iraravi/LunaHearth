@@ -28,3 +28,19 @@ The vegetables in the background illustration are decorative; actual inventory a
 - Final iPhone regular and large-text/dark/Reduce Motion navigation tests both passed after the inline kitchen change (`/tmp/interactive-home-final-phone.log`).
 
 Not uploaded to TestFlight or the App Store.
+
+## Full-screen entrance refinement
+
+The home scene now uses the fridge view's edge-to-edge presentation: ignored safe area for scenery, hidden status bar, and hidden root navigation bar. An accessible 48-point close button returns to Today. Destination editors retain their navigation controls. The closed entrance shows a wider exterior with canopy, planters, and steps; native doors open with the existing hinge state and the exterior transitions into the interior. Reduce Motion disables these animations.
+
+New original `LivingHomeExterior` artwork was generated with the imagegen skill from a generic prompt: square, symmetrical modern warm-white home facade, charcoal trim, shallow canopy, two planters, stone steps, straight-on camera a few metres back, empty black central doorway for native animated door overlays, no text/brands/people/wooden doors. No household content was used or transmitted. The generated asset is bundled offline. Door bounds were matched to the actual generated doorway.
+
+Build passed (`/tmp/home-fullscreen-build.log`). Entrance unit tests and unfolded Duo destination/return/exit test passed (`/tmp/home-fullscreen-tests-open.log`). An initial run with the simulator folded correctly stayed at the entrance; the navigation test requires unfolding first. Manual closed-to-open verification confirms status/navigation bars are absent in `fullscreen-entrance.png` and `fullscreen-interior.png`.
+
+### Direct hinge opening and realistic doors
+
+Follow-up refinement removes all instructional text on the physical Duo entrance. Regular iPhone retains an accessible icon-only Open door control. The original exterior was edited through imagegen to add photorealistic charcoal double doors with narrow smoked-glass panels and steel pulls, preserving the facade. `LivingHomeExteriorDoors` supplies the cropped door leaves; SwiftUI animates those leaves rather than drawing substitute panels.
+
+Final requested behavior matches the fridge: hinge changes directly open/close the door leaves and reveal/hide the full interior with a 0.85-second transition. There is no camera zoom, timed approach, or waiting sequence. Reduce Motion makes the transition immediate. No content writes or network calls occur. An animated-entry UI regression exercises the destinations after the reveal.
+
+Final direct-hinge unit tests and animated navigation/return/exit test passed (`/tmp/home-direct-hinge-open-tests.log`). The iPhone large-text/dark/Reduce Motion route also passed during this refinement (`/tmp/home-cinematic-phone.log`); the final change removes the timed sequence and uses the same immediate Reduce Motion behavior. Updated entrance screenshot confirms realistic doors and no instruction text. No release upload performed.
