@@ -5,7 +5,7 @@ struct ReceiptImportView: View {
     let householdID: UUID
     let sampleImage: Data?
     let onExpenseSaved: ((String, String) -> Void)?
-    @State private var expenseDetails = true
+    @State private var expenseDetails = false
     @State private var confirmingSave = false
     @State private var recordingExpense: Bool
     @State private var expenseDraft = ExpenseDraft(category: .groceries)
@@ -48,7 +48,7 @@ struct ReceiptImportView: View {
     }
     private var saveSummary: String {
         let amount = (try? ExpenseRules.minorUnits(expenseDraft.amount)).map { ExpenseRules.money($0, currency: expenseDraft.currency) } ?? expenseDraft.amount
-        return (recordingExpense ? "Expense total: \(amount). " : "") + "Inventory items selected: \(inventoryCount). Food kept at home can go in pantry inventory. Leave meals eaten out, services and gifts out. Purchased items stay in purchase history."
+        return (recordingExpense ? "Expense: \(amount)\n\n" : "") + "\(selected) selected items\n\(inventoryCount) pantry updates\n\nPrevious purchases linked to this receipt will not add stock again."
     }
 
     var body: some View {
@@ -92,6 +92,16 @@ struct ReceiptImportView: View {
                 }
             }
             .sheet(isPresented: $confirmingSave) { saveReview }
+            .sheet(isPresented: $expenseDetails) {
+                NavigationStack {
+                    Form {
+                        Section("Purchase") { ExpenseFieldRows(draft: $expenseDraft) }
+                        Section { Toggle("Record in Expenses", isOn: $recordingExpense).accessibilityIdentifier("receipt.recordExpense") }
+                        Section { Text("Check the receipt date and full total, including tax and discounts.").font(.subheadline).foregroundStyle(.secondary) }
+                    }.navigationTitle("Purchase details").navigationBarTitleDisplayMode(.inline)
+                        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { expenseDetails = false }.accessibilityIdentifier("receipt.purchaseDone") } }
+                }
+            }
             .alert("Receipt needs attention", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
                 Button("OK", role: .cancel) { error = nil }
             } message: { Text(error ?? "Please try again.") }
@@ -179,33 +189,40 @@ struct ReceiptImportView: View {
                     }
                     if !sourceText.isEmpty {
                         Section {
-                            ReceiptScanSummary(lines: $lines, merchant: expenseDraft.merchant, amount: expenseDraft.amount,
-                                               currency: expenseDraft.currency,
-                                               unavailableIDs: Set(lines.filter { repository.receiptLineImported($0.id) }.map(\.id)))
-                        }.listRowBackground(Color.clear)
-                        Section { ReviewSafetyNotice(context: .receipt) }
-                        Section {
-                            Toggle("Record in Expenses", isOn: $recordingExpense).accessibilityIdentifier("receipt.recordExpense")
-                            if recordingExpense {
-                                DisclosureGroup(isExpanded: $expenseDetails) {
-                                    ExpenseFieldRows(draft: $expenseDraft)
-                                    Text("Confirm the full total after tax and discounts. Excluding an item below does not reduce this total.")
-                                        .font(.caption).foregroundStyle(.secondary)
-                                } label: {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        Text(expenseDraft.merchant.isEmpty ? "Receipt expense" : expenseDraft.merchant).font(.headline)
-                                        Text("\(expenseDraft.currency) \(expenseDraft.amount.isEmpty ? "Enter total" : expenseDraft.amount) · \(expenseDraft.date.formatted(date: .abbreviated, time: .omitted))")
-                                            .font(.subheadline).foregroundStyle(.secondary)
-                                        Text("Receipt date: \(expenseDraft.date.formatted(date: .abbreviated, time: .omitted)). Check it against the receipt.").font(.caption).foregroundStyle(.secondary)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Review your purchase").font(.title2.bold())
+                                Text("Check the total. Choose what goes into your pantry.").font(.subheadline).foregroundStyle(.secondary)
+                                HStack {
+                                    Label("\(lines.count) items", systemImage: "bag").foregroundStyle(.primary)
+                                    Spacer()
+                                    Menu("Pantry options") {
+                                        Button("Add selected items") { for i in lines.indices where lines[i].included && !repository.receiptLineImported(lines[i].id) { lines[i].addToInventory = true } }
+                                        Button("Don’t add any") { for i in lines.indices { lines[i].addToInventory = false } }
                                     }
-                                }
-                            }
+                                }.font(.subheadline)
+                            }.padding(.vertical, 6)
+                        }.listRowBackground(Color.clear)
+                        Section("1 · Purchase details") {
+                            Button { expenseDetails = true } label: {
+                                HStack(spacing: 14) {
+                                    Image(systemName: "receipt.fill").foregroundStyle(.orange)
+                                        .font(.title2).frame(width: 40, height: 44)
+                                    VStack(alignment: .leading, spacing: 5) {
+                                        Text(expenseDraft.merchant.isEmpty ? "Add store and total" : expenseDraft.merchant).font(.headline)
+                                        Text("\(expenseDraft.currency) \(expenseDraft.amount.isEmpty ? "Total needed" : expenseDraft.amount) · \(expenseDraft.date.formatted(date: .abbreviated, time: .omitted))")
+                                            .font(.subheadline).foregroundStyle(.secondary)
+                                    }
+                                    Spacer(minLength: 0)
+                                    Image(systemName: "chevron.right").font(.caption.bold()).foregroundStyle(.secondary)
+                                }.padding(.vertical, 6).contentShape(Rectangle())
+                            }.buttonStyle(.plain).accessibilityIdentifier("receipt.editPurchase")
                         }
                         if lines.isEmpty {
                             Section { Text("Text was found, but no priced item lines were clear. Read the original text and add a line below, or try another photo.") }
                         }
                         if !lines.isEmpty && (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiReceiptNames) ?? true)) {
                             Section {
+                              DisclosureGroup("Name suggestions") {
                                 if decoding {
                                     ProgressView("Decoding names on this device…")
                                     Button("Cancel decoding") { cancelDecoding(); decodeMessage = "Decoding cancelled. Names stay as you reviewed them." }
@@ -216,16 +233,20 @@ struct ReceiptImportView: View {
                                 }
                                 Text(decodeMessage ?? "AI guesses what abbreviated labels mean and may choose the wrong product. Compare each suggestion with the receipt and packaging before using it.")
                                     .font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("receipt.decodeStatus")
+                              }
                             }
                         }
                         Section {
+                            ForEach($lines) { $line in
+                                ReceiptItemOverview(line: $line, purchaseDay: HouseholdDay(recordingExpense ? expenseDraft.date : .now).key,
+                                    currency: recordingExpense ? expenseDraft.currency : nil, proposal: proposals[line.id],
+                                    alreadyImported: repository.receiptLineImported(line.id))
+                            }
                             Button("Add a missed item", systemImage: "plus") {
                                 lines.append(ReceiptLine(id: ReceiptRules.hash(sourceText + "|manual|\(lines.count)"), name: "", addToInventory: false))
                             }.disabled(lines.count >= 150).accessibilityIdentifier("receipt.addLine")
-                        }
-                        ForEach($lines) { $line in
-                            ReceiptReviewRow(line: $line, purchaseDay: HouseholdDay(recordingExpense ? expenseDraft.date : .now).key, currency: recordingExpense ? expenseDraft.currency : nil, proposal: proposals[line.id], alreadyImported: repository.receiptLineImported(line.id))
-                        }
+                        } header: { Text("2 · Items · \(selected) selected") }
+                          footer: { Text("Tap an item to choose pantry storage or match a previous purchase.") }
                         imageOptions
                         Section("Receipt details") {
                             DisclosureGroup("Already marked this purchase bought?") {
@@ -275,17 +296,18 @@ struct ReceiptImportView: View {
                                 .background(InventoryTheme.ink, in: RoundedRectangle(cornerRadius: 18))
                                 .foregroundStyle(InventoryTheme.canvas)
                         }.buttonStyle(.plain).accessibilityIdentifier("receipt.saveWithInventory")
-                    }
+                    } else {
                     Button {
                         for index in lines.indices { lines[index].addToInventory = false }
                         confirmingSave = false
                         save()
                     } label: {
-                        Text("Save without inventory")
+                        Text("Save purchase")
                             .frame(maxWidth: .infinity, minHeight: 44).padding(12)
                             .background(InventoryTheme.surface, in: RoundedRectangle(cornerRadius: 18))
                             .foregroundStyle(InventoryTheme.ink)
                     }.buttonStyle(.plain).accessibilityIdentifier("receipt.saveWithoutInventory")
+                    }
                 }.padding(24)
             }.background(InventoryTheme.canvas)
                 .navigationTitle("Review receipt").navigationBarTitleDisplayMode(.inline)
@@ -351,7 +373,7 @@ struct ReceiptImportView: View {
         receiptImages = scan.previewImages; keepImages = false; previewIncomplete = scan.previewIncomplete
         expenseDraft.amount = ExpenseRules.receiptTotal(scan.text) ?? ""
         expenseDraft.merchant = String(scan.text.components(separatedBy: .newlines).first?.prefix(200) ?? "")
-        expenseDetails = true
+        expenseDetails = false
         if let currency = ExpenseRules.receiptCurrency(scan.text) { expenseDraft.currency = currency }
         for index in lines.indices {
             lines[index].addToInventory = false
@@ -415,6 +437,56 @@ struct ReceiptImportView: View {
                 outcome = count == 0 ? "These items were already imported. Nothing added again." : "\(count) purchases saved. Shopping and inventory are updated."
             }
         } catch { self.error = (error as? ReceiptImportError)?.errorDescription ?? userFacingError(error) }
+    }
+}
+
+private struct ReceiptItemOverview: View {
+    @Binding var line: ReceiptLine
+    let purchaseDay: String
+    let currency: String?
+    let proposal: ReceiptNameProposal?
+    let alreadyImported: Bool
+    @Environment(LocalHouseholdRepository.self) private var repository
+    @State private var editing = false
+    private var needsReview: Bool {
+        !alreadyImported && line.included && !line.confirmedNewPurchase && line.existingPurchaseID == nil
+            && !repository.receiptPurchaseCandidates(name: line.name, day: purchaseDay).isEmpty
+    }
+    private var status: String {
+        if alreadyImported { return "Already saved" }
+        if !line.included { return "Excluded" }
+        if needsReview { return "Review previous purchase" }
+        if line.existingPurchaseID != nil { return "Attach receipt · no stock change" }
+        if !line.addToInventory { return "Purchase only" }
+        return line.keepSeparatePack ? "Pantry · separate pack" : "Pantry"
+    }
+    var body: some View {
+        Button { editing = true } label: {
+            HStack(spacing: 14) {
+                Image(systemName: needsReview ? "exclamationmark.circle" : "bag.fill")
+                    .foregroundStyle(needsReview ? Color.orange : Color.red).font(.title3)
+                    .frame(width: 40, height: 44).background(Color.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                VStack(alignment: .leading, spacing: 5) {
+                    Text(line.name.isEmpty ? "New item" : line.name).font(.headline).foregroundStyle(.primary)
+                    Text(status).font(.caption).foregroundStyle(needsReview ? Color.orange : Color.secondary)
+                    if !line.quantity.isEmpty { Text(line.quantity).font(.caption).foregroundStyle(.secondary) }
+                }
+                Spacer(minLength: 4)
+                if !line.amount.isEmpty { Text(line.amount).font(.subheadline.monospacedDigit()).foregroundStyle(.primary) }
+                Image(systemName: "chevron.right").font(.caption.bold()).foregroundStyle(.secondary)
+            }.padding(.vertical, 6).contentShape(Rectangle())
+        }.buttonStyle(.plain).accessibilityIdentifier("receipt.editItem.\(line.name)")
+        .sheet(isPresented: $editing) {
+            NavigationStack {
+                List {
+                    ReceiptReviewRow(line: $line, purchaseDay: purchaseDay, currency: currency, proposal: proposal, alreadyImported: alreadyImported)
+                }.scrollContentBackground(.hidden).background(ShoppingTheme.canvas)
+                    .navigationTitle("Receipt item").navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { editing = false }.accessibilityIdentifier("receipt.itemDone")
+                    } }
+            }
+        }
     }
 }
 
@@ -503,34 +575,30 @@ private struct ReceiptReviewRow: View {
                             .accessibilityIdentifier("receipt.acceptAIMatch.\(item.id)")
                     }
                 }
-                Toggle("Add to pantry", isOn: $line.addToInventory)
-                    .accessibilityIdentifier("receipt.inventory.\(line.name)")
-                if line.addToInventory {
-                    if matches.isEmpty {
-                        Text("A new pantry pack will be created.").font(.caption).foregroundStyle(.secondary)
-                    } else {
-                        Text("Already in your pantry").font(.subheadline.weight(.semibold))
-                        Toggle("Keep as a separate pack", isOn: Binding(get: { line.keepSeparatePack }, set: { separate in
-                            line.keepSeparatePack = separate
-                            line.inventoryID = separate ? nil : (matches.count == 1 ? matches.first?.id : nil)
-                        })).accessibilityIdentifier("receipt.separatePack.\(line.name)")
-                        if line.keepSeparatePack {
-                            Text("Your existing pack, amount and expiry stay unchanged.").font(.caption).foregroundStyle(.secondary)
-                        } else {
-                            Picker("Add to pack", selection: $line.inventoryID) {
-                                Text("Choose a pack").tag(nil as UUID?)
-                                ForEach(matches) { item in
-                                    Text("\(item.name) · \(item.quantityText ?? "Amount not set") · \(InventoryRules.expiryLabel(item.expiryDay, today: HouseholdDay(.now).key))").tag(Optional(item.id))
-                                }
-                            }.accessibilityIdentifier("receipt.restockPack.\(line.name)")
-                            Text(RestockQuantity.detail(existing: matches.first(where: { $0.id == line.inventoryID })?.quantityText, purchased: line.quantity))
-                                .font(.caption).foregroundStyle(.secondary)
-                            Text("The existing pack’s purchase date stays unchanged. This purchase is recorded separately in history.")
-                                .font(.caption).foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Pantry").font(.headline)
+                    if !matches.isEmpty {
+                        pantryChoice("Add to existing pack", detail: "Combine with stock already at home", symbol: "archivebox", selected: line.addToInventory && !line.keepSeparatePack, id: "receipt.inventory.\(line.name)") {
+                            line.addToInventory = true; line.keepSeparatePack = false
+                            if matches.count == 1 { line.inventoryID = matches.first?.id }
                         }
                     }
-                } else {
-                    Text("Save the purchase without changing pantry stock.").font(.caption).foregroundStyle(.secondary)
+                    pantryChoice(matches.isEmpty ? "Add to pantry" : "Keep a separate pack", detail: "Own quantity and expiry date", symbol: "shippingbox", selected: line.addToInventory && (matches.isEmpty || line.keepSeparatePack), id: "receipt.separatePack.\(line.name)") {
+                        line.addToInventory = true; line.keepSeparatePack = true; line.inventoryID = nil
+                    }
+                    pantryChoice("Purchase only", detail: "No change to pantry stock", symbol: "bag", selected: !line.addToInventory, id: "receipt.purchaseOnly.\(line.name)") {
+                        line.addToInventory = false
+                    }
+                }.padding(.vertical, 8)
+                if line.addToInventory && !line.keepSeparatePack && !matches.isEmpty {
+                    Picker("Existing pack", selection: $line.inventoryID) {
+                        Text("Choose a pack").tag(nil as UUID?)
+                        ForEach(matches) { item in
+                            Text("\(item.name) · \(item.quantityText ?? "Amount not set")").tag(Optional(item.id))
+                        }
+                    }.accessibilityIdentifier("receipt.restockPack.\(line.name)")
+                    Text(RestockQuantity.detail(existing: matches.first(where: { $0.id == line.inventoryID })?.quantityText, purchased: line.quantity))
+                        .font(.caption).foregroundStyle(.secondary)
                 }
                 DisclosureGroup("Quantity, price & expiry") {
                 if let currency {
@@ -561,7 +629,7 @@ private struct ReceiptReviewRow: View {
 
                 }
                 } else if line.existingPurchaseID != nil {
-                    Label("Receipt attached · pantry unchanged", systemImage: "checkmark.shield")
+                    Label("Will attach receipt · pantry unchanged", systemImage: "checkmark.shield")
                         .font(.subheadline).accessibilityIdentifier("receipt.linked.\(line.name)")
                     if let currency {
                         TextField("Line total in \(currency) (optional)", text: $line.amount).keyboardType(.decimalPad)
@@ -600,13 +668,28 @@ private struct ReceiptReviewRow: View {
             line.inventoryID = matches.count == 1 ? matches.first?.id : nil
         }
     }
+    private func pantryChoice(_ title: String, detail: String, symbol: String, selected: Bool, id: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 12) {
+                Image(systemName: symbol).font(.title3).foregroundStyle(.orange).frame(width: 28)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                    Text(detail).font(.caption).foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 4)
+                Image(systemName: selected ? "checkmark.circle.fill" : "circle").foregroundStyle(selected ? Color.orange : Color.secondary)
+            }.padding(12).frame(maxWidth: .infinity, alignment: .leading)
+                .background(selected ? Color.orange.opacity(0.10) : Color.secondary.opacity(0.06), in: RoundedRectangle(cornerRadius: 14))
+                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(selected ? Color.orange : .clear, lineWidth: 1))
+        }.buttonStyle(.plain).accessibilityIdentifier(id).accessibilityValue(selected ? "Selected" : "Not selected")
+    }
     private func purchaseDateLabel(_ day: String) -> String {
         ShoppingEntryRules.date(for: day)?.formatted(date: .abbreviated, time: .omitted) ?? day
     }
     private var purchaseReview: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Have you recorded this purchase already?").font(.headline)
-            Text("Similar purchases exist in your history. Their dates below are previous purchases, not the date of this receipt.")
+            Text("Is this a new purchase?").font(.headline)
+            Text("Bought more? Record it here. Already saved it? Attach this receipt below.")
                 .font(.caption).foregroundStyle(.secondary)
             Button {
                 line.existingPurchaseID = nil; line.confirmedNewPurchase = true
@@ -614,8 +697,6 @@ private struct ReceiptReviewRow: View {
                 Label("Record this purchase", systemImage: line.confirmedNewPurchase ? "checkmark.circle.fill" : "circle")
                     .font(.subheadline.weight(.semibold)).frame(minHeight: 44)
             }.buttonStyle(.borderless).accessibilityIdentifier("receipt.newPurchase.\(line.name)")
-            Text("Choose this if you bought more. You can use your existing pantry pack on the next step.")
-                .font(.caption).foregroundStyle(.secondary)
             DisclosureGroup("Already recorded? Attach receipt") {
                 Text("Only choose the same purchase you previously marked bought. This will not add pantry stock again.")
                     .font(.caption).foregroundStyle(.secondary)

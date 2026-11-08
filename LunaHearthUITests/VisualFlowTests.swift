@@ -392,16 +392,15 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         tapVisible("inventory.scanReceipt", app: app)
+        tapVisible("receipt.editItem.PREMIUM MUTTON LEG", app: app)
         let match = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "receipt.match.")).firstMatch
         reveal(match, app: app)
         XCTAssertTrue(match.waitForExistence(timeout: 5))
         XCTAssertTrue(match.label.contains("Mutton"))
         match.tap()
-        let stock = app.switches["receipt.inventory.PREMIUM MUTTON LEG"].firstMatch
-        reveal(stock, app: app)
-        stock.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
-        XCTAssertEqual(stock.value as? String, "1")
+        tapVisible("receipt.separatePack.PREMIUM MUTTON LEG", app: app)
         capture("Receipt-Mutton-Match", app: app)
+        tapVisible("receipt.itemDone", app: app)
         app.buttons["receipt.confirm"].tap()
         tapVisible("receipt.saveWithInventory", app: app)
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
@@ -448,17 +447,13 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.inventory", app: app)
         tapVisible("inventory.scanReceipt", app: app)
+        capture("Receipt-Clean-Overview", app: app)
+        tapVisible("receipt.editItem.Curd", app: app)
         tapVisible("receipt.newPurchase.Curd", app: app)
-        let pantry = app.switches["receipt.inventory.Curd"].firstMatch
-        reveal(pantry, app: app)
-        XCTAssertTrue(pantry.exists)
-        pantry.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
-        let separate = app.switches["receipt.separatePack.Curd"].firstMatch
-        reveal(separate, app: app)
-        XCTAssertTrue(separate.exists)
-        separate.coordinate(withNormalizedOffset: CGVector(dx: 0.9, dy: 0.5)).tap()
-        XCTAssertTrue(app.staticTexts["Your existing pack, amount and expiry stay unchanged."].exists)
+        tapVisible("receipt.separatePack.Curd", app: app)
+        XCTAssertEqual(app.buttons["receipt.separatePack.Curd"].value as? String, "Selected")
         capture("Receipt-Separate-Pack-Review", app: app)
+        tapVisible("receipt.itemDone", app: app)
         app.buttons["receipt.confirm"].tap()
         XCTAssertTrue(app.buttons["receipt.saveWithInventory"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["receipt.saveWithInventory"].firstMatch.tap()
@@ -476,10 +471,12 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
         tapVisible("inventory.scanReceipt", app: app)
         XCTAssertTrue(app.buttons["receipt.confirm"].waitForExistence(timeout: 5))
+        tapVisible("receipt.editItem.Curd", app: app)
         tapVisible("Already recorded? Attach receipt", app: app)
         tapVisible("receipt.usePurchase.Curd", app: app)
         XCTAssertEqual(app.buttons["receipt.usePurchase.Curd"].value as? String, "Selected")
         capture("Receipt-Existing-Purchase", app: app)
+        tapVisible("receipt.itemDone", app: app)
         app.buttons["receipt.confirm"].tap()
         XCTAssertTrue(app.buttons["receipt.saveWithoutInventory"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["receipt.saveWithoutInventory"].firstMatch.tap()
@@ -940,7 +937,7 @@ final class VisualFlowTests: XCTestCase {
             guard bounds.width > 0, bounds.height > 0 else { return }
             // Let XCTest route receipt and pantry gestures to the foreground collection's display.
             // App-relative coordinates can target the inactive display on Duo simulators.
-            if app.navigationBars["Receipt"].exists || app.navigationBars["Groceries at home"].exists,
+            if app.navigationBars["Receipt"].exists || app.navigationBars["Receipt item"].exists || app.navigationBars["Groceries at home"].exists,
                let collection = app.collectionViews.allElementsBoundByIndex.last, collection.exists {
                 if down { collection.swipeDown() }
                 else { collection.swipeUp() }
@@ -1877,22 +1874,14 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Home"].firstMatch.tap(); tapVisible("home.expenses", app: app)
         tapVisible("expenses.scan", app: app)
         let amount = app.textFields["expense.amount"]
-        XCTAssertTrue(app.staticTexts["receipt.scannedTotal"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["receipt.scannedTotal"].label.contains("6.48"))
         capture("Receipt-Scan-Overview", app: app)
-        tapVisible("receipt.inventoryAll", app: app)
-        XCTAssertEqual(app.staticTexts["receipt.inventorySummary"].label, "Inventory items selected: 2")
-        tapVisible("receipt.inventoryNone", app: app)
-        XCTAssertEqual(app.staticTexts["receipt.inventorySummary"].label, "Inventory items selected: 0")
-        tapVisible("receipt.card.Curd", app: app)
-        XCTAssertEqual(app.staticTexts["receipt.inventorySummary"].label, "Inventory items selected: 1")
+        tapVisible("receipt.editPurchase", app: app)
+        XCTAssertEqual(amount.value as? String, "6.48")
+        tapVisible("receipt.purchaseDone", app: app)
+        tapVisible("receipt.editItem.Curd", app: app)
+        tapVisible("receipt.separatePack.Curd", app: app)
         capture("Receipt-Visual-Selection", app: app)
-        let quantityMatches = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Quantity, price & expiry")).firstMatch
-        reveal(quantityMatches, app: app)
-        quantityMatches.tap()
-        let shoppingMatch = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH %@", "receipt.shopping.")).firstMatch
-        reveal(shoppingMatch, app: app)
-        capture("HelpVideo-ReceiptMatches", app: app)
+        tapVisible("receipt.itemDone", app: app)
         app.buttons["receipt.confirm"].tap()
         XCTAssertTrue(app.buttons["receipt.saveWithInventory"].firstMatch.waitForExistence(timeout: 5))
         capture("Receipt-Explicit-Inventory-Confirmation", app: app)
@@ -1954,6 +1943,7 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("inventory.scanReceipt", app: app)
         XCTAssertTrue(app.buttons["receipt.confirm"].waitForExistence(timeout: 5))
         XCTAssertEqual(app.buttons["receipt.confirm"].label, "Save receipt")
+        tapVisible("Name suggestions", app: app)
         tapVisible("receipt.decodeNames", app: app)
         let decodeStatus = app.staticTexts["receipt.decodeStatus"]
         XCTAssertTrue(decodeStatus.waitForExistence(timeout: 5))

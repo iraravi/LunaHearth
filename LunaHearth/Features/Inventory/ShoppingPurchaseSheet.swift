@@ -13,8 +13,15 @@ struct ShoppingPurchaseSheet: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text(item.name).font(AppTheme.sectionTitle)
-                    Text("You bought this item. Choose how to update your pantry.").font(.subheadline).foregroundStyle(InventoryTheme.muted)
+                    HStack(spacing: 14) {
+                        Image(systemName: "bag.fill").font(.title).foregroundStyle(.orange)
+                            .frame(width: 56, height: 56).background(Color.orange.opacity(0.10), in: RoundedRectangle(cornerRadius: 16))
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(item.name).font(.title2.bold())
+                            if let quantity = item.quantityText { Text(quantity).font(.subheadline).foregroundStyle(.secondary) }
+                        }
+                    }
+                    Text("Where should this purchase go?").font(.subheadline).foregroundStyle(InventoryTheme.muted)
                     if repository.inventory.contains(where: { !$0.isUsedUp && IngredientMatching.same($0.name, item.name) && !InventoryRules.canRestock(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay) }) {
                         Text("An older pack is past expiry. This purchase will use a separate pack or another recorded pack; expired quantities stay separate.").font(.subheadline).foregroundStyle(InventoryTheme.muted)
                     }
@@ -28,7 +35,7 @@ struct ShoppingPurchaseSheet: View {
                             } else { choosingExisting = true }
                         } label: {
                             HStack(alignment: .top, spacing: 14) {
-                                Image(systemName: "checkmark.circle").font(.title2).frame(width: 32)
+                                Image(systemName: "archivebox").font(.title2).foregroundStyle(.orange).frame(width: 32)
                                 VStack(alignment: .leading, spacing: 6) {
                                     Text("Add to existing pack").font(.headline)
                                     Text(matches.count == 1 ? RestockQuantity.detail(existing: matches.first?.quantityText, purchased: item.quantityText) : "\(matches.count) saved packs match. Choose which one to restock.")
@@ -37,14 +44,14 @@ struct ShoppingPurchaseSheet: View {
                                 Spacer(minLength: 0)
                             }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
                                 .background(InventoryTheme.surface, in: RoundedRectangle(cornerRadius: 20)).contentShape(Rectangle())
-                        }.buttonStyle(.plain).foregroundStyle(InventoryTheme.accent).accessibilityIdentifier("shopping.keepInventory.existing")
+                        }.buttonStyle(.plain).foregroundStyle(InventoryTheme.ink).accessibilityIdentifier("shopping.keepInventory.existing")
                         choice("Keep a separate pack", detail: "Leave the existing pack unchanged. The new pack keeps its own amount and expiry date.", symbol: "plus.square.on.square", identifier: "shopping.separateInventory", inventory: true, separate: true)
                     } else {
                         choice("Add to pantry", detail: "Mark this bought and add it to your pantry. You can add an expiry date later.", symbol: "shippingbox.and.arrow.backward", identifier: "shopping.purchaseInventory", inventory: true)
                     }
                     choice("Don’t add to pantry", detail: "Save this purchase and finish shopping. Your pantry stays unchanged.", symbol: "gift", identifier: "shopping.purchaseOnly", inventory: false)
                     Text("Changing shopping status later won’t remove a pack from inventory.").font(.caption).foregroundStyle(InventoryTheme.muted)
-                }.padding(24)
+                }.padding(20).frame(maxWidth: 600, alignment: .leading).frame(maxWidth: .infinity)
             }.background(InventoryTheme.canvas).tint(InventoryTheme.accent)
                 .navigationTitle("Finish shopping").navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } } }
@@ -66,7 +73,7 @@ struct ShoppingPurchaseSheet: View {
             do { try repository.recordPurchase(item, addToInventory: inventory, keeping: keeping, allowSeparatePack: separate); completed() } catch { self.error = error.localizedDescription }
         } label: {
             HStack(alignment: .top, spacing: 14) {
-                Image(systemName: symbol).font(.title2).frame(width: 32).accessibilityHidden(true)
+                Image(systemName: symbol).font(.title2).foregroundStyle(.orange).frame(width: 32).accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: 6) {
                     Text(title).font(.headline)
                     Text(detail).font(.subheadline).foregroundStyle(InventoryTheme.muted)
@@ -74,6 +81,6 @@ struct ShoppingPurchaseSheet: View {
                 Spacer(minLength: 0)
             }.padding(18).frame(maxWidth: .infinity, alignment: .leading)
                 .background(InventoryTheme.surface, in: RoundedRectangle(cornerRadius: 20))
-        }.buttonStyle(.plain).foregroundStyle(InventoryTheme.accent).accessibilityIdentifier(identifier)
+        }.buttonStyle(.plain).foregroundStyle(InventoryTheme.ink).accessibilityIdentifier(identifier)
     }
 }

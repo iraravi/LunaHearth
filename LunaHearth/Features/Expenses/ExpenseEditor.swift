@@ -81,7 +81,11 @@ struct ExpenseFieldRows: View {
     @Binding var draft: ExpenseDraft
     var body: some View {
         ExpenseMerchantField(merchant: $draft.merchant)
-        TextField("Total amount, e.g. 12.50", text: $draft.amount).keyboardType(.decimalPad).accessibilityIdentifier("expense.amount")
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Total amount").font(.caption).foregroundStyle(.secondary)
+            TextField("e.g. 12.50", text: $draft.amount).keyboardType(.decimalPad)
+                .font(.title2.weight(.semibold)).accessibilityLabel("Total amount").accessibilityIdentifier("expense.amount")
+        }.padding(.vertical, 4)
         Picker("Currency", selection: $draft.currency) {
             ForEach(ExpenseRules.currencies, id: \.self) { Text($0).tag($0) }
         }.accessibilityIdentifier("expense.currency")
