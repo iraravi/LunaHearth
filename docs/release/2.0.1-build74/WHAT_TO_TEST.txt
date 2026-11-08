@@ -1,0 +1,15 @@
+Nam Illam 2.0.1 (74) - native UI beta
+
+Update without deleting the app. Confirm your existing household, pantry, shopping, schedules and expenses remain available.
+
+1. Meals: choose a cuisine, generate ideas, swipe between cards and use Plan meal. Review ingredients, add missing items to Shopping and finish cooking. Check compact and Duo layouts, large text and Reduce Motion.
+2. Expenses: add and edit a total, merchant, currency, date and category. Expand Notes & refund. Existing notes/refunds should remain visible when editing.
+3. Receipt review: check item names, total and Shopping matches before saving. Image retention and receipt text now follow item review. Confirm optional image retention stays off unless selected. Test Duo scrolling and all save actions.
+4. Calendar: expand Choose calendars, search by calendar or account, and change Not shown / Busy only / Event titles. Confirm selection persists.
+5. Today: switch My day / Family, check assignments and expand Household overview. Summarize should open the overview on supported devices.
+6. Check red/orange icons and readable controls in light/dark mode, VoiceOver and larger text.
+7. On two family devices, verify sharing and assignment notifications with permissions enabled. Confirm offline use and later sync.
+
+Known validation limits: broader physical Duo, large-text and receipt regression review is ongoing. On-device AI output still requires review. Saved receipt images remain local only and are not included in CloudKit sync or encrypted exports.
+
+Internal testing only. The public App Store release is unchanged.
