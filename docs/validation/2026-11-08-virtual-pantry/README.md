@@ -51,3 +51,13 @@ XcodeGen and simulator build passed. All 332 Swift Testing tests plus performanc
 Replaced flat generated-in-code metal doors with original photorealistic closed/open assets: dark glass, dispenser, metal drawers, and empty door bins. Upper door halves animate independently; lower drawers remain decorative. Food icons are still generated from saved packs, never baked into backgrounds. Built-in imagegen prompts and asset paths are in `ARTWORK.md`. Active Duo screenshots: `duo-realistic-closed.png`, `duo-realistic-open.png`.
 
 Validation: XcodeGen/build passed; 332 Swift Testing tests, performance XCTest, and Duo light/dark full-screen UI flows passed. Result: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_14-50-46--0600.xcresult`. No TestFlight upload.
+
+## Physical hinge follow-up
+
+Virtual pantry is now gated by an actual UIHingeInteraction observation (iOS 27.1+), isolated in Services/Device/PantryHingeObserver. No device-name or width inference. Regular phones and older OS versions retain the normal pantry and do not offer virtual mode. A transient nil update during hierarchy/display handoff preserves the last known state; unknown status never invents an angle. Closed means exterior; partially/fully open means interior. No tap-to-open controls remain. List mode remains an explicit user choice. Fold updates never write household records, request permissions, or use networking.
+
+Unfolded presentation crops the artwork to the main fridge cavity only, omitting the lower freezer drawers. Closed exterior retains the drawers. Existing generated artwork is unchanged; SwiftUI performs display-only framing.
+
+Domain tests cover closed/partial/full/unknown/unavailable states. Initial integration build, 334 unit tests, and unfolded Duo editor/list flow passed: `/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_15-04-15--0600.xcresult`. Further phone and fold-transition checks recorded below.
+
+Final checks: regular iPhone 18 Pro normal-pantry UI test passed (`/tmp/NamIllamFix/Logs/Test/Test-LunaHearth-2026.11.08_15-05-59--0600.xcresult`). Device Hub manual verification on the latest build: fully open shows only the main interior; Closed switches to exterior on cover display; reopening to partial posture automatically restores the interior without a tap. Captured `duo-hinge-closed.png` and `duo-hinge-interior.png`. This verifies simulator hinge notifications, not physical hardware. The provided Spencer's reference URL returned HTTP 403; existing user-provided refrigerator references were used instead. Not uploaded to TestFlight.

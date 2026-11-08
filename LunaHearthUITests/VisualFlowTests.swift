@@ -2773,6 +2773,18 @@ final class VisualFlowTests: XCTestCase {
         capture("05-Tasks-Light", app: app)
     }
 
+    func testRegularPhoneKeepsNormalPantry() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]
+        app.launch()
+        app.buttons["Home"].firstMatch.tap()
+        tapVisible("home.inventory", app: app)
+        XCTAssertTrue(app.buttons["inventory.scanReceipt"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.descendants(matching: .any)["inventory.virtual"].firstMatch.exists)
+        XCTAssertFalse(app.buttons["inventory.viewMode"].exists)
+        app.terminate()
+    }
+
     func testVirtualPantryLight() { virtualPantry(dark: false, large: false) }
     func testVirtualPantryDark() { virtualPantry(dark: true, large: false) }
     func testVirtualPantryAccessibility() { virtualPantry(dark: true, large: true) }
@@ -2786,13 +2798,10 @@ final class VisualFlowTests: XCTestCase {
         let virtual = app.descendants(matching: .any)["inventory.virtual"].firstMatch
         if !virtual.waitForExistence(timeout: 3) { tapVisible("inventory.viewMode", app: app) }
         XCTAssertTrue(virtual.waitForExistence(timeout: 5))
-        XCTAssertFalse(app.buttons["inventory.item.Milk"].exists)
-        capture("Virtual-Pantry-Closed", app: app)
-        tapVisible("inventory.virtual.open", app: app)
+        // The simulator is unfolded for this flow; the actual hinge opens the interior.
         XCTAssertTrue(app.buttons["inventory.item.Milk"].waitForExistence(timeout: 5))
-        tapVisible("inventory.virtual.close", app: app)
-        XCTAssertFalse(app.buttons["inventory.item.Milk"].exists)
-        tapVisible("inventory.virtual.open", app: app)
+        XCTAssertFalse(app.buttons["inventory.virtual.open"].exists)
+        XCTAssertFalse(app.buttons["inventory.virtual.close"].exists)
         capture("Virtual-Pantry-\(dark ? "Dark" : "Light")-\(large ? "Large" : "Standard")", app: app)
         tapVisible("inventory.item.Milk", app: app)
         if app.buttons["inventory.virtual.edit"].waitForExistence(timeout: 2) {

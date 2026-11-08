@@ -8,6 +8,7 @@ enum InventoryTheme {
 struct InventoryView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
+    @State private var hingeState: PantryHingeState = .unavailable
     @State private var showingTools = false
     @State private var adding = false
     @State private var scanningReceipt = false
@@ -125,6 +126,11 @@ struct InventoryView: View {
             }.buttonStyle(.borderless)
         }.listRowBackground(Color.clear).listRowSeparator(.hidden).listRowInsets(EdgeInsets(top: 4, leading: 0, bottom: 12, trailing: 0))
     }
+    private func receiveHinge(_ state: PantryHingeState) {
+        // A transient nil during display handoff is not evidence that the device lost its hinge.
+        guard state != .unavailable else { return }
+        hingeState = state
+    }
     private func content(now: Date) -> some View {
         let active = repository.inventory.filter { !$0.isUsedUp }
         let matching = repository.inventory.filter {
@@ -173,8 +179,10 @@ struct InventoryView: View {
             } footer: { Text("Dates come from the pack details you enter. Missing dates stay unknown. Inventory works offline and syncs with your home when iCloud is enabled.") }
         }
         }
-        .fullScreenCover(isPresented: $virtualView) {
-            VirtualPantryView(items: active, exit: { virtualView = false })
+        .background(PantryHingeObserver(update: receiveHinge))
+        .fullScreenCover(isPresented: Binding(get: { virtualView && hingeState.supportsVirtualPantry }, set: { virtualView = $0 })) {
+            VirtualPantryView(items: active, hingeState: hingeState, exit: { virtualView = false })
+                .background(PantryHingeObserver(update: receiveHinge))
         }
         .scrollContentBackground(.hidden).background(InventoryTheme.canvas).tint(InventoryTheme.accent)
         .householdHelp(.pantry)
@@ -182,10 +190,12 @@ struct InventoryView: View {
         .searchable(text: $search, prompt: "Find an ingredient")
         .onChange(of: search) { _, _ in selectedCategory = nil }
         .toolbar {
+            if hingeState.supportsVirtualPantry {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(virtualView ? "List view" : "Virtual pantry", systemImage: virtualView ? "list.bullet" : "refrigerator") {
                     virtualView.toggle()
                 }.accessibilityIdentifier("inventory.viewMode")
+            }
             }
             if !typeSize.isAccessibilitySize {
             ToolbarItem(placement: .topBarTrailing) { Button("Scan receipt", systemImage: "doc.viewfinder") { scanningReceipt = true }.labelStyle(.iconOnly).accessibilityLabel("Scan receipt").accessibilityIdentifier("inventory.scanReceipt") }

@@ -3,6 +3,7 @@ import SwiftUI
 /// Immersive visual presentation only; the normal pantry remains the editing workspace.
 struct VirtualPantryView: View {
     let items: [InventoryItem]
+    let hingeState: PantryHingeState
     let exit: () -> Void
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var zone: VirtualPantryZone = .fridge
@@ -20,7 +21,11 @@ struct VirtualPantryView: View {
         GeometryReader { geometry in
             ZStack {
                 if hasDoors {
-                    Image("VirtualFridgeOpen").resizable().accessibilityHidden(true)
+                    Image("VirtualFridgeClosed").resizable().accessibilityHidden(true)
+                    Image("VirtualFridgeOpen").resizable()
+                        .frame(width: geometry.size.width, height: geometry.size.height / 0.665)
+                        .frame(width: geometry.size.width, height: geometry.size.height, alignment: .top)
+                        .clipped().opacity(opened ? 1 : 0).accessibilityHidden(true)
                 } else { cupboard }
                 if contentsVisible {
                     let displayed = Array(visible[VirtualPantryRules.pageRange(page: page, itemCount: visible.count)])
@@ -33,7 +38,7 @@ struct VirtualPantryView: View {
                         }.buttonStyle(.plain)
                             .frame(width: geometry.size.width * 0.24, height: max(44, geometry.size.height * (hasDoors ? 0.11 : 0.15)))
                             .position(x: geometry.size.width * (0.23 + Double(index % 3) * 0.27),
-                                      y: geometry.size.height * ((hasDoors ? 0.15 : 0.23) + Double(index / 3) * (hasDoors ? 0.12 : 0.17)))
+                                      y: geometry.size.height * ((hasDoors ? 0.15 / 0.665 : 0.23) + Double(index / 3) * (hasDoors ? 0.12 / 0.665 : 0.17)))
                             .accessibilityLabel(item.name)
                             .accessibilityValue(item.quantityText ?? "Amount not set")
                             .accessibilityIdentifier("inventory.item.\(item.name)")
@@ -43,19 +48,13 @@ struct VirtualPantryView: View {
                     Ellipse().fill(.white.opacity(mist ? 0.5 : 0)).blur(radius: 28)
                         .frame(height: geometry.size.height * 0.15).offset(y: geometry.size.height * 0.2)
                         .allowsHitTesting(false).accessibilityHidden(true)
-                    Button(action: toggleDoors) {
+                    ZStack {
                         HStack(spacing: 0) {
                             door(left: true).rotation3DEffect(.degrees(opened ? -100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .leading)
                             door(left: false).rotation3DEffect(.degrees(opened ? 100 : 0), axis: (x: 0, y: 1, z: 0), anchor: .trailing)
                         }.frame(height: geometry.size.height * 0.665).contentShape(Rectangle())
-                    }.buttonStyle(.plain).frame(maxHeight: .infinity, alignment: .top).opacity(opened ? 0 : 1)
-                        .allowsHitTesting(!opened).accessibilityHidden(opened)
-                        .accessibilityLabel("Open \(zone.title.lowercased())")
-                        .accessibilityIdentifier("inventory.virtual.open")
-                        .accessibilityRepresentation {
-                            Button("Open \(zone.title.lowercased())", action: toggleDoors)
-                                .accessibilityIdentifier("inventory.virtual.open")
-                        }
+                    }.frame(maxHeight: .infinity, alignment: .top).opacity(opened ? 0 : 1)
+                        .allowsHitTesting(false).accessibilityHidden(true)
 
                 }
             }.clipped()
@@ -66,6 +65,10 @@ struct VirtualPantryView: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier("inventory.virtual")
         .sheet(item: $editing) { InventoryEditor(item: $0) }
+        .onChange(of: hingeState, initial: true) { _, state in
+            guard let showInterior = state.interiorVisible else { return }
+            withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.85)) { opened = showInterior }
+        }
         .task(id: opened) {
             mist = false
             guard opened, !reduceMotion else { return }
@@ -74,7 +77,7 @@ struct VirtualPantryView: View {
             guard !Task.isCancelled else { return }
             withAnimation(.easeOut(duration: 1)) { mist = false }
         }
-        .onChange(of: zone) { _, _ in page = 0; opened = false; mist = false }
+        .onChange(of: zone) { _, _ in page = 0; opened = hingeState.interiorVisible ?? opened; mist = false }
         .onChange(of: visible.map(\.id)) { _, ids in
             page = min(page, VirtualPantryRules.pageCount(itemCount: ids.count) - 1)
         }
@@ -89,10 +92,6 @@ struct VirtualPantryView: View {
                 }
             } label: { controlIcon("cabinet") }
                 .accessibilityLabel("Storage area").accessibilityIdentifier("inventory.virtual.storage")
-            if hasDoors && opened {
-                Button(action: toggleDoors) { controlIcon("door.left.hand.closed") }
-                    .accessibilityLabel("Close \(zone.title.lowercased())").accessibilityIdentifier("inventory.virtual.close")
-            }
             if contentsVisible && visible.count > 9 {
                 Button { page = max(0, page - 1) } label: { controlIcon("chevron.left") }
                     .disabled(page == 0).accessibilityLabel("Previous shelves")
@@ -105,9 +104,6 @@ struct VirtualPantryView: View {
     private func controlIcon(_ symbol: String) -> some View {
         Image(systemName: symbol).font(.body.weight(.semibold)).foregroundStyle(.black)
             .frame(width: 48, height: 48).background(.white.opacity(0.95), in: Circle())
-    }
-    private func toggleDoors() {
-        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.85)) { opened.toggle() }
     }
     private func door(left: Bool) -> some View {
         GeometryReader { geometry in

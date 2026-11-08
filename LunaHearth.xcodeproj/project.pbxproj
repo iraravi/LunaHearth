@@ -97,6 +97,7 @@
 		5936D111383B91EB90383021 /* PantryVisualRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1CE5CA2F89284B70188346 /* PantryVisualRules.swift */; };
 		5946F7A54C486BE03E583E52 /* PantryPhotoImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA786DB87D3F0288696A08E1 /* PantryPhotoImport.swift */; };
 		59D40E76C3036B520C89BEF0 /* ReceiptNameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D42D54EC6DE58854899590AC /* ReceiptNameTests.swift */; };
+		5A9057CBF2D693C186C9F072 /* PantryHingeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2EE8D6A21CD9906E4A24F3 /* PantryHingeState.swift */; };
 		5B2204C003852ED61C870859 /* CalendarDeliveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D0EC0B527C95CE96B0D674 /* CalendarDeliveryTests.swift */; };
 		5CE9EC87924F9B632FF4E74C /* LocalStoreConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AC97FE46236E6CC68E1B6B /* LocalStoreConfiguration.swift */; };
 		5D6AE6C679C1A5195C240FE1 /* ReceiptImageStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E1EBD8AFA3D24F3EF672F7C /* ReceiptImageStorage.swift */; };
@@ -104,6 +105,7 @@
 		5F3E3F8D54E6A9F89C867565 /* OnDeviceIngredientComparisonService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84B808C2508984FA5834496 /* OnDeviceIngredientComparisonService.swift */; };
 		5F8DA56CE1891A84380A3CCD /* HowItWorksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72910D54B652745EBA5D5CB /* HowItWorksView.swift */; };
 		60BD2068C52B27EC036E760B /* GroceryOrganizationControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8524DCEA47E714E3CD84FE07 /* GroceryOrganizationControls.swift */; };
+		613998DB88685E8CC59340D5 /* PantryHingeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8C9A7DFA0BFFB3D7FA518D /* PantryHingeTests.swift */; };
 		62ECB2C6B00FBA52EF095A7B /* CalendarDayPeriodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A2D057D100F02487FB0CE7 /* CalendarDayPeriodTests.swift */; };
 		63EAE2363D9F428CFC991456 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F8F5A1D4EAFB40AEA1FDB5 /* HomeDashboardView.swift */; };
 		66ACF93DEDCA7140FFBA7BB3 /* WelcomeStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5B7A90DCFC541C0929A80A1 /* WelcomeStyle.swift */; };
@@ -251,6 +253,7 @@
 		E478AD26A43117C604A9242B /* UITestPantryFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F990D560B87C997FE42205 /* UITestPantryFixture.swift */; };
 		E492E91C35CAB4012373B87A /* AppleAIStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB31D1534917FC624CA845B /* AppleAIStatusService.swift */; };
 		E517493323E2B95883E0D8BA /* EntryActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6DDD638309049575F48328B /* EntryActions.swift */; };
+		E5DD7B0DB3BE719FBC4EC44D /* PantryHingeObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A245BAD737AE40AF55A1B5EC /* PantryHingeObserver.swift */; };
 		E65A888E4BFCB0658799E181 /* LocalHouseholdRepository+Purchases.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4FB3E084C96E1440F374F8 /* LocalHouseholdRepository+Purchases.swift */; };
 		E66F3BD188DF03F21B3F4507 /* PantryPhotoCamera.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44625EE7970A5F23F3BF911 /* PantryPhotoCamera.swift */; };
 		E6BF8136B06CCEDA3F74CC49 /* TodayWorkspaceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F33A4CA06524D0F5E14ADFC /* TodayWorkspaceSection.swift */; };
@@ -361,6 +364,7 @@
 		395C282EAE99A369B5CC374A /* ShoppingEntryRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingEntryRulesTests.swift; sourceTree = "<group>"; };
 		39C5C6E22BAFD1AF1008474F /* LocalHouseholdRepository+PortableBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalHouseholdRepository+PortableBackup.swift"; sourceTree = "<group>"; };
 		3A34481EDFB70B8C62C72D3A /* ExpenseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseTests.swift; sourceTree = "<group>"; };
+		3B2EE8D6A21CD9906E4A24F3 /* PantryHingeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryHingeState.swift; sourceTree = "<group>"; };
 		3B4FA8EFE0AA1AE68CDA2A6D /* InventoryStatusBadges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryStatusBadges.swift; sourceTree = "<group>"; };
 		3BCF375162E91FB48A8E4940 /* CloudKitPublicConfigurationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitPublicConfigurationService.swift; sourceTree = "<group>"; };
 		3DBA2BA33A3E72168A87138A /* CalendarFamilyBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarFamilyBoard.swift; sourceTree = "<group>"; };
@@ -481,6 +485,7 @@
 		9F25F716FF36ECF0B57F3211 /* OrbitingHomePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbitingHomePreview.swift; sourceTree = "<group>"; };
 		A1589196DA67B7B64404BBF7 /* HouseholdExpense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdExpense.swift; sourceTree = "<group>"; };
 		A20E4D8D6D794827A9FCD27D /* VisionReceiptScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionReceiptScanner.swift; sourceTree = "<group>"; };
+		A245BAD737AE40AF55A1B5EC /* PantryHingeObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryHingeObserver.swift; sourceTree = "<group>"; };
 		A44625EE7970A5F23F3BF911 /* PantryPhotoCamera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryPhotoCamera.swift; sourceTree = "<group>"; };
 		A4F00F4ED25F3C8183AF64A4 /* InventoryDuplicateReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryDuplicateReview.swift; sourceTree = "<group>"; };
 		A506ED8C7A5524DE05A28783 /* InteractiveFloorPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveFloorPlan.swift; sourceTree = "<group>"; };
@@ -540,6 +545,7 @@
 		D8077ED7F981E20D4D82C2AB /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		D98C4F40166D6C632BC04072 /* SmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmokeTests.swift; sourceTree = "<group>"; };
 		DA019D7FB54CC1A65515F4F8 /* ConnectedRemindersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedRemindersView.swift; sourceTree = "<group>"; };
+		DA8C9A7DFA0BFFB3D7FA518D /* PantryHingeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryHingeTests.swift; sourceTree = "<group>"; };
 		DB4FB3E084C96E1440F374F8 /* LocalHouseholdRepository+Purchases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalHouseholdRepository+Purchases.swift"; sourceTree = "<group>"; };
 		DCD6CF98DC9C7CB0DEB29240 /* OnDevicePantryCategorizationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDevicePantryCategorizationService.swift; sourceTree = "<group>"; };
 		DD6AE3E56E55884D4698462C /* CloudKitBackupService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitBackupService.swift; sourceTree = "<group>"; };
@@ -696,6 +702,14 @@
 				9F25F716FF36ECF0B57F3211 /* OrbitingHomePreview.swift */,
 			);
 			path = Home;
+			sourceTree = "<group>";
+		};
+		1BFF78FD41CC9F53913854DA /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				A245BAD737AE40AF55A1B5EC /* PantryHingeObserver.swift */,
+			);
+			path = Device;
 			sourceTree = "<group>";
 		};
 		1F7542900D6B81139ECBE768 /* Infrastructure */ = {
@@ -928,6 +942,7 @@
 				7A9EF9F63E6F1DCC6CFD2CAA /* InventoryRules.swift */,
 				C3C291D28769E31EB42E608E /* MealCooking.swift */,
 				418613D46BEC8F7FEBE8CED1 /* MealSuggestions.swift */,
+				3B2EE8D6A21CD9906E4A24F3 /* PantryHingeState.swift */,
 				AA786DB87D3F0288696A08E1 /* PantryPhotoImport.swift */,
 				1DD7FD5238F39C3808170697 /* PantryTemplates.swift */,
 				9A1CE5CA2F89284B70188346 /* PantryVisualRules.swift */,
@@ -956,6 +971,7 @@
 				23EBE0CB835EFF8E3CE637EE /* Backup */,
 				2592FB3C0D33CB07E7C11828 /* Calendar */,
 				7880287393129D1A8BBBCFAF /* Configuration */,
+				1BFF78FD41CC9F53913854DA /* Device */,
 				6008A7043166C2CB4329102F /* Documents */,
 				9D3AFAC839249B3FA52551FF /* Notifications */,
 				AC1427E7F23756B1B4CB0B12 /* PantryPhoto */,
@@ -1217,6 +1233,7 @@
 				8FB9894FC038F1B9B5E3B8E6 /* LocalRepositoryTests.swift */,
 				1152F566014C0889336BC25B /* MealCookingTests.swift */,
 				D14C2F9D2CB0CFB948E525F1 /* MealSuggestionTests.swift */,
+				DA8C9A7DFA0BFFB3D7FA518D /* PantryHingeTests.swift */,
 				13EFE6CB71F837A8A38845FC /* PantryPhotoTests.swift */,
 				752D6D448E1DC3B4D6A52225 /* PantryVisualRulesTests.swift */,
 				E4BF84B83236107FA2779A78 /* PortableBackupTests.swift */,
@@ -1406,6 +1423,7 @@
 				88934CAEB7BE0EB7DE1BE412 /* LocalRepositoryTests.swift in Sources */,
 				B768FE8AF2F503D91FFE5CF9 /* MealCookingTests.swift in Sources */,
 				F70EDDCCBFE0A0CBB3584DD3 /* MealSuggestionTests.swift in Sources */,
+				613998DB88685E8CC59340D5 /* PantryHingeTests.swift in Sources */,
 				070A98F3D0EED4DC9EF813ED /* PantryPhotoTests.swift in Sources */,
 				FD6B59F6D63569DD3EDD7E88 /* PantryVisualRulesTests.swift in Sources */,
 				9D261C83E196FA7AFC6D7519 /* PortableBackupTests.swift in Sources */,
@@ -1591,6 +1609,8 @@
 				77DBE6918EBF158065473FEC /* OnDeviceTodayBriefService.swift in Sources */,
 				9F6D0F3B90F64E1BCD8DF715 /* OnboardingView.swift in Sources */,
 				492D99A5888EC982BBAEF368 /* OrbitingHomePreview.swift in Sources */,
+				E5DD7B0DB3BE719FBC4EC44D /* PantryHingeObserver.swift in Sources */,
+				5A9057CBF2D693C186C9F072 /* PantryHingeState.swift in Sources */,
 				D0B2860225A903393C4BD889 /* PantryIdeasView.swift in Sources */,
 				E66F3BD188DF03F21B3F4507 /* PantryPhotoCamera.swift in Sources */,
 				5946F7A54C486BE03E583E52 /* PantryPhotoImport.swift in Sources */,
