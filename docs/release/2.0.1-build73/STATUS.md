@@ -11,3 +11,9 @@ Prepared November 8, 2026 on codex/receipt-calendar-reliability, application sou
 ## Upload confirmed
 
 Xcode Organizer displayed “App upload complete” and “LunaHearth 2.0.1 (73) uploaded.” Upload succeeded through the GUI. Apple processing, build-specific notes and tester-group assignment are not yet verified because Safari is waiting for two-factor verification. The public App Store version is unchanged.
+
+## Internal testing verified
+
+After user completed Safari verification, Apple processing finished. Assigned 2.0.1 (73) to LunaHearth Beta (4 internal testers); group now shows 18 builds. Verified build status Testing, expires in 90 days. Saved build-specific What to Test notes and reloaded the details page to verify persistence. Build details: https://appstoreconnect.apple.com/teams/278f79ef-d215-47fc-82e0-b88d1239f11b/apps/6811447245/testflight/ios/5114b6b7-01f0-4367-8343-db823cc45db2 .
+
+Internal testing only, consistent with the preceding beta workflow. No public App Store submission or external beta-review request made. Tester installation of build 73 has not been observed.
