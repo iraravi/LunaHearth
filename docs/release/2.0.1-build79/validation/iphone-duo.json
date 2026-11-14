@@ -1,0 +1,44 @@
+[
+  {
+    "file": "screenshots/iphone-duo/01-Home-Closed.png",
+    "width": 1398,
+    "height": 2034,
+    "opaque": true,
+    "sha256": "87700790b4678d6f8f586f175762013bda989a11d2ac047058ea1b8892b69d36"
+  },
+  {
+    "file": "screenshots/iphone-duo/02-Home-Open.png",
+    "width": 2853,
+    "height": 2007,
+    "opaque": true,
+    "sha256": "cc77996f4770c5f6a98b5a003a3e74b4cced3e2b5fa60e56b3bd84672b337640"
+  },
+  {
+    "file": "screenshots/iphone-duo/03-Fridge-Closed.png",
+    "width": 1398,
+    "height": 2034,
+    "opaque": true,
+    "sha256": "59c2d1745f3013f07597ca393803988f367af32b898cae679f69f1770d8ae266"
+  },
+  {
+    "file": "screenshots/iphone-duo/04-Fridge-Open.png",
+    "width": 2853,
+    "height": 2007,
+    "opaque": true,
+    "sha256": "6aab4353ab08b575ced932d354087188b2cd464d3a76ae22d1e604ddb37b6155"
+  },
+  {
+    "file": "screenshots/iphone-duo/05-Pantry-Closed.png",
+    "width": 1398,
+    "height": 2034,
+    "opaque": true,
+    "sha256": "ab0e29c87f17ed165a43ce240e54323aab38dfdbb43d3ba950784cf2869a74da"
+  },
+  {
+    "file": "screenshots/iphone-duo/06-Pantry-Open.png",
+    "width": 2853,
+    "height": 2007,
+    "opaque": true,
+    "sha256": "8cb6143bd96bc35af9a2ce88eaae4c45b54425a52811e48af0776e3029049f20"
+  }
+]

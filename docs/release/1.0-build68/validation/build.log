@@ -1,0 +1,363 @@
+⚙️  Generating plists...
+⚙️  Generating project...
+⚙️  Writing project...
+Created project at /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth.xcodeproj
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project LunaHearth.xcodeproj -scheme LunaHearth -destination "platform=iOS Simulator,id=C058393F-C06E-4837-9851-4BD44C0635A1" -derivedDataPath /tmp/LunaHearthDerivedData build
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (1 target)
+    Target 'LunaHearth' in project 'LunaHearth' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+Build description signature: a03574577b4e119c5f7f6078c9f26136
+Build description path: /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/XCBuildData/a03574577b4e119c5f7f6078c9f26136.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache
+
+ProcessProductPackaging /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/LunaHearth.entitlements /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app.xcent (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+    Entitlements:
+    
+    {
+}
+    
+    builtin-productPackagingUtility /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/LunaHearth.entitlements -entitlements -format xml -o /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app.xcent
+
+ProcessProductPackaging /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/LunaHearth.entitlements /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app-Simulated.xcent (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+    Entitlements:
+    
+    {
+    "application-identifier" = "647V74N5JV.com.neuralluna.lunahearth";
+    "aps-environment" = development;
+    "com.apple.developer.icloud-container-environment" = Development;
+    "com.apple.developer.icloud-container-identifiers" =     (
+        "iCloud.com.neuralluna.lunahearth"
+    );
+    "com.apple.developer.icloud-services" =     (
+        CloudKit
+    );
+}
+    
+    builtin-productPackagingUtility /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/LunaHearth.entitlements -entitlements -format xml -o /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app-Simulated.xcent
+
+ProcessProductPackagingDER /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app.xcent /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app.xcent.der (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    /usr/bin/derq query -f xml -i /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app.xcent -o /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app.xcent.der --raw
+
+ProcessProductPackagingDER /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app-Simulated.xcent /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app-Simulated.xcent.der (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    /usr/bin/derq query -f xml -i /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app-Simulated.xcent -o /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app-Simulated.xcent.der --raw
+
+ProcessInfoPlistFile /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Info.plist /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/Info.plist (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-infoPlistUtility /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/Info.plist -producttype com.apple.product-type.application -genpkginfo /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/assetcatalog_generated_info.plist -o /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Info.plist
+
+SwiftDriver LunaHearth normal arm64 com.apple.xcode.tools.swift.compiler (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name LunaHearth -Onone @/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.SwiftFileList -DDEBUG -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/LunaHearthDerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -F /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -c -j11 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/LunaHearthDerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/LunaHearthDerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-generated-files.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-own-target-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-project-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources-normal/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-Swift.h -working-directory /Users/ira/Documents/Project/LunaHearth/LunaHearth -experimental-emit-module-separately -disable-cmo
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ LunaHearth (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+
+SwiftCompile normal arm64 Compiling\ CloudSharingSheet.swift,\ ConnectedRemindersView.swift,\ ConnectionsView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Sharing/CloudSharingSheet.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Connections/ConnectedRemindersView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Connections/ConnectionsView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Sharing/CloudSharingSheet.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile CloudSharingSheet.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Connections/ConnectedRemindersView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile ConnectedRemindersView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Connections/ConnectionsView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile ConnectionsView.swift
+
+SwiftCompile normal arm64 Compiling\ CalendarDeliverySettingsView.swift,\ CalendarSettingsView.swift,\ CalendarView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/CalendarDeliverySettingsView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/CalendarSettingsView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/CalendarView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/CalendarDeliverySettingsView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile CalendarDeliverySettingsView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/CalendarSettingsView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile CalendarSettingsView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/CalendarView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile CalendarView.swift
+
+SwiftCompile normal arm64 Compiling\ HouseholdBackup.swift,\ HouseholdHelp.swift,\ HouseholdSharingView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/Backup/HouseholdBackup.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/UseCases/HouseholdHelp.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Sharing/HouseholdSharingView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/Backup/HouseholdBackup.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile HouseholdBackup.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/UseCases/HouseholdHelp.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile HouseholdHelp.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Sharing/HouseholdSharingView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile HouseholdSharingView.swift
+
+SwiftCompile normal arm64 Compiling\ LunaHearthApp.swift,\ MealPlanningReminder.swift,\ MealPrepReminder.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/App/LunaHearthApp.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Notifications/MealPlanningReminder.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Notifications/MealPrepReminder.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/App/LunaHearthApp.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile LunaHearthApp.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Notifications/MealPlanningReminder.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile MealPlanningReminder.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Notifications/MealPrepReminder.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile MealPrepReminder.swift
+
+SwiftCompile normal arm64 Compiling\ PantryPhotoImportView.swift,\ PersonalShopping.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/PantryPhoto/PantryPhotoImportView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Notifications/PersonalShopping.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/PantryPhoto/PantryPhotoImportView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile PantryPhotoImportView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Notifications/PersonalShopping.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile PersonalShopping.swift
+
+SwiftCompile normal arm64 Compiling\ PrivacyPolicyView.swift,\ ReceiptImportView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/More/PrivacyPolicyView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Receipts/ReceiptImportView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/More/PrivacyPolicyView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile PrivacyPolicyView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Receipts/ReceiptImportView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile ReceiptImportView.swift
+
+SwiftCompile normal arm64 Compiling\ ReminderDeliverySection.swift,\ SystemAppointmentAlerts.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Connections/ReminderDeliverySection.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Notifications/SystemAppointmentAlerts.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Connections/ReminderDeliverySection.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile ReminderDeliverySection.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Notifications/SystemAppointmentAlerts.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile SystemAppointmentAlerts.swift
+
+SwiftCompile normal arm64 Compiling\ AppointmentEditorView.swift,\ BackupView.swift,\ CalendarDeliveryCoordinator.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/AppointmentEditorView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Backup/BackupView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/CalendarDeliveryCoordinator.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/AppointmentEditorView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile AppointmentEditorView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Backup/BackupView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile BackupView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Calendar/CalendarDeliveryCoordinator.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile CalendarDeliveryCoordinator.swift
+
+SwiftCompile normal arm64 Compiling\ MoreView.swift,\ OnboardingView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/More/MoreView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Onboarding/OnboardingView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/More/MoreView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile MoreView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Onboarding/OnboardingView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile OnboardingView.swift
+
+SwiftCompile normal arm64 Compiling\ HouseholdSupportArticle.swift,\ HowItWorksView.swift,\ InvitationSendSheet.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/UseCases/HouseholdSupportArticle.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Onboarding/HowItWorksView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Sharing/InvitationSendSheet.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/UseCases/HouseholdSupportArticle.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile HouseholdSupportArticle.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Onboarding/HowItWorksView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile HowItWorksView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Services/Sharing/InvitationSendSheet.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile InvitationSendSheet.swift
+
+SwiftCompile normal arm64 Compiling\ AIStatus.swift,\ AIStatusView.swift,\ ApplePlanning.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/UseCases/AIStatus.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/More/AIStatusView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/Integrations/ApplePlanning.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/UseCases/AIStatus.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile AIStatus.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/More/AIStatusView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile AIStatusView.swift
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Domain/Integrations/ApplePlanning.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile ApplePlanning.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling ReminderDeliverySection.swift, SystemAppointmentAlerts.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling HouseholdSupportArticle.swift, HowItWorksView.swift, InvitationSendSheet.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 Compiling\ HouseholdHelpView.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Help/HouseholdHelpView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Features/Help/HouseholdHelpView.swift (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile HouseholdHelpView.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling AIStatus.swift, AIStatusView.swift, ApplePlanning.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling HouseholdBackup.swift, HouseholdHelp.swift, HouseholdSharingView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling LunaHearthApp.swift, MealPlanningReminder.swift, MealPrepReminder.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppointmentEditorView.swift, BackupView.swift, CalendarDeliveryCoordinator.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling MoreView.swift, OnboardingView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling PantryPhotoImportView.swift, PersonalShopping.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling CalendarDeliverySettingsView.swift, CalendarSettingsView.swift, CalendarView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling HouseholdHelpView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling PrivacyPolicyView.swift, ReceiptImportView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Compiling CloudSharingSheet.swift, ConnectedRemindersView.swift, ConnectionsView.swift (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for LunaHearth (in target 'LunaHearth' from project 'LunaHearth')
+
+SwiftDriver\ Compilation\ Requirements LunaHearth normal arm64 com.apple.xcode.tools.swift.compiler (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name LunaHearth -Onone @/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.SwiftFileList -DDEBUG -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/LunaHearthDerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -F /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -c -j11 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/LunaHearthDerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/LunaHearthDerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-generated-files.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-own-target-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-project-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources-normal/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-Swift.h -working-directory /Users/ira/Documents/Project/LunaHearth/LunaHearth -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver\ Compilation LunaHearth normal arm64 com.apple.xcode.tools.swift.compiler (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name LunaHearth -Onone @/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.SwiftFileList -DDEBUG -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/LunaHearthDerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -F /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -c -j11 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/LunaHearthDerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/LunaHearthDerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-generated-files.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-own-target-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-project-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources-normal/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth-Swift.h -working-directory /Users/ira/Documents/Project/LunaHearth/LunaHearth -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.swiftmodule/arm64-apple-ios-simulator.swiftmodule /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftmodule (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftmodule /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.swiftmodule/arm64-apple-ios-simulator.swiftmodule
+
+Copy /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.swiftmodule/arm64-apple-ios-simulator.swiftdoc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftdoc (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftdoc /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.swiftmodule/arm64-apple-ios-simulator.swiftdoc
+
+Copy /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.swiftmodule/arm64-apple-ios-simulator.abi.json /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.abi.json (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.abi.json /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+Copy /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftsourceinfo (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftsourceinfo /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Ld /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth.debug.dylib normal (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -F/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -filelist /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.LinkFileList -install_name @rpath/LunaHearth.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -Xlinker -no_adhoc_codesign -o /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth.debug.dylib
+
+ConstructStubExecutorLinkFileList /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-ExecutorLinkFileList-normal-arm64.txt (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    construct-stub-executor-link-file-list /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'LunaHearth' from project 'LunaHearth')
+
+Ld /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth normal (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -F/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/Frameworks -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth-ExecutorLinkFileList-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app-Simulated.xcent.der /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth.debug.dylib -Xlinker -no_adhoc_codesign -o /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth
+
+CopySwiftLibs /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth.debug.dylib --scan-folder /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Frameworks --scan-folder /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/PlugIns --scan-folder /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/SystemExtensions --scan-folder /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name LunaHearth --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk --xcode-version 27A9269 --platform-family iOS --deployment-target 18.0 --bundle-identifier com.neuralluna.lunahearth --output /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app --target-triple arm64-apple-ios18.0-simulator --binary-file /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth --dependency-file /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth_dependency_info.dat --stringsdata-file /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.SwiftFileList --metadata-file-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.DependencyMetadataFileList --static-metadata-file-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/Objects-normal/arm64/LunaHearth.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-30 17:59:15.290 appintentsmetadataprocessor[72424:4447698] Starting appintentsmetadataprocessor export
+2026-10-30 17:59:15.368 appintentsmetadataprocessor[72424:4447698] Writing Metadata.appintents
+2026-10-30 17:59:15.368 appintentsmetadataprocessor[72424:4447698] Metadata root: /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Metadata.appintents
+
+AppIntentsSSUTraining (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsnltrainingprocessor --infoplist-path /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Info.plist --temp-dir-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/ssu --bundle-id com.neuralluna.lunahearth --product-path /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app --extracted-metadata-path /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Metadata.appintents --metadata-file-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.DependencyMetadataFileList --source-file /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Info.plist --archive-ssu-assets
+2026-10-30 17:59:15.395 appintentsnltrainingprocessor[72425:4447703] Parsing options for appintentsnltrainingprocessor
+2026-10-30 17:59:15.395 appintentsnltrainingprocessor[72425:4447703] Starting AppIntents SSU YAML Generation
+2026-10-30 17:59:15.402 appintentsnltrainingprocessor[72425:4447703] Training 'Plan an appointment in ${+applicationName}' for en
+2026-10-30 17:59:15.403 appintentsnltrainingprocessor[72425:4447703] Training 'Show my family calendar in ${+applicationName}' for en
+2026-10-30 17:59:15.403 appintentsnltrainingprocessor[72425:4447703] Training Negative Phrases '' for en
+2026-10-30 17:59:15.403 appintentsnltrainingprocessor[72425:4447703] Application name 'Nam Illam' for en
+2026-10-30 17:59:15.408 appintentsnltrainingprocessor[72425:4447703] Generated AppIntents SSU YAML files in file:///tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/ssu/
+2026-10-30 17:59:15.408 appintentsnltrainingprocessor[72425:4447703] Copied AppIntents SSU YAML files to file:///tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Metadata.appintents/
+Archiving all locales.
+[------------------------------------------------------------] 0% archiving en[🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢] 100% archived en[🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢🁢] 100% archived 1 locales/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Metadata.appintents/nlu
+/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Metadata.appintents/nlu/70bff1b66ab4e961271a2f550f2b5678.version
+
+
+CodeSign /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth.debug.dylib (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/LunaHearth.debug.dylib
+
+CodeSign /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/__preview.dylib (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/__preview.dylib
+/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/__preview.dylib: replacing existing signature
+
+CodeSign /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/LunaHearth.app.xcent --timestamp\=none --generate-entitlement-der /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app
+
+Validate /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-validationUtility /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app -shallow-bundle -infoplist-subpath Info.plist
+
+PruneExplicitPrecompiledModules /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/LunaHearthDerivedData/SDKExplicitPrecompiledModules
+
+note: Removed stale file '/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/PlugIns'
+
+** BUILD SUCCEEDED **
+

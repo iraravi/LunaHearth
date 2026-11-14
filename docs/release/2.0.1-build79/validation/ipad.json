@@ -1,0 +1,26 @@
+[
+  {
+    "file": "screenshots/ipad/Preview-04-Pantry.png",
+    "width": 2064,
+    "height": 2752,
+    "sha256": "ab8262ceb37df43ecdee53919eed03a88c910c051bbac183182e458407d1e01f"
+  },
+  {
+    "file": "screenshots/ipad/Preview-03-Fridge.png",
+    "width": 2064,
+    "height": 2752,
+    "sha256": "842e4529a2b831f9bcb1c701297e633b80250d4edc33eda83dbc2005f84476a6"
+  },
+  {
+    "file": "screenshots/ipad/Preview-02-WholeHome.png",
+    "width": 2064,
+    "height": 2752,
+    "sha256": "9fa476e1705c58ec0f5e3bc90f77f4c202f3a11063e1b6f154374c4ec1b5a4bf"
+  },
+  {
+    "file": "screenshots/ipad/Preview-01-Entrance.png",
+    "width": 2064,
+    "height": 2752,
+    "sha256": "760df6623f7df2c117f98e2471fd4db0670c02f956692208a7e5a29afd89d73c"
+  }
+]

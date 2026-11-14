@@ -1,0 +1,30 @@
+{
+  "prepared_on": "2026-10-03",
+  "market": [
+    "IND"
+  ],
+  "market_confirmed": true,
+  "pricing": null,
+  "publisher": null,
+  "public_support_email": null,
+  "support_url": null,
+  "privacy_policy_url": null,
+  "app_store_connect_verified_today": false,
+  "submission_state": "preparation_only",
+  "binary_public_ready": false,
+  "testflight_reference_build": "66",
+  "final_public_build": null,
+  "validation": {
+    "swift_tests_passed": 272,
+    "swift_suites": 51,
+    "performance_xctests_passed": 1,
+    "phone_selected_ui_cases_passed": 12,
+    "phone_initial_failed_cases": 1,
+    "phone_calendar_rerun_passed": true,
+    "ipad_selected_ui_cases_passed": 12,
+    "screenshots_validated_and_visually_reviewed": 12,
+    "website_render_review_complete": false,
+    "physical_release_checks_complete": false
+  },
+  "india_availability_applied_in_app_store_connect": false
+}

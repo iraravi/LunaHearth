@@ -1,0 +1,30 @@
+[
+  {
+    "file": "website/support.html",
+    "language": true,
+    "viewport": true,
+    "local_links_valid": true,
+    "visual_review": "blocked: browser URL policy rejected local file navigation; no workaround attempted"
+  },
+  {
+    "file": "website/help-and-faq.html",
+    "language": true,
+    "viewport": true,
+    "local_links_valid": true,
+    "visual_review": "blocked: browser URL policy rejected local file navigation; no workaround attempted"
+  },
+  {
+    "file": "website/product-guide.html",
+    "language": true,
+    "viewport": true,
+    "local_links_valid": true,
+    "visual_review": "blocked: browser URL policy rejected local file navigation; no workaround attempted"
+  },
+  {
+    "file": "website/privacy.html",
+    "language": true,
+    "viewport": true,
+    "local_links_valid": true,
+    "visual_review": "blocked: browser URL policy rejected local file navigation; no workaround attempted"
+  }
+]

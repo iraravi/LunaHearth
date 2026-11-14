@@ -1,0 +1,30 @@
+[
+  {
+    "file": "preview/ipad-app-preview.mp4",
+    "duration": "00:00:22.43",
+    "frames": 672,
+    "bytes": 17493238,
+    "decoded": true
+  },
+  {
+    "file": "preview/iphone-duo-app-preview.mp4",
+    "duration": "00:00:25.00",
+    "frames": 749,
+    "bytes": 18321695,
+    "decoded": true
+  },
+  {
+    "file": "preview/iphone-max-app-preview.mp4",
+    "duration": "00:00:22.60",
+    "frames": 677,
+    "bytes": 18325780,
+    "decoded": true
+  },
+  {
+    "file": "preview/iphone-pro-app-preview.mp4",
+    "duration": "00:00:22.07",
+    "frames": 661,
+    "bytes": 18319702,
+    "decoded": true
+  }
+]

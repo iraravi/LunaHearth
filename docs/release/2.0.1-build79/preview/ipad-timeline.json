@@ -1,0 +1,24 @@
+{
+  "source": "source/ipad-walkthrough.mov",
+  "segments": [
+    [
+      110.53333333333333,
+      120.96666666666667
+    ],
+    [
+      125.03333333333333,
+      133.03333333333333
+    ],
+    [
+      136.73333333333332,
+      140.73333333333332
+    ]
+  ],
+  "duration": 22.433333333333337,
+  "playback_speed": 1,
+  "width": 1200,
+  "height": 1600,
+  "fps": 30,
+  "audio": "intentional silence",
+  "provenance": "Native app recording with fictional in-memory Maple House data"
+}

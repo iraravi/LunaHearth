@@ -66,7 +66,7 @@ extension LocalHouseholdRepository {
     /// graph validation leaves both local values and the previous token unchanged.
     func applyCloudChanges(_ plan: HouseholdSyncMerge.Plan, remote: [RemoteHouseholdRecord], token: Data, writable: Bool) throws {
         guard let configuration = syncConfiguration, let household else { throw HouseholdSharingError.invalidData }
-        var records = Dictionary(uniqueKeysWithValues: try makeBackup().records.map { ($0.id, $0) })
+        var records = Dictionary(uniqueKeysWithValues: try makeSyncSnapshot().records.map { ($0.id, $0) })
         for entity in plan.apply {
             if entity.deleted { records.removeValue(forKey: entity.record.id) }
             else { records[entity.record.id] = entity.record }
@@ -98,7 +98,7 @@ extension LocalHouseholdRepository {
         let values = try conflicted.map { try JSONDecoder().decode(RemoteHouseholdRecord.self, from: $0.remoteData).entity }
         guard let household else { throw HouseholdSharingError.invalidData }
         if useCloud {
-            var records = Dictionary(uniqueKeysWithValues: try makeBackup().records.map { ($0.id, $0) })
+            var records = Dictionary(uniqueKeysWithValues: try makeSyncSnapshot().records.map { ($0.id, $0) })
             for value in values {
                 if value.deleted { records.removeValue(forKey: value.record.id) }
                 else { records[value.record.id] = value.record }

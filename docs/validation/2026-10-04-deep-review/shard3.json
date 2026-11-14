@@ -1,0 +1,176 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "C03D2F10-9BE7-45C0-86A5-5D89B708CE98",
+        "deviceName": "LunaHearth Audit C",
+        "modelName": "iPhone 18 Pro Max",
+        "osBuildNumber": "24A434",
+        "osVersion": "27.0",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 10,
+      "passedTests": 28,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "LunaHearth \u00b7 Built with macOS 27.0.1",
+  "expectedFailures": 0,
+  "failedTests": 10,
+  "finishTime": 1791129113.819,
+  "passedTests": 28,
+  "result": "Failed",
+  "runtimeWarnings": [
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    }
+  ],
+  "skippedTests": 0,
+  "startTime": 1791127293.599,
+  "statistics": [
+    {
+      "subtitle": "1 test run",
+      "title": "1 test collected performance metrics"
+    }
+  ],
+  "testFailures": [
+    {
+      "failureText": "Failed to synthesize event: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nElement debug description:\nAttributes: TextField, 0x110a3a440, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nElement subtree:\n \u2192TextField, 0x110a3a440, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nPath to element:\n \u2192Application, 0x107f56800, pid: 11969, label: 'LunaHearth'\n  \u21b3Window (Main), 0x107f56080, {{0.0, 0.0}, {440.0, 956.0}}\n   \u21b3Other, 0x110a388c0, {{0.0, 0.0}, {440.0, 956.0}}\n    \u21b3Other, 0x110a38a00, {{0.0, 0.0}, {440.0, 956.0}}\n     \u21b3Other, 0x110a38b40, {{0.0, 0.0}, {440.0, 956.0}}\n      \u21b3Other, 0x110a38c80, {{0.0, 0.0}, {440.0, 956.0}}\n       \u21b3Other, 0x110a38dc0, {{0.0, 0.0}, {440.0, 956.0}}\n        \u21b3Other, 0x110a3b840, {{0.0, 0.0}, {440.0, 956.0}}\n         \u21b3Other, 0x110a3b700, {{0.0, 0.0}, {440.0, 956.0}}\n          \u21b3Other, 0x110a39cc0, {{0.0, 0.0}, {440.0, 956.0}}\n           \u21b3Other, 0x110a392c0, {{0.0, 0.0}, {440.0, 956.0}}\n            \u21b3ScrollView, 0x110a39680, {{0.0, 0.0}, {440.0, 956.0}}\n             \u21b3Other, 0x110a3a080, {{0.0, 116.0}, {440.0, 1515.0}}\n              \u21b3TextField, 0x110a3a440, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nQuery chain:\n \u2192Find: Target Application 'com.neuralluna.lunahearth'\n  Output: {\n    Application, 0x107f55cc0, pid: 11969, label: 'LunaHearth'\n  }\n  \u21aa\ufe0eFind: Descendants matching type TextField\n    Output: {\n      TextField, 0x10742f980, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\n    }\n    \u21aa\ufe0eFind: Elements matching predicate '\"setup.householdName\" IN identifiers'\n      Output: {\n        TextField, 0x107f4f840, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\n      }\n",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 7,
+      "testIdentifierString": "VisualFlowTests/testExpenseDashboardLargeText()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testExpenseDashboardLargeText",
+      "testName": "testExpenseDashboardLargeText()"
+    },
+    {
+      "failureText": "XCTAssertTrue failed",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 11,
+      "testIdentifierString": "VisualFlowTests/testGuidedSetupSavesProgressAndKeepsSkipsSeparate()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testGuidedSetupSavesProgressAndKeepsSkipsSeparate",
+      "testName": "testGuidedSetupSavesProgressAndKeepsSkipsSeparate()"
+    },
+    {
+      "failureText": "XCTAssertTrue failed",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 12,
+      "testIdentifierString": "VisualFlowTests/testHomeEndToEndRoomItemWarrantyAndMaintenance()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testHomeEndToEndRoomItemWarrantyAndMaintenance",
+      "testName": "testHomeEndToEndRoomItemWarrantyAndMaintenance()"
+    },
+    {
+      "failureText": "XCTAssertTrue failed - Missing inventory.reviewDuplicates",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 13,
+      "testIdentifierString": "VisualFlowTests/testIngredientDuplicateWarningAndSeparatePack()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testIngredientDuplicateWarningAndSeparatePack",
+      "testName": "testIngredientDuplicateWarningAndSeparatePack()"
+    },
+    {
+      "failureText": "XCTAssertTrue failed - Missing inventory.attentionLow",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 17,
+      "testIdentifierString": "VisualFlowTests/testLowStockDarkShelf()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testLowStockDarkShelf",
+      "testName": "testLowStockDarkShelf()"
+    },
+    {
+      "failureText": "Failed to synthesize event: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nElement debug description:\nAttributes: TextField, 0x111e96e40, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nElement subtree:\n \u2192TextField, 0x111e96e40, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nPath to element:\n \u2192Application, 0x111e88140, pid: 14000, label: 'LunaHearth'\n  \u21b3Window (Main), 0x111e8a580, {{0.0, 0.0}, {440.0, 956.0}}\n   \u21b3Other, 0x111e89180, {{0.0, 0.0}, {440.0, 956.0}}\n    \u21b3Other, 0x111e89e00, {{0.0, 0.0}, {440.0, 956.0}}\n     \u21b3Other, 0x111e89040, {{0.0, 0.0}, {440.0, 956.0}}\n      \u21b3Other, 0x111e89540, {{0.0, 0.0}, {440.0, 956.0}}\n       \u21b3Other, 0x111e96940, {{0.0, 0.0}, {440.0, 956.0}}\n        \u21b3Other, 0x111e97480, {{0.0, 0.0}, {440.0, 956.0}}\n         \u21b3Other, 0x111e95540, {{0.0, 0.0}, {440.0, 956.0}}\n          \u21b3Other, 0x111e96580, {{0.0, 0.0}, {440.0, 956.0}}\n           \u21b3Other, 0x111e94280, {{0.0, 0.0}, {440.0, 956.0}}\n            \u21b3ScrollView, 0x111e94f00, {{0.0, 0.0}, {440.0, 956.0}}\n             \u21b3Other, 0x111e96080, {{0.0, 116.0}, {440.0, 1515.0}}\n              \u21b3TextField, 0x111e96e40, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nQuery chain:\n \u2192Find: Target Application 'com.neuralluna.lunahearth'\n  Output: {\n    Application, 0x111e8bd40, pid: 14000, label: 'LunaHearth'\n  }\n  \u21aa\ufe0eFind: Descendants matching type TextField\n    Output: {\n      TextField, 0x111e8fd40, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\n    }\n    \u21aa\ufe0eFind: Elements matching predicate '\"setup.householdName\" IN identifiers'\n      Output: {\n        TextField, 0x111e8a1c0, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\n      }\n",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 22,
+      "testIdentifierString": "VisualFlowTests/testPantryPhotoLargeTextManualFallback()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testPantryPhotoLargeTextManualFallback",
+      "testName": "testPantryPhotoLargeTextManualFallback()"
+    },
+    {
+      "failureText": "Failed to synthesize event: Neither element nor any descendant has keyboard focus. Event dispatch snapshot: TextField, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nElement debug description:\nAttributes: TextField, 0x111ed7ac0, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nElement subtree:\n \u2192TextField, 0x111ed7ac0, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nPath to element:\n \u2192Application, 0x111ed6d00, pid: 14718, label: 'LunaHearth'\n  \u21b3Window (Main), 0x111ed6e40, {{0.0, 0.0}, {440.0, 956.0}}\n   \u21b3Other, 0x111ed4dc0, {{0.0, 0.0}, {440.0, 956.0}}\n    \u21b3Other, 0x111ed48c0, {{0.0, 0.0}, {440.0, 956.0}}\n     \u21b3Other, 0x111ed4c80, {{0.0, 0.0}, {440.0, 956.0}}\n      \u21b3Other, 0x111ed4b40, {{0.0, 0.0}, {440.0, 956.0}}\n       \u21b3Other, 0x111ed4a00, {{0.0, 0.0}, {440.0, 956.0}}\n        \u21b3Other, 0x111ed5400, {{0.0, 0.0}, {440.0, 956.0}}\n         \u21b3Other, 0x111ed4780, {{0.0, 0.0}, {440.0, 956.0}}\n          \u21b3Other, 0x111ed5680, {{0.0, 0.0}, {440.0, 956.0}}\n           \u21b3Other, 0x111ed5540, {{0.0, 0.0}, {440.0, 956.0}}\n            \u21b3ScrollView, 0x111ed5180, {{0.0, 0.0}, {440.0, 956.0}}\n             \u21b3Other, 0x111ed6440, {{0.0, 116.0}, {440.0, 1515.0}}\n              \u21b3TextField, 0x111ed7ac0, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\nQuery chain:\n \u2192Find: Target Application 'com.neuralluna.lunahearth'\n  Output: {\n    Application, 0x111e8f480, pid: 14718, label: 'LunaHearth'\n  }\n  \u21aa\ufe0eFind: Descendants matching type TextField\n    Output: {\n      TextField, 0x111e99180, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\n    }\n    \u21aa\ufe0eFind: Elements matching predicate '\"setup.householdName\" IN identifiers'\n      Output: {\n        TextField, 0x111ef2580, {{24.0, 775.7}, {392.0, 76.0}}, identifier: 'setup.householdName', label: 'Home name', placeholderValue: 'e.g. Our Home'\n      }\n",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 26,
+      "testIdentifierString": "VisualFlowTests/testReceiptReviewLargeText()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testReceiptReviewLargeText",
+      "testName": "testReceiptReviewLargeText()"
+    },
+    {
+      "failureText": "XCTAssertTrue failed",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 27,
+      "testIdentifierString": "VisualFlowTests/testRedesignedGroceryToolsLandscape()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testRedesignedGroceryToolsLandscape",
+      "testName": "testRedesignedGroceryToolsLandscape()"
+    },
+    {
+      "failureText": "Failed to tap \"Used up\" Button: No matches found for Descendants matching type SegmentedControl from input {(\n    Application, pid: 15498, label: 'LunaHearth'\n)}",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 31,
+      "testIdentifierString": "VisualFlowTests/testShoppingPurchaseInventoryAndFriends()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testShoppingPurchaseInventoryAndFriends",
+      "testName": "testShoppingPurchaseInventoryAndFriends()"
+    },
+    {
+      "failureText": "XCTAssertTrue failed - Missing shopping.organizeAI",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 32,
+      "testIdentifierString": "VisualFlowTests/testShoppingShelvesPurchaseAndAI()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testShoppingShelvesPurchaseAndAI",
+      "testName": "testShoppingShelvesPurchaseAndAI()"
+    }
+  ],
+  "title": "Test - LunaHearth",
+  "topInsights": [],
+  "totalTestCount": 38
+}

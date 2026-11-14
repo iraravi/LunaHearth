@@ -1,0 +1,72 @@
+ffmpeg version 7.1 Copyright (c) 2000-2024 the FFmpeg developers
+  built with Apple clang version 13.1.6 (clang-1316.0.21.2.5)
+  configuration: --prefix=/Volumes/tempdisk/sw --extra-cflags=-fno-stack-check --arch=arm64 --cc=/usr/bin/clang --enable-gpl --enable-libvmaf --enable-libopenjpeg --enable-libopus --enable-libmp3lame --enable-libx264 --enable-libx265 --enable-libvpx --enable-libwebp --enable-libass --enable-libfreetype --enable-fontconfig --enable-libtheora --enable-libvorbis --enable-libsnappy --enable-libaom --enable-libvidstab --enable-libzimg --enable-libsvtav1 --enable-libharfbuzz --enable-libkvazaar --pkg-config-flags=--static --enable-ffplay --enable-postproc --enable-neon --enable-runtime-cpudetect --disable-indev=qtkit --disable-indev=x11grab_xcb
+  libavutil      59. 39.100 / 59. 39.100
+  libavcodec     61. 19.100 / 61. 19.100
+  libavformat    61.  7.100 / 61.  7.100
+  libavdevice    61.  3.100 / 61.  3.100
+  libavfilter    10.  4.100 / 10.  4.100
+  libswscale      8.  3.100 /  8.  3.100
+  libswresample   5.  3.100 /  5.  3.100
+  libpostproc    58.  3.100 / 58.  3.100
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/Users/ira/Documents/Project/LunaHearth/LunaHearth/docs/release/2.0.1-build79/preview/source/ipad-walkthrough.mov':
+  Metadata:
+    major_brand     : qt  
+    minor_version   : 0
+    compatible_brands: qt  
+    creation_time   : 2026-11-08T23:31:49.000000Z
+  Duration: 00:02:27.40, start: 0.000000, bitrate: 5651 kb/s
+  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(tv, bt709/smpte432/iec61966-2-1, progressive), 2064x2752, 5650 kb/s, 5.38 fps, 600 tbr, 600 tbn (default)
+      Metadata:
+        creation_time   : 2026-11-08T23:31:49.000000Z
+        handler_name    : Core Media Video
+        vendor_id       : [0][0][0][0]
+        encoder         : H.264
+Input #1, lavfi, from 'anullsrc=channel_layout=stereo:sample_rate=48000:d=22.433333333333337':
+  Duration: N/A, start: 0.000000, bitrate: 768 kb/s
+  Stream #1:0: Audio: pcm_u8, 48000 Hz, stereo, u8, 768 kb/s
+Stream mapping:
+  Stream #0:0 (h264) -> fps:default
+  fps:default -> Stream #0:0 (libx264)
+  Stream #1:0 -> #0:1 (pcm_u8 (native) -> aac (native))
+Press [q] to stop, [?] for help
+[libx264 @ 0x13c807500] using SAR=1/1
+[libx264 @ 0x13c807500] using cpu capabilities: ARMv8 NEON
+[libx264 @ 0x13c807500] profile High, level 4.0, 4:2:0, 8-bit
+[libx264 @ 0x13c807500] 264 - core 164 r3190 7ed753b - H.264/MPEG-4 AVC codec - Copyleft 2003-2024 - http://www.videolan.org/x264.html - options: cabac=1 ref=3 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=7 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=1 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=16 lookahead_threads=2 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=1 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=40 rc=abr mbtree=1 bitrate=10000 ratetol=1.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 vbv_maxrate=12000 vbv_bufsize=20000 nal_hrd=none filler=0 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to '/Users/ira/Documents/Project/LunaHearth/LunaHearth/docs/release/2.0.1-build79/preview/ipad-app-preview.mp4':
+  Metadata:
+    major_brand     : qt  
+    minor_version   : 0
+    compatible_brands: qt  
+    encoder         : Lavf61.7.100
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, bt709, progressive), 1200x1600 [SAR 1:1 DAR 3:4], q=2-31, 10000 kb/s, 30 fps, 15360 tbn
+      Metadata:
+        encoder         : Lavc61.19.100 libx264
+      Side data:
+        cpb: bitrate max/min/avg: 12000000/0/10000000 buffer size: 20000000 vbv_delay: N/A
+  Stream #0:1: Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 256 kb/s
+      Metadata:
+        encoder         : Lavc61.19.100 aac
+frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A    frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A    frame=    0 fps=0.0 q=0.0 size=       0KiB time=N/A bitrate=N/A speed=N/A    frame=   27 fps= 11 q=13.0 size=     512KiB time=00:00:00.83 bitrate=5033.6kbits/s speed=0.33x    frame=   53 fps= 17 q=15.0 size=     768KiB time=00:00:01.70 bitrate=3701.1kbits/s speed=0.561x    frame=   75 fps= 21 q=18.0 size=    2560KiB time=00:00:02.43 bitrate=8618.6kbits/s speed=0.688x    frame=  109 fps= 27 q=14.0 size=    3328KiB time=00:00:03.60 bitrate=7573.2kbits/s speed=0.891x    frame=  138 fps= 30 q=11.0 size=    3840KiB time=00:00:04.53 bitrate=6939.2kbits/s speed=0.998x    frame=  158 fps= 31 q=8.0 size=    3840KiB time=00:00:05.20 bitrate=6049.6kbits/s speed=1.03x    frame=  181 fps= 33 q=6.0 size=    3840KiB time=00:00:05.96 bitrate=5272.2kbits/s speed=1.07x    frame=  209 fps= 35 q=5.0 size=    4096KiB time=00:00:06.90 bitrate=4863.0kbits/s speed=1.14x    frame=  231 fps= 35 q=3.0 size=    4096KiB time=00:00:07.63 bitrate=4395.8kbits/s speed=1.16x    frame=  252 fps= 36 q=2.0 size=    4096KiB time=00:00:08.33 bitrate=4026.6kbits/s speed=1.18x    frame=  279 fps= 37 q=3.0 size=    4096KiB time=00:00:09.23 bitrate=3634.1kbits/s speed=1.22x    frame=  297 fps= 37 q=2.0 size=    4608KiB time=00:00:09.83 bitrate=3838.9kbits/s speed=1.22x    frame=  318 fps= 37 q=2.0 size=    5120KiB time=00:00:10.53 bitrate=3982.0kbits/s speed=1.23x    frame=  345 fps= 38 q=5.0 size=    6656KiB time=00:00:11.43 bitrate=4769.1kbits/s speed=1.26x    frame=  371 fps= 39 q=6.0 size=    7680KiB time=00:00:12.30 bitrate=5115.0kbits/s speed=1.28x    frame=  393 fps= 39 q=5.0 size=    8960KiB time=00:00:13.03 bitrate=5631.8kbits/s speed=1.29x    frame=  418 fps= 39 q=7.0 size=   10240KiB time=00:00:13.86 bitrate=6049.5kbits/s speed=1.31x    frame=  442 fps= 40 q=7.0 size=   11520KiB time=00:00:14.66 bitrate=6434.5kbits/s speed=1.32x    frame=  460 fps= 40 q=9.0 size=   12544KiB time=00:00:15.26 bitrate=6731.1kbits/s speed=1.32x    frame=  488 fps= 40 q=9.0 size=   13824KiB time=00:00:16.20 bitrate=6990.5kbits/s speed=1.34x    frame=  501 fps= 40 q=7.0 size=   14336KiB time=00:00:16.63 bitrate=7060.6kbits/s speed=1.32x    frame=  527 fps= 40 q=5.0 size=   15104KiB time=00:00:17.50 bitrate=7070.4kbits/s speed=1.33x    frame=  541 fps= 40 q=3.0 size=   15616KiB time=00:00:17.96 bitrate=7120.2kbits/s speed=1.32x    frame=  565 fps= 40 q=4.0 size=   16896KiB time=00:00:18.76 bitrate=7375.4kbits/s speed=1.33x    frame=  596 fps= 41 q=2.0 size=   16896KiB time=00:00:19.80 bitrate=6990.5kbits/s speed=1.35x    frame=  648 fps= 43 q=1.0 size=   16896KiB time=N/A bitrate=N/A speed=N/A    [mp4 @ 0x13c806270] Starting second pass: moving the moov atom to the beginning of the file
+[out#0/mp4 @ 0x13c805860] video:17051KiB audio:6KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 0.149618%
+frame=  672 fps= 44 q=-1.0 Lsize=   17083KiB time=00:00:22.33 bitrate=6266.2kbits/s speed=1.46x    
+[libx264 @ 0x13c807500] frame I:4     Avg QP: 5.97  size:527961
+[libx264 @ 0x13c807500] frame P:171   Avg QP: 2.74  size: 63509
+[libx264 @ 0x13c807500] frame B:497   Avg QP: 5.16  size:  9030
+[libx264 @ 0x13c807500] consecutive B-frames:  1.0%  0.9%  0.4% 97.6%
+[libx264 @ 0x13c807500] mb I  I16..4: 15.6% 42.8% 41.6%
+[libx264 @ 0x13c807500] mb P  I16..4:  1.7%  3.4%  2.5%  P16..4: 16.4%  1.9%  2.6%  0.0%  0.0%    skip:71.5%
+[libx264 @ 0x13c807500] mb B  I16..4:  0.2%  0.5%  0.1%  B16..8:  7.0%  0.9%  0.6%  direct: 1.3%  skip:89.4%  L0:30.7% L1:63.3% BI: 6.0%
+[libx264 @ 0x13c807500] 8x8 transform intra:48.1% inter:36.9%
+[libx264 @ 0x13c807500] coded y,uvDC,uvAC intra: 97.5% 94.2% 92.4% inter: 6.0% 5.6% 4.8%
+[libx264 @ 0x13c807500] i16 v,h,dc,p: 16% 13% 13% 58%
+[libx264 @ 0x13c807500] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 28% 22% 25%  3%  4%  4%  4%  5%  5%
+[libx264 @ 0x13c807500] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 28% 23% 22%  4%  6%  4%  5%  4%  4%
+[libx264 @ 0x13c807500] i8c dc,h,v,p: 55% 19% 20%  6%
+[libx264 @ 0x13c807500] Weighted P-Frames: Y:2.9% UV:1.8%
+[libx264 @ 0x13c807500] ref P L0: 84.0%  5.6%  7.8%  2.5%  0.1%
+[libx264 @ 0x13c807500] ref B L0: 88.0% 10.3%  1.7%
+[libx264 @ 0x13c807500] ref B L1: 95.5%  4.5%
+[libx264 @ 0x13c807500] kb/s:6235.69
+[aac @ 0x13c808890] Qavg: 65536.000

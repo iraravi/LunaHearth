@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "build": "66",
+  "minimum_os": "18.0",
+  "device_families": [
+    1,
+    2
+  ],
+  "sdk": "iphoneos27.1",
+  "privacy_manifest_present": true,
+  "tracking": false,
+  "non_system_dylibs": [],
+  "signed": false,
+  "scope": "Unsigned Release build only; does not verify distribution signing or App Store acceptance"
+}

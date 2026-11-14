@@ -5,7 +5,9 @@ struct ReceiptImportView: View {
     let householdID: UUID
     let sampleImage: Data?
     let onExpenseSaved: ((String, String) -> Void)?
+    @State private var extractionMessage: String?
     @State private var expenseDetails = false
+    @State private var purchaseDateReviewed = false
     @State private var confirmingSave = false
     @State private var recordingExpense: Bool
     @State private var expenseDraft = ExpenseDraft(category: .groceries)
@@ -31,11 +33,17 @@ struct ReceiptImportView: View {
     @State private var scanSession = ReceiptScanSession()
     private var busy: Bool { scanSession.isReading || savingImages }
     @State private var lines: [ReceiptLine] = []
+    /// Scanned items are proposed only when they add up to the receipt's printed totals.
+    @State private var itemization: ReceiptItemization = .verified
+    @State private var hiddenItemCount = 0
+    /// Scanned line amounts, kept so turning "Record in Expenses" off and on again restores them.
+    @State private var scannedAmounts: [String: String] = [:]
     @State private var sourceText = ""
     @State private var store = ""
     @State private var error: String?
     @State private var outcome: String?
     @State private var savedPurchaseID: UUID?
+    @State private var savedExpenseID: UUID?
     @State private var decoding = false
     @State private var decodeTask: Task<Void, Never>?
     @State private var decodeGeneration = UUID()
@@ -48,6 +56,7 @@ struct ReceiptImportView: View {
     }
     private var saveSummary: String {
         let amount = (try? ExpenseRules.minorUnits(expenseDraft.amount)).map { ExpenseRules.money($0, currency: expenseDraft.currency) } ?? expenseDraft.amount
+        if recordingExpense && selected == 0 { return "Expense: \(amount)\n\nNo shopping or pantry items will be changed." }
         return (recordingExpense ? "Expense: \(amount)\n\n" : "") + "\(selected) selected items\n\(inventoryCount) pantry updates\n\nPrevious purchases linked to this receipt will not add stock again."
     }
 
@@ -58,7 +67,14 @@ struct ReceiptImportView: View {
                 ReceiptCamera(completed: { data in camera = false; startCameraScan(data) },
                     failed: { message in camera = false; error = message }, cancelled: { camera = false })
             }
-            .onChange(of: recordingExpense) { _, enabled in if !enabled { for index in lines.indices { lines[index].amount = "" } } }
+            .onChange(of: recordingExpense) { _, enabled in
+                for index in lines.indices {
+                    if !enabled { lines[index].amount = "" }
+                    else if lines[index].amount.isEmpty, let scanned = scannedAmounts[lines[index].id], !scanned.isEmpty {
+                        lines[index].amount = scanned
+                    }
+                }
+            }
             .onChange(of: photos) { _, value in startPhotoScan(value) }
             .sheet(isPresented: $showingImages) { ReceiptImageViewer(pages: receiptImages) }
             .interactiveDismissDisabled(savingImages)
@@ -66,7 +82,7 @@ struct ReceiptImportView: View {
                 guard let id = imageSaveID else { return }
                 defer { savingImages = false; imageSaveID = nil }
                 do { try await imageStorage.save(receiptImages, home: householdID, purchase: id) }
-                catch { self.error = "Purchase saved, but its image could not be stored. Your original photo is unchanged. Free some storage and scan it again if you want to keep a copy." }
+                catch { self.error = "Receipt saved, but its image could not be stored. Your original photo is unchanged. Free some storage and scan it again if you want to keep a copy." }
             }
             .onDisappear { scanSession.cancel(); cancelDecoding() }
             .onChange(of: repository.household?.id) { _, id in if id != householdID { dismiss() } }
@@ -80,15 +96,18 @@ struct ReceiptImportView: View {
                             UIColor.white.setFill(); context.fill(CGRect(x: 0, y: 0, width: 400, height: 600))
                             ("TEST MARKET\nMilk 4.00\nTOTAL 4.00" as NSString).draw(at: CGPoint(x: 30, y: 40), withAttributes: [.foregroundColor: UIColor.black, .font: UIFont.systemFont(ofSize: 24)])
                         }
-                        var scan = ReceiptRules.scan(text: "TEST MARKET\nMilk 4.00\nTOTAL 4.00")
+                        let text = ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-expense-only")
+                            ? "TEST MARKET\nMilk 4.00\nSUBTOTAL 8.00\nTOTAL USD 8.00\n2026-10-02"
+                            : "TEST MARKET\nMilk 4.00\nTOTAL 4.00"
+                        var scan = ReceiptRules.scan(text: text, sameLinePrices: true)
                         scan.previewImages = [data]; apply(scan); return
                     }
                     if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-mutton") {
-                        apply(ReceiptRules.scan(text: "TEST MARKET\nPREMIUM MUTTON LEG 12.00\nTOTAL 12.00"))
+                        apply(ReceiptRules.scan(text: "TEST MARKET\nPREMIUM MUTTON LEG 12.00\nTOTAL 12.00", sameLinePrices: true))
                         return
                     }
                     #endif
-                    apply(ReceiptRules.scan(text: "FRESH MARKET\nCurd 3.99\n2 x Bananas 2.49\nTOTAL 6.48"))
+                    apply(ReceiptRules.scan(text: "FRESH MARKET\nCurd 3.99\n2 x Bananas 2.49\nTOTAL 6.48", sameLinePrices: true))
                 }
             }
             .sheet(isPresented: $confirmingSave) { saveReview }
@@ -99,7 +118,7 @@ struct ReceiptImportView: View {
                         Section { Toggle("Record in Expenses", isOn: $recordingExpense).accessibilityIdentifier("receipt.recordExpense") }
                         Section { Text("Check the receipt date and full total, including tax and discounts.").font(.subheadline).foregroundStyle(.secondary) }
                     }.navigationTitle("Purchase details").navigationBarTitleDisplayMode(.inline)
-                        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { expenseDetails = false }.accessibilityIdentifier("receipt.purchaseDone") } }
+                        .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { purchaseDateReviewed = true; expenseDetails = false }.accessibilityIdentifier("receipt.purchaseDone") } }
                 }
             }
             .alert("Receipt needs attention", isPresented: Binding(get: { error != nil }, set: { if !$0 { error = nil } })) {
@@ -141,7 +160,7 @@ struct ReceiptImportView: View {
                         if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
                     }
                     try Task.checkCancellation()
-                    var result = ReceiptRules.scan(text: pages.joined(separator: "\n"))
+                    var result = try await OnDeviceReceiptExtractionService().extract(text: pages.joined(separator: "\n"))
                     result.previewImages = previews
                     result.previewIncomplete = previews.count != pages.count
                     return result
@@ -169,7 +188,11 @@ struct ReceiptImportView: View {
                         Label(outcome, systemImage: "checkmark.circle.fill").accessibilityIdentifier("receipt.success")
                         if let savedPurchaseID {
                             NavigationLink { PurchaseDetailView(purchaseID: savedPurchaseID) } label: { Label("View purchase", systemImage: "bag") }
-                                .accessibilityIdentifier("receipt.purchaseDetails")
+                                .disabled(savingImages).accessibilityIdentifier("receipt.purchaseDetails")
+                        }
+                        if let savedExpenseID, let expense = repository.expenses.first(where: { $0.id == savedExpenseID }) {
+                            NavigationLink { ExpenseEditor(item: expense) } label: { Label("View expense", systemImage: "receipt") }
+                                .disabled(savingImages).accessibilityIdentifier("receipt.expenseDetails")
                         }
                         Button("Done") { dismiss() }.disabled(savingImages)
                     }
@@ -191,7 +214,9 @@ struct ReceiptImportView: View {
                         Section {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("Review your purchase").font(.title2.bold())
-                                Text("Check the total. Choose what goes into your pantry.").font(.subheadline).foregroundStyle(.secondary)
+                                Text(itemization == .verified ? "Check the total. Choose what goes into your pantry." : "Check the store, date and total.").font(.subheadline).foregroundStyle(.secondary)
+                                if let extractionMessage, itemization == .verified { Text(extractionMessage).font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("receipt.extractionStatus") }
+                                if !lines.isEmpty {
                                 HStack {
                                     Label("\(lines.count) items", systemImage: "bag").foregroundStyle(.primary)
                                     Spacer()
@@ -200,6 +225,7 @@ struct ReceiptImportView: View {
                                         Button("Don’t add any") { for i in lines.indices { lines[i].addToInventory = false } }
                                     }
                                 }.font(.subheadline)
+                                }
                             }.padding(.vertical, 6)
                         }.listRowBackground(Color.clear)
                         Section("1 · Purchase details") {
@@ -209,7 +235,7 @@ struct ReceiptImportView: View {
                                         .font(.title2).frame(width: 40, height: 44)
                                     VStack(alignment: .leading, spacing: 5) {
                                         Text(expenseDraft.merchant.isEmpty ? "Add store and total" : expenseDraft.merchant).font(.headline)
-                                        Text("\(expenseDraft.currency) \(expenseDraft.amount.isEmpty ? "Total needed" : expenseDraft.amount) · \(expenseDraft.date.formatted(date: .abbreviated, time: .omitted))")
+                                        Text("\(expenseDraft.currency) \(expenseDraft.amount.isEmpty ? "Total needed" : expenseDraft.amount) · \(purchaseDateReviewed ? expenseDraft.date.formatted(date: .abbreviated, time: .omitted) : "Check date")")
                                             .font(.subheadline).foregroundStyle(.secondary)
                                     }
                                     Spacer(minLength: 0)
@@ -217,7 +243,22 @@ struct ReceiptImportView: View {
                                 }.padding(.vertical, 6).contentShape(Rectangle())
                             }.buttonStyle(.plain).accessibilityIdentifier("receipt.editPurchase")
                         }
-                        if lines.isEmpty {
+                        if lines.contains(where: \.amountNeedsReview) {
+                            Section {
+                                Label("Item amounts need review", systemImage: "exclamationmark.triangle")
+                                    .font(.headline)
+                                Text("Some prices or discounts need review, or items may be missing. Readable amounts are retained as proposals, not confirmed totals. Compare every row with the original receipt before saving.")
+                                    .font(.subheadline).foregroundStyle(.secondary)
+                            }.accessibilityIdentifier("receipt.amountReviewWarning")
+                        }
+                        if case .unverified(let gap) = itemization {
+                            Section {
+                                Label("Items not listed", systemImage: "list.bullet.rectangle")
+                                    .font(.headline)
+                                Text(itemizationMessage(gap))
+                                    .font(.subheadline).foregroundStyle(.secondary)
+                            }.accessibilityElement(children: .combine).accessibilityIdentifier("receipt.itemsNotVerified")
+                        } else if lines.isEmpty {
                             Section { Text("Text was found, but no priced item lines were clear. Read the original text and add a line below, or try another photo.") }
                         }
                         if !lines.isEmpty && (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiReceiptNames) ?? true)) {
@@ -238,7 +279,7 @@ struct ReceiptImportView: View {
                         }
                         Section {
                             ForEach($lines) { $line in
-                                ReceiptItemOverview(line: $line, purchaseDay: HouseholdDay(recordingExpense ? expenseDraft.date : .now).key,
+                                ReceiptItemOverview(line: $line, purchaseDay: HouseholdDay(recordingExpense || purchaseDateReviewed ? expenseDraft.date : .now).key,
                                     currency: recordingExpense ? expenseDraft.currency : nil, proposal: proposals[line.id],
                                     alreadyImported: repository.receiptLineImported(line.id))
                             }
@@ -272,10 +313,10 @@ struct ReceiptImportView: View {
                         if !receiptImages.isEmpty || previewIncomplete {
                             Section("Receipt image") {
                                 Button("View scanned receipt", systemImage: "photo") { showingImages = true }.disabled(receiptImages.isEmpty)
-                                Toggle("Keep receipt image", isOn: $keepImages).disabled(selected == 0 || previewIncomplete).accessibilityIdentifier("receipt.keepImages")
+                                Toggle("Keep receipt image", isOn: $keepImages).disabled((selected == 0 && !recordingExpense) || previewIncomplete).accessibilityIdentifier("receipt.keepImages")
                                 if previewIncomplete { Text("Some pages could not be prepared within the image limit. Scan again to save a complete copy; your extracted items are still available.").font(.caption) }
-                                if selected == 0 { Text("Select at least one purchased item to keep the image in Purchase history.").font(.caption) }
-                                Text("Compressed copy: \(imageSizeLabel). Local to this device; not shared through iCloud or included in encrypted exports. You can remove it from Purchase details.")
+                                if selected == 0 && !recordingExpense { Text("Record an expense or select an item to keep the receipt image.").font(.caption) }
+                                Text("Compressed copy: \(imageSizeLabel). Local to this device; not shared through iCloud or included in encrypted exports. You can view or remove it from the saved expense or Purchase details.")
                                     .font(.caption).foregroundStyle(.secondary)
                             }
                         }
@@ -302,7 +343,7 @@ struct ReceiptImportView: View {
                         confirmingSave = false
                         save()
                     } label: {
-                        Text("Save purchase")
+                        Text(recordingExpense && selected == 0 ? "Save expense" : "Save purchase")
                             .frame(maxWidth: .infinity, minHeight: 44).padding(12)
                             .background(InventoryTheme.surface, in: RoundedRectangle(cornerRadius: 18))
                             .foregroundStyle(InventoryTheme.ink)
@@ -340,7 +381,7 @@ struct ReceiptImportView: View {
                         if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
             }
             try Task.checkCancellation()
-            var result = ReceiptRules.scan(text: pages.joined(separator: "\n"))
+            var result = try await OnDeviceReceiptExtractionService().extract(text: pages.joined(separator: "\n"))
                     result.previewImages = previews
                     result.previewIncomplete = previews.count != pages.count
                     return result
@@ -362,26 +403,37 @@ struct ReceiptImportView: View {
                         if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
         }
         try Task.checkCancellation()
-        var result = ReceiptRules.scan(text: pages.joined(separator: "\n"))
+        var result = try await OnDeviceReceiptExtractionService().extract(text: pages.joined(separator: "\n"))
                     result.previewImages = previews
                     result.previewIncomplete = previews.count != pages.count
                     return result
     }
     private func apply(_ scan: ReceiptScan) {
         cancelDecoding(); proposals = [:]; decodeMessage = nil
-        sourceText = scan.text; lines = scan.lines
+        sourceText = scan.text
+        itemization = ReceiptReconciliation.check(lines: scan.lines, text: scan.text)
+        // Unverified proposals are hidden, not shown with warnings: a wrong price or a
+        // non-product row is worse than a blank list the user can fill in themselves.
+        lines = itemization == .verified ? scan.lines : []
+        hiddenItemCount = itemization == .verified ? 0 : scan.lines.count
+        scannedAmounts = Dictionary(lines.map { ($0.id, $0.amount) }, uniquingKeysWith: { first, _ in first })
+        extractionMessage = scan.extractionMessage
         let savedNames = repository.groceries.map(\.name) + repository.inventory.map(\.name)
         for line in lines {
             if let proposal = ReceiptNameRules.savedProposal(for: line, names: savedNames) { proposals[line.id] = proposal }
         }
         receiptImages = scan.previewImages; keepImages = false; previewIncomplete = scan.previewIncomplete
         expenseDraft.amount = ExpenseRules.receiptTotal(scan.text) ?? ""
-        expenseDraft.merchant = String(scan.text.components(separatedBy: .newlines).first?.prefix(200) ?? "")
+        expenseDraft.merchant = ReceiptPurchaseDetails.merchant(scan.text, saved: repository.shoppingStoreNames) ?? ""
+        let scannedDate = ReceiptPurchaseDetails.day(scan.text).flatMap { ShoppingEntryRules.date(for: $0) }
+        purchaseDateReviewed = scannedDate != nil
+        expenseDraft.date = scannedDate ?? .now
         expenseDetails = false
         if let currency = ExpenseRules.receiptCurrency(scan.text) { expenseDraft.currency = currency }
         for index in lines.indices {
             lines[index].addToInventory = false
             if !recordingExpense { lines[index].amount = "" }
+            else if lines[index].amount.isEmpty { lines[index].amountNeedsReview = true }
             let name = lines[index].name
             let shopping = repository.groceries.filter { !$0.isCompleted && $0.purchaseDisposition != "inventory" && $0.receiptImportKey == nil && IngredientMatching.same($0.name, name) }
             if shopping.count == 1 { lines[index].groceryID = shopping.first?.id }
@@ -392,6 +444,16 @@ struct ReceiptImportView: View {
     }
     private func cancelDecoding() {
         decodeTask?.cancel(); decodeGeneration = UUID(); decoding = false
+    }
+    private func itemizationMessage(_ gap: ReceiptItemizationGap) -> String {
+        let reason = switch gap {
+        case .noItems: "No item lines were clear on this receipt."
+        case .uncertainAmounts: "Some item prices or discounts could not be read clearly."
+        case .noPrintedTotals: "The receipt's totals are unclear or conflicting, so we couldn't check the items."
+        case .mismatch: "The items we read don't add up to the receipt's printed subtotal."
+        }
+        let found = hiddenItemCount > 0 ? " To avoid guessing, the \(hiddenItemCount) lines we read aren't listed." : ""
+        return reason + found + " You can still save the expense, and add pantry items yourself with Add a missed item."
     }
     private func decodeNames() {
         cancelDecoding()
@@ -418,7 +480,10 @@ struct ReceiptImportView: View {
     }
     private func reviewSave() {
         do {
-            if recordingExpense { try ExpenseRules.validate(expenseDraft) }
+            if recordingExpense {
+                guard purchaseDateReviewed else { expenseDetails = true; return }
+                try ExpenseRules.validate(expenseDraft)
+            }
             confirmingSave = true
         } catch { self.error = userFacingError(error) }
     }
@@ -429,14 +494,16 @@ struct ReceiptImportView: View {
             let alreadyRecorded = repository.expenses.contains { $0.receiptKey == key }
             let count = try repository.importReceipt(lines, householdID: householdID,
                 storeName: recordingExpense ? expenseDraft.merchant : store,
-                expense: recordingExpense ? expenseDraft : nil, receiptKey: key)
+                expense: recordingExpense ? expenseDraft : nil, receiptKey: key,
+                purchaseDate: purchaseDateReviewed ? expenseDraft.date : nil)
             let purchaseID = ReceiptRules.groceryID(home: householdID, key: "purchase|" + key)
             if repository.purchases.contains(where: { $0.purchaseID == purchaseID }) { savedPurchaseID = purchaseID }
-            if keepImages && selected > 0 && !receiptImages.isEmpty {
+            if keepImages && (selected > 0 || recordingExpense) && !previewIncomplete && !receiptImages.isEmpty {
                 savingImages = true; imageSaveID = purchaseID
             }
             if recordingExpense {
                 if let saved = repository.expenses.first(where: { $0.receiptKey == key }) {
+                    savedExpenseID = saved.id
                     onExpenseSaved?(String(saved.day.prefix(7)), saved.currencyCode)
                 }
                 outcome = alreadyRecorded ? "Expense already recorded. \(count) additional items updated." : "Expense saved. \(count) purchased items recorded. Inventory additions: \(additions)."
@@ -483,6 +550,11 @@ private struct ReceiptItemOverview: View {
                 }
                 Spacer(minLength: 4)
                 if !line.amount.isEmpty { Text(line.amount).font(.subheadline.monospacedDigit()).foregroundStyle(.primary) }
+                else if line.amountNeedsReview {
+                    Label("Check amount", systemImage: "exclamationmark.triangle")
+                        .font(.caption).foregroundStyle(.orange)
+                        .accessibilityLabel("Item amount could not be verified against the receipt subtotal")
+                }
                 Image(systemName: "chevron.right").font(.caption.bold()).foregroundStyle(.secondary)
             }.padding(.vertical, 6).contentShape(Rectangle())
         }.buttonStyle(.plain).accessibilityIdentifier("receipt.editItem.\(line.name)")

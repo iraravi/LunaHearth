@@ -1,0 +1,4 @@
+Developer receipt diagnostics (internal testing only).
+Open More > AI Status > Receipt debug · Developer.
+Choose a receipt photo or scan with the camera. Compare numbered OCR text, structured Apple Intelligence output, validation reasons and final parsed items. Share debug text only after reviewing it for private receipt details. This screen does not save expenses or pantry items; clear or leave to discard the report.
+Also verify purchase headers: printed date versus today's date, merchant identification, conflicting totals and missing-price review warnings.

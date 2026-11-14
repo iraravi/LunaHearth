@@ -1,0 +1,42 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "95BE29CF-B33F-401E-813D-F408CEDDA522",
+        "deviceName": "LunaHearth Audit B",
+        "modelName": "iPhone 18 Pro Max",
+        "osBuildNumber": "24A434",
+        "osVersion": "27.0",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 0,
+      "passedTests": 2,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "LunaHearth \u00b7 Built with macOS 27.0.1",
+  "expectedFailures": 0,
+  "failedTests": 0,
+  "finishTime": 1791168156.577,
+  "passedTests": 2,
+  "result": "Passed",
+  "runtimeWarnings": [
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    }
+  ],
+  "skippedTests": 0,
+  "startTime": 1791168040.166,
+  "statistics": [],
+  "testFailures": [],
+  "title": "Test - LunaHearth",
+  "topInsights": [],
+  "totalTestCount": 2
+}

@@ -8,6 +8,10 @@ struct AIStatusView: View {
 
     var body: some View {
         SettingsDetailPage(title: "AI Status", subtitle: "Know what’s running on your device.", symbol: "sparkles", accent: AppTheme.slate) {
+            #if RECEIPT_DEBUG
+            NavigationLink("Receipt debug · Developer", destination: ReceiptDebugView())
+                .accessibilityIdentifier("aiStatus.receiptDebug")
+            #endif
             if let snapshot {
                 SettingsDetailCard(title: "Apple Intelligence", symbol: "brain", accent: AppTheme.slate) {
                     Label(snapshot.availability.title, systemImage: snapshot.availability == .ready ? "checkmark.circle.fill" : "info.circle")
@@ -37,7 +41,7 @@ struct AIStatusView: View {
                         ? "Kitchen photos can use on-device image AI. If it fails, the scan falls back to readable product labels. Every suggestion needs review."
                         : "Kitchen photos use readable product labels. Full photo AI needs iOS 27, available Apple Intelligence and image-input support. You can always add missed items manually.")
                         .font(.subheadline).foregroundStyle(.secondary)
-                    Text("Receipts use Apple Vision to read text. AI name decoding is optional when the text model is available.")
+                    Text("Receipts use Apple Vision followed by on-device AI extraction when available. If AI cannot finish or validate its output, a standard scan is used.")
                         .font(.subheadline).foregroundStyle(.secondary)
                     Text("This shows current capability, not the result of your last scan. Each scan tells you which method it used.")
                         .font(.footnote).foregroundStyle(.secondary)

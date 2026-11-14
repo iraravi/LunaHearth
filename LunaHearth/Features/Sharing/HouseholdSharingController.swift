@@ -32,7 +32,7 @@ import Observation
         guard let configuration = repository.syncConfiguration else { throw HouseholdSharingError.notReady }
         guard !repository.syncBaselines.contains(where: \.conflict) else { throw HouseholdSharingError.conflicts }
         let destination = configuration.destination
-        let initial = try repository.makeBackup()
+        let initial = try repository.makeSyncSnapshot()
         let baseline = try repository.cloudBaselines()
         pendingCount = HouseholdSyncMerge.plan(local: initial.records, baseline: baseline, remote: baseline).upload.count
         let changes = try await service.changes(in: destination, since: configuration.changeToken)
@@ -50,7 +50,7 @@ import Observation
             throw HouseholdSharingError.accessLost
         }
         // Re-read after the network wait so an edit made while fetching is included.
-        let local = try repository.makeBackup()
+        let local = try repository.makeSyncSnapshot()
         let plan = HouseholdSyncMerge.plan(local: local.records, baseline: baseline, remote: Array(remote.values))
         do {
             try repository.applyCloudChanges(plan, remote: Array(remote.values), token: changes.token, writable: changes.writable)
@@ -68,13 +68,13 @@ import Observation
         }
         var upload = plan.upload
         if service.linksCurrentMemberAutomatically, try repository.ensureCurrentCloudMember() {
-            let refreshed = try repository.makeBackup(), baselines = try repository.cloudBaselines()
+            let refreshed = try repository.makeSyncSnapshot(), baselines = try repository.cloudBaselines()
             upload = HouseholdSyncMerge.plan(local: refreshed.records, baseline: baselines, remote: baselines).upload
         }
         let result = try await service.save(upload, in: destination)
         guard repository.household?.id == destination.householdID else { throw HouseholdSharingError.notReady }
         try repository.acknowledgeCloudWrites(result.saved, completed: !result.needsRetry)
-        let fresh = try repository.makeBackup(), currentBase = try repository.cloudBaselines()
+        let fresh = try repository.makeSyncSnapshot(), currentBase = try repository.cloudBaselines()
         pendingCount = HouseholdSyncMerge.plan(local: fresh.records, baseline: currentBase, remote: currentBase).upload.count
         failures = 0; retryAt = .distantPast
         message = result.needsRetry ? "Another device made changes. Sync will reconcile them on the next pass." : nil
@@ -101,7 +101,7 @@ import Observation
         working = true; message = nil
         defer { working = false }
         do {
-            let backup = try repository.makeBackup()
+            let backup = try repository.makeSyncSnapshot()
             let destination = try await service.createHome(householdID: backup.householdID)
             try repository.configureSharing(destination)
             try await performSync(repository)

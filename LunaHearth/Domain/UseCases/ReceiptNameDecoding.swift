@@ -53,6 +53,14 @@ enum ReceiptNameRules {
               !cleaned.contains(where: { $0.isNewline || $0.asciiValue.map { $0 < 32 } == true }),
               !cleaned.contains("://"), original.contains(where: \.isLetter),
               cleaned.caseInsensitiveCompare(original) != .orderedSame else { return nil }
+        // Reject a shortened suffix masquerading as an expansion: FAIRLIFECHOC
+        // must not become just Chocolate, which changes the product's identity.
+        func compact(_ value: String) -> String {
+            value.lowercased().replacingOccurrences(of: "chocolate", with: "choc")
+                .filter { $0.isLetter || $0.isNumber }
+        }
+        let source = compact(original), suggestion = compact(cleaned)
+        guard !(source.hasSuffix(suggestion) && source.count - suggestion.count >= 3) else { return nil }
         return ReceiptNameProposal(id: inputs[index].id, original: original, name: cleaned)
     }
 

@@ -311,3 +311,75 @@ Receipt rows offer Find matches with AI when device capability and the existing 
 The model may suggest a branded product or cut for a generic shopping request, but is instructed to preserve explicit product constraints and avoid substitutions. This is guidance, not an accuracy guarantee. Each suggestion is labelled AI and requires explicit confirmation; there is no automatic selection. Receipt and shopping names plus grocery ID form a transient review snapshot. Saving rechecks the snapshot, pending-item eligibility and single use inside the existing local receipt transaction. Editing the receipt name invalidates approval, and changed shopping names fail validation. Async responses are discarded if context changes. Completed/history items and pantry restock identity are not broadened by AI. Existing assignment/name remain intact; receipt naming remains available for the new pack.
 
 Offline deterministic candidates and manual review remain available if the model is missing or fails. Names are not persisted in AI diagnostics. No receipt image storage is added: persistent image retention and storage controls remain separate work.
+
+## Automatic structured receipt extraction — November 9, 2026
+
+Receipt photo selection, camera scans and sample-image scans now use Vision OCR followed automatically by OnDeviceReceiptExtractionService. Apple Foundation Models is the primary product extraction path on capable devices when the existing aiReceiptNames/AI operational controls permit it. It receives numbered OCR text rows from this receipt only, not household records or images, and returns a typed @Generable product list: source row, literal printed name, printed positive price and linked discount source rows. These are review proposals, never database writes.
+
+ReceiptExtractionRules validates source indexes, literal names and price evidence, rejects reused coupon rows and mismatched Costco SKU references, calculates net amounts using integer minor units, and reconciles against a readable subtotal. Unreadable values stay blank with a review warning. Repeated product amounts are grouped without inventing package quantities. Naming expansion and shopping/pantry matching remain separate, explicitly reviewed actions.
+
+No cloud AI, network service, additional permission or persistence schema is introduced. Receipt text stays on-device and is not logged in AI diagnostics. This broadens the model input from product-name snippets to the current OCR receipt text. Input is limited to 8,000 characters/120 rows and output to 80 products; oversized receipts use the full deterministic fallback rather than silently truncating. Unavailability, operational pause, generation failure, invalid structured evidence or empty output falls back to ReceiptRules with an explicit Standard scan used message. Cancellation remains controlled by ReceiptScanSession, whose existing watchdog also covers AI work; a watchdog timeout cancels the scan and allows retry/manual entry rather than promising a successful AI result.
+
+Validation: simulator build passed and 353 unit tests across 67 suites passed. New tests cover structured evidence, hallucinated names/prices, source bounds, duplicate coupon use, SKU conflicts, unreadable prices and subtotal mismatch. These tests validate integration/guardrails, not generative accuracy on a physical Apple Intelligence device. Device receipt testing remains necessary before public release. Not yet uploaded to TestFlight.
+
+### Receipt purchase-header correction — November 9, 2026
+
+The receipt review header no longer silently treats today's date as the printed purchase date. A single valid printed date is proposed; ambiguous numeric ordering requires review unless a US postal address establishes month/day ordering. Missing dates display Check date and open Purchase details before the save review. Costco evidence elsewhere in OCR can identify a generic WHOLESALE header; a generic header alone remains blank. Conflicting TOTAL and AMOUNT fields are rejected unless the printed payment amount is independently corroborated by subtotal plus tax. This does not fabricate or repair OCR digits. All blank expense-item amounts now show review warnings, including deterministic fallback results.
+
+These are local, transient review changes to ReceiptScan/ExpenseDraft presentation and receipt validation. No persistence schema, CloudKit, permissions or network changes. Automatic on-device AI product extraction remains in place; literal labels and unknown prices still need review. Regression fixtures cover the reported 170.63/770.63 conflict, generic merchant headers, absent/ambiguous/conflicting dates and invalid calendar dates. OCR and physical-device generative accuracy are separate from these text-fixture checks.
+
+### Internal developer receipt lab
+
+Debug and the dedicated Internal build configuration expose More → AI Status → Receipt debug. The RECEIPT_DEBUG compile condition excludes this screen, transient generated-output field and capture code from public Release builds. The lab runs the production receipt pipeline without saving records and displays numbered OCR, structured model fields, validation rejection reasons and final proposals. Private receipt text stays in memory; clear/leave removes it. Explicit Share debug text can export it through the system share sheet; no automatic upload or persistent receipt logging is added. Developer access is controlled by distributing the Internal archive only to intended internal testers, not by an in-app identity check. See docs/validation/2026-11-09-receipt-debug/README.md for distribution and privacy details.
+
+### Receipt recovery and multiline evidence — November 10, 2026
+
+Structured receipt proposals now include priceRow separately from the name row. Up to three adjacent name/quantity lines are supported when the price row explicitly states count Each @ unit-price/Each and count × unit price equals the printed line total. Names must remain literal OCR evidence; unrelated total lines cannot be used as product prices. Purchase/price rows and discounts cannot be reused.
+
+Generation uses fresh on-device sessions with at most one correction attempt for rejected evidence or unresolved amounts. The correction identifies the validation issue and requests all repeated purchases separately; generated arithmetic is not trusted. Internal debug reports retain both attempt outputs and reasons. After two invalid responses, independently valid non-overlapping proposals may be retained as a clearly labelled partial result; invalid/conflicting proposals are omitted for user review. Source-readable amounts remain visible with review flags on subtotal mismatch rather than being erased globally. The existing scan watchdog/cancellation still bounds the whole operation. No network AI or record writes are added.
+
+The offline fallback supports explicit multiline Each rows with conservatively matched adjacent named discounts, filters calculation/promotional rows out of product names, and accepts Unicode OCR tax markers and accented Costco product labels. It does not claim to repair all damaged names or dates. Affected entities remain transient ReceiptScan/ReceiptLine/ReceiptItemEvidence; no schema, CloudKit, permission or dependency changes.
+
+Validation: 363 unit tests in 70 suites passed on the iPhone simulator, including multiline India Bazaar names/prices/discounts, line-total versus unit-price checks, invalid coupon partial recovery, Unicode suffixes and accented labels. This validates deterministic behavior, not model accuracy on Ravi's physical device. Build 83 is intended for internal testing with the diagnostic screen.
+
+### Source-owned amounts — follow-up to build 83 device report
+
+This supersedes the whole-receipt model row-link/retry pipeline above. OnDeviceReceiptExtractionService now starts with source-parsed products and money, then asks Foundation Models only to clean literal labels in batches of four (at most twelve labels per scan; larger baskets retain all original rows). AI returns no row IDs, prices or discount references and cannot alter amounts or product count. A label is accepted only if it equals the original or the exact leading-code-stripped original; it cannot remove size/brand words or substitute another product. No new networking, storage or schema changes. The model receives only candidate labels, not full receipt text/payment/member details. Existing explicit name-decoding suggestions remain a separate review action.
+
+Exact same-SKU ALB/4LB pack-label variants combine using the numeric spelling already present on that receipt, not a generated correction. A first-glyph-damaged product SKU may use the immediately following coupon's matching numeric suffix as a monetary proposal, always marked for review. Non-adjacent or unrelated codes are not linked. This does not establish a permanent product alias or infer a purchase date. Internal diagnostics show AI label batches and rejected label proposals; original OCR and source-derived money remain visible independently.
+
+### Weight / unit-price receipt tables — November 10, 2026
+
+The offline parser now retains SKU-labelled products between an explicit Unit Price / Total Price header and subtotal. Product names and immediately following amount rows can be separate. A slash-suffixed unit price is never treated as the purchased line total; missing totals remain blank. Orphan amounts are not attached across intervening rows or products. Table results remain marked for review because OCR may omit whole products or damage labels. The supplied India Metro OCR recovers nine visible product candidates; it cannot recover the two product names missing from OCR. This changes transient ReceiptScan/ReceiptLine proposals only, with no record writes, schema, permissions, networking or dependencies. Physical-image OCR quality remains a separate limitation from parsing the supplied text.
+
+## Receipt itemization gate — November 10, 2026
+
+Receipt scanning is expense-first. The review always proposes store, date, total and currency for the user to confirm. Scanned item rows are proposed only when `ReceiptReconciliation` verifies them against the receipt's own printed numbers:
+
+- every item has a readable amount that is not flagged for review;
+- the items sum exactly (integer minor units) to the printed subtotal, and, when readable, subtotal + tax equals the total; or, for a receipt with no subtotal and no tax label, the items sum exactly to the total.
+
+Otherwise the item list is hidden (not shown with warnings) and the user can save the expense and add pantry items manually. A missing list is preferred to a wrong price. Same-line prices (`Milk 4.00`) are kept as proposed amounts on the production scan path (`ReceiptRules.scan(text:sameLinePrices: true)`) because the gate rejects any set that does not reconcile. AI never contributes amounts. The internal Receipt debug screen reports the check result, item sum and printed subtotal/tax/total.
+
+Unit tests cover the deterministic check against supplied OCR text only; they do not measure real-device OCR accuracy or how often real receipts reconcile.
+
+### Expense-only retention and conflicting totals
+
+Receipt-total evidence now distinguishes missing/unreadable values from contradictory readable values. Conflicting subtotal/tax/total evidence cannot enable itemization through another matching amount. Receipts still require user confirmation; a matching arithmetic sum is not proof of product identity.
+
+The expense-first fallback can retain an image without any product rows. Images remain explicitly opt-in, compressed and local-only, and are reopened or removed from the expense using the existing receipt-derived storage ID. No placeholder shopping items, PurchaseEntry records or inventory changes are created for the attachment. No schema migration, CloudKit, permission or network changes. See `docs/validation/2026-11-10-receipt-reliability/README.md` for scope and validation limits.
+
+## Store-free, multi-country receipt reading — November 11, 2026
+
+Product decision: receipt reading contains no store-specific code. Layouts are recognized from the rows themselves; countries differ only in data.
+
+- `ReceiptVocabulary`: subtotal, total, tax, discount and payment words for English, Indian bills (Net Amount, CGST/SGST/IGST, cess), German, French, Spanish, Italian, Dutch and Nordic receipts. Add a language by adding words.
+- `ItemCodeReceiptDetails` (formerly Costco-only): turns on when product rows start with an item code or discount rows reference one (`CODE /ITEMCODE 8.00-`), whatever the store.
+- `ReceiptColumns`: `NAME QTY [UNIT] RATE AMOUNT` columns (Indian Qty/Rate/Amount bills, weighed goods, `2 @ 3.99`) are accepted only when quantity × rate reproduces the line amount; a unit price is never the amount charged.
+- Count × unit-price rows under a product (`2 Each @ $2.99/Each $5.98`, `2 x 1,29 2,58`) in any currency; discount rows in any supported language.
+- Amounts: `1,234.56`, `1.234,56`, Indian `1,23,456.00`, decimal commas, currency before or after the number.
+- `ReceiptReconciliation`: items may match the subtotal (tax added) or the total (tax-inclusive GST/VAT receipts, untaxed receipts).
+- Store-name suggestion uses the offline store catalog plus the household's saved store names as data; no store is named in code.
+- Expense currencies widened to 25 two-decimal currencies. Whole-unit currencies (JPY, KRW) and three-decimal ones (KWD, BHD) need a minor-unit migration first.
+
+Validation: 407 unit tests pass, including synthetic India GST, German, UK, US and multilingual-label fixtures. Fixtures prove the general rules only; they do not measure real-device OCR or real receipt coverage.

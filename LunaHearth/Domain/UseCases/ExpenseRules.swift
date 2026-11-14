@@ -1,5 +1,19 @@
 import Foundation
 
+/// Source evidence is distinct from an optional suggestion: contradictory values must not
+/// become equivalent to a missing/unreadable total in downstream reconciliation.
+enum ReceiptTotalEvidence: Equatable, Sendable {
+    case absent
+    case unreadable
+    case conflicting
+    case value(String)
+
+    var amount: String? {
+        if case .value(let amount) = self { return amount }
+        return nil
+    }
+}
+
 enum ExpenseCategory: String, CaseIterable, Identifiable, Codable, Sendable {
     case groceries = "Groceries", home = "Home & supplies", utilities = "Bills & utilities"
     case dining = "Eating out", transport = "Transport", other = "Other"
@@ -52,7 +66,12 @@ enum ExpenseError: LocalizedError {
     }
 }
 enum ExpenseRules {
-    static let currencies = ["USD", "INR", "EUR", "GBP", "CAD", "AUD"]
+    /// Two-decimal currencies only: amounts are stored as value × 100. Whole-unit currencies
+    /// (JPY, KRW) need a minor-unit migration before they can be offered.
+    static let currencies = ["USD", "INR", "EUR", "GBP", "CAD", "AUD", "NZD", "SGD", "AED", "SAR", "QAR",
+                             "CHF", "SEK", "NOK", "DKK", "PLN", "ZAR", "MYR", "HKD", "MXN", "BRL", "LKR", "NPR", "BDT", "PKR"]
+    /// Printed currency markers: ISO codes plus common symbols and abbreviations.
+    static let currencyPattern = #"(?:"# + currencies.joined(separator: "|") + #"|Rs\.?|₹|\$|€|£|kr\.?|zł|RM|R(?=\s?\d))"#
     static var defaultCurrency: String { currencies.contains(Locale.current.currency?.identifier ?? "") ? Locale.current.currency?.identifier ?? "USD" : "USD" }
     static func minorUnits(_ input: String) throws -> Int {
         let value = input.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -92,34 +111,67 @@ enum ExpenseRules {
     }
     /// Suggest only an explicitly labeled total; users confirm the complete receipt amount.
     static func receiptTotal(_ text: String) -> String? {
+        receiptTotalEvidence(text).amount
+    }
+
+    static func receiptTotalEvidence(_ text: String) -> ReceiptTotalEvidence {
         let lines = String(text.prefix(40_000)).components(separatedBy: .newlines)
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines)
                 .replacingOccurrences(of: #"^[*★]+\s*"#, with: "", options: .regularExpression) }.filter { !$0.isEmpty }
         let labels = [
-            #"(?i)^(grand\s+total|net\s+(total|amount|payable)|amount\s+(due|payable)|total\s+payable|bill\s+total)\b\s*[:=\-]?\s*"#,
-            #"(?i)^(total\s+amount|total)\b\s*[:=\-]?\s*"#,
+            ReceiptVocabulary.label(ReceiptVocabulary.strongTotal),
+            ReceiptVocabulary.label(ReceiptVocabulary.total),
             #"(?i)^amount\s*:\s*"#
         ]
-        for pattern in labels {
+        let printsCents = text.range(of: #"\d[.,]\d{2}(?!\d)"#, options: .regularExpression) != nil
+        var selected: String?
+        var labelSeen = false
+        var paymentAmounts = Set<String>()
+        for (priority, pattern) in labels.enumerated() {
             var amounts = Set<String>()
             for (index, line) in lines.enumerated() {
                 guard let label = line.range(of: pattern, options: .regularExpression) else { continue }
+                labelSeen = true
                 let remainder = String(line[label.upperBound...])
                 let candidate = remainder.isEmpty && index + 1 < lines.count ? lines[index + 1] : remainder
-                // A dollar receipt with an unmarked integer total may have lost its decimal
-                // in OCR (e.g. white-on-black "95.97" read as "95197"). Do not invent cents.
-                if text.contains("$"), candidate.trimmingCharacters(in: .whitespaces).range(of: #"^\d+$"#, options: .regularExpression) != nil { continue }
+                // On a receipt that prints cents, an unmarked integer total may have lost its
+                // decimal in OCR (e.g. "95.97" read as "95197"). Do not invent cents.
+                if printsCents, candidate.trimmingCharacters(in: .whitespaces).range(of: #"^\d+$"#, options: .regularExpression) != nil { continue }
                 if let amount = normalizedReceiptAmount(candidate) { amounts.insert(amount) }
             }
             // Conflicting totals need human review, never an arbitrary last-line choice.
-            if !amounts.isEmpty { return amounts.count == 1 ? amounts.first : nil }
+            if priority == 2 { paymentAmounts = amounts }
+            if selected == nil, !amounts.isEmpty {
+                guard amounts.count == 1 else { return .conflicting }
+                selected = amounts.first
+            }
         }
-        return nil
+        guard let selected else { return labelSeen ? .unreadable : .absent }
+        // Payment evidence must agree even when the higher-priority TOTAL was readable.
+        guard paymentAmounts.isEmpty || paymentAmounts == [selected] else {
+            // Recover only a printed candidate corroborated by subtotal + tax.
+            // Never repair a digit based on arithmetic alone or fabricate a total.
+            func labeledAmount(_ pattern: String) -> Int? {
+                let found = lines.compactMap { line -> Int? in
+                    guard let label = line.range(of: pattern, options: .regularExpression) else { return nil }
+                    let value = String(line[label.upperBound...]).trimmingCharacters(in: .whitespaces)
+                    if ["0.00", "$0.00", "$ 0.00"].contains(value) { return 0 }
+                    return normalizedReceiptAmount(value).flatMap { try? minorUnits($0) }
+                }
+                return Set(found).count == 1 ? found.first : nil
+            }
+            guard let subtotal = labeledAmount(ReceiptVocabulary.label(ReceiptVocabulary.subtotal)),
+                  let tax = labeledAmount(ReceiptVocabulary.label(ReceiptVocabulary.tax)) else { return .conflicting }
+            let expected = amountText(subtotal + tax)
+            guard paymentAmounts == [expected] else { return .conflicting }
+            return .value(expected)
+        }
+        return .value(selected)
     }
 
-    private static func normalizedReceiptAmount(_ input: String) -> String? {
+    static func normalizedReceiptAmount(_ input: String) -> String? {
         var value = input.trimmingCharacters(in: .whitespaces)
-        let currency = #"(?:USD|INR|EUR|GBP|CAD|AUD|Rs\.?|₹|\$|€|£)"#
+        let currency = currencyPattern
         value = value.replacingOccurrences(of: "(?i)^(?:" + currency + #"\s*){1,2}"#, with: "", options: .regularExpression)
         value = value.replacingOccurrences(of: #"(?i)\s*"# + currency + "$", with: "", options: .regularExpression)
         // Accept standard/Indian grouping, decimal commas, and whole-rupee totals.
@@ -134,10 +186,10 @@ enum ExpenseRules {
     }
 
     static func receiptCurrency(_ text: String) -> String? {
-        let patterns = [("INR", #"(?i)(₹|\bINR\b|\bRs\.?(?=\s*[0-9]))"#),
-                        ("USD", #"(?i)\bUSD\b"#), ("EUR", #"(?i)(€|\bEUR\b)"#),
-                        ("GBP", #"(?i)(£|\bGBP\b)"#), ("CAD", #"(?i)\bCAD\b"#), ("AUD", #"(?i)\bAUD\b"#)]
-        let matches = patterns.filter { text.range(of: $0.1, options: .regularExpression) != nil }.map(\.0)
+        // Unambiguous symbols and printed ISO codes only; "$" alone could be any dollar.
+        let symbols = [("INR", #"₹|\bRs\.?(?=\s*[0-9])"#), ("EUR", "€"), ("GBP", "£"), ("PLN", #"zł"#)]
+        let patterns = symbols.map { ($0.0, "(?i)(" + $0.1 + ")") } + currencies.map { ($0, #"\b"# + $0 + #"\b"#) }
+        let matches = Set(patterns.filter { text.range(of: $0.1, options: .regularExpression) != nil }.map(\.0))
         return matches.count == 1 ? matches.first : nil
     }
     static func csv(_ report: ExpenseMonthSummary) -> String {

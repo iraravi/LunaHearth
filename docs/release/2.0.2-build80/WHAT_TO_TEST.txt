@@ -1,0 +1,1 @@
+Receipt scanning: improved filtering of non-product text across stores, including payment references, tips/fees, rewards, contact details and unit-price calculations. Please scan grocery receipts and verify that only purchased products are proposed. Check repeated products and Costco discounts. Review names, totals and pantry choices before saving. All processing stays on-device.

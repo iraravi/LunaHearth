@@ -1,0 +1,5 @@
+Receipt extraction improvements and developer diagnostics.
+Test the Costco and India Bazaar receipts in More > AI Status > Receipt debug.
+The AI now returns separate product-name and price source rows and retries invalid or unreconciled output once. Debug reports show both attempts. Validated partial results keep readable amounts with review warnings; compare missing items and discounts before saving.
+Multiline count/unit-price rows no longer become product names. Standard scan supports explicit Each @ price lines and linked named discounts. Costco fallback handles accented product names and OCR tax-marker suffixes.
+No cloud AI; no automatic receipt-data upload.

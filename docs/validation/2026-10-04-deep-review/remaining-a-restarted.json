@@ -1,0 +1,59 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "95BE29CF-B33F-401E-813D-F408CEDDA522",
+        "deviceName": "LunaHearth Audit B",
+        "modelName": "iPhone 18 Pro Max",
+        "osBuildNumber": "24A434",
+        "osVersion": "27.0",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "passedTests": 4,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "LunaHearth \u00b7 Built with macOS 27.0.1",
+  "expectedFailures": 0,
+  "failedTests": 1,
+  "finishTime": 1791131382.873,
+  "passedTests": 4,
+  "result": "Failed",
+  "runtimeWarnings": [
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    }
+  ],
+  "skippedTests": 0,
+  "startTime": 1791130165.9,
+  "statistics": [],
+  "testFailures": [
+    {
+      "failureText": "Testing was canceled",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 5,
+      "testIdentifierString": "VisualFlowTests/testShoppingFormDarkAndLargeText()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testShoppingFormDarkAndLargeText",
+      "testName": "testShoppingFormDarkAndLargeText()"
+    }
+  ],
+  "title": "Test - LunaHearth",
+  "topInsights": [],
+  "totalTestCount": 5
+}

@@ -1,0 +1,24 @@
+{
+  "source": "source/iphone-pro-walkthrough.mov",
+  "segments": [
+    [
+      82.06666666666666,
+      92.13333333333334
+    ],
+    [
+      94.56666666666666,
+      102.56666666666666
+    ],
+    [
+      106.13333333333334,
+      110.13333333333334
+    ]
+  ],
+  "duration": 22.066666666666677,
+  "playback_speed": 1,
+  "width": 886,
+  "height": 1920,
+  "fps": 30,
+  "audio": "intentional silence",
+  "provenance": "Native app recording with fictional in-memory Maple House data"
+}

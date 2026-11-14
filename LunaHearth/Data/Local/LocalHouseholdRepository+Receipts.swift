@@ -3,7 +3,9 @@ import SwiftData
 
 extension LocalHouseholdRepository {
     /// Validate the complete review before a single local transaction; failed reviews save nothing.
-    @discardableResult func importReceipt(_ lines: [ReceiptLine], householdID: UUID, storeName: String, expense: ExpenseDraft? = nil, receiptKey: String? = nil) throws -> Int {
+    @discardableResult func importReceipt(_ lines: [ReceiptLine], householdID: UUID, storeName: String, expense: ExpenseDraft? = nil, receiptKey: String? = nil, purchaseDate: Date? = nil) throws -> Int {
+        // The receipt's own date when known, also for pantry-only imports without an expense.
+        let purchaseDay = HouseholdDay(expense?.date ?? purchaseDate ?? .now).key
         try FeatureAccess.require(.receiptImport)
         if expense != nil { try FeatureAccess.require(.receiptExpenses) }
         if lines.contains(where: { $0.included && $0.addToInventory && $0.existingPurchaseID == nil }) { try FeatureAccess.require(.receiptPantry) }
@@ -30,7 +32,7 @@ extension LocalHouseholdRepository {
             }
             guard line.quantity.count <= 200, line.id.count == 64,
                   line.id.allSatisfy({ $0.isHexDigit }) else { throw InventoryError.longDetail }
-            let candidates = receiptPurchaseCandidates(name: line.name, day: HouseholdDay(expense?.date ?? .now).key)
+            let candidates = receiptPurchaseCandidates(name: line.name, day: purchaseDay)
             if let id = line.existingPurchaseID {
                 guard let candidate = candidates.first(where: { $0.id == id }), claimedPurchases.insert(id).inserted else { throw ReceiptImportError.changedMatch }
                 guard !candidate.alreadyLinked else { throw ReceiptImportError.alreadyExpensed }
@@ -122,14 +124,14 @@ extension LocalHouseholdRepository {
                         item.expiryDay = line.expiryDay
                         item.quantityText = InventoryRules.optional(line.quantity)
                         item.storeID = store?.id; item.storeName = store?.displayName
-                        item.sourceGroceryID = grocery.id; item.purchasedDay = HouseholdDay(expense?.date ?? .now).key
+                        item.sourceGroceryID = grocery.id; item.purchasedDay = purchaseDay
                         context.insert(item); availableInventory.append(item)
                         stockedID = item.id; stockAction = "added"
                     }
                 }
                 appendPurchase(id: ReceiptRules.groceryID(home: householdID, key: "purchase-line|" + line.id),
                     purchaseID: groupID, grocery: grocery, inventoryID: stockedID, expenseID: linkedExpenseID,
-                    day: HouseholdDay(expense?.date ?? .now).key, action: stockAction,
+                    day: purchaseDay, action: stockAction,
                     amount: line.amount.isEmpty ? nil : try ExpenseRules.minorUnits(line.amount), currency: expense?.currency)
             }
         }

@@ -1,0 +1,26 @@
+[
+  {
+    "file": "screenshots/iphone-pro/Preview-04-Pantry.png",
+    "width": 1206,
+    "height": 2622,
+    "sha256": "897a977622f71787b449642a6f6a457086f540145442bd339fa3f67207f6cb77"
+  },
+  {
+    "file": "screenshots/iphone-pro/Preview-03-Fridge.png",
+    "width": 1206,
+    "height": 2622,
+    "sha256": "04240ba84ec2c2c86f265053265736f6a3a33c038c50a108dace4ea2173661c5"
+  },
+  {
+    "file": "screenshots/iphone-pro/Preview-02-WholeHome.png",
+    "width": 1206,
+    "height": 2622,
+    "sha256": "f07bdfcd7b1d6e9181d98fa23666d4cd636434d2eae64ffd0b33ee4a079b3bc7"
+  },
+  {
+    "file": "screenshots/iphone-pro/Preview-01-Entrance.png",
+    "width": 1206,
+    "height": 2622,
+    "sha256": "ccc4244c26b65c2efe2fdd829ec17f1e04ce0ba710e411399d00fdce05e16884"
+  }
+]

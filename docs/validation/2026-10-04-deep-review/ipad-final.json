@@ -1,0 +1,55 @@
+{
+  "devicesAndConfigurations": [
+    {
+      "device": {
+        "architecture": "arm64",
+        "deviceId": "06BC268A-1A85-488D-B420-84FB47DE13FB",
+        "deviceName": "iPad Pro 13-inch (M5)",
+        "modelName": "iPad Pro 13-inch (M5)",
+        "osBuildNumber": "24A434",
+        "osVersion": "27.0",
+        "platform": "iOS Simulator"
+      },
+      "expectedFailures": 0,
+      "failedTests": 1,
+      "passedTests": 1,
+      "skippedTests": 0,
+      "testPlanConfiguration": {
+        "configurationId": "1",
+        "configurationName": "Test Scheme Action"
+      }
+    }
+  ],
+  "environmentDescription": "LunaHearth \u00b7 Built with macOS 27.0.1",
+  "expectedFailures": 0,
+  "failedTests": 1,
+  "finishTime": 1791129046.144,
+  "passedTests": 1,
+  "result": "Failed",
+  "runtimeWarnings": [
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    },
+    {
+      "issueType": "Runtime Warning",
+      "message": "Invalid frame dimension (negative or non-finite)."
+    }
+  ],
+  "skippedTests": 0,
+  "startTime": 1791128823.915,
+  "statistics": [],
+  "testFailures": [
+    {
+      "failureText": "XCTAssertTrue failed - Missing item.addWarranty",
+      "targetName": "LunaHearthUITests",
+      "testIdentifier": 2,
+      "testIdentifierString": "VisualFlowTests/testHomeEndToEndRoomItemWarrantyAndMaintenance()",
+      "testIdentifierURL": "test://com.apple.xcode/LunaHearth/LunaHearthUITests/VisualFlowTests/testHomeEndToEndRoomItemWarrantyAndMaintenance",
+      "testName": "testHomeEndToEndRoomItemWarrantyAndMaintenance()"
+    }
+  ],
+  "title": "Test - LunaHearth",
+  "topInsights": [],
+  "totalTestCount": 2
+}

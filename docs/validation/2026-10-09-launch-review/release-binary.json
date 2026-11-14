@@ -1,0 +1,13 @@
+{
+  "version": "1.0",
+  "build": "66",
+  "minimumOS": "18.0",
+  "sdk": "iphoneos27.1",
+  "deviceFamilies": [
+    1,
+    2
+  ],
+  "executableSHA256": "50031001d6956e70a95300b7d1208983554491f1c0ba1f25b431b531e62af9fe",
+  "privacyManifestPresent": true,
+  "signedDistributionVerified": false
+}

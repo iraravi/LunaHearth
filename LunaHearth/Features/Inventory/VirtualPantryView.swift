@@ -132,16 +132,6 @@ struct VirtualPantryView: View {
                 .offset(x: left ? 0 : -geometry.size.width)
                 .frame(width: geometry.size.width, height: geometry.size.height, alignment: .topLeading)
                 .clipped()
-                .overlay {
-                    if !left && coldStorage {
-                        VStack(spacing: 16) {
-                            ForEach(Array(visible.prefix(3))) { item in
-                                Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
-                                    .font(.system(size: min(36, geometry.size.width * 0.12)))
-                            }
-                        }.opacity(0.38).accessibilityHidden(true)
-                    }
-                }
         }
     }
     private var cupboard: some View {

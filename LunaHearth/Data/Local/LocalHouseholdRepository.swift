@@ -105,6 +105,12 @@ final class LocalHouseholdRepository: HouseholdRepository {
         try makeRecordBackup(refresh: refresh, includingFiles: false)
     }
 
+    /// Records shared through iCloud. Document files and room scans stay on this device: they
+    /// are not sync records, and a room's local scan path survives incoming room updates.
+    func makeSyncSnapshot(refresh: Bool = true) throws -> HouseholdBackup {
+        try makeRecordBackup(refresh: refresh, includingFiles: true)
+    }
+
     func makeRecordBackup(refresh: Bool = true, includingFiles: Bool) throws -> HouseholdBackup {
         if refresh { try reload() }
         guard let household else { throw BackupError.invalidBackup }

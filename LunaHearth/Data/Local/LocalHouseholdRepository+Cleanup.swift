@@ -25,7 +25,9 @@ extension LocalHouseholdRepository {
             switch preview.scope {
             case .pantry: for item in inventory { context.delete(item) }
             case .shopping: for item in groceries { context.delete(item) }
-            case .expenses: for item in expenses { context.delete(item) }
+            case .expenses:
+                unlinkPurchases(fromExpenses: Set(expenses.map(\.id)))
+                for item in expenses { context.delete(item) }
             case .meals:
                 for item in meals { context.delete(item) }
                 for task in tasks where preview.linkedTaskIDs.contains(task.id) { context.delete(task) }

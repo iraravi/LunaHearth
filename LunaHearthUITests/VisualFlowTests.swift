@@ -8,6 +8,28 @@ final class VisualFlowTests: XCTestCase {
         await MainActor.run { XCUIDevice.shared.orientation = .portrait }
     }
 
+    func testPhonePantryOpensVirtualFridgeAndPantry() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--store-screenshots"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap()
+        tapVisible("home.inventory", app: app)
+        let mode = app.buttons["inventory.viewMode"]
+        XCTAssertTrue(mode.waitForExistence(timeout: 5))
+        mode.tap()
+        let storage = app.buttons["inventory.virtual.storage"]
+        XCTAssertTrue(storage.waitForExistence(timeout: 5))
+        storage.tap()
+        app.buttons["Pantry"].tap()
+        XCTAssertTrue(app.buttons["inventory.item.Basmati rice"].waitForExistence(timeout: 5))
+        capture("Phone-Virtual-Pantry", app: app)
+        app.buttons.matching(identifier: "inventory.viewMode").matching(NSPredicate(format: "label == %@", "List view")).firstMatch.tap()
+        XCTAssertTrue(app.buttons["inventory.add"].waitForExistence(timeout: 5))
+        app.buttons["inventory.viewMode"].tap()
+        XCTAssertTrue(storage.waitForExistence(timeout: 5))
+    }
+
     /// Public help media: isolated demo stores only, never a user's household.
     func testNarratedHelpScreens() {
         let app = XCUIApplication()
@@ -93,6 +115,33 @@ final class VisualFlowTests: XCTestCase {
     func testEnterInteractiveHome() { enterInteractiveHome(large: false) }
     func testEnterInteractiveHomeAccessibility() { enterInteractiveHome(large: true) }
     func testInteractiveHomeAnimatedEntrance() { enterInteractiveHome(large: false, reduceMotion: false) }
+
+    /// Natural-speed App Store footage. Uses only fictional in-memory household data.
+    func testAppStoreHomePreview() async throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--store-screenshots"]
+        app.launch()
+        XCTAssertTrue(app.buttons["today.enterHome"].waitForExistence(timeout: 15))
+        app.buttons["today.enterHome"].tap()
+        XCTAssertTrue(app.buttons["home.scene.open"].waitForExistence(timeout: 5))
+        capture("Preview-01-Entrance", app: app)
+        try await Task.sleep(for: .seconds(3))
+        app.buttons["home.scene.open"].tap()
+        XCTAssertTrue(app.buttons["home.scene.kitchen"].waitForExistence(timeout: 5))
+        try await Task.sleep(for: .seconds(4))
+        capture("Preview-02-WholeHome", app: app)
+        app.buttons["home.scene.kitchen"].tap()
+        XCTAssertTrue(app.buttons["inventory.virtual.storage"].waitForExistence(timeout: 5))
+        try await Task.sleep(for: .seconds(6))
+        capture("Preview-03-Fridge", app: app)
+        app.buttons["inventory.virtual.storage"].tap()
+        app.buttons["Pantry"].tap()
+        try await Task.sleep(for: .seconds(4))
+        capture("Preview-04-Pantry", app: app)
+        app.buttons["home.scene.return"].tap()
+        XCTAssertTrue(app.buttons["home.scene.shopping"].waitForExistence(timeout: 5))
+        try await Task.sleep(for: .seconds(3))
+    }
     private func enterInteractiveHome(large: Bool, reduceMotion: Bool = true) {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-today"]
@@ -462,7 +511,7 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("receipt.separatePack.PREMIUM MUTTON LEG", app: app)
         capture("Receipt-Mutton-Match", app: app)
         tapVisible("receipt.itemDone", app: app)
-        app.buttons["receipt.confirm"].tap()
+        tapReceiptSave(app)
         tapVisible("receipt.saveWithInventory", app: app)
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["Close"].firstMatch.tap()
@@ -515,7 +564,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertEqual(app.buttons["receipt.separatePack.Curd"].value as? String, "Selected")
         capture("Receipt-Separate-Pack-Review", app: app)
         tapVisible("receipt.itemDone", app: app)
-        app.buttons["receipt.confirm"].tap()
+        tapReceiptSave(app)
         XCTAssertTrue(app.buttons["receipt.saveWithInventory"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["receipt.saveWithInventory"].firstMatch.tap()
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
@@ -538,7 +587,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertEqual(app.buttons["receipt.usePurchase.Curd"].value as? String, "Selected")
         capture("Receipt-Existing-Purchase", app: app)
         tapVisible("receipt.itemDone", app: app)
-        app.buttons["receipt.confirm"].tap()
+        tapReceiptSave(app)
         XCTAssertTrue(app.buttons["receipt.saveWithoutInventory"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["receipt.saveWithoutInventory"].firstMatch.tap()
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))
@@ -942,6 +991,16 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 5))
     }
 
+    /// Saving a receipt whose date was not read first asks the user to confirm the purchase
+    /// details. Confirm them as a user would, then continue to the save review.
+    private func tapReceiptSave(_ app: XCUIApplication) {
+        app.buttons["receipt.confirm"].tap()
+        let done = app.buttons["receipt.purchaseDone"]
+        if done.waitForExistence(timeout: 2) {
+            done.tap()
+            app.buttons["receipt.confirm"].tap()
+        }
+    }
     private func tapVisible(_ id: String, app: XCUIApplication) {
         let query = app.descendants(matching: .any).matching(identifier: id)
         let matches = query.allElementsBoundByIndex
@@ -958,6 +1017,9 @@ final class VisualFlowTests: XCTestCase {
     private func reveal(_ element: XCUIElement, app: XCUIApplication, identifier suppliedID: String? = nil) {
         _ = element.waitForExistence(timeout: 2)
         var targetID = suppliedID
+        // Once the target has been seen, scroll in short steps; if it then leaves the
+        // accessibility tree, the last step overshot it, so reverse direction.
+        var lastDirection: Bool?
         for _ in 0..<12 {
             guard let snapshot = try? app.snapshot() else { return }
             func descendants(_ node: XCUIElementSnapshot) -> [XCUIElementSnapshot] {
@@ -994,13 +1056,19 @@ final class VisualFlowTests: XCTestCase {
                 if toolbarControl || ancestors.isEmpty { return }
                 if target.frame.midY >= top && target.frame.midY < bounds.maxY { return }
             }
-            let down = target.map { $0.frame.midY < top } ?? false
+            let down = target.map { $0.frame.midY < top } ?? lastDirection.map { !$0 } ?? false
+            if target != nil || lastDirection != nil { lastDirection = down }
             guard bounds.width > 0, bounds.height > 0 else { return }
             // Let XCTest route receipt and pantry gestures to the foreground collection's display.
             // App-relative coordinates can target the inactive display on Duo simulators.
             if app.navigationBars["Receipt"].exists || app.navigationBars["Receipt item"].exists || app.navigationBars["Groceries at home"].exists,
                let collection = app.collectionViews.allElementsBoundByIndex.last, collection.exists {
-                if down { collection.swipeDown() }
+                if lastDirection != nil {
+                    // Short drag: a full swipe can jump past a section on a short landscape screen.
+                    let from = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.4 : 0.6))
+                    let to = collection.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.6 : 0.4))
+                    from.press(forDuration: 0.05, thenDragTo: to)
+                } else if down { collection.swipeDown() }
                 else { collection.swipeUp() }
                 continue
             }
@@ -1950,7 +2018,7 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("receipt.separatePack.Curd", app: app)
         capture("Receipt-Visual-Selection", app: app)
         tapVisible("receipt.itemDone", app: app)
-        app.buttons["receipt.confirm"].tap()
+        tapReceiptSave(app)
         XCTAssertTrue(app.buttons["receipt.saveWithInventory"].firstMatch.waitForExistence(timeout: 5))
         capture("Receipt-Explicit-Inventory-Confirmation", app: app)
         app.buttons["receipt.saveWithInventory"].firstMatch.tap()
@@ -1959,6 +2027,53 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["purchase.expense"].tap()
         XCTAssertTrue(amount.waitForExistence(timeout: 5))
         XCTAssertEqual(amount.value as? String, "6.48")
+    }
+
+    func testExpenseOnlyReceiptImageLightMode() { expenseOnlyReceiptImage(dark: false) }
+    func testExpenseOnlyReceiptImageDarkMode() { expenseOnlyReceiptImage(dark: true) }
+
+    func testExpenseOnlyReceiptDeletion() { expenseOnlyReceiptImage(dark: false, deleteExpense: true) }
+
+    private func expenseOnlyReceiptImage(dark: Bool, deleteExpense: Bool = false) {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-receipt", "--ui-testing-receipt-images", "--ui-testing-receipt-expense-only"] + (dark ? ["--dark"] : [])
+        app.launch(); createHousehold(app)
+        app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
+        tapVisible("inventory.scanReceipt", app: app)
+        XCTAssertTrue(app.descendants(matching: .any)["receipt.itemsNotVerified"].firstMatch.waitForExistence(timeout: 5))
+        let keep = app.switches["receipt.keepImages"].firstMatch
+        reveal(keep, app: app)
+        XCTAssertTrue(keep.isEnabled)
+        XCTAssertEqual(keep.value as? String, "0")
+        keep.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
+        XCTAssertEqual(keep.value as? String, "1")
+        capture("Expense-Only-Image-OptIn-" + (dark ? "Dark" : "Light"), app: app)
+        tapReceiptSave(app)
+        XCTAssertTrue(app.buttons["Save expense"].exists)
+        app.buttons["receipt.saveWithoutInventory"].firstMatch.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 10))
+        tapVisible("receipt.expenseDetails", app: app)
+        tapVisible("expense.receiptImages", app: app)
+        XCTAssertTrue(app.buttons["Open receipt image"].waitForExistence(timeout: 10))
+        app.buttons["Open receipt image"].tap()
+        XCTAssertTrue(app.navigationBars["Receipt image"].waitForExistence(timeout: 5))
+        capture("Expense-Only-Saved-Receipt-" + (dark ? "Dark" : "Light"), app: app)
+        app.buttons["Done"].firstMatch.tap()
+        if deleteExpense {
+            app.navigationBars["Saved receipt"].buttons.firstMatch.tap()
+            tapVisible("expense.delete", app: app)
+            let confirm = app.buttons.matching(identifier: "Delete expense").allElementsBoundByIndex.last
+            XCTAssertNotNil(confirm)
+            confirm?.tap()
+            XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 10))
+            XCTAssertFalse(app.buttons["receipt.expenseDetails"].exists)
+            app.terminate()
+            return
+        }
+        tapVisible("Remove saved image", app: app)
+        app.buttons["Remove image"].firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["No saved receipt image"].waitForExistence(timeout: 5))
+        app.terminate()
     }
 
     func testOptionalReceiptImageDarkMode() {
@@ -1973,7 +2088,7 @@ final class VisualFlowTests: XCTestCase {
         keep.coordinate(withNormalizedOffset: CGVector(dx: 0.94, dy: 0.5)).tap()
         XCTAssertEqual(keep.value as? String, "1")
         capture("Receipt-Image-OptIn-Dark", app: app)
-        app.buttons["receipt.confirm"].tap()
+        tapReceiptSave(app)
         app.buttons["receipt.saveWithoutInventory"].firstMatch.tap()
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 10))
         tapVisible("receipt.purchaseDetails", app: app)
@@ -2017,7 +2132,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(decodeStatus.waitForExistence(timeout: 5))
         XCTAssertTrue(decodeStatus.label.contains("Model generation is disabled in this automated test session."))
         capture("Receipt-Review", app: app)
-        app.buttons["receipt.confirm"].tap()
+        tapReceiptSave(app)
         XCTAssertTrue(app.buttons["receipt.saveWithoutInventory"].firstMatch.waitForExistence(timeout: 5))
         app.buttons["receipt.saveWithoutInventory"].firstMatch.tap()
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 5))

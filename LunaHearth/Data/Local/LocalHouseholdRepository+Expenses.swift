@@ -32,7 +32,17 @@ extension LocalHouseholdRepository {
     }
     func deleteExpense(_ item: HouseholdExpense) throws {
         guard expenses.contains(where: { $0.id == item.id }) else { throw HouseholdValidation.invalidReference }
-        try commit { context.delete(item) }
+        try commit {
+            unlinkPurchases(fromExpenses: [item.id])
+            context.delete(item)
+        }
+    }
+    /// Purchases outlive a deleted expense, but must not stay marked as already expensed:
+    /// otherwise a later receipt cannot be attached and re-recording would stock twice.
+    func unlinkPurchases(fromExpenses ids: Set<UUID>) {
+        for entry in purchases where entry.expenseID.map(ids.contains) == true {
+            entry.expenseID = nil; entry.modifiedAt = .now
+        }
     }
 }
 

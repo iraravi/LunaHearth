@@ -17,6 +17,12 @@ struct ReceiptNameTests {
         #expect(ReceiptNameRules.proposal(index: 0, name: "Bananas", inputs: [ReceiptNameInput(id: "b", name: "123456")]) == nil)
     }
 
+    @Test func nameExpansionCannotDropBrandIntoGenericSuffix() {
+        let inputs = [ReceiptNameInput(id: "a", name: "FAIRLIFECHOC")]
+        #expect(ReceiptNameRules.proposal(index: 0, name: "Chocolate", inputs: inputs) == nil)
+        #expect(ReceiptNameRules.proposal(index: 0, name: "Fairlife chocolate", inputs: inputs) != nil)
+    }
+
     @Test func proposalsNeverOverwriteAnEditedOrDifferentLine() {
         let proposal = ReceiptNameProposal(id: "a", original: "GRK YOG", name: "Greek yogurt")
         var line = ReceiptLine(id: "a", name: "GRK YOG", quantity: "2 tubs")

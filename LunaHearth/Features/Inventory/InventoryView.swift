@@ -10,6 +10,15 @@ struct InventoryView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var hingeState: PantryHingeState = .unavailable
+    @State private var phoneVirtualView = false
+    private var presentsVirtualView: Binding<Bool> {
+        Binding(get: {
+            allowsVirtualView && (hingeState.supportsVirtualPantry ? virtualView : phoneVirtualView)
+        }, set: { value in
+            if hingeState.supportsVirtualPantry { virtualView = value }
+            else { phoneVirtualView = value }
+        })
+    }
     @State private var showingTools = false
     @State private var adding = false
     @State private var scanningReceipt = false
@@ -181,8 +190,9 @@ struct InventoryView: View {
         }
         }
         .background(PantryHingeObserver(update: receiveHinge))
-        .fullScreenCover(isPresented: Binding(get: { allowsVirtualView && virtualView && hingeState.supportsVirtualPantry }, set: { virtualView = $0 })) {
-            VirtualPantryView(items: active, hingeState: hingeState, exit: { virtualView = false })
+        .fullScreenCover(isPresented: presentsVirtualView) {
+            VirtualPantryView(items: active, hingeState: hingeState == .unavailable ? .fullyOpen : hingeState,
+                              exit: { presentsVirtualView.wrappedValue = false })
                 .background(PantryHingeObserver(update: receiveHinge))
         }
         .scrollContentBackground(.hidden).background(InventoryTheme.canvas).tint(InventoryTheme.accent)
@@ -191,10 +201,10 @@ struct InventoryView: View {
         .searchable(text: $search, prompt: "Find an ingredient")
         .onChange(of: search) { _, _ in selectedCategory = nil }
         .toolbar {
-            if allowsVirtualView && hingeState.supportsVirtualPantry {
+            if allowsVirtualView {
             ToolbarItem(placement: .topBarTrailing) {
-                Button(virtualView ? "List view" : "Virtual pantry", systemImage: virtualView ? "list.bullet" : "refrigerator") {
-                    virtualView.toggle()
+                Button("Virtual kitchen", systemImage: "refrigerator") {
+                    presentsVirtualView.wrappedValue = true
                 }.accessibilityIdentifier("inventory.viewMode")
             }
             }

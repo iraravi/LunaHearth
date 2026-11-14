@@ -1,0 +1,9 @@
+This update adds optional illustrative home and kitchen scenes. The home illustration is not a scan or reconstruction of the user's actual house. Virtual kitchen items represent saved inventory, not camera recognition or a live camera feed.
+
+Home scene: Today > Step inside your home. On a regular iPhone, use the door button to enter. On a supported foldable device, opening/closing the device controls the entrance. Inside, Kitchen opens the virtual fridge/pantry; Tasks and Shopping open the corresponding household lists.
+
+Virtual kitchen: use the storage icon to choose Fridge or Pantry, and the list icon to return to the regular inventory list. Empty inventory shows empty shelves. Reduce Motion is respected. These views use bundled artwork and local data; no additional account or permission is required.
+
+App Store captures use the fictional Maple House household. No real household data is included.
+
+Release preparation: select the new App Store distribution build after processing. Build 77 was uploaded as TestFlight Internal Only and is not the public submission binary.

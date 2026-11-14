@@ -1,5 +1,11 @@
 # Interactive home entrance
 
+## Regular iPhone framing refinement
+
+Tall compact windows now use a dedicated full-height portrait composition of the same interior, preserving the office, kitchen and shopping area together without blurred padding. Generated with the built-in imagegen tool from the existing original home artwork: pull the camera back into the entry hallway, preserve the three destinations, furniture, materials and daylight, tall 9:19.5 composition, no labels or UI. Source: exec-57859d08-24cb-4699-8bf2-9d051281352f.png. Bundled asset: LivingHomeInteriorPortrait.imageset/interior-portrait.png. Small labelled room controls use at least 44-point icon targets; accessibility text sizes retain scrollable full destination rows. Wide windows retain the existing scene layout. This is presentation only: no schema, permissions, network access or record changes. App Store recordings use the fictional in-memory Maple House fixture at normal animation speed.
+
+Closed fridge doors now show only the bundled exterior artwork. Removed the decorative inventory stack on the glass, which was not anchored to shelves and appeared to float. Interactive items remain on interior shelf surfaces and are revealed only after opening.
+
 ## Scope
 
 Today → Step inside your home opens an optional full-screen home scene. The front doors follow the physical Duo hinge using the existing availability-gated Apple adapter. A regular iPhone has an explicit Open door button. Unknown/unavailable transient hinge updates preserve the last known state. Reduce Motion removes the entrance movement.
@@ -44,3 +50,11 @@ Follow-up refinement removes all instructional text on the physical Duo entrance
 Final requested behavior matches the fridge: hinge changes directly open/close the door leaves and reveal/hide the full interior with a 0.85-second transition. There is no camera zoom, timed approach, or waiting sequence. Reduce Motion makes the transition immediate. No content writes or network calls occur. An animated-entry UI regression exercises the destinations after the reveal.
 
 Final direct-hinge unit tests and animated navigation/return/exit test passed (`/tmp/home-direct-hinge-open-tests.log`). The iPhone large-text/dark/Reduce Motion route also passed during this refinement (`/tmp/home-cinematic-phone.log`); the final change removes the timed sequence and uses the same immediate Reduce Motion behavior. Updated entrance screenshot confirms realistic doors and no instruction text. No release upload performed.
+
+### Regular iPhone virtual kitchen entry correction
+
+The Inventory toolbar incorrectly required physical hinge support before exposing virtual mode. Regular iPhones now have a Virtual kitchen control which presents the same full-screen fridge and pantry interiors. Manual phone presentation is separate from the saved Duo preference so normal inventory navigation remains a list until requested. Returning to the list and reopening are supported. No model, household data, network, or permission changes. UI regression coverage enters from Home → Pantry, switches storage, returns to the list, and reopens virtual mode.
+
+Regular-iPhone correction verification: build succeeded and 339 unit tests passed. UI test initially found both the covered toolbar and the full-screen List view identifier; narrowed the test to the List view label. Retest passed, including entering from Inventory, switching to Pantry, returning and reopening. Logs: `/tmp/NamIllam-phone-virtual-test.log`, `/tmp/NamIllam-phone-virtual-ui-retest.log`. Candidate build 79 walkthrough captures passed on iPhone Pro, Pro Max and iPad. Build 79 is not uploaded.
+
+Candidate 79 Duo manual capture: verified Home closed/open, Fridge closed/open with mist, Pantry closed/open using Device Hub's physical posture controls on iOS 27.1. Six unretouched screenshots retained in `docs/release/2.0.1-build79/screenshots/iphone-duo/`. The inside display produces black frames while powered off; those are excluded from the App Store preview edit.

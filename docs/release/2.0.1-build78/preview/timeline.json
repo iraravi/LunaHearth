@@ -1,0 +1,20 @@
+{
+  "source": "source/iphone-walkthrough.mov",
+  "provenance": "Native simulator capture of build 78, fictional Maple House in-memory UI-test fixture",
+  "source_in_seconds": 28,
+  "source_out_seconds": 53,
+  "sequence_start_seconds": 0,
+  "sequence_end_seconds": 25,
+  "playback_speed": 1,
+  "canvas": [886, 1920],
+  "fps": 30,
+  "audio": "Intentionally silent; no narration or music",
+  "fit": "Uniform scale to height, one-pixel side padding; no content crop",
+  "beats": [
+    {"seconds": [0, 3], "content": "Closed home entrance opens"},
+    {"seconds": [3, 9], "content": "Full-height portrait home with office, kitchen and shopping"},
+    {"seconds": [9, 18], "content": "Enter fridge; doors open, saved groceries and mist appear"},
+    {"seconds": [18, 22], "content": "Switch to pantry shelves"},
+    {"seconds": [22, 25], "content": "Return to home"}
+  ]
+}

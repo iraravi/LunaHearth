@@ -1,0 +1,142 @@
+{
+  "phone": {
+    "overall": "failed",
+    "ui_cases": [
+      {
+        "name": "testAppStoreScreenshots",
+        "result": "passed",
+        "seconds": 75.76
+      },
+      {
+        "name": "testDemoChaptersWithReducedMotionAndLargeText",
+        "result": "passed",
+        "seconds": 34.428
+      },
+      {
+        "name": "testExpenseDashboardMonthlyTracking",
+        "result": "passed",
+        "seconds": 35.415
+      },
+      {
+        "name": "testFamilyWeekLargeText",
+        "result": "passed",
+        "seconds": 26.717
+      },
+      {
+        "name": "testHelpAtAccessibilityTextSize",
+        "result": "passed",
+        "seconds": 23.597
+      },
+      {
+        "name": "testLinkedAppleCalendarFlow",
+        "result": "failed",
+        "seconds": 50.826
+      },
+      {
+        "name": "testMeasuredShoppingRestockUpdatesPantry",
+        "result": "passed",
+        "seconds": 70.147
+      },
+      {
+        "name": "testReceiptLinkLargeText",
+        "result": "passed",
+        "seconds": 59.451
+      },
+      {
+        "name": "testReceiptLinksBoughtItemWithoutRestocking",
+        "result": "passed",
+        "seconds": 73.8
+      },
+      {
+        "name": "testSiriAppointmentDraftLink",
+        "result": "passed",
+        "seconds": 14.998
+      },
+      {
+        "name": "testStoreFailureNeverShowsNewHomeSetup",
+        "result": "passed",
+        "seconds": 6.577
+      },
+      {
+        "name": "testTodayPlanningRetainsSelectionDuringRotation",
+        "result": "passed",
+        "seconds": 17.636
+      }
+    ]
+  },
+  "phone-calendar-fixed": {
+    "overall": "passed",
+    "ui_cases": [
+      {
+        "name": "testLinkedAppleCalendarFlow",
+        "result": "passed",
+        "seconds": 47.541
+      }
+    ]
+  },
+  "ipad": {
+    "overall": "passed",
+    "ui_cases": [
+      {
+        "name": "testAppStoreScreenshots",
+        "result": "passed",
+        "seconds": 86.009
+      },
+      {
+        "name": "testDemoChaptersWithReducedMotionAndLargeText",
+        "result": "passed",
+        "seconds": 26.072
+      },
+      {
+        "name": "testExpenseDashboardMonthlyTracking",
+        "result": "passed",
+        "seconds": 34.948
+      },
+      {
+        "name": "testFamilyWeekLargeText",
+        "result": "passed",
+        "seconds": 22.628
+      },
+      {
+        "name": "testHelpAtAccessibilityTextSize",
+        "result": "passed",
+        "seconds": 18.733
+      },
+      {
+        "name": "testLinkedAppleCalendarFlow",
+        "result": "passed",
+        "seconds": 44.351
+      },
+      {
+        "name": "testMeasuredShoppingRestockUpdatesPantry",
+        "result": "passed",
+        "seconds": 71.415
+      },
+      {
+        "name": "testReceiptLinkLargeText",
+        "result": "passed",
+        "seconds": 50.797
+      },
+      {
+        "name": "testReceiptLinksBoughtItemWithoutRestocking",
+        "result": "passed",
+        "seconds": 73.985
+      },
+      {
+        "name": "testSiriAppointmentDraftLink",
+        "result": "passed",
+        "seconds": 14.75
+      },
+      {
+        "name": "testStoreFailureNeverShowsNewHomeSetup",
+        "result": "passed",
+        "seconds": 6.078
+      },
+      {
+        "name": "testTodayPlanningRetainsSelectionDuringRotation",
+        "result": "passed",
+        "seconds": 14.454
+      }
+    ]
+  }
+}

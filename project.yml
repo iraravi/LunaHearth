@@ -4,6 +4,10 @@ options:
   deploymentTarget:
     iOS: "18.0"
   createIntermediateGroups: true
+configs:
+  Debug: debug
+  Release: release
+  Internal: release
 settings:
   base:
     SWIFT_VERSION: 6.0
@@ -12,9 +16,15 @@ settings:
     CODE_SIGN_STYLE: Automatic
     CLOUDKIT_ENVIRONMENT: Development
     APS_ENVIRONMENT: development
-    CURRENT_PROJECT_VERSION: 77
-    MARKETING_VERSION: 2.0.1
+    CURRENT_PROJECT_VERSION: 86
+    MARKETING_VERSION: 2.0.2
   configs:
+    Debug:
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) DEBUG RECEIPT_DEBUG"
+    Internal:
+      SWIFT_ACTIVE_COMPILATION_CONDITIONS: "$(inherited) RECEIPT_DEBUG"
+      CLOUDKIT_ENVIRONMENT: Production
+      APS_ENVIRONMENT: production
     Release:
       CLOUDKIT_ENVIRONMENT: Production
       APS_ENVIRONMENT: production
@@ -60,3 +70,13 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth.uitests
         GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: LunaHearth
+
+schemes:
+  LunaHearthInternal:
+    build:
+      targets:
+        LunaHearth: all
+    run:
+      config: Internal
+    archive:
+      config: Internal

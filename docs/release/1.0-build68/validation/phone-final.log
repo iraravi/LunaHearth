@@ -1,0 +1,684 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project LunaHearth.xcodeproj -scheme LunaHearth -destination "platform=iOS Simulator,id=196B74A3-6F4A-476A-9264-F338915C0149" -derivedDataPath /tmp/LunaHearthDerivedData -resultBundlePath /tmp/namillam-build68-phone-final.xcresult "-only-testing:LunaHearthUITests/VisualFlowTests/testAppStoreScreenshots" "-only-testing:LunaHearthUITests/VisualFlowTests/testDarkModeScreenSurvey" test
+
+Writing result bundle at path:
+	/tmp/namillam-build68-phone-final.xcresult
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (3 targets)
+    Target 'LunaHearthUITests' in project 'LunaHearth'
+        ➜ Explicit dependency on target 'LunaHearth' in project 'LunaHearth'
+    Target 'LunaHearthTests' in project 'LunaHearth'
+        ➜ Explicit dependency on target 'LunaHearth' in project 'LunaHearth'
+    Target 'LunaHearth' in project 'LunaHearth' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --print-asset-tag-combinations --output-format xml1 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/Assets.xcassets
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/usr/bin/actool --version --output-format xml1
+
+Build description signature: 38902b647449cd01844c5948a05e3936
+Build description path: /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/XCBuildData/38902b647449cd01844c5948a05e3936.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -o /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache
+
+SwiftDriver LunaHearthUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name LunaHearthUITests -Onone @/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/LunaHearthDerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk/Developer/Library/Frameworks -parse-as-library -c -j11 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/LunaHearthDerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/LunaHearthDerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-generated-files.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-own-target-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-project-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-Swift.h -working-directory /Users/ira/Documents/Project/LunaHearth/LunaHearth -experimental-emit-module-separately -disable-cmo
+
+ProcessInfoPlistFile /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Info.plist /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/Info.plist (in target 'LunaHearth' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-infoPlistUtility /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearth/Resources/Info.plist -producttype com.apple.product-type.application -genpkginfo /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearth.build/assetcatalog_generated_info.plist -o /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/Info.plist
+
+ProcessInfoPlistFile /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/PlugIns/LunaHearthTests.xctest/Info.plist /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthTests.build/empty-LunaHearthTests.plist (in target 'LunaHearthTests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-infoPlistUtility /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthTests.build/empty-LunaHearthTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -format binary -platform iphonesimulator -o /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearth.app/PlugIns/LunaHearthTests.xctest/Info.plist
+
+ProcessInfoPlistFile /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/Info.plist /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/empty-LunaHearthUITests.plist (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-infoPlistUtility /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/empty-LunaHearthUITests.plist -producttype com.apple.product-type.bundle.ui-testing -expandbuildsettings -format binary -platform iphonesimulator -additionalcontentfile /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/ProductTypeInfoPlistAdditions.plist -o /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/Info.plist
+
+SwiftCompile normal arm64 Compiling\ VisualFlowTests.swift /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearthUITests/VisualFlowTests.swift (in target 'LunaHearthUITests' from project 'LunaHearth')
+
+SwiftCompile normal arm64 /Users/ira/Documents/Project/LunaHearth/LunaHearth/LunaHearthUITests/VisualFlowTests.swift (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-SwiftPerFileCompile VisualFlowTests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ LunaHearthUITests (in target 'LunaHearthUITests' from project 'LunaHearth')
+
+SwiftCompile normal arm64 (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for LunaHearthUITests (in target 'LunaHearthUITests' from project 'LunaHearth')
+
+SwiftDriver\ Compilation\ Requirements LunaHearthUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name LunaHearthUITests -Onone @/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/LunaHearthDerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk/Developer/Library/Frameworks -parse-as-library -c -j11 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/LunaHearthDerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/LunaHearthDerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-generated-files.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-own-target-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-project-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-Swift.h -working-directory /Users/ira/Documents/Project/LunaHearth/LunaHearth -experimental-emit-module-separately -disable-cmo
+
+Copy /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.swiftsourceinfo (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.swiftsourceinfo /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests.swiftmodule/Project/arm64-apple-ios-simulator.swiftsourceinfo
+
+Copy /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests.swiftmodule/arm64-apple-ios-simulator.abi.json /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.abi.json (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.abi.json /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests.swiftmodule/arm64-apple-ios-simulator.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling VisualFlowTests.swift (in target 'LunaHearthUITests' from project 'LunaHearth')
+
+SwiftDriver\ Compilation LunaHearthUITests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name LunaHearthUITests -Onone @/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.SwiftFileList -DDEBUG -module-alias Testing\=_Testing_Unavailable -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -target arm64-apple-ios18.0-simulator -g -module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /tmp/LunaHearthDerivedData/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk/Developer/Library/Frameworks -parse-as-library -c -j11 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /tmp/LunaHearthDerivedData/SDKStatCaches.noindex/iphonesimulator27.1-24A94403-35d3147121984ba087c28d913653d626.sdkstatcache -output-file-map /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /tmp/LunaHearthDerivedData/ModuleCache.noindex -sdk-module-cache-path /tmp/LunaHearthDerivedData/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /tmp/LunaHearthDerivedData/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests_const_extract_protocols.json -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-generated-files.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-own-target-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-all-target-headers.hmap -Xcc -iquote -Xcc /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests-project-headers.hmap -Xcc -I/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/include -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources-normal/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources/arm64 -Xcc -I/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests-Swift.h -working-directory /Users/ira/Documents/Project/LunaHearth/LunaHearth -experimental-emit-module-separately -disable-cmo
+
+Ld /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/LunaHearthUITests normal (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-ios18.0-simulator -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -L/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -L/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib -F/tmp/LunaHearthDerivedData/Build/Intermediates.noindex/EagerLinkingTBDs/Debug-iphonesimulator -F/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks -iframework /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk/Developer/Library/Frameworks -filelist /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.LinkFileList -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @loader_path/Frameworks -Xlinker -rpath -Xlinker @executable_path/Frameworks -Xlinker -dead_strip -Xlinker -object_path_lto -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -objc_abi_version -Xlinker 2 -Xlinker -dependency_info -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.swiftmodule -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __entitlements -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests.xctest-Simulated.xcent -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __ents_der -Xlinker /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests.xctest-Simulated.xcent.der -Xlinker -no_adhoc_codesign -o /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/LunaHearthUITests
+
+CopySwiftLibs /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/LunaHearthUITests --scan-folder /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/Frameworks --scan-folder /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/PlugIns --scan-folder /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/SystemExtensions --scan-folder /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/Extensions --platform iphonesimulator --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+
+ExtractAppIntentsMetadata (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name LunaHearthUITests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator27.1.sdk --xcode-version 27A9269 --platform-family iOS --deployment-target 18.0 --bundle-identifier com.neuralluna.lunahearth.uitests --output /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest --target-triple arm64-apple-ios18.0-simulator --binary-file /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest/LunaHearthUITests --dependency-file /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests_dependency_info.dat --stringsdata-file /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.SwiftFileList --metadata-file-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests.DependencyMetadataFileList --static-metadata-file-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/LunaHearthUITests.DependencyStaticMetadataFileList --swift-const-vals-list /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/LunaHearth.build/Debug-iphonesimulator/LunaHearthUITests.build/Objects-normal/arm64/LunaHearthUITests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-30 18:12:22.734 appintentsmetadataprocessor[75875:4510306] Starting appintentsmetadataprocessor export
+2026-10-30 18:12:22.739 appintentsmetadataprocessor[75875:4510306] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CodeSign /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app/PlugIns/LunaHearthUITests.xctest
+
+CodeSign /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app (in target 'LunaHearthUITests' from project 'LunaHearth')
+    cd /Users/ira/Documents/Project/LunaHearth/LunaHearth
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app
+/tmp/LunaHearthDerivedData/Build/Products/Debug-iphonesimulator/LunaHearthUITests-Runner.app: replacing existing signature
+
+PruneExplicitPrecompiledModules /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/LunaHearthDerivedData/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /tmp/LunaHearthDerivedData/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-10-30 18:12:26.751 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:12:59.469679-0500 LunaHearthUITests-Runner[76067:4512501] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+objc[76067]: Class UIAccessibilityLoaderWebShared is implemented in both /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x105d8c398) and /Library/Developer/CoreSimulator/Volumes/iOS_24A434/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x105e80310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+Test Suite 'Selected tests' started at 2026-10-30 18:13:04.109.
+Test Suite 'LunaHearthUITests.xctest' started at 2026-10-30 18:13:04.110.
+Test Suite 'VisualFlowTests' started at 2026-10-30 18:13:04.112.
+Test Case '-[LunaHearthUITests.VisualFlowTests testAppStoreScreenshots]' started.
+    t =     0.01s Start Test at 2026-10-30 18:13:04.124
+    t =     0.36s Set Up
+    t =     0.36s     Setting device orientation to Portrait
+    t =     0.37s         Device orientation changed to Portrait
+    t =     0.39s         Wait for com.apple.springboard to idle
+    t =     0.48s Setting device orientation to Portrait
+    t =     0.49s     Wait for com.apple.springboard to idle
+    t =     0.50s Open com.neuralluna.lunahearth
+    t =     0.50s     Launch com.neuralluna.lunahearth
+2026-10-30 18:13:04.964 xcodebuild[75843:4509289] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-30 18:13:04.965 xcodebuild[75843:4509289] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-30 18:13:05.019 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+    t =     2.20s         Setting up automation session
+    t =     5.51s         Wait for com.neuralluna.lunahearth to idle
+    t =     8.07s Waiting 10.0s for "Today" Button to exist
+    t =     9.12s     Checking `Expect predicate `existsNoRetry == 1` for object "Today" Button`
+    t =     9.12s         Checking existence of `"Today" Button`
+    t =    10.22s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    10.44s Added attachment named 'Store-01-Today'
+    t =    10.45s Tap "Home" Button
+    t =    10.45s     Wait for com.neuralluna.lunahearth to idle
+    t =    10.46s     Find the "Home" Button
+    t =    10.48s     Check for interrupting elements affecting "house" Button
+    t =    10.54s     Synthesize event
+    t =    11.01s     Wait for com.neuralluna.lunahearth to idle
+    t =    13.07s Waiting 5.0s for "home.inventory" Button to exist
+    t =    14.12s     Checking `Expect predicate `existsNoRetry == 1` for object "home.inventory" Button`
+    t =    14.12s         Checking existence of `"home.inventory" Button`
+    t =    15.20s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    15.37s Added attachment named 'Store-02-Home'
+    t =    15.37s Get all elements bound by index for: Elements matching predicate '"home.shopping" IN identifiers'
+    t =    15.43s Find the "home.shopping" Any
+    t =    15.57s Waiting 2.0s for "home.shopping" Button to exist
+    t =    16.66s     Checking `Expect predicate `existsNoRetry == 1` for object "home.shopping" Button`
+    t =    16.66s         Checking existence of `"home.shopping" Button`
+    t =    16.71s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    16.79s Find the "home.shopping" Button
+    t =    16.85s Waiting 5.0s for "home.shopping" Button to exist
+    t =    17.88s     Checking `Expect predicate `existsNoRetry == 1` for object "home.shopping" Button`
+    t =    17.88s         Checking existence of `"home.shopping" Button`
+    t =    17.93s Tap "home.shopping" Button
+    t =    17.93s     Wait for com.neuralluna.lunahearth to idle
+    t =    17.93s     Find the "home.shopping" Button
+    t =    17.99s     Check for interrupting elements affecting "home.shopping" Button
+    t =    18.03s     Synthesize event
+    t =    18.33s     Wait for com.neuralluna.lunahearth to idle
+    t =    18.51s Waiting 5.0s for "shopping.changeView" Button to exist
+    t =    19.55s     Checking `Expect predicate `existsNoRetry == 1` for object "shopping.changeView" Button`
+    t =    19.55s         Checking existence of `"shopping.changeView" Button`
+    t =    19.69s Find the "shopping.changeView" Button
+    t =    19.76s Tap "shopping.changeView" Button
+    t =    19.76s     Wait for com.neuralluna.lunahearth to idle
+    t =    19.77s     Find the "shopping.changeView" Button
+    t =    19.84s     Check for interrupting elements affecting "shopping.changeView" Button
+    t =    19.90s     Synthesize event
+    t =    20.20s     Wait for com.neuralluna.lunahearth to idle
+    t =    21.02s Waiting 5.0s for "shopping.item.Tomatoes" Button to exist
+    t =    22.06s     Checking `Expect predicate `existsNoRetry == 1` for object "shopping.item.Tomatoes" Button`
+    t =    22.06s         Checking existence of `"shopping.item.Tomatoes" Button`
+    t =    23.16s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    23.35s Added attachment named 'Store-03-Shopping'
+    t =    23.36s Get all elements bound by index for: Elements matching predicate '"shopping.inventory" IN identifiers'
+    t =    23.44s Find the "shopping.inventory" Any
+    t =    23.57s Waiting 2.0s for "shopping.inventory" Button to exist
+    t =    24.61s     Checking `Expect predicate `existsNoRetry == 1` for object "shopping.inventory" Button`
+    t =    24.61s         Checking existence of `"shopping.inventory" Button`
+    t =    24.69s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    24.82s Find the "shopping.inventory" Button
+    t =    24.93s Waiting 5.0s for "shopping.inventory" Button to exist
+    t =    25.96s     Checking `Expect predicate `existsNoRetry == 1` for object "shopping.inventory" Button`
+    t =    25.96s         Checking existence of `"shopping.inventory" Button`
+    t =    26.05s Tap "shopping.inventory" Button
+    t =    26.05s     Wait for com.neuralluna.lunahearth to idle
+    t =    26.05s     Find the "shopping.inventory" Button
+    t =    26.13s     Check for interrupting elements affecting "shopping.inventory" Button
+    t =    26.20s     Synthesize event
+    t =    26.51s     Wait for com.neuralluna.lunahearth to idle
+    t =    27.10s Waiting 5.0s for "inventory.item.Basmati rice" Button to exist
+    t =    28.14s     Checking `Expect predicate `existsNoRetry == 1` for object "inventory.item.Basmati rice" Button`
+    t =    28.14s         Checking existence of `"inventory.item.Basmati rice" Button`
+    t =    29.22s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    29.39s Added attachment named 'Store-04-Pantry'
+    t =    29.39s Tap "Calendar" Button
+    t =    29.39s     Wait for com.neuralluna.lunahearth to idle
+    t =    29.39s     Find the "Calendar" Button
+    t =    29.41s     Check for interrupting elements affecting "calendar" Button
+    t =    29.46s     Synthesize event
+    t =    29.75s     Wait for com.neuralluna.lunahearth to idle
+    t =    31.68s Waiting 5.0s for "Garden walk" StaticText to exist
+    t =    32.71s     Checking `Expect predicate `existsNoRetry == 1` for object "Garden walk" StaticText`
+    t =    32.71s         Checking existence of `"Garden walk" StaticText`
+    t =    33.79s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    33.93s Added attachment named 'Store-05-Calendar'
+    t =    33.93s Terminate com.neuralluna.lunahearth:76128
+2026-10-30 18:13:38.070 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:13:38.071 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:13:38.075 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+    t =    35.00s Open com.neuralluna.lunahearth
+    t =    35.00s     Launch com.neuralluna.lunahearth
+2026-10-30 18:13:39.118 xcodebuild[75843:4509289] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-30 18:13:39.118 xcodebuild[75843:4509289] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-30 18:13:39.137 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+    t =    35.22s         Setting up automation session
+    t =    37.98s         Wait for com.neuralluna.lunahearth to idle
+    t =    39.98s Waiting 10.0s for "Home" Button to exist
+    t =    41.00s     Checking `Expect predicate `existsNoRetry == 1` for object "Home" Button`
+    t =    41.00s         Checking existence of `"Home" Button`
+    t =    41.08s Tap "Home" Button
+    t =    41.08s     Wait for com.neuralluna.lunahearth to idle
+    t =    41.10s     Find the "Home" Button
+    t =    41.12s     Check for interrupting elements affecting "Home" Button
+    t =    41.20s     Synthesize event
+    t =    41.65s     Wait for com.neuralluna.lunahearth to idle
+    t =    43.61s Get all elements bound by index for: Elements matching predicate '"home.expenses" IN identifiers'
+    t =    43.68s Find the "home.expenses" Any
+    t =    43.74s Waiting 2.0s for "home.expenses" Button to exist
+    t =    44.77s     Checking `Expect predicate `existsNoRetry == 1` for object "home.expenses" Button`
+    t =    44.77s         Checking existence of `"home.expenses" Button`
+    t =    44.83s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    44.90s Find the "home.expenses" Button
+    t =    44.96s Press Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 709.6) for 0.1 seconds, then drag to Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 351.1) with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    44.96s     Wait for com.neuralluna.lunahearth to idle
+    t =    44.96s     Find the Target Application 'com.neuralluna.lunahearth'
+    t =    44.99s     Check for interrupting elements affecting "Nam Illam" Application
+    t =    45.03s     Synthesize event
+    t =    45.03s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    45.06s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    45.09s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    45.11s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    45.14s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    46.19s     Wait for com.neuralluna.lunahearth to idle
+    t =    46.20s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    46.28s Find the "home.expenses" Button
+    t =    46.33s Press Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 709.6) for 0.1 seconds, then drag to Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 351.1) with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    46.33s     Wait for com.neuralluna.lunahearth to idle
+    t =    46.34s     Find the Target Application 'com.neuralluna.lunahearth'
+    t =    46.37s     Check for interrupting elements affecting "Nam Illam" Application
+    t =    46.40s     Synthesize event
+    t =    46.40s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    46.43s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    46.46s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    46.49s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    46.52s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    47.57s     Wait for com.neuralluna.lunahearth to idle
+    t =    47.57s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    47.65s Find the "home.expenses" Button
+    t =    47.70s Waiting 5.0s for "home.expenses" Button to exist
+    t =    48.73s     Checking `Expect predicate `existsNoRetry == 1` for object "home.expenses" Button`
+    t =    48.73s         Checking existence of `"home.expenses" Button`
+    t =    48.78s Tap "home.expenses" Button
+    t =    48.78s     Wait for com.neuralluna.lunahearth to idle
+    t =    48.78s     Find the "home.expenses" Button
+    t =    48.83s     Check for interrupting elements affecting "home.expenses" Button
+    t =    48.86s     Synthesize event
+    t =    49.16s     Wait for com.neuralluna.lunahearth to idle
+    t =    49.51s Waiting 5.0s for "expenses.total" StaticText to exist
+    t =    50.53s     Checking `Expect predicate `existsNoRetry == 1` for object "expenses.total" StaticText`
+    t =    50.53s         Checking existence of `"expenses.total" StaticText`
+    t =    51.62s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    51.76s Added attachment named 'Store-06-Expenses'
+    t =    51.77s Tear Down
+Test Case '-[LunaHearthUITests.VisualFlowTests testAppStoreScreenshots]' passed (52.115 seconds).
+Test Case '-[LunaHearthUITests.VisualFlowTests testDarkModeScreenSurvey]' started.
+    t =     0.00s Start Test at 2026-10-30 18:13:56.240
+    t =     0.04s Set Up
+    t =     0.04s     Setting device orientation to Portrait
+    t =     0.05s         Wait for com.neuralluna.lunahearth to idle
+    t =     0.05s Open com.neuralluna.lunahearth
+    t =     0.06s     Launch com.neuralluna.lunahearth
+    t =     0.06s         Terminate com.neuralluna.lunahearth:76204
+2026-10-30 18:13:56.316 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:13:56.316 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:13:56.317 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:13:57.363 xcodebuild[75843:4509289] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-10-30 18:13:57.363 xcodebuild[75843:4509289] [MT] IDELaunchParametersSnapshot: no debugger version
+2026-10-30 18:13:57.384 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+    t =     1.33s         Setting up automation session
+    t =     3.74s         Wait for com.neuralluna.lunahearth to idle
+    t =     5.45s Waiting 10.0s for "setup.start" Button to exist
+    t =     6.49s     Checking `Expect predicate `existsNoRetry == 1` for object "setup.start" Button`
+    t =     6.49s         Checking existence of `"setup.start" Button`
+    t =     6.55s Tap "setup.start" Button
+    t =     6.55s     Wait for com.neuralluna.lunahearth to idle
+    t =     6.55s     Find the "setup.start" Button
+    t =     6.57s     Check for interrupting elements affecting "setup.start" Button
+    t =     6.58s     Synthesize event
+    t =     6.91s     Wait for com.neuralluna.lunahearth to idle
+    t =     6.91s Waiting 5.0s for "setup.create" Button to exist
+    t =     7.94s     Checking `Expect predicate `existsNoRetry == 1` for object "setup.create" Button`
+    t =     7.94s         Checking existence of `"setup.create" Button`
+    t =     7.98s Waiting 5.0s for "setup.householdName" TextField to exist
+    t =     9.01s     Checking `Expect predicate `existsNoRetry == 1` for object "setup.householdName" TextField`
+    t =     9.01s         Checking existence of `"setup.householdName" TextField`
+    t =     9.04s Get all elements bound by index for: Elements matching predicate '"setup.householdName" IN identifiers'
+    t =     9.05s Find the "setup.householdName" Any
+    t =     9.08s Waiting 2.0s for "setup.householdName" TextField to exist
+    t =    10.10s     Checking `Expect predicate `existsNoRetry == 1` for object "setup.householdName" TextField`
+    t =    10.10s         Checking existence of `"setup.householdName" TextField`
+    t =    10.13s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    10.16s Find the "setup.householdName" TextField
+    t =    10.19s Waiting 5.0s for "setup.householdName" TextField to exist
+    t =    11.22s     Checking `Expect predicate `existsNoRetry == 1` for object "setup.householdName" TextField`
+    t =    11.22s         Checking existence of `"setup.householdName" TextField`
+    t =    11.24s Tap "setup.householdName" TextField
+    t =    11.24s     Wait for com.neuralluna.lunahearth to idle
+    t =    11.24s     Find the "setup.householdName" TextField
+    t =    11.26s     Check for interrupting elements affecting "setup.householdName" TextField
+    t =    11.28s     Synthesize event
+    t =    11.58s     Wait for com.neuralluna.lunahearth to idle
+<unknown>:0: warning: -[LunaHearthUITests.VisualFlowTests testDarkModeScreenSurvey] : Invalid frame dimension (negative or non-finite).
+    t =    12.90s Type 'Our Home' into "setup.householdName" TextField
+    t =    12.90s     Wait for com.neuralluna.lunahearth to idle
+    t =    13.24s     Find the "setup.householdName" TextField
+    t =    13.29s     Check for interrupting elements affecting "setup.householdName" TextField
+    t =    13.32s     Synthesize event
+    t =    13.67s     Wait for com.neuralluna.lunahearth to idle
+    t =    13.67s Tap "setup.keyboardDone" Button
+    t =    13.67s     Wait for com.neuralluna.lunahearth to idle
+    t =    13.68s     Find the "setup.keyboardDone" Button
+    t =    13.73s     Check for interrupting elements affecting "setup.keyboardDone" Button
+    t =    13.79s     Synthesize event
+    t =    14.13s     Wait for com.neuralluna.lunahearth to idle
+    t =    14.42s Tap "setup.create" Button
+    t =    14.42s     Wait for com.neuralluna.lunahearth to idle
+    t =    14.43s     Find the "setup.create" Button
+    t =    14.45s     Check for interrupting elements affecting "setup.create" Button
+    t =    14.48s     Synthesize event
+    t =    14.78s     Wait for com.neuralluna.lunahearth to idle
+    t =    15.36s Waiting 5.0s for "Home" Button to exist
+    t =    16.39s     Checking `Expect predicate `existsNoRetry == 1` for object "Home" Button`
+    t =    16.39s         Checking existence of `"Home" Button`
+    t =    16.43s Tap "Today" Button
+    t =    16.43s     Wait for com.neuralluna.lunahearth to idle
+    t =    16.46s     Find the "Today" Button
+    t =    16.48s     Check for interrupting elements affecting "sun.max" Button
+    t =    16.59s     Synthesize event
+    t =    16.88s     Wait for com.neuralluna.lunahearth to idle
+    t =    18.88s Waiting 5.0s for "today.quickAdd" Button to exist
+    t =    19.90s     Checking `Expect predicate `existsNoRetry == 1` for object "today.quickAdd" Button`
+    t =    19.90s         Checking existence of `"today.quickAdd" Button`
+    t =    20.98s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    21.19s Added attachment named 'Dark-Survey-Today'
+    t =    21.19s Tap "Calendar" Button
+    t =    21.19s     Wait for com.neuralluna.lunahearth to idle
+    t =    21.20s     Find the "Calendar" Button
+    t =    21.22s     Check for interrupting elements affecting "calendar" Button
+    t =    21.26s     Synthesize event
+    t =    21.55s     Wait for com.neuralluna.lunahearth to idle
+    t =    24.42s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    24.57s Added attachment named 'Dark-Survey-Calendar'
+    t =    24.57s Tap "Home" Button
+    t =    24.57s     Wait for com.neuralluna.lunahearth to idle
+    t =    24.58s     Find the "Home" Button
+    t =    24.60s     Check for interrupting elements affecting "house" Button
+    t =    24.64s     Synthesize event
+    t =    24.94s     Wait for com.neuralluna.lunahearth to idle
+    t =    27.65s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    27.81s Added attachment named 'Dark-Survey-Home'
+    t =    27.81s Get all elements bound by index for: Elements matching predicate '"home.tasks" IN identifiers'
+    t =    27.86s Find the "home.tasks" Any
+    t =    27.93s Waiting 2.0s for "home.tasks" Button to exist
+    t =    28.96s     Checking `Expect predicate `existsNoRetry == 1` for object "home.tasks" Button`
+    t =    28.96s         Checking existence of `"home.tasks" Button`
+    t =    29.02s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    29.10s Find the "home.tasks" Button
+    t =    29.17s Press Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 709.6) for 0.1 seconds, then drag to Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 351.1) with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    29.17s     Wait for com.neuralluna.lunahearth to idle
+    t =    29.17s     Find the Target Application 'com.neuralluna.lunahearth'
+    t =    29.20s     Check for interrupting elements affecting "Nam Illam" Application
+    t =    29.24s     Synthesize event
+    t =    29.24s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    29.27s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    29.30s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    29.33s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    29.37s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    30.42s     Wait for com.neuralluna.lunahearth to idle
+    t =    30.43s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    30.51s Find the "home.tasks" Button
+    t =    30.57s Waiting 5.0s for "home.tasks" Button to exist
+    t =    31.61s     Checking `Expect predicate `existsNoRetry == 1` for object "home.tasks" Button`
+    t =    31.61s         Checking existence of `"home.tasks" Button`
+    t =    31.67s Tap "home.tasks" Button
+    t =    31.67s     Wait for com.neuralluna.lunahearth to idle
+    t =    31.67s     Find the "home.tasks" Button
+    t =    31.72s     Check for interrupting elements affecting "home.tasks" Button
+    t =    31.76s     Synthesize event
+    t =    32.06s     Wait for com.neuralluna.lunahearth to idle
+    t =    33.12s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    33.26s Added attachment named 'Dark-Survey-home.tasks'
+    t =    33.26s Tap Button (First Match)
+    t =    33.26s     Wait for com.neuralluna.lunahearth to idle
+    t =    33.26s     Find the Button (First Match)
+    t =    33.29s     Check for interrupting elements affecting "BackButton" Button
+    t =    33.32s     Synthesize event
+    t =    33.62s     Wait for com.neuralluna.lunahearth to idle
+    t =    33.93s Get all elements bound by index for: Elements matching predicate '"home.meals" IN identifiers'
+    t =    33.99s Find the "home.meals" Any
+    t =    34.05s Waiting 2.0s for "home.meals" Button to exist
+    t =    35.08s     Checking `Expect predicate `existsNoRetry == 1` for object "home.meals" Button`
+    t =    35.08s         Checking existence of `"home.meals" Button`
+    t =    35.14s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    35.22s Find the "home.meals" Button
+    t =    35.28s Waiting 5.0s for "home.meals" Button to exist
+    t =    36.31s     Checking `Expect predicate `existsNoRetry == 1` for object "home.meals" Button`
+    t =    36.31s         Checking existence of `"home.meals" Button`
+    t =    36.37s Tap "home.meals" Button
+    t =    36.37s     Wait for com.neuralluna.lunahearth to idle
+    t =    36.38s     Find the "home.meals" Button
+    t =    36.42s     Check for interrupting elements affecting "home.meals" Button
+    t =    36.46s     Synthesize event
+    t =    36.76s     Wait for com.neuralluna.lunahearth to idle
+    t =    38.27s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    38.44s Added attachment named 'Dark-Survey-home.meals'
+    t =    38.44s Tap Button (First Match)
+    t =    38.44s     Wait for com.neuralluna.lunahearth to idle
+    t =    38.44s     Find the Button (First Match)
+    t =    38.47s     Check for interrupting elements affecting "BackButton" Button
+    t =    38.50s     Synthesize event
+    t =    38.80s     Wait for com.neuralluna.lunahearth to idle
+    t =    39.11s Get all elements bound by index for: Elements matching predicate '"home.layout" IN identifiers'
+    t =    39.17s Find the "home.layout" Any
+    t =    39.24s Waiting 2.0s for "home.layout" Button to exist
+    t =    40.27s     Checking `Expect predicate `existsNoRetry == 1` for object "home.layout" Button`
+    t =    40.27s         Checking existence of `"home.layout" Button`
+    t =    40.32s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    40.40s Find the "home.layout" Button
+    t =    40.46s Press Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 709.6) for 0.1 seconds, then drag to Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 351.1) with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    40.46s     Wait for com.neuralluna.lunahearth to idle
+    t =    40.47s     Find the Target Application 'com.neuralluna.lunahearth'
+    t =    40.50s     Check for interrupting elements affecting "Nam Illam" Application
+    t =    40.54s     Synthesize event
+    t =    40.54s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    40.57s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    40.61s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    40.64s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    40.67s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    41.72s     Wait for com.neuralluna.lunahearth to idle
+    t =    41.73s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    41.82s Find the "home.layout" Button
+    t =    41.87s Waiting 5.0s for "home.layout" Button to exist
+    t =    42.91s     Checking `Expect predicate `existsNoRetry == 1` for object "home.layout" Button`
+    t =    42.91s         Checking existence of `"home.layout" Button`
+    t =    42.96s Tap "home.layout" Button
+    t =    42.96s     Wait for com.neuralluna.lunahearth to idle
+    t =    42.96s     Find the "home.layout" Button
+    t =    43.01s     Check for interrupting elements affecting "home.layout" Button
+    t =    43.05s     Synthesize event
+    t =    43.35s     Wait for com.neuralluna.lunahearth to idle
+    t =    44.72s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    44.86s Added attachment named 'Dark-Survey-home.layout'
+    t =    44.86s Tap Button (First Match)
+    t =    44.86s     Wait for com.neuralluna.lunahearth to idle
+    t =    44.86s     Find the Button (First Match)
+    t =    44.89s     Check for interrupting elements affecting "BackButton" Button
+    t =    44.92s     Synthesize event
+    t =    45.22s     Wait for com.neuralluna.lunahearth to idle
+    t =    45.53s Get all elements bound by index for: Elements matching predicate '"home.expenses" IN identifiers'
+    t =    45.59s Find the "home.expenses" Any
+    t =    45.65s Waiting 2.0s for "home.expenses" Button to exist
+    t =    46.68s     Checking `Expect predicate `existsNoRetry == 1` for object "home.expenses" Button`
+    t =    46.68s         Checking existence of `"home.expenses" Button`
+    t =    46.75s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    46.82s Find the "home.expenses" Button
+    t =    46.88s Waiting 5.0s for "home.expenses" Button to exist
+    t =    47.91s     Checking `Expect predicate `existsNoRetry == 1` for object "home.expenses" Button`
+    t =    47.92s         Checking existence of `"home.expenses" Button`
+    t =    47.97s Tap "home.expenses" Button
+    t =    47.97s     Wait for com.neuralluna.lunahearth to idle
+    t =    47.97s     Find the "home.expenses" Button
+    t =    48.02s     Check for interrupting elements affecting "home.expenses" Button
+    t =    48.06s     Synthesize event
+    t =    48.35s     Wait for com.neuralluna.lunahearth to idle
+    t =    49.48s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    49.64s Added attachment named 'Dark-Survey-home.expenses'
+    t =    49.64s Tap Button (First Match)
+    t =    49.64s     Wait for com.neuralluna.lunahearth to idle
+    t =    49.65s     Find the Button (First Match)
+    t =    49.68s     Check for interrupting elements affecting "BackButton" Button
+    t =    49.72s     Synthesize event
+    t =    50.03s     Wait for com.neuralluna.lunahearth to idle
+    t =    50.35s Get all elements bound by index for: Elements matching predicate '"home.care" IN identifiers'
+    t =    50.41s Find the "home.care" Any
+    t =    50.48s Waiting 2.0s for "home.care" Button to exist
+    t =    51.51s     Checking `Expect predicate `existsNoRetry == 1` for object "home.care" Button`
+    t =    51.51s         Checking existence of `"home.care" Button`
+    t =    51.58s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    51.65s Find the "home.care" Button
+    t =    51.72s Press Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 709.6) for 0.1 seconds, then drag to Target Application 'com.neuralluna.lunahearth'[0.00, 0.00] -> (220.0, 351.1) with velocity of 500.00 pixels per second, and then hold for 0.0 seconds 
+    t =    51.72s     Wait for com.neuralluna.lunahearth to idle
+    t =    51.72s     Find the Target Application 'com.neuralluna.lunahearth'
+    t =    51.75s     Check for interrupting elements affecting "Nam Illam" Application
+    t =    51.79s     Synthesize event
+    t =    51.79s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    51.82s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    51.85s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    51.89s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    51.92s         Find the Target Application 'com.neuralluna.lunahearth'
+    t =    52.97s     Wait for com.neuralluna.lunahearth to idle
+    t =    52.98s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    53.06s Find the "home.care" Button
+    t =    53.12s Waiting 5.0s for "home.care" Button to exist
+    t =    54.16s     Checking `Expect predicate `existsNoRetry == 1` for object "home.care" Button`
+    t =    54.16s         Checking existence of `"home.care" Button`
+    t =    54.22s Tap "home.care" Button
+    t =    54.22s     Wait for com.neuralluna.lunahearth to idle
+    t =    54.22s     Find the "home.care" Button
+    t =    54.27s     Check for interrupting elements affecting "home.care" Button
+    t =    54.31s     Synthesize event
+    t =    54.61s     Wait for com.neuralluna.lunahearth to idle
+    t =    55.94s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    56.08s Added attachment named 'Dark-Survey-home.care'
+    t =    56.08s Tap Button (First Match)
+    t =    56.08s     Wait for com.neuralluna.lunahearth to idle
+    t =    56.08s     Find the Button (First Match)
+    t =    56.10s     Check for interrupting elements affecting "BackButton" Button
+    t =    56.13s     Synthesize event
+    t =    56.42s     Wait for com.neuralluna.lunahearth to idle
+    t =    56.73s Tap "More" Button
+    t =    56.73s     Wait for com.neuralluna.lunahearth to idle
+    t =    56.74s     Find the "More" Button
+    t =    56.77s     Check for interrupting elements affecting "ellipsis.circle" Button
+    t =    56.81s     Synthesize event
+    t =    57.10s     Wait for com.neuralluna.lunahearth to idle
+    t =    59.90s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    60.04s Added attachment named 'Dark-Survey-More'
+    t =    60.04s Get all elements bound by index for: Elements matching predicate '"more.preferences" IN identifiers'
+    t =    60.08s Find the "more.preferences" Any
+    t =    60.12s Waiting 2.0s for "more.preferences" Button to exist
+    t =    61.14s     Checking `Expect predicate `existsNoRetry == 1` for object "more.preferences" Button`
+    t =    61.14s         Checking existence of `"more.preferences" Button`
+    t =    61.18s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    61.23s Find the "more.preferences" Button
+    t =    61.27s Waiting 5.0s for "more.preferences" Button to exist
+    t =    62.29s     Checking `Expect predicate `existsNoRetry == 1` for object "more.preferences" Button`
+    t =    62.29s         Checking existence of `"more.preferences" Button`
+    t =    62.32s Tap "more.preferences" Button
+    t =    62.32s     Wait for com.neuralluna.lunahearth to idle
+    t =    62.32s     Find the "more.preferences" Button
+    t =    62.36s     Check for interrupting elements affecting "more.preferences" Button
+    t =    62.38s     Synthesize event
+    t =    62.68s     Wait for com.neuralluna.lunahearth to idle
+    t =    64.05s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    64.18s Added attachment named 'Dark-Survey-more.preferences'
+    t =    64.18s Tap Button (First Match)
+    t =    64.18s     Wait for com.neuralluna.lunahearth to idle
+    t =    64.18s     Find the Button (First Match)
+    t =    64.21s     Check for interrupting elements affecting "BackButton" Button
+    t =    64.24s     Synthesize event
+    t =    64.54s     Wait for com.neuralluna.lunahearth to idle
+    t =    64.85s Get all elements bound by index for: Elements matching predicate '"more.privacy" IN identifiers'
+    t =    64.89s Find the "more.privacy" Any
+    t =    64.93s Waiting 2.0s for "more.privacy" Button to exist
+    t =    65.96s     Checking `Expect predicate `existsNoRetry == 1` for object "more.privacy" Button`
+    t =    65.96s         Checking existence of `"more.privacy" Button`
+    t =    66.01s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    66.05s Find the "more.privacy" Button
+    t =    66.10s Waiting 5.0s for "more.privacy" Button to exist
+    t =    67.11s     Checking `Expect predicate `existsNoRetry == 1` for object "more.privacy" Button`
+    t =    67.12s         Checking existence of `"more.privacy" Button`
+    t =    67.16s Tap "more.privacy" Button
+    t =    67.16s     Wait for com.neuralluna.lunahearth to idle
+    t =    67.16s     Find the "more.privacy" Button
+    t =    67.20s     Check for interrupting elements affecting "more.privacy" Button
+    t =    67.22s     Synthesize event
+    t =    67.52s     Wait for com.neuralluna.lunahearth to idle
+    t =    68.92s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    69.05s Added attachment named 'Dark-Survey-more.privacy'
+    t =    69.05s Tap Button (First Match)
+    t =    69.05s     Wait for com.neuralluna.lunahearth to idle
+    t =    69.06s     Find the Button (First Match)
+    t =    69.08s     Check for interrupting elements affecting "BackButton" Button
+    t =    69.11s     Synthesize event
+    t =    69.40s     Wait for com.neuralluna.lunahearth to idle
+    t =    69.71s Get all elements bound by index for: Elements matching predicate '"more.connections" IN identifiers'
+    t =    69.75s Find the "more.connections" Any
+    t =    69.80s Waiting 2.0s for "more.connections" Button to exist
+    t =    70.83s     Checking `Expect predicate `existsNoRetry == 1` for object "more.connections" Button`
+    t =    70.83s         Checking existence of `"more.connections" Button`
+    t =    70.87s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    70.92s Find the "more.connections" Button
+    t =    70.96s Waiting 5.0s for "more.connections" Button to exist
+    t =    71.98s     Checking `Expect predicate `existsNoRetry == 1` for object "more.connections" Button`
+    t =    71.98s         Checking existence of `"more.connections" Button`
+    t =    72.03s Tap "more.connections" Button
+    t =    72.03s     Wait for com.neuralluna.lunahearth to idle
+    t =    72.03s     Find the "more.connections" Button
+    t =    72.06s     Check for interrupting elements affecting "more.connections" Button
+    t =    72.09s     Synthesize event
+    t =    72.38s     Wait for com.neuralluna.lunahearth to idle
+    t =    73.74s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    73.86s Added attachment named 'Dark-Survey-more.connections'
+    t =    73.86s Tap Button (First Match)
+    t =    73.86s     Wait for com.neuralluna.lunahearth to idle
+    t =    73.86s     Find the Button (First Match)
+    t =    73.88s     Check for interrupting elements affecting "BackButton" Button
+    t =    73.91s     Synthesize event
+    t =    74.21s     Wait for com.neuralluna.lunahearth to idle
+    t =    74.52s Get all elements bound by index for: Elements matching predicate '"more.family" IN identifiers'
+    t =    74.55s Find the "more.family" Any
+    t =    74.60s Waiting 2.0s for "more.family" Button to exist
+    t =    75.61s     Checking `Expect predicate `existsNoRetry == 1` for object "more.family" Button`
+    t =    75.61s         Checking existence of `"more.family" Button`
+    t =    75.65s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    75.70s Find the "more.family" Button
+    t =    75.74s Waiting 5.0s for "more.family" Button to exist
+    t =    76.76s     Checking `Expect predicate `existsNoRetry == 1` for object "more.family" Button`
+    t =    76.77s         Checking existence of `"more.family" Button`
+    t =    76.81s Tap "more.family" Button
+    t =    76.81s     Wait for com.neuralluna.lunahearth to idle
+    t =    76.81s     Find the "more.family" Button
+    t =    76.84s     Check for interrupting elements affecting "more.family" Button
+    t =    76.87s     Synthesize event
+    t =    77.16s     Wait for com.neuralluna.lunahearth to idle
+    t =    78.53s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    78.65s Added attachment named 'Dark-Survey-more.family'
+    t =    78.65s Tap Button (First Match)
+    t =    78.65s     Wait for com.neuralluna.lunahearth to idle
+    t =    78.66s     Find the Button (First Match)
+    t =    78.68s     Check for interrupting elements affecting "BackButton" Button
+    t =    78.71s     Synthesize event
+    t =    79.01s     Wait for com.neuralluna.lunahearth to idle
+    t =    79.32s Tear Down
+Test Case '-[LunaHearthUITests.VisualFlowTests testDarkModeScreenSurvey]' passed (79.912 seconds).
+Test Suite 'VisualFlowTests' passed at 2026-10-30 18:15:16.153.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 132.028 (132.041) seconds
+Test Suite 'LunaHearthUITests.xctest' passed at 2026-10-30 18:15:16.153.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 132.028 (132.043) seconds
+Test Suite 'Selected tests' passed at 2026-10-30 18:15:16.155.
+	 Executed 2 tests, with 0 failures (0 unexpected) in 132.028 (132.045) seconds
+2026-10-30 18:15:16.211 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:15:16.211 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:15:16.211 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:15:16.258 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:15:16.258 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:15:16.259 xcodebuild[75843:4509289] [MT] IDESchemeActionSDKRecord: operatingSystemBuild = <DVTBuildVersion 24A94403>, error = invalidDigitCount(94403).
+2026-10-30 18:15:16.536 xcodebuild[75843:4514282]  IDETestOperationsObserverDebug: Failure collecting diagnostics from simulator: Process exited with error 72:
+ xcrun: error: unable to find utility "simctl", not a developer tool or in PATH
+
+2026-10-30 18:15:16.547 xcodebuild[75843:4509289] [MT] IDETestOperationsObserverDebug: 173.764 elapsed -- Testing started completed.
+2026-10-30 18:15:16.547 xcodebuild[75843:4509289] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-30 18:15:16.547 xcodebuild[75843:4509289] [MT] IDETestOperationsObserverDebug: 173.764 sec, +173.764 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/namillam-build68-phone-final.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

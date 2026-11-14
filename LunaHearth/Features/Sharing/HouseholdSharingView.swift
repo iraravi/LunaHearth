@@ -95,7 +95,7 @@ struct HouseholdSharingView: View {
                     Text("These records changed on this device and in iCloud. Review both versions, then choose which set to keep. Other records are not affected by this choice.").font(.footnote)
                     ForEach(repository.syncBaselines.filter(\.conflict), id: \.entityID) { baseline in
                         if let remote = try? JSONDecoder().decode(RemoteHouseholdRecord.self, from: baseline.remoteData),
-                           let local = try? repository.makeBackup(refresh: false) {
+                           let local = try? repository.makeSyncSnapshot(refresh: false) {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text(remote.entity.record.kind.replacingOccurrences(of: "Household", with: "")).font(.headline)
                                 ConflictVersionView(title: "On this device", record: local.records.first { $0.id == baseline.entityID })

@@ -1,0 +1,182 @@
+[
+  {
+    "file": "screenshots/ipad-13/Store-01-Today.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "9cc60f62999d6422f837792afc1a7f837c971a4e1a257011938f7babf576a34c",
+    "source_result": "/tmp/namillam-build68-ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-02-Home.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "f1eb2717df6fac3a328cfbd6391c50ba2226c449cce7e83c54a8cf7672404e0d",
+    "source_result": "/tmp/namillam-build68-ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-03-Shopping.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "6b277b3af4de16266b6932b01ccbd56e5039e8e456c0860c5749a6aff68a4076",
+    "source_result": "/tmp/namillam-build68-ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-04-Pantry.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "b3056876998799cb7e8dcb4e0bdd63925b7e079c470a5d0235e96fedff5e6115",
+    "source_result": "/tmp/namillam-build68-ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-05-Calendar.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "0d8586b92e92e8a9382eddb0dd46b8c2c28a35b79d9620afe04393d2f73704c6",
+    "source_result": "/tmp/namillam-build68-ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-06-Expenses.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "292a8f5091bf3de66bcd539b3f9e071b12ca73c35ea2ee4e72184e064b52fafd",
+    "source_result": "/tmp/namillam-build68-ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-01-Today.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "c3e9671dc56f3411ba7296de437238b99b3c48249ad3c3fe7c1db10445092c83",
+    "source_result": "/tmp/namillam-build68-phone-final.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-02-Home.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "4a89177e917c4892a28c877dba26149b41e2943e52be87864ea26f1d9f1ddc3c",
+    "source_result": "/tmp/namillam-build68-phone-final.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-03-Shopping.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "b03c09a472e9842fe2caaa25a36a586d0404f34448bc674cb8e40d68f845b615",
+    "source_result": "/tmp/namillam-build68-phone-final.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-04-Pantry.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "b85aaf73cd447b62e1e3d66eb411ab224e495bef50778172f20d95ea81501b64",
+    "source_result": "/tmp/namillam-build68-phone-final.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-05-Calendar.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "37b5838176a12a5e198810ba1a657c1c3881756780be1ef2b9819109e9070ede",
+    "source_result": "/tmp/namillam-build68-phone-final.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-06-Expenses.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "bbd2e58a9303c4cf4b10bed0ad535d5dedbbe46af7e7591df35ae7b292dbdad1",
+    "source_result": "/tmp/namillam-build68-phone-final.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-duo/Store-01-Today.png",
+    "pixels": [
+      1398,
+      2034
+    ],
+    "sha256": "6e36c97b5c1f60597bd4f634c36d734e7cc6e4f61ea317ccc8abc41e212d6855",
+    "source_result": "/tmp/namillam-build68-duo.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-duo/Store-02-Home.png",
+    "pixels": [
+      1398,
+      2034
+    ],
+    "sha256": "c873232b69137b497f4ec1d283a2b4834b0f27829637b08a0255c3c9be41a021",
+    "source_result": "/tmp/namillam-build68-duo.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-duo/Store-03-Shopping.png",
+    "pixels": [
+      1398,
+      2034
+    ],
+    "sha256": "67c70f4f713d551ba51be43de07c8ccebd4bf7badc5cd866f7b6cc3a907ebacb",
+    "source_result": "/tmp/namillam-build68-duo.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-duo/Store-04-Pantry.png",
+    "pixels": [
+      1398,
+      2034
+    ],
+    "sha256": "babbfb4ebcb55e4bf029a78303fa1ec4f4c817dc186532d7bce51cfc0dcaeb71",
+    "source_result": "/tmp/namillam-build68-duo.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-duo/Store-05-Calendar.png",
+    "pixels": [
+      1398,
+      2034
+    ],
+    "sha256": "5bd2b8ffa2eec59fb0bbc1a9d4843932801c4bb6a8432d393a834540bee95553",
+    "source_result": "/tmp/namillam-build68-duo.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-duo/Store-06-Expenses.png",
+    "pixels": [
+      1398,
+      2034
+    ],
+    "sha256": "15c926a472a329ea0f4ca85889a8bb7dffd392eadc03f156dcc6f01fda9c7537",
+    "source_result": "/tmp/namillam-build68-duo.xcresult",
+    "sample_data": true
+  }
+]

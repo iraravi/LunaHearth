@@ -25,10 +25,7 @@ struct InteractiveHomeView: View {
             GeometryReader { geometry in
                 ZStack {
                     Color(white: 0.10)
-                    Image("LivingHomeInterior").resizable().scaledToFill()
-                        .frame(width: geometry.size.width, height: geometry.size.height).clipped()
-                        .accessibilityHidden(true)
-                    if entrance.isOpen { destinations(size: geometry.size) }
+                    interior(size: geometry.size)
                     ZStack {
                         Image("LivingHomeExterior").resizable().scaledToFill()
                             .frame(width: geometry.size.width, height: geometry.size.height).clipped()
@@ -105,14 +102,32 @@ struct InteractiveHomeView: View {
         .interactiveDismissDisabled()
     }
 
+    /// Preserve the complete room composition on a tall phone instead of cropping to the kitchen.
+    private func interior(size: CGSize) -> some View {
+        let compact = size.width < 720 && size.height > size.width
+        return ZStack {
+            ZStack {
+                Image(compact ? "LivingHomeInteriorPortrait" : "LivingHomeInterior").resizable()
+                    .scaledToFill()
+                    .frame(width: size.width, height: size.height).clipped()
+                    .accessibilityHidden(true)
+                if entrance.isOpen && !typeSize.isAccessibilitySize {
+                    destinations(size: size)
+                }
+            }.frame(width: size.width, height: size.height)
+            if entrance.isOpen && typeSize.isAccessibilitySize { destinations(size: size) }
+        }.frame(width: size.width, height: size.height).clipped()
+    }
+
     @ViewBuilder private func destinations(size: CGSize) -> some View {
-        if size.width >= 720 && !typeSize.isAccessibilitySize {
+        if !typeSize.isAccessibilitySize {
             // Scene anchors correspond to the bundled landscape artwork.
-            destination(.tasks).position(x: size.width * 0.17, y: size.height * 0.46)
-            destination(.kitchen).position(x: size.width * 0.54, y: size.height * 0.40)
-            destination(.shopping).position(x: size.width * 0.82, y: size.height * 0.73)
+            let compact = size.width < 720 && size.height > size.width
+            sceneDestination(.tasks, compact: compact).position(x: size.width * (compact ? 0.20 : 0.17), y: size.height * (compact ? 0.52 : 0.46))
+            sceneDestination(.kitchen, compact: compact).position(x: size.width * (compact ? 0.64 : 0.54), y: size.height * (compact ? 0.43 : 0.40))
+            sceneDestination(.shopping, compact: compact).position(x: size.width * (compact ? 0.80 : 0.82), y: size.height * (compact ? 0.65 : 0.73))
         } else {
-            // Keep every action visible when artwork is cropped in a narrow window.
+            // Large accessibility text retains explicit, scrollable destination rows.
             ScrollView {
                 VStack(spacing: 12) {
                     ForEach(Destination.allCases, id: \.self) { destination($0) }
@@ -120,6 +135,24 @@ struct InteractiveHomeView: View {
             }.frame(maxHeight: .infinity, alignment: .bottom)
                 .defaultScrollAnchor(.bottom)
         }
+    }
+
+    @ViewBuilder private func sceneDestination(_ value: Destination, compact: Bool) -> some View {
+        if compact {
+            Button { path.append(value) } label: {
+                VStack(spacing: 4) {
+                    Image(systemName: value.symbol).font(.body.weight(.semibold))
+                        .frame(width: 44, height: 44)
+                        .background(.white.opacity(0.96), in: Circle())
+                    Text(value.title).font(.caption.weight(.semibold))
+                        .padding(.horizontal, 8).padding(.vertical, 4)
+                        .background(.white.opacity(0.96), in: Capsule())
+                }.foregroundStyle(.black)
+                    .shadow(color: .black.opacity(0.18), radius: 5, y: 2)
+            }.buttonStyle(.plain)
+                .accessibilityLabel("\(value.title), \(value.detail)")
+                .accessibilityIdentifier("home.scene.\(value.rawValue)")
+        } else { destination(value) }
     }
 
     private func destination(_ value: Destination) -> some View {

@@ -1,0 +1,26 @@
+[
+  {
+    "file": "screenshots/iphone-max/Preview-04-Pantry.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "58717c271698f2e0b923fb5fff5f9596357075bc83b53831aee77e9df73b6cbd"
+  },
+  {
+    "file": "screenshots/iphone-max/Preview-03-Fridge.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "ec0eca9bf32c8b5440556d6e72a4fcf5f8b561796e59e2cd32f6323242d77424"
+  },
+  {
+    "file": "screenshots/iphone-max/Preview-02-WholeHome.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "968ac5d28d0dd8f3110b1a67ae4a99d325bbacab1b219fee0190944bc7fb816e"
+  },
+  {
+    "file": "screenshots/iphone-max/Preview-01-Entrance.png",
+    "width": 1320,
+    "height": 2868,
+    "sha256": "968644a23477d34d175b9a61ab2a06853a3232d819c68ae52ff93821dd8c7f88"
+  }
+]

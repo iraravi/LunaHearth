@@ -1,0 +1,31 @@
+{
+  "segments": [
+    {
+      "source": "source/duo-entrance.mov",
+      "start": 1,
+      "end": 4
+    },
+    {
+      "source": "source/duo-interior.mov",
+      "start": 19.7,
+      "end": 26.7
+    },
+    {
+      "source": "source/duo-interior.mov",
+      "start": 63.9,
+      "end": 71.9
+    },
+    {
+      "source": "source/duo-interior.mov",
+      "start": 109.3,
+      "end": 116.3
+    }
+  ],
+  "duration": 25,
+  "playback_speed": 1,
+  "width": 1920,
+  "height": 886,
+  "fps": 30,
+  "fit": "Contain with neutral black margins to preserve whole app UI",
+  "note": "Duo changes active display on folding. Real front and interior footage joined with cuts; inactive black intervals excluded."
+}

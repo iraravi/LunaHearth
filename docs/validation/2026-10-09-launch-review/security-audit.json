@@ -1,0 +1,19 @@
+{
+  "scope": "offline heuristic checks; no Sonar scan, CVE database or live Apple validation",
+  "checks": [
+    {
+      "check": "production-source-patterns",
+      "files": 196
+    },
+    {
+      "check": "privacy-permissions-and-transport-plists"
+    },
+    {
+      "check": "swift-concurrency-minimum-os-and-runtime-dependencies"
+    },
+    {
+      "check": "tracked-credential-files-and-common-literal-patterns"
+    }
+  ],
+  "findings": []
+}

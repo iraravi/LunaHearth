@@ -1,0 +1,100 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project LunaHearth.xcodeproj -scheme LunaHearth -destination "platform=iOS Simulator,id=AB932798-7D65-459F-B401-6348EA8C67AB" -derivedDataPath /tmp/NamIllamFix -resultBundlePath /tmp/NamIllam78-preview.xcresult "-only-testing:LunaHearthUITests/VisualFlowTests/testAppStoreHomePreview" test-without-building
+
+Writing result bundle at path:
+	/tmp/NamIllam78-preview.xcresult
+
+2026-11-08 17:00:18.580184-0600 LunaHearthUITests-Runner[68291:4954609] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-11-08 17:00:24.514.
+Test Suite 'LunaHearthUITests.xctest' started at 2026-11-08 17:00:24.518.
+Test Suite 'VisualFlowTests' started at 2026-11-08 17:00:24.518.
+Test Case '-[LunaHearthUITests.VisualFlowTests testAppStoreHomePreview]' started.
+    t =     0.01s Start Test at 2026-11-08 17:00:24.531
+    t =     0.07s Set Up
+    t =     0.09s     Setting device orientation to Portrait
+    t =     0.14s         Wait for com.apple.springboard to idle
+    t =     0.17s Open com.neuralluna.lunahearth
+    t =     0.17s     Launch com.neuralluna.lunahearth
+2026-11-08 17:00:25.014 xcodebuild[68242:4954216] [MT] IDELaunchParametersSnapshot: debugger version lookup failed for path '<nil>': noURL
+2026-11-08 17:00:25.014 xcodebuild[68242:4954216] [MT] IDELaunchParametersSnapshot: no debugger version
+objc[68291]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.2.8117.0.Ko9Qdl/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.2.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x108278310) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.2.8117.0.Ko9Qdl/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.2.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x107bbc398). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     1.69s         Setting up automation session
+    t =     5.62s         Wait for com.neuralluna.lunahearth to idle
+    t =     9.55s Waiting 15.0s for "today.enterHome" Button to exist
+    t =    10.59s     Checking `Expect predicate `existsNoRetry == 1` for object "today.enterHome" Button`
+    t =    10.59s         Checking existence of `"today.enterHome" Button`
+    t =    10.93s Tap "today.enterHome" Button
+    t =    10.93s     Wait for com.neuralluna.lunahearth to idle
+    t =    10.93s     Find the "today.enterHome" Button
+    t =    11.02s     Check for interrupting elements affecting "today.enterHome" Button
+    t =    11.16s     Synthesize event
+    t =    11.48s     Wait for com.neuralluna.lunahearth to idle
+    t =    12.00s Waiting 5.0s for "home.scene.open" Button to exist
+    t =    13.04s     Checking `Expect predicate `existsNoRetry == 1` for object "home.scene.open" Button`
+    t =    13.05s         Checking existence of `"home.scene.open" Button`
+    t =    14.14s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    14.41s Added attachment named 'Preview-01-Entrance'
+    t =    17.42s Tap "home.scene.open" Button
+    t =    17.42s     Wait for com.neuralluna.lunahearth to idle
+    t =    17.42s     Find the "home.scene.open" Button
+    t =    17.49s     Check for interrupting elements affecting "home.scene.open" Button
+    t =    17.53s     Synthesize event
+    t =    17.84s     Wait for com.neuralluna.lunahearth to idle
+    t =    17.84s Waiting 5.0s for "home.scene.kitchen" Button to exist
+    t =    18.88s     Checking `Expect predicate `existsNoRetry == 1` for object "home.scene.kitchen" Button`
+    t =    18.89s         Checking existence of `"home.scene.kitchen" Button`
+    t =    24.02s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    24.29s Added attachment named 'Preview-02-WholeHome'
+    t =    24.29s Tap "home.scene.kitchen" Button
+    t =    24.29s     Wait for com.neuralluna.lunahearth to idle
+    t =    24.29s     Find the "home.scene.kitchen" Button
+    t =    24.35s     Check for interrupting elements affecting "home.scene.kitchen" Button
+    t =    24.41s     Synthesize event
+    t =    24.71s     Wait for com.neuralluna.lunahearth to idle
+    t =    24.76s Waiting 5.0s for "inventory.virtual.storage" Button to exist
+    t =    25.78s     Checking `Expect predicate `existsNoRetry == 1` for object "inventory.virtual.storage" Button`
+    t =    25.78s         Checking existence of `"inventory.virtual.storage" Button`
+    t =    32.91s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    33.16s Added attachment named 'Preview-03-Fridge'
+    t =    33.16s Tap "inventory.virtual.storage" Button
+    t =    33.16s     Wait for com.neuralluna.lunahearth to idle
+    t =    33.17s     Find the "inventory.virtual.storage" Button
+    t =    33.24s     Check for interrupting elements affecting "inventory.virtual.storage" Button
+    t =    33.30s     Synthesize event
+    t =    33.60s     Wait for com.neuralluna.lunahearth to idle
+    t =    34.03s Tap "Pantry" Button
+    t =    34.03s     Wait for com.neuralluna.lunahearth to idle
+    t =    35.16s     Find the "Pantry" Button
+    t =    35.29s     Check for interrupting elements affecting "Pantry" Button
+    t =    35.35s     Synthesize event
+    t =    35.66s     Wait for com.neuralluna.lunahearth to idle
+    t =    42.17s Find the Target Application 'com.neuralluna.lunahearth'
+    t =    42.41s Added attachment named 'Preview-04-Pantry'
+    t =    42.41s Tap "home.scene.return" Button
+    t =    42.41s     Wait for com.neuralluna.lunahearth to idle
+    t =    42.42s     Find the "home.scene.return" Button
+    t =    42.49s     Check for interrupting elements affecting "home.scene.return" Button
+    t =    42.54s     Synthesize event
+    t =    42.85s     Wait for com.neuralluna.lunahearth to idle
+    t =    43.20s Waiting 5.0s for "home.scene.shopping" Button to exist
+    t =    44.24s     Checking `Expect predicate `existsNoRetry == 1` for object "home.scene.shopping" Button`
+    t =    44.24s         Checking existence of `"home.scene.shopping" Button`
+    t =    47.32s Tear Down
+Test Case '-[LunaHearthUITests.VisualFlowTests testAppStoreHomePreview]' passed (47.779 seconds).
+Test Suite 'VisualFlowTests' passed at 2026-11-08 17:01:12.315.
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.779 (47.796) seconds
+Test Suite 'LunaHearthUITests.xctest' passed at 2026-11-08 17:01:12.319.
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.779 (47.801) seconds
+Test Suite 'Selected tests' passed at 2026-11-08 17:01:12.320.
+	 Executed 1 test, with 0 failures (0 unexpected) in 47.779 (47.806) seconds
+2026-11-08 17:01:12.699 xcodebuild[68242:4954216] [MT] IDETestOperationsObserverDebug: 60.139 elapsed -- Testing started completed.
+2026-11-08 17:01:12.699 xcodebuild[68242:4954216] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-11-08 17:01:12.699 xcodebuild[68242:4954216] [MT] IDETestOperationsObserverDebug: 60.139 sec, +60.139 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/NamIllam78-preview.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

@@ -23,11 +23,43 @@ import UIKit
     @Test func parserExcludesPaymentsAndNeverUsesPriceAsQuantity() {
         let scan = ReceiptRules.scan(text: "MARKET\n123456 CURD 3.99 T\n2 x BANANAS 2.49\nSUBTOTAL 6.48\nTax 0.25\nTOTAL 6.73\nVISA 6.73\nCoupon -1.00\nRefund curd 3.99")
         #expect(scan.lines.map(\.name) == ["CURD", "BANANAS"])
-        #expect(scan.lines[0].quantity.isEmpty)
+        // An item-code row counts as one unit (store-free rule); the price is never a quantity.
+        #expect(scan.lines[0].quantity == "1 piece")
         #expect(scan.lines[1].quantity == "2 pieces")
         #expect(scan.lines.map(\.id) == ReceiptRules.scan(text: scan.text).lines.map(\.id))
         #expect(ReceiptRules.scan(text: "TOTAL 25.00\nNet Amount 25.00\nAmount payable 25.00\nThank you").lines.isEmpty)
     }
+    @Test(arguments: [
+        "AID: A0000000031010 12.50", "APPR# 123456 12.50", "RESP: APPROVED 12.50",
+        "Auth code: 123456 12.50", "Reference number: 123456 12.50", "Card ending 1234 12.50",
+        "CONTACTLESS 12.50", "EBT FOOD 12.50", "UPI 12.50", "Cashback 12.50",
+        "Service charge 1.50", "Delivery fee $2.00", "TIP: 2.00", "Bag fee 0.10",
+        "Bottle deposit 0.20", "Items sold: 3.00", "Points earned 25.00",
+        "Thank you for shopping 10.00", "Survey reward 5.00", "Please visit again 5.00",
+        "www.example.com 10.00", "help@example.com 10.00", "0.750 kg @ 4.00"
+    ])
+    func nonProductRowsAreRejectedAcrossMerchants(row: String) {
+        let scan = ReceiptRules.scan(text: "STORE\nTomatoes 3.00\n" + row + "\nMilk 2.00")
+        #expect(scan.lines.map(\.name) == ["Tomatoes", "Milk"])
+    }
+
+    @Test func metadataFilteringPreservesProductsAndMixedReceiptOrder() {
+        let scan = ReceiptRules.scan(text: """
+        MARKET
+        Service tray 12.00
+        Shipping tape 2.00
+        Tip Top Bread 3.00
+        Card game 4.00
+        TOTAL 21.00
+        2 x Apples 4.00
+        Apples 2.00
+        AMOUNT: $27.00
+        """)
+        #expect(scan.lines.map(\.name) == ["Service tray", "Shipping tape", "Tip Top Bread", "Card game", "Apples"])
+        // Unknown pack counts remain unknown; this change must not invent stock amounts.
+        #expect(scan.lines.last?.quantity.isEmpty == true)
+    }
+
     @Test func currencyLabelsAndWholeRupeesDoNotDropItems() {
         let result = ReceiptRules.scan(text: "MARKET\nMilk ₹60\nCurd Rs. 35.00\nRice INR 120\nApples₹80.00\nBread $2.00\nTOTAL INR 297.00")
         #expect(result.lines.map(\.name) == ["Milk", "Curd", "Rice", "Apples", "Bread"])

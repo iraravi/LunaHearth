@@ -22,4 +22,8 @@ print(found["udid"])
     -only-testing:LunaHearthUITests/VisualFlowTests/testAppStoreScreenshots test > "$results/$family.log" 2>&1
   xcrun simctl status_bar "$target" clear
 done
-python3 scripts/package-store-screenshots.py --phone "$results/phone.xcresult" --ipad "$results/ipad.xcresult"
+release_version=$(awk '/MARKETING_VERSION:/ {gsub(/"/, "", $2); print $2; exit}' project.yml)
+release_build=$(awk '/CURRENT_PROJECT_VERSION:/ {print $2; exit}' project.yml)
+package_dir="${STORE_PACKAGE_DIR:-docs/release/$release_version-build$release_build}"
+python3 scripts/package-store-screenshots.py --phone "$results/phone.xcresult" --ipad "$results/ipad.xcresult" \
+  --output "$package_dir" --version "$release_version" --build "$release_build"
