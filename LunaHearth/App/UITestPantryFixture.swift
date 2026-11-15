@@ -46,6 +46,17 @@ import Foundation
         if ProcessInfo.processInfo.arguments.contains("--ui-testing-restock-count") {
             try repository.add(EntryDraft(kind: .grocery, title: "Rice", quantity: "1 kg"))
         }
+        if ProcessInfo.processInfo.arguments.contains("--ui-testing-buy-again"), let home = repository.household?.id {
+            // Bought weekly, last a week ago: due to buy again today.
+            try repository.commit {
+                for weeksAgo in [3, 2, 1] {
+                    let day = HouseholdDay(Calendar.current.date(byAdding: .day, value: -7 * weeksAgo, to: .now) ?? .now).key
+                    let bread = GroceryItem(householdID: home, name: "Bread", quantityText: "1 loaf", storeName: "Walmart", isCompleted: true)
+                    repository.context.insert(bread)
+                    repository.appendPurchase(id: UUID(), purchaseID: UUID(), grocery: bread, inventoryID: nil, expenseID: nil, day: day, action: "elsewhere")
+                }
+            }
+        }
         if ProcessInfo.processInfo.arguments.contains("--ui-testing-duplicate-milk") {
             var duplicate = InventoryDraft(); duplicate.name = "milk"; duplicate.quantity = "2"
             try repository.saveInventory(duplicate, allowSeparatePack: true)

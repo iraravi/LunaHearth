@@ -3,7 +3,7 @@ import Foundation
 enum AppFeature: String, CaseIterable, Codable, Sendable {
     case ai, aiMeals, aiShopping, aiPantry, aiCategories, aiDuplicates, aiReceiptNames, aiPhoto, aiBriefs
     case receipts, receiptImport, receiptExpenses, receiptPantry, pantryPhoto, pantryTemplates
-    case shoppingIdeas, shoppingAssignments, shoppingToPantry, mealIdeas, weeklyMeals, mealReminder
+    case shoppingIdeas, shoppingAssignments, shoppingToPantry, buyAgain, mealIdeas, weeklyMeals, mealReminder
     case notesSharing, calendarExport, reminders
 
     var title: String {
@@ -26,6 +26,7 @@ enum AppFeature: String, CaseIterable, Codable, Sendable {
         case .shoppingIdeas: "Shopping ideas"
         case .shoppingAssignments: "Shopping assignments"
         case .shoppingToPantry: "Shopping to pantry"
+        case .buyAgain: "Buy again"
         case .mealIdeas: "Meal ideas"
         case .weeklyMeals: "Weekly meal planning"
         case .mealReminder: "Meal planning reminder"

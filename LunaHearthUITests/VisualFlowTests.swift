@@ -2175,6 +2175,21 @@ final class VisualFlowTests: XCTestCase {
         capture("Restock-Quantity-Saved", app: app)
     }
 
+    func testBuyAgainAddsAUsualPurchaseToTheList() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-buy-again"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap()
+        tapVisible("home.shopping", app: app)
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Usually every 7 days · last bought 7 days ago")).firstMatch.waitForExistence(timeout: 5))
+        capture("Buy-Again-Suggestion", app: app)
+        tapVisible("buyAgain.add.Bread", app: app)
+        XCTAssertTrue(app.descendants(matching: .any)["shopping.item.Bread"].firstMatch.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["buyAgain.add.Bread"].exists)
+        capture("Buy-Again-Added", app: app)
+    }
+
     func testShoppingKeepsExistingMilkInventory() {
         let app = XCUIApplication(); app.launchArguments = ["--ui-testing", "--ui-testing-ai-ready", "--ui-testing-pantry", "--ui-testing-fresh-milk"]
         app.launch()

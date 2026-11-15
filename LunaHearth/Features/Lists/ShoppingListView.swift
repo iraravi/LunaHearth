@@ -4,6 +4,8 @@ import SwiftUI
 struct ShoppingListView: View {
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(PublicConfigurationStore.self) private var publicStatus
+    @AppStorage(BuyAgainSnoozes.storageKey) private var buyAgainSnoozes = ""
     @State private var showingTools = false
     @State private var feedback: PurchaseFeedback?
     @State private var purchase: GroceryItem?
@@ -51,6 +53,8 @@ struct ShoppingListView: View {
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
             .listRowInsets(EdgeInsets(top: 6, leading: 0, bottom: 6, trailing: 0))
+
+            if !buyAgain.isEmpty { buyAgainSection }
 
             if visibleItems.isEmpty {
                 Section {
@@ -165,6 +169,48 @@ struct ShoppingListView: View {
         }
         .onChange(of: repository.household?.id) { _, _ in categoryHints = [:]; organizationStatus = nil; categoryFilter = nil; organizing = false }
         .saveError($error)
+    }
+
+    private var buyAgain: [RepeatPurchaseSuggestion] {
+        guard publicStatus.configuration?.allows(.buyAgain) ?? true,
+              repository.syncConfiguration?.readOnly != true, repository.syncConfiguration?.recovery != true else { return [] }
+        return Array(repository.buyAgainSuggestions(snoozed: BuyAgainSnoozes.decode(buyAgainSnoozes, householdID: repository.household?.id)).prefix(5))
+    }
+
+    private var buyAgainSection: some View {
+        Section {
+            ForEach(buyAgain) { item in
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 12) {
+                        Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
+                            .font(.system(size: 26)).frame(width: 44, height: 44).accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(item.name).font(.body.weight(.semibold))
+                            Text(item.detail).font(.caption).foregroundStyle(ShoppingTheme.muted)
+                            let extra = [item.quantity, item.store].filter { !$0.isEmpty }.joined(separator: " · ")
+                            if !extra.isEmpty { Text(extra).font(.caption).foregroundStyle(ShoppingTheme.muted) }
+                        }.fixedSize(horizontal: false, vertical: true)
+                        Spacer(minLength: 0)
+                    }.accessibilityElement(children: .combine)
+                    HStack(spacing: 16) {
+                        Button("Add to list", systemImage: "plus") {
+                            do { try repository.addBuyAgain(item) } catch { self.error = userFacingError(error) }
+                        }.font(.subheadline.weight(.semibold)).frame(minHeight: 44)
+                            .accessibilityIdentifier("buyAgain.add.\(item.name)")
+                        Button("Not now") {
+                            if let home = repository.household?.id { buyAgainSnoozes = BuyAgainSnoozes.snooze(item, householdID: home, stored: buyAgainSnoozes) }
+                        }.font(.subheadline).foregroundStyle(ShoppingTheme.muted).frame(minHeight: 44)
+                            .accessibilityHint("Hides \(item.name) until it is usually due again, on this device.")
+                            .accessibilityIdentifier("buyAgain.snooze.\(item.name)")
+                    }.buttonStyle(.borderless)
+                }.padding(.vertical, 4)
+            }
+        } header: {
+            Label("Buy again", systemImage: "arrow.triangle.2.circlepath").font(.subheadline.weight(.semibold))
+                .textCase(nil).foregroundStyle(ShoppingTheme.ink).padding(.vertical, 6)
+        } footer: {
+            Text("Based on how often you have bought these. Nothing is added until you tap Add.").font(.caption)
+        }.listRowBackground(ShoppingTheme.surface)
     }
 
     private var header: some View {

@@ -11,8 +11,10 @@ enum TodayPriority: String, CaseIterable, Identifiable {
     let shopping: [AssignedShoppingItem]
     let dates: [TodayPantryItem]
     let restock: [TodayPantryItem]
+    /// Usually rebought by now, and not already shown as marked low.
+    let buyAgain: [RepeatPurchaseSuggestion]
     let memberName: String?
-    init(repository: LocalHouseholdRepository, personal: PersonalShopping, now: Date) {
+    init(repository: LocalHouseholdRepository, personal: PersonalShopping, now: Date, snoozes: String = "") {
         let memberID = repository.household.flatMap { personal.memberID($0.id) }
         let member = repository.members.first { $0.id == memberID }
         memberName = member?.displayName
@@ -25,9 +27,14 @@ enum TodayPriority: String, CaseIterable, Identifiable {
         shopping = TodayAttentionRules.shopping(items, today: HouseholdDay(now).key)
         dates = TodayAttentionRules.dates(packs, today: HouseholdDay(now).key)
         restock = TodayAttentionRules.restock(packs)
+        let lowKeys = Set(restock.map { IngredientMatching.key($0.name) })
+        let sync = repository.syncConfiguration
+        buyAgain = FeatureAccess.allows(.buyAgain) && sync?.readOnly != true && sync?.recovery != true
+            ? repository.buyAgainSuggestions(now: now, snoozed: BuyAgainSnoozes.decode(snoozes, householdID: repository.household?.id)).filter { !lowKeys.contains($0.key) }
+            : []
     }
     func count(_ priority: TodayPriority) -> Int {
-        switch priority { case .buy: shopping.count; case .dates: dates.count; case .restock: restock.count }
+        switch priority { case .buy: shopping.count; case .dates: dates.count; case .restock: restock.count + buyAgain.count }
     }
 }
 
@@ -39,8 +46,9 @@ struct TodayPriorities: View {
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Binding var selection: TodayPriority
     @State private var expanded: TodayPriority?
+    @AppStorage(BuyAgainSnoozes.storageKey) private var buyAgainSnoozes = ""
     var body: some View {
-        let data = TodayAttentionData(repository: repository, personal: personal, now: now)
+        let data = TodayAttentionData(repository: repository, personal: personal, now: now, snoozes: buyAgainSnoozes)
         VStack(alignment: .leading, spacing: 12) {
             (dynamicTypeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4)) : AnyLayout(HStackLayout(spacing: 8))) {
                 Text("Pantry & shopping").font(.title3.bold())
@@ -112,13 +120,14 @@ struct TodayPriorityItems: View {
     @State private var purchase: GroceryItem?
     @State private var editing: InventoryItem?
     @State private var error: String?
+    @AppStorage(BuyAgainSnoozes.storageKey) private var buyAgainSnoozes = ""
     private var readOnly: Bool { repository.syncConfiguration?.readOnly == true || repository.syncConfiguration?.recovery == true }
     private var day: String { HouseholdDay(now).key }
 
     var body: some View {
-        let data = TodayAttentionData(repository: repository, personal: personal, now: now)
+        let data = TodayAttentionData(repository: repository, personal: personal, now: now, snoozes: buyAgainSnoozes)
         VStack(alignment: .leading, spacing: 14) {
-            Text(priority == .buy ? (data.memberName.map { "Needed now · For \($0)" } ?? "Needed now · Household shopping") : priority == .dates ? "Recorded expiry dates · Next 7 days and past due" : "Marked low at home · One entry per ingredient")
+            Text(priority == .buy ? (data.memberName.map { "Needed now · For \($0)" } ?? "Needed now · Household shopping") : priority == .dates ? "Recorded expiry dates · Next 7 days and past due" : data.buyAgain.isEmpty ? "Marked low at home · One entry per ingredient" : "Marked low at home, or usually bought by now")
                 .font(.caption).foregroundStyle(TodayTheme.muted).fixedSize(horizontal: false, vertical: true)
             if readOnly { Text("This shared home is read-only. You can browse its items.").font(.caption).foregroundStyle(TodayTheme.muted) }
             if data.count(priority) == 0 {
@@ -164,6 +173,18 @@ struct TodayPriorityItems: View {
                             .disabled(readOnly || alreadyShopping).accessibilityIdentifier("today.restock.\(item.name)")
                     }
                 }
+                ForEach(Array(data.buyAgain.prefix(limit.map { max(0, $0 - data.restock.count) } ?? data.buyAgain.count))) { item in
+                    VStack(alignment: .leading, spacing: 4) {
+                        itemRow(name: item.name, detail: item.detail, status: nil, warning: false, symbol: "arrow.triangle.2.circlepath")
+                            .accessibilityElement(children: .combine)
+                        Button {
+                            do { try repository.addBuyAgain(item) } catch { self.error = userFacingError(error) }
+                        } label: {
+                            Label("Add to shopping", systemImage: "plus").font(.subheadline.weight(.medium)).frame(minHeight: 44)
+                        }.buttonStyle(.plain).foregroundStyle(TodayTheme.accent)
+                            .disabled(readOnly).accessibilityIdentifier("today.buyAgain.\(item.name)")
+                    }
+                }
                 NavigationLink { ShoppingListView() } label: { footer("Open shopping") }
             }
         }
@@ -176,7 +197,7 @@ struct TodayPriorityItems: View {
         switch priority {
         case .buy: "No shopping needed now. Later items stay on your list."
         case .dates: "No recorded expiry dates need attention."
-        case .restock: "No active ingredients are marked low."
+        case .restock: "Nothing is marked low or due to buy again."
         }
     }
     private func footer(_ title: String) -> some View {
