@@ -92,6 +92,7 @@ struct PurchaseDetailView: View {
 }
 
 private struct PurchaseDetailContent: View {
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     let purchaseID: UUID
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dynamicTypeSize) private var typeSize
@@ -168,7 +169,7 @@ private struct PurchaseDetailContent: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top, spacing: 12) {
                 if !typeSize.isAccessibilitySize {
-                    Text(PantryVisualRules.icon(entry.name, category: PantryVisualRules.category(entry.name)))
+                    Text(PantryVisualRules.icon(entry.name, memory: PantryCategoryMemory.decode(categoryMemory)))
                         .font(.system(size: 32)).frame(width: 52, height: 52)
                         .background(ExpenseTheme.accent.opacity(0.06), in: RoundedRectangle(cornerRadius: 14)).accessibilityHidden(true)
                 }

@@ -12,8 +12,8 @@ enum AppTheme {
     static let contentPadding: CGFloat = 20
     static let displayTitle = Font.system(.largeTitle, design: .default, weight: .bold)
     static let sectionTitle = Font.system(.title2, design: .default, weight: .bold)
-    // Legacy semantic accent name; use blue instead of pale green for controls and labels.
-    static let sage = Color("IllustrationBlue")
+    // Legacy semantic accent name for controls and labels; follows the brand accent (deep amber / champagne).
+    static let sage = Color("HearthAccent")
     static let clay = Color("IllustrationOrange")
     static let slate = Color("IllustrationBlue")
     static let plum = Color("IllustrationPurple")

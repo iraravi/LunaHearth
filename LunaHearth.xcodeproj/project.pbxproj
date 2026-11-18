@@ -142,6 +142,7 @@
 		6D9C559AD97092FBEA22570D /* HouseholdCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE90A1880C0547877E4A92EA /* HouseholdCleanup.swift */; };
 		6F0384BDEA780DBF9265F909 /* IngredientMatching.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6BB550B1D3BEDBC727B1F51 /* IngredientMatching.swift */; };
 		703ACF4E917527A72DCAB97D /* TodayLivingHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FB040DE7C2F4958A0C3F53 /* TodayLivingHome.swift */; };
+		70BBB6658BA2DAA32B06EB18 /* PantryAutoCategorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A555BD249FC0D095DBC3E1 /* PantryAutoCategorizer.swift */; };
 		714DCFF966BB5F86B8DA0D5A /* ExpenseMerchantField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D006DAD0DA85BD7946EC4E /* ExpenseMerchantField.swift */; };
 		7411EAD6B0F15B5AC465A785 /* HouseholdSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411ED1CCD9AA5D7A0BFD49CA /* HouseholdSharingTests.swift */; };
 		741709E709792120F3E8D682 /* ReceiptAbbreviations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D68F51B571C9F47D3099BD9 /* ReceiptAbbreviations.swift */; };
@@ -249,6 +250,7 @@
 		C6DBE6B4EFEB7D4DCD62BE2A /* AIStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27C2B46B0835A493E829C9CA /* AIStatusView.swift */; };
 		C72390AE061EFAC962F1E02A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71818E0DAF86BD299DDCCE1A /* HomeView.swift */; };
 		C765CEAE33C032D931894C07 /* ConnectedDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BD776A9835D3925C60ADD93 /* ConnectedDemoTests.swift */; };
+		C89A0F9095237D999F2350F7 /* PantryCategoryMemoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4F5F5AA7B821968E7314D8 /* PantryCategoryMemoryTests.swift */; };
 		CB2E0EBFB3DC4C6BA55FDC1A /* PortableBackupFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 258D78351291B35C1E3DFCE9 /* PortableBackupFiles.swift */; };
 		CBFB08C41E300E61D151F521 /* LocalHouseholdRepository+Appointments.swift in Sources */ = {isa = PBXBuildFile; fileRef = C467C05867160208D0C3B52B /* LocalHouseholdRepository+Appointments.swift */; };
 		CC7284430E005ABD228135EB /* ShoppingSuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF3DA361B4BC919CF277CD3 /* ShoppingSuggestions.swift */; };
@@ -400,6 +402,7 @@
 		318F155F8335229694131EB2 /* PantryQuantityInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryQuantityInput.swift; sourceTree = "<group>"; };
 		3217099408699023C1666237 /* FeatureIllustration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureIllustration.swift; sourceTree = "<group>"; };
 		3400F6ED5E73E209DF1E9991 /* ShoppingShelfCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingShelfCard.swift; sourceTree = "<group>"; };
+		35A555BD249FC0D095DBC3E1 /* PantryAutoCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryAutoCategorizer.swift; sourceTree = "<group>"; };
 		395C282EAE99A369B5CC374A /* ShoppingEntryRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingEntryRulesTests.swift; sourceTree = "<group>"; };
 		39C5C6E22BAFD1AF1008474F /* LocalHouseholdRepository+PortableBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalHouseholdRepository+PortableBackup.swift"; sourceTree = "<group>"; };
 		3A34481EDFB70B8C62C72D3A /* ExpenseTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseTests.swift; sourceTree = "<group>"; };
@@ -464,6 +467,7 @@
 		5CD118ED42F304B530403D48 /* ExpenseRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseRules.swift; sourceTree = "<group>"; };
 		5D9355F07F2B131A4EF30284 /* EntryDraftMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryDraftMapping.swift; sourceTree = "<group>"; };
 		5E1EBD8AFA3D24F3EF672F7C /* ReceiptImageStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptImageStorage.swift; sourceTree = "<group>"; };
+		5E4F5F5AA7B821968E7314D8 /* PantryCategoryMemoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryCategoryMemoryTests.swift; sourceTree = "<group>"; };
 		5ECA8E1516A5DC97410D5F81 /* CalendarDeliveryCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDeliveryCoordinator.swift; sourceTree = "<group>"; };
 		5F33A4CA06524D0F5E14ADFC /* TodayWorkspaceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayWorkspaceSection.swift; sourceTree = "<group>"; };
 		60125751633E42A7090F2C8F /* ShoppingStoreCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingStoreCatalogTests.swift; sourceTree = "<group>"; };
@@ -1115,6 +1119,7 @@
 				5517BD0B13BC9E0F6060C9FD /* InventoryShelf.swift */,
 				3B4FA8EFE0AA1AE68CDA2A6D /* InventoryStatusBadges.swift */,
 				8DB8E3D8FD41FD40CCCB4283 /* InventoryView.swift */,
+				35A555BD249FC0D095DBC3E1 /* PantryAutoCategorizer.swift */,
 				A6B64093FBE65367CB8E8210 /* PantryIdeasView.swift */,
 				318F155F8335229694131EB2 /* PantryQuantityInput.swift */,
 				835F91D30FEBAD93FF1DDD73 /* ShoppingPurchaseSheet.swift */,
@@ -1322,6 +1327,7 @@
 				8FB9894FC038F1B9B5E3B8E6 /* LocalRepositoryTests.swift */,
 				1152F566014C0889336BC25B /* MealCookingTests.swift */,
 				D14C2F9D2CB0CFB948E525F1 /* MealSuggestionTests.swift */,
+				5E4F5F5AA7B821968E7314D8 /* PantryCategoryMemoryTests.swift */,
 				DA8C9A7DFA0BFFB3D7FA518D /* PantryHingeTests.swift */,
 				13EFE6CB71F837A8A38845FC /* PantryPhotoTests.swift */,
 				752D6D448E1DC3B4D6A52225 /* PantryVisualRulesTests.swift */,
@@ -1527,6 +1533,7 @@
 				88934CAEB7BE0EB7DE1BE412 /* LocalRepositoryTests.swift in Sources */,
 				B768FE8AF2F503D91FFE5CF9 /* MealCookingTests.swift in Sources */,
 				F70EDDCCBFE0A0CBB3584DD3 /* MealSuggestionTests.swift in Sources */,
+				C89A0F9095237D999F2350F7 /* PantryCategoryMemoryTests.swift in Sources */,
 				613998DB88685E8CC59340D5 /* PantryHingeTests.swift in Sources */,
 				070A98F3D0EED4DC9EF813ED /* PantryPhotoTests.swift in Sources */,
 				FD6B59F6D63569DD3EDD7E88 /* PantryVisualRulesTests.swift in Sources */,
@@ -1730,6 +1737,7 @@
 				77DBE6918EBF158065473FEC /* OnDeviceTodayBriefService.swift in Sources */,
 				9F6D0F3B90F64E1BCD8DF715 /* OnboardingView.swift in Sources */,
 				492D99A5888EC982BBAEF368 /* OrbitingHomePreview.swift in Sources */,
+				70BBB6658BA2DAA32B06EB18 /* PantryAutoCategorizer.swift in Sources */,
 				E5DD7B0DB3BE719FBC4EC44D /* PantryHingeObserver.swift in Sources */,
 				5A9057CBF2D693C186C9F072 /* PantryHingeState.swift in Sources */,
 				D0B2860225A903393C4BD889 /* PantryIdeasView.swift in Sources */,
@@ -1873,7 +1881,7 @@
 				CLOUDKIT_ENVIRONMENT = Production;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 89;
+				CURRENT_PROJECT_VERSION = 90;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1973,7 +1981,7 @@
 				CLOUDKIT_ENVIRONMENT = Development;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 89;
+				CURRENT_PROJECT_VERSION = 90;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2060,7 +2068,7 @@
 				CLOUDKIT_ENVIRONMENT = Production;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 89;
+				CURRENT_PROJECT_VERSION = 90;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_NS_ASSERTIONS = NO;

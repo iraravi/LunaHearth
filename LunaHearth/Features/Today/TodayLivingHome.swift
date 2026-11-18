@@ -10,6 +10,7 @@ struct TodayLivingHome: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var typeSize
     @State private var fridgeOpen = false
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     private var chilled: [InventoryItem] {
         inventory.filter { VirtualPantryRules.zone(name: $0.name, location: $0.location) == .fridge }
     }
@@ -37,18 +38,42 @@ struct TodayLivingHome: View {
 
             (typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(spacing: 14)) : AnyLayout(HStackLayout(alignment: .top, spacing: 14))) {
                 NavigationLink { PlanningListView(kind: .task) } label: {
-                    VStack(alignment: .leading, spacing: 12) {
-                        noticeboard.frame(height: expanded ? 120 : 80)
-                        tileLabel("Tasks", detail: tasks.isEmpty ? "Nothing due" : "\(tasks.count) need attention")
-                    }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
-                        .background(TodayTheme.surface, in: RoundedRectangle(cornerRadius: 22))
+                    tile(symbol: "checklist", count: tasks.count, title: "Tasks",
+                         detail: tasks.isEmpty ? "Nothing due" : tasks.count == 1 ? "needs attention" : "need attention") {
+                        if tasks.isEmpty {
+                            Label("All clear", systemImage: "checkmark.circle.fill").font(.caption.weight(.semibold)).foregroundStyle(TodayTheme.accent)
+                        } else {
+                            ForEach(tasks.prefix(2)) { task in
+                                HStack(spacing: 6) {
+                                    Image(systemName: "circle").font(.caption2).foregroundStyle(TodayTheme.accent)
+                                    Text(task.title).font(.caption).foregroundStyle(TodayTheme.ink).lineLimit(1)
+                                }
+                            }
+                        }
+                    }
                 }.buttonStyle(.plain).accessibilityIdentifier("today.living.tasks")
                 NavigationLink { ShoppingListView() } label: {
-                    VStack(alignment: .leading, spacing: 12) {
-                        groceryBag.frame(height: expanded ? 120 : 80)
-                        tileLabel("Shopping", detail: shopping.isEmpty ? "All caught up" : "\(shopping.count) left to buy")
-                    }.padding(16).frame(maxWidth: .infinity, alignment: .leading)
-                        .background(TodayTheme.surface, in: RoundedRectangle(cornerRadius: 22))
+                    tile(symbol: "basket", count: shopping.count, title: "Shopping",
+                         detail: shopping.isEmpty ? "All caught up" : "left to buy") {
+                        if shopping.isEmpty {
+                            Label("List is clear", systemImage: "checkmark.circle.fill").font(.caption.weight(.semibold)).foregroundStyle(TodayTheme.accent)
+                        } else {
+                            let memory = PantryCategoryMemory.decode(categoryMemory)
+                            HStack(spacing: -6) {
+                                ForEach(shopping.prefix(4)) { item in
+                                    Text(PantryVisualRules.icon(item.name, memory: memory)).font(.system(size: 17))
+                                        .frame(width: 32, height: 32)
+                                        .background(TodayTheme.hero, in: Circle())
+                                        .overlay(Circle().strokeBorder(TodayTheme.surface, lineWidth: 2))
+                                }
+                                if shopping.count > 4 {
+                                    Text("+\(shopping.count - 4)").font(.caption2.weight(.bold)).foregroundStyle(TodayTheme.ink)
+                                        .frame(width: 32, height: 32).background(TodayTheme.hero, in: Circle())
+                                        .overlay(Circle().strokeBorder(TodayTheme.surface, lineWidth: 2))
+                                }
+                            }
+                        }
+                    }
                 }.buttonStyle(.plain).accessibilityIdentifier("today.living.shopping")
             }
             VStack(spacing: 0) {
@@ -83,49 +108,30 @@ struct TodayLivingHome: View {
 
     }
 
-    private func tileLabel(_ title: String, detail: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title).font(.headline)
-            Text(detail).font(.caption).foregroundStyle(TodayTheme.muted)
-                .fixedSize(horizontal: false, vertical: true)
+    /// A clean summary tile: amber icon chip, large count, label and a small preview.
+    private func tile<Preview: View>(symbol: String, count: Int, title: String, detail: String,
+                                     @ViewBuilder preview: () -> Preview) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top) {
+                Image(systemName: symbol).font(.body.weight(.semibold)).foregroundStyle(TodayTheme.accent)
+                    .frame(width: 40, height: 40).background(TodayTheme.accent.opacity(0.12), in: RoundedRectangle(cornerRadius: 12))
+                    .accessibilityHidden(true)
+                Spacer(minLength: 4)
+                Text(count, format: .number).font(.system(.largeTitle, design: .rounded, weight: .bold)).monospacedDigit()
+                    .foregroundStyle(TodayTheme.ink).contentTransition(.numericText())
+                    .accessibilityHidden(true)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).font(.headline).foregroundStyle(TodayTheme.ink)
+                Text(detail).font(.caption).foregroundStyle(TodayTheme.muted).fixedSize(horizontal: false, vertical: true)
+            }
+            VStack(alignment: .leading, spacing: 5) { preview() }.frame(minHeight: expanded ? 44 : 32, alignment: .topLeading)
         }
-    }
-
-    private var noticeboard: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 14).fill(Color(red: 0.25, green: 0.30, blue: 0.36).gradient)
-            VStack(spacing: 7) {
-                ForEach(0..<3) { index in
-                    HStack(spacing: 7) {
-                        Image(systemName: tasks.isEmpty ? "checkmark.circle.fill" : "circle")
-                            .foregroundStyle(Color(red: 0.83, green: 0.68, blue: 0.46))
-                        Capsule().fill(.white.opacity(index < tasks.count ? 0.8 : 0.22)).frame(height: 4)
-                    }
-                }
-            }.font(.system(size: 12)).padding(16)
-        }.frame(width: expanded ? 160 : 120, height: expanded ? 100 : 68).rotationEffect(.degrees(-3)).padding(.horizontal, 8)
-            .shadow(color: .black.opacity(0.14), radius: 5, y: 5)
-            .symbolEffect(.bounce, options: .nonRepeating, value: reduceMotion ? 0 : tasks.count)
-            .accessibilityHidden(true)
-    }
-
-    private var groceryBag: some View {
-        ZStack(alignment: .bottom) {
-            RoundedRectangle(cornerRadius: 12).stroke(Color(red: 0.50, green: 0.39, blue: 0.27), lineWidth: 5)
-                .frame(width: 35, height: 55).offset(y: -28)
-            HStack(spacing: -5) {
-                ForEach(Array(shopping.prefix(3).enumerated()), id: \.element.id) { index, item in
-                    Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
-                        .font(.system(size: expanded ? 35 : 25)).rotationEffect(.degrees(Double(index - 1) * 12))
-                }
-            }.offset(y: -32)
-            RoundedRectangle(cornerRadius: 10).fill(Color(red: 0.73, green: 0.58, blue: 0.40).gradient)
-                .frame(width: expanded ? 95 : 72, height: expanded ? 66 : 48)
-                .overlay { Image(systemName: "basket").font(.title3).foregroundStyle(.white.opacity(0.8)) }
-        }.frame(maxWidth: .infinity).padding(.bottom, 4)
-            .shadow(color: .black.opacity(0.14), radius: 5, y: 5)
-            .symbolEffect(.bounce, options: .nonRepeating, value: reduceMotion ? 0 : shopping.count)
-            .accessibilityHidden(true)
+        .padding(16).frame(maxWidth: .infinity, alignment: .leading)
+        .background(TodayTheme.surface, in: RoundedRectangle(cornerRadius: 22))
+        .overlay(RoundedRectangle(cornerRadius: 22).strokeBorder(TodayTheme.ink.opacity(0.06), lineWidth: 1))
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(title), \(count == 0 ? detail : "\(count) \(detail)")")
     }
 
     private var fridge: some View {
@@ -137,7 +143,7 @@ struct TodayLivingHome: View {
                     .frame(height: geometry.size.height, alignment: .top).clipped()
                 HStack(spacing: 24) {
                     ForEach(chilled.prefix(4)) { item in
-                        Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
+                        Text(PantryVisualRules.icon(item.name, memory: PantryCategoryMemory.decode(categoryMemory)))
                             .font(.system(size: expanded ? 44 : 30))
                     }
                 }.offset(y: geometry.size.height * 0.10)

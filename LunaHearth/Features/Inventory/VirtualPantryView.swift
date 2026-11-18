@@ -18,6 +18,7 @@ struct VirtualPantryView: View {
     private var coldStorage: Bool { zone == .fridge || zone == .freezer }
     private var hasDoors: Bool { zone != .other }
     private var contentsVisible: Bool { (!hasDoors || opened) && itemsRevealed }
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     private struct RevealKey: Hashable { let opened: Bool; let zone: String; let reduceMotion: Bool }
 
     var body: some View {
@@ -42,7 +43,7 @@ struct VirtualPantryView: View {
                             ZStack(alignment: .bottom) {
                                 Ellipse().fill(.black.opacity(0.24))
                                     .frame(width: iconSize * 0.68, height: 5).blur(radius: 2)
-                                Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
+                                Text(PantryVisualRules.icon(item.name, memory: PantryCategoryMemory.decode(categoryMemory)))
                                     .font(.system(size: iconSize)).offset(y: iconSize * 0.08)
                             }
                             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)

@@ -30,6 +30,7 @@ struct RootTabView: View {
                 .tag(RootTab.more)
         }
         .tint(AppTheme.accent)
+        .pantryAutoCategorizer()
         .hearthNavigationMaterial(AppTheme.canvas, for: .tabBar)
         .environment(\.featureCanvasCoordinator, canvas)
         .background((selection == .home ? canvas.color(for: .home) : AppTheme.canvas).ignoresSafeArea())

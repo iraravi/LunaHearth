@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Transient, editable OCR review. Artwork is decorative, never a recognition claim.
 struct ReceiptScanSummary: View {
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     @Binding var lines: [ReceiptLine]
     let merchant: String
     let amount: String
@@ -63,7 +64,7 @@ struct ReceiptScanSummary: View {
                     } label: {
                         VStack(alignment: .leading, spacing: 10) {
                             HStack {
-                                Text(PantryVisualRules.icon(line.name, category: PantryVisualRules.category(line.name)))
+                                Text(PantryVisualRules.icon(line.name, memory: PantryCategoryMemory.decode(categoryMemory)))
                                     .font(.system(size: 32)).accessibilityHidden(true)
                                 Spacer(minLength: 4)
                                 Image(systemName: eligible(line) && line.addToInventory ? "checkmark.circle.fill" : "circle")

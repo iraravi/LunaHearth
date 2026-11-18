@@ -32,6 +32,14 @@ struct InventoryView: View {
     @AppStorage("inventory.shelfView") private var shelfView = true
     @State private var selectedCategory: PantryCategory?
     @State private var categoryHints: [String: PantryCategory] = [:]
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
+    /// Remembered on-device categories, with this screen's own organize results on top.
+    private var allHints: [String: PantryCategory] {
+        let memory = PantryCategoryMemory.decode(categoryMemory)
+        var hints: [String: PantryCategory] = [:]
+        for item in repository.inventory { if let c = memory[IngredientMatching.key(item.name)] { hints[item.name] = c } }
+        return hints.merging(categoryHints) { _, new in new }
+    }
     @State private var organizing = false
     @State private var organizationStatus: String?
     private let organizer: any PantryCategorizationService = OnDevicePantryCategorizationService()
@@ -91,7 +99,7 @@ struct InventoryView: View {
             muted: InventoryTheme.muted, summaryIdentifier: "inventory.count")
     }
     private func categoryFilters(_ matching: [InventoryItem]) -> some View {
-        GroceryCategoryFilters(categories: matching.map { InventoryShelf.category($0, hints: categoryHints) },
+        GroceryCategoryFilters(categories: matching.map { InventoryShelf.category($0, hints: allHints) },
             selection: $selectedCategory, accent: InventoryTheme.accent, surface: InventoryTheme.surface,
             ink: InventoryTheme.ink, identifier: "inventory")
     }
@@ -149,7 +157,7 @@ struct InventoryView: View {
             (filter != "low" || $0.isLowStock == true) &&
             IngredientMatching.matchesSearch($0.name, query: search)
         }
-        let visible = matching.filter { selectedCategory == nil || InventoryShelf.category($0, hints: categoryHints) == selectedCategory }
+        let visible = matching.filter { selectedCategory == nil || InventoryShelf.category($0, hints: allHints) == selectedCategory }
         return Group {
             List {
             pantryHeader(active: active, matching: matching)
@@ -164,13 +172,18 @@ struct InventoryView: View {
                 }
             }
             if shelfView {
-                InventoryShelf(items: visible, hints: categoryHints, now: now) { editing = $0 }
+                InventoryShelf(items: visible, hints: allHints, now: now) { editing = $0 }
             } else {
             ForEach(visible) { item in
                 Button { editing = item } label: {
                     HStack(spacing: 14) {
-                        Image(systemName: item.isUsedUp ? "checkmark.circle" : "shippingbox")
-                            .font(.title2).foregroundStyle(InventoryTheme.accent).frame(width: 42).accessibilityHidden(true)
+                        Group {
+                            if item.isUsedUp {
+                                Image(systemName: "checkmark.circle").font(.title2).foregroundStyle(InventoryTheme.accent)
+                            } else {
+                                Text(PantryVisualRules.icon(item.name, category: InventoryShelf.category(item, hints: allHints))).font(.system(size: 26))
+                            }
+                        }.frame(width: 44, height: 44).background(InventoryTheme.accent.opacity(0.08), in: RoundedRectangle(cornerRadius: 12)).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 5) {
                             Text(item.name).font(.headline).foregroundStyle(InventoryTheme.ink)
                             if let quantity = item.quantityText { Text(quantity).font(.subheadline).foregroundStyle(InventoryTheme.muted) }

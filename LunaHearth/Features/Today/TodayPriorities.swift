@@ -111,6 +111,7 @@ struct TodayPriorities: View {
 }
 
 struct TodayPriorityItems: View {
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     let priority: TodayPriority
     let now: Date
     let limit: Int?
@@ -206,7 +207,7 @@ struct TodayPriorityItems: View {
     }
     private func itemRow(name: String, detail: String, status: String?, warning: Bool, symbol: String) -> some View {
         HStack(spacing: 12) {
-            Text(PantryVisualRules.icon(name, category: PantryVisualRules.category(name)))
+            Text(PantryVisualRules.icon(name, memory: PantryCategoryMemory.decode(categoryMemory)))
                 .font(.system(size: 27)).frame(width: 44, height: 48)
                 .background(TodayTheme.hero.opacity(0.65), in: RoundedRectangle(cornerRadius: 13)).accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 4) {

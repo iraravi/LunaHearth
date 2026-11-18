@@ -20,11 +20,12 @@ struct ShoppingListView: View {
     @AppStorage("shopping.shelfView") private var shelfView = true
     @State private var categoryFilter: PantryCategory?
     @State private var categoryHints: [String: PantryCategory] = [:]
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     @State private var organizing = false
     @State private var organizationStatus: String?
     private let organizer: any PantryCategorizationService = OnDevicePantryCategorizationService()
     private func category(_ item: GroceryItem) -> PantryCategory {
-        let known = PantryVisualRules.category(item.name)
+        let known = PantryVisualRules.category(item.name, memory: PantryCategoryMemory.decode(categoryMemory))
         return known == .other ? categoryHints[item.name] ?? .other : known
     }
     private func open(_ item: GroceryItem) {
@@ -182,7 +183,7 @@ struct ShoppingListView: View {
             ForEach(buyAgain) { item in
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 12) {
-                        Text(PantryVisualRules.icon(item.name, category: PantryVisualRules.category(item.name)))
+                        Text(PantryVisualRules.icon(item.name, memory: PantryCategoryMemory.decode(categoryMemory)))
                             .font(.system(size: 26)).frame(width: 44, height: 44).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 3) {
                             Text(item.name).font(.body.weight(.semibold))
