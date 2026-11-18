@@ -489,6 +489,27 @@ final class VisualFlowTests: XCTestCase {
         capture("Storage-Recovery", app: app)
     }
 
+    func testReceiptShowsBillNameBesideDecodedName() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-receipt", "--ui-testing-receipt-abbreviated"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
+        tapVisible("inventory.scanReceipt", app: app)
+        XCTAssertTrue(app.buttons["receipt.confirm"].waitForExistence(timeout: 5))
+        func shown(_ text: String) -> XCUIElement {
+            app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", text)).firstMatch
+        }
+        XCTAssertTrue(shown("On bill").waitForExistence(timeout: 5))
+        XCTAssertTrue(shown("Nichols Roasted No-Salt Pistachios").exists)
+        capture("Receipt-Bill-Name-Choice", app: app)
+        let accept = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'receipt.acceptName.'")).firstMatch
+        XCTAssertTrue(accept.exists)
+        accept.tap()
+        XCTAssertTrue(app.buttons["receipt.editItem.Nichols Roasted No-Salt Pistachios"].waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'receipt.keepBillName.'")).firstMatch.exists)
+    }
+
     func testReceiptMuttonLandscape() {
         XCUIDevice.shared.orientation = .landscapeLeft
         defer { XCUIDevice.shared.orientation = .portrait }
@@ -2126,7 +2147,6 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("inventory.scanReceipt", app: app)
         XCTAssertTrue(app.buttons["receipt.confirm"].waitForExistence(timeout: 5))
         XCTAssertEqual(app.buttons["receipt.confirm"].label, "Save receipt")
-        tapVisible("Name suggestions", app: app)
         tapVisible("receipt.decodeNames", app: app)
         let decodeStatus = app.staticTexts["receipt.decodeStatus"]
         XCTAssertTrue(decodeStatus.waitForExistence(timeout: 5))

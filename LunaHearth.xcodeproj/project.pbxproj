@@ -144,6 +144,7 @@
 		703ACF4E917527A72DCAB97D /* TodayLivingHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FB040DE7C2F4958A0C3F53 /* TodayLivingHome.swift */; };
 		714DCFF966BB5F86B8DA0D5A /* ExpenseMerchantField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D006DAD0DA85BD7946EC4E /* ExpenseMerchantField.swift */; };
 		7411EAD6B0F15B5AC465A785 /* HouseholdSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411ED1CCD9AA5D7A0BFD49CA /* HouseholdSharingTests.swift */; };
+		741709E709792120F3E8D682 /* ReceiptAbbreviations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D68F51B571C9F47D3099BD9 /* ReceiptAbbreviations.swift */; };
 		741BE8727AEDCB6EA1A4CDB3 /* InvitationDeliveryStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C9E0DECF5EE0D86A024E28 /* InvitationDeliveryStatus.swift */; };
 		742A715F3A8018630E906DC3 /* ExpenseRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CD118ED42F304B530403D48 /* ExpenseRules.swift */; };
 		7513C1444D682C68B1178B63 /* GroceryToolsSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C6FA38C99744083AD79E204 /* GroceryToolsSheet.swift */; };
@@ -406,6 +407,7 @@
 		3B2EE8D6A21CD9906E4A24F3 /* PantryHingeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryHingeState.swift; sourceTree = "<group>"; };
 		3B4FA8EFE0AA1AE68CDA2A6D /* InventoryStatusBadges.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryStatusBadges.swift; sourceTree = "<group>"; };
 		3BCF375162E91FB48A8E4940 /* CloudKitPublicConfigurationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudKitPublicConfigurationService.swift; sourceTree = "<group>"; };
+		3D68F51B571C9F47D3099BD9 /* ReceiptAbbreviations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptAbbreviations.swift; sourceTree = "<group>"; };
 		3DBA2BA33A3E72168A87138A /* CalendarFamilyBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarFamilyBoard.swift; sourceTree = "<group>"; };
 		3F87CC2256AC1D9C2B4981F5 /* TodayPriorities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayPriorities.swift; sourceTree = "<group>"; };
 		3FAC52613164D3C16FBA81E6 /* BackupCodec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupCodec.swift; sourceTree = "<group>"; };
@@ -1019,6 +1021,7 @@
 				1DD7FD5238F39C3808170697 /* PantryTemplates.swift */,
 				9A1CE5CA2F89284B70188346 /* PantryVisualRules.swift */,
 				0D6E295A796B6D32501F65D2 /* PublicAppConfiguration.swift */,
+				3D68F51B571C9F47D3099BD9 /* ReceiptAbbreviations.swift */,
 				47083DAC854DC38402EB42E1 /* ReceiptColumns.swift */,
 				E19D39D3756672C2DD53BF55 /* ReceiptExtraction.swift */,
 				54DE82FBA9BD7C50E26E2170 /* ReceiptImageProposals.swift */,
@@ -1750,6 +1753,7 @@
 				D173E3399433A3B6EE9677AE /* PurchaseFeedback.swift in Sources */,
 				826ACBA9056650ABAD15FFE7 /* PurchaseHistoryView.swift in Sources */,
 				38B8F0D30910A08F239F2628 /* QuickAddView.swift in Sources */,
+				741709E709792120F3E8D682 /* ReceiptAbbreviations.swift in Sources */,
 				13F08A7B174AEDAB8FBF4EF3 /* ReceiptCamera.swift in Sources */,
 				9A69110B6706FAC689134542 /* ReceiptColumns.swift in Sources */,
 				4A3ECA7FF3FACDB4F5E91923 /* ReceiptDebugView.swift in Sources */,
@@ -1869,7 +1873,7 @@
 				CLOUDKIT_ENVIRONMENT = Production;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 87;
+				CURRENT_PROJECT_VERSION = 88;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1969,7 +1973,7 @@
 				CLOUDKIT_ENVIRONMENT = Development;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 87;
+				CURRENT_PROJECT_VERSION = 88;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2056,7 +2060,7 @@
 				CLOUDKIT_ENVIRONMENT = Production;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 87;
+				CURRENT_PROJECT_VERSION = 88;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_NS_ASSERTIONS = NO;

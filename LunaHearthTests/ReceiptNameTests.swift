@@ -88,3 +88,61 @@ struct ReceiptSavedNameTests {
         #expect(repository.purchases.count == 1)
     }
 }
+
+struct ReceiptAbbreviationTests {
+    @Test func hebPistachioLabelDecodesOffline() throws {
+        #expect(ReceiptAbbreviations.expand("NICHOLS RSTD NO-SALT PIST F") == "Nichols Roasted No-Salt Pistachios")
+        #expect(ReceiptAbbreviations.expand("2 NICHOLS RSTD NO-SALT PIST F") == "Nichols Roasted No-Salt Pistachios")
+        let line = ReceiptLine(id: "pist", name: "NICHOLS RSTD NO-SALT PIST F")
+        let proposal = try #require(ReceiptNameRules.abbreviationProposal(for: line))
+        #expect(proposal.name == "Nichols Roasted No-Salt Pistachios" && proposal.original == line.name && !proposal.fromSavedItem)
+        #expect(ReceiptNameRules.canApply(proposal, to: line))
+    }
+
+    @Test func commonLabelsDecode() {
+        #expect(ReceiptAbbreviations.expand("GV WHL MLK") == "Great Value Whole Milk")
+        #expect(ReceiptAbbreviations.expand("ORG BNLS SKNLS CHKN BRST") == "Organic Boneless Skinless Chicken Breast")
+        #expect(ReceiptAbbreviations.expand("GRK YOG 32OZ") == "Greek Yogurt 32 oz")
+        #expect(ReceiptAbbreviations.expand("KS ALMDS UNSLTD") == "Kirkland Signature Almonds Unsalted")
+    }
+
+    @Test func readableOrUnknownLabelsAreLeftAlone() {
+        // Already readable, typed in mixed case, brand-only, numeric codes, or a two-word name ending in a letter.
+        for label in ["Milk", "Instant Pot", "FAIRLIFECHOC", "1485984", "VITAMIN E", ""] {
+            #expect(ReceiptAbbreviations.expand(label) == nil, "\(label)")
+        }
+        // A real abbreviation still decodes beside a short brand code, which stays as printed.
+        #expect(ReceiptAbbreviations.expand("HEB BRD") == "HEB Bread")
+    }
+
+    @Test func hebReceiptScanOffersReadableNames() {
+        let text = """
+        H-E-B
+        1078 6977 1114 2620 1800 809
+        1 NICHOLS RSTD NO-SALT PIST F 8.80
+        2 NICHOLS RSTD NO-SALT PIST F 1.73
+        Total 10.53
+        VISA EPS 10.53
+        ITEMS PURCHASED: 2
+        SALE & PRICE CUT SAVINGS : $31.69
+        """
+        let scan = ReceiptRules.scan(text: text, sameLinePrices: true)
+        #expect(!scan.lines.isEmpty)
+        for line in scan.lines {
+            #expect(ReceiptNameRules.abbreviationProposal(for: line)?.name == "Nichols Roasted No-Salt Pistachios", "\(line.name)")
+        }
+    }
+}
+
+struct ReceiptNameSourceTests {
+    @Test func suggestionsSayWhereTheNameCameFrom() throws {
+        let line = ReceiptLine(id: "pist", name: "NICHOLS RSTD NO-SALT PIST F")
+        let decoded = try #require(ReceiptNameRules.abbreviationProposal(for: line))
+        #expect(decoded.sourceLabel == "Decoded" && !decoded.fromAI)
+        var ai = try #require(ReceiptNameRules.proposal(index: 0, name: "Nichols roasted pistachios", inputs: [ReceiptNameInput(id: line.id, name: line.name)]))
+        ai.fromAI = true
+        #expect(ai.sourceLabel == "AI says" && ai.original == line.name)
+        let saved = try #require(ReceiptNameRules.savedProposal(for: ReceiptLine(id: "a", name: "FAIRLIFECHOC"), names: ["Fairlife chocolate"]))
+        #expect(saved.sourceLabel == "Your saved item")
+    }
+}

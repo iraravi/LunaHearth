@@ -48,6 +48,8 @@ struct ReceiptImportView: View {
     @State private var decodeTask: Task<Void, Never>?
     @State private var decodeGeneration = UUID()
     @State private var proposals: [String: ReceiptNameProposal] = [:]
+    /// Lines where the user chose to keep the name printed on the bill; AI does not suggest again.
+    @State private var keptBillNames: Set<String> = []
     @State private var decodeMessage: String?
     private let decoder: any ReceiptNameDecodingService = OnDeviceReceiptNameService()
     private var selected: Int { lines.filter(\.included).count }
@@ -101,6 +103,10 @@ struct ReceiptImportView: View {
                             : "TEST MARKET\nMilk 4.00\nTOTAL 4.00"
                         var scan = ReceiptRules.scan(text: text, sameLinePrices: true)
                         scan.previewImages = [data]; apply(scan); return
+                    }
+                    if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-abbreviated") {
+                        apply(ReceiptRules.scan(text: "H-E-B\nNICHOLS RSTD NO-SALT PIST F 8.80\nTOTAL 8.80", sameLinePrices: true))
+                        return
                     }
                     if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-mutton") {
                         apply(ReceiptRules.scan(text: "TEST MARKET\nPREMIUM MUTTON LEG 12.00\nTOTAL 12.00", sameLinePrices: true))
@@ -261,27 +267,36 @@ struct ReceiptImportView: View {
                         } else if lines.isEmpty {
                             Section { Text("Text was found, but no priced item lines were clear. Read the original text and add a line below, or try another photo.") }
                         }
-                        if !lines.isEmpty && (aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiReceiptNames) ?? true)) {
-                            Section {
-                              DisclosureGroup("Name suggestions") {
-                                if decoding {
-                                    ProgressView("Decoding names on this device…")
-                                    Button("Cancel decoding") { cancelDecoding(); decodeMessage = "Decoding cancelled. Names stay as you reviewed them." }
-                                } else {
-                                    Button("Decode names with AI", systemImage: "sparkles") { decodeNames() }
-                                        .frame(minHeight: 44).accessibilityIdentifier("receipt.decodeNames")
-                                        .disabled(busy || !lines.contains(where: \.included))
+                        if !lines.isEmpty {
+                            Section("Item names") {
+                                if !pendingSuggestions.isEmpty {
+                                    Button("Use \(pendingSuggestions.count) suggested \(pendingSuggestions.count == 1 ? "name" : "names")", systemImage: "text.badge.checkmark") {
+                                        for index in lines.indices {
+                                            if let proposal = proposals[lines[index].id], pendingSuggestions.contains(proposal.id) { lines[index].name = proposal.name }
+                                        }
+                                    }
+                                    .frame(minHeight: 44).accessibilityIdentifier("receipt.acceptAllNames")
                                 }
-                                Text(decodeMessage ?? "AI guesses what abbreviated labels mean and may choose the wrong product. Compare each suggestion with the receipt and packaging before using it.")
+                                if aiAvailability.showsAIActions && (publicStatus.configuration?.allows(.aiReceiptNames) ?? true) {
+                                    if decoding {
+                                        ProgressView("Decoding names on this device…")
+                                        Button("Cancel decoding") { cancelDecoding(); decodeMessage = "Decoding cancelled. Names stay as you reviewed them." }
+                                    } else {
+                                        Button("Decode names with AI again", systemImage: "sparkles") { decodeNames() }
+                                            .frame(minHeight: 44).accessibilityIdentifier("receipt.decodeNames")
+                                            .disabled(busy || !lines.contains(where: \.included))
+                                    }
+                                }
+                                Text(decodeMessage ?? "Each item shows the name on the bill and the suggested name. Accept the suggestion or keep the bill name.")
                                     .font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("receipt.decodeStatus")
-                              }
                             }
                         }
                         Section {
                             ForEach($lines) { $line in
                                 ReceiptItemOverview(line: $line, purchaseDay: HouseholdDay(recordingExpense || purchaseDateReviewed ? expenseDraft.date : .now).key,
                                     currency: recordingExpense ? expenseDraft.currency : nil, proposal: proposals[line.id],
-                                    alreadyImported: repository.receiptLineImported(line.id))
+                                    alreadyImported: repository.receiptLineImported(line.id),
+                                    keepBillName: { keepBillName(line.id) })
                             }
                             Button("Add a missed item", systemImage: "plus") {
                                 lines.append(ReceiptLine(id: ReceiptRules.hash(sourceText + "|manual|\(lines.count)"), name: "", addToInventory: false))
@@ -409,7 +424,7 @@ struct ReceiptImportView: View {
                     return result
     }
     private func apply(_ scan: ReceiptScan) {
-        cancelDecoding(); proposals = [:]; decodeMessage = nil
+        cancelDecoding(); proposals = [:]; keptBillNames = []; decodeMessage = nil
         sourceText = scan.text
         itemization = ReceiptReconciliation.check(lines: scan.lines, text: scan.text)
         // Unverified proposals are hidden, not shown with warnings: a wrong price or a
@@ -420,7 +435,9 @@ struct ReceiptImportView: View {
         extractionMessage = scan.extractionMessage
         let savedNames = repository.groceries.map(\.name) + repository.inventory.map(\.name)
         for line in lines {
-            if let proposal = ReceiptNameRules.savedProposal(for: line, names: savedNames) { proposals[line.id] = proposal }
+            if let proposal = ReceiptNameRules.savedProposal(for: line, names: savedNames) ?? ReceiptNameRules.abbreviationProposal(for: line) {
+                proposals[line.id] = proposal
+            }
         }
         receiptImages = scan.previewImages; keepImages = false; previewIncomplete = scan.previewIncomplete
         expenseDraft.amount = ExpenseRules.receiptTotal(scan.text) ?? ""
@@ -435,12 +452,29 @@ struct ReceiptImportView: View {
             if !recordingExpense { lines[index].amount = "" }
             else if lines[index].amount.isEmpty { lines[index].amountNeedsReview = true }
             let name = lines[index].name
-            let shopping = repository.groceries.filter { !$0.isCompleted && $0.purchaseDisposition != "inventory" && $0.receiptImportKey == nil && IngredientMatching.same($0.name, name) }
+            // A decoded name ("Organic Bananas") may match the list where the printed label cannot.
+            let decoded = proposals[lines[index].id].map(\.name)
+            func matches(_ saved: String) -> Bool { IngredientMatching.same(saved, name) || decoded.map { IngredientMatching.same(saved, $0) } == true }
+            let shopping = repository.groceries.filter { !$0.isCompleted && $0.purchaseDisposition != "inventory" && $0.receiptImportKey == nil && matches($0.name) }
             if shopping.count == 1 { lines[index].groceryID = shopping.first?.id }
-            let inventory = repository.inventory.filter { InventoryRules.canRestock(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay) && IngredientMatching.same($0.name, name) }
+            let inventory = repository.inventory.filter { InventoryRules.canRestock(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay) && matches($0.name) }
             if inventory.count == 1 { lines[index].inventoryID = inventory.first?.id }
             if repository.receiptLineImported(lines[index].id) { lines[index].included = false }
         }
+        // Decode bill names with on-device AI automatically when this phone supports it.
+        if lines.contains(where: \.included), aiAvailability.showsAIActions,
+           publicStatus.configuration?.allows(.aiReceiptNames) ?? true { decodeNames() }
+    }
+    /// Suggestions that can still be applied to an unchanged, included, unsaved line.
+    private var pendingSuggestions: Set<String> {
+        Set(lines.compactMap { line in
+            guard let proposal = proposals[line.id], !repository.receiptLineImported(line.id),
+                  ReceiptNameRules.canApply(proposal, to: line) else { return nil }
+            return proposal.id
+        })
+    }
+    private func keepBillName(_ id: String) {
+        keptBillNames.insert(id); proposals[id] = nil
     }
     private func cancelDecoding() {
         decodeTask?.cancel(); decodeGeneration = UUID(); decoding = false
@@ -460,13 +494,14 @@ struct ReceiptImportView: View {
         let generation = decodeGeneration
         let inputs = lines.filter { line in line.included && !repository.receiptLineImported(line.id) }
             .map { ReceiptNameInput(id: $0.id, name: $0.name) }
-        decoding = true; proposals = [:]; decodeMessage = nil
+        // Keep offline and saved-name suggestions; AI may replace offline ones with a better name.
+        decoding = true; decodeMessage = nil
         decodeTask = Task {
             do {
                 let result = try await decoder.decode(inputs)
                 try Task.checkCancellation()
                 guard decodeGeneration == generation, repository.household?.id == householdID else { return }
-                for proposal in result.proposals where proposals[proposal.id]?.fromSavedItem != true {
+                for proposal in result.proposals where proposals[proposal.id]?.fromSavedItem != true && !keptBillNames.contains(proposal.id) {
                     proposals[proposal.id] = proposal
                 }
                 decodeMessage = result.message
@@ -520,6 +555,7 @@ private struct ReceiptItemOverview: View {
     let currency: String?
     let proposal: ReceiptNameProposal?
     let alreadyImported: Bool
+    let keepBillName: () -> Void
     @Environment(LocalHouseholdRepository.self) private var repository
     @State private var editing = false
     private var needsReview: Bool {
@@ -535,6 +571,26 @@ private struct ReceiptItemOverview: View {
         return line.keepSeparatePack ? "Pantry · separate pack" : "Pantry"
     }
     var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            itemButton
+            if let proposal, !alreadyImported, ReceiptNameRules.canApply(proposal, to: line) {
+                ReceiptNameChoice(line: $line, proposal: proposal, keepBillName: keepBillName).padding(.leading, 54)
+            }
+        }
+        .sheet(isPresented: $editing) {
+            NavigationStack {
+                List {
+                    ReceiptReviewRow(line: $line, purchaseDay: purchaseDay, currency: currency, proposal: proposal,
+                        alreadyImported: alreadyImported, keepBillName: keepBillName)
+                }.scrollContentBackground(.hidden).background(ShoppingTheme.canvas)
+                    .navigationTitle("Receipt item").navigationBarTitleDisplayMode(.inline)
+                    .toolbar { ToolbarItem(placement: .confirmationAction) {
+                        Button("Done") { editing = false }.accessibilityIdentifier("receipt.itemDone")
+                    } }
+            }
+        }
+    }
+    private var itemButton: some View {
         Button { editing = true } label: {
             HStack(spacing: 14) {
                 Image(systemName: needsReview ? "exclamationmark.circle" : "bag.fill")
@@ -542,9 +598,6 @@ private struct ReceiptItemOverview: View {
                     .frame(width: 40, height: 44).background(Color.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 VStack(alignment: .leading, spacing: 5) {
                     Text(line.name.isEmpty ? "New item" : line.name).font(.headline).foregroundStyle(.primary)
-                    if let proposal, ReceiptNameRules.canApply(proposal, to: line) {
-                        Text("Suggested: \(proposal.name)").font(.subheadline).foregroundStyle(.secondary)
-                    }
                     Text(status).font(.caption).foregroundStyle(needsReview ? Color.orange : Color.secondary)
                     if !line.quantity.isEmpty { Text(line.quantity).font(.caption).foregroundStyle(.secondary) }
                 }
@@ -557,18 +610,34 @@ private struct ReceiptItemOverview: View {
                 }
                 Image(systemName: "chevron.right").font(.caption.bold()).foregroundStyle(.secondary)
             }.padding(.vertical, 6).contentShape(Rectangle())
-        }.buttonStyle(.plain).accessibilityIdentifier("receipt.editItem.\(line.name)")
-        .sheet(isPresented: $editing) {
-            NavigationStack {
-                List {
-                    ReceiptReviewRow(line: $line, purchaseDay: purchaseDay, currency: currency, proposal: proposal, alreadyImported: alreadyImported)
-                }.scrollContentBackground(.hidden).background(ShoppingTheme.canvas)
-                    .navigationTitle("Receipt item").navigationBarTitleDisplayMode(.inline)
-                    .toolbar { ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") { editing = false }.accessibilityIdentifier("receipt.itemDone")
-                    } }
+        }.buttonStyle(.borderless).accessibilityIdentifier("receipt.editItem.\(line.name)")
+    }
+}
+
+/// The name printed on the bill beside the suggested name, with one tap to use either.
+private struct ReceiptNameChoice: View {
+    @Binding var line: ReceiptLine
+    let proposal: ReceiptNameProposal
+    let keepBillName: () -> Void
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            LabeledContent("On bill") { Text(proposal.original).font(.caption.monospaced()) }
+                .font(.caption).foregroundStyle(.secondary)
+            LabeledContent(proposal.sourceLabel) { Text(proposal.name).font(.subheadline.weight(.semibold)).foregroundStyle(.primary) }
+                .font(.caption).foregroundStyle(.secondary)
+            if proposal.fromSavedItem {
+                Text("Confirm it is the same product.").font(.caption2).foregroundStyle(.secondary)
             }
+            HStack(spacing: 10) {
+                Button(proposal.fromAI ? "Accept AI name" : "Use this name", systemImage: proposal.fromAI ? "sparkles" : "checkmark") { line.name = proposal.name }
+                    .buttonStyle(.borderedProminent).controlSize(.small)
+                    .accessibilityIdentifier("receipt.acceptName.\(line.id)")
+                Button("Keep bill name") { keepBillName() }
+                    .buttonStyle(.bordered).controlSize(.small)
+                    .accessibilityIdentifier("receipt.keepBillName.\(line.id)")
+            }.frame(minHeight: 44)
         }
+        .accessibilityElement(children: .contain)
     }
 }
 
@@ -578,6 +647,7 @@ private struct ReceiptReviewRow: View {
     let currency: String?
     let proposal: ReceiptNameProposal?
     let alreadyImported: Bool
+    var keepBillName: () -> Void = {}
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.aiAvailability) private var aiAvailability
     @Environment(PublicConfigurationStore.self) private var publicStatus
@@ -615,13 +685,7 @@ private struct ReceiptReviewRow: View {
                 }
             }
             if let proposal, !alreadyImported, ReceiptNameRules.canApply(proposal, to: line) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Label(proposal.name, systemImage: proposal.fromSavedItem ? "link" : "sparkles").font(.headline)
-                    Text(proposal.fromSavedItem ? "Matches a saved name. Confirm it is the same product as “\(proposal.original)”." : "Suggested from “\(proposal.original)”").font(.caption).foregroundStyle(.secondary)
-                    Button("Use suggested name") { line.name = proposal.name }
-                        .frame(minHeight: 44).buttonStyle(.borderless)
-                        .accessibilityIdentifier("receipt.acceptName.\(line.id)")
-                }
+                ReceiptNameChoice(line: $line, proposal: proposal, keepBillName: keepBillName)
             }
             if line.included {
                 if !candidates.isEmpty { purchaseReview }

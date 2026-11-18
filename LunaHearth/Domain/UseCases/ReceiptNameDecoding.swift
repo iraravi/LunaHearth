@@ -14,6 +14,10 @@ struct ReceiptNameProposal: Sendable {
     let original: String
     let name: String
     var fromSavedItem = false
+    var fromAI = false
+
+    /// Where the suggestion came from, shown beside the name printed on the bill.
+    var sourceLabel: String { fromSavedItem ? "Your saved item" : fromAI ? "AI says" : "Decoded" }
 }
 
 struct ReceiptNameDecoding: Sendable {
@@ -42,6 +46,12 @@ enum ReceiptNameRules {
               var result = proposal(index: 0, name: name, inputs: [ReceiptNameInput(id: line.id, name: line.name)]) else { return nil }
         result.fromSavedItem = true
         return result
+    }
+
+    /// Offline decode of printed abbreviations, shown for review like any other suggestion.
+    static func abbreviationProposal(for line: ReceiptLine) -> ReceiptNameProposal? {
+        guard let name = ReceiptAbbreviations.expand(line.name) else { return nil }
+        return proposal(index: 0, name: name, inputs: [ReceiptNameInput(id: line.id, name: line.name)])
     }
 
     /// Treat generated text as untrusted, and never associate it with an invented row.
