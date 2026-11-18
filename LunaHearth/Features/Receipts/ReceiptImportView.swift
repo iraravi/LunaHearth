@@ -598,6 +598,7 @@ private struct ReceiptItemOverview: View {
                     .frame(width: 40, height: 44).background(Color.orange.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 VStack(alignment: .leading, spacing: 5) {
                     Text(line.name.isEmpty ? "New item" : line.name).font(.headline).foregroundStyle(.primary)
+                        .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
                     Text(status).font(.caption).foregroundStyle(needsReview ? Color.orange : Color.secondary)
                     if !line.quantity.isEmpty { Text(line.quantity).font(.caption).foregroundStyle(.secondary) }
                 }
@@ -620,22 +621,37 @@ private struct ReceiptNameChoice: View {
     let proposal: ReceiptNameProposal
     let keepBillName: () -> Void
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            LabeledContent("On bill") { Text(proposal.original).font(.caption.monospaced()) }
-                .font(.caption).foregroundStyle(.secondary)
-            LabeledContent(proposal.sourceLabel) { Text(proposal.name).font(.subheadline.weight(.semibold)).foregroundStyle(.primary) }
-                .font(.caption).foregroundStyle(.secondary)
+        VStack(alignment: .leading, spacing: 10) {
+            // Two aligned columns: the label on the left, the name on the right.
+            Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 12, verticalSpacing: 6) {
+                GridRow {
+                    Text("On bill").font(.caption).foregroundStyle(.secondary)
+                    Text(proposal.original).font(.caption.monospaced()).foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                GridRow {
+                    Text(proposal.sourceLabel).font(.caption).foregroundStyle(.secondary)
+                    Text(proposal.name).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
             if proposal.fromSavedItem {
                 Text("Confirm it is the same product.").font(.caption2).foregroundStyle(.secondary)
             }
             HStack(spacing: 10) {
-                Button(proposal.fromAI ? "Accept AI name" : "Use this name", systemImage: proposal.fromAI ? "sparkles" : "checkmark") { line.name = proposal.name }
-                    .buttonStyle(.borderedProminent).controlSize(.small)
-                    .accessibilityIdentifier("receipt.acceptName.\(line.id)")
-                Button("Keep bill name") { keepBillName() }
-                    .buttonStyle(.bordered).controlSize(.small)
-                    .accessibilityIdentifier("receipt.keepBillName.\(line.id)")
-            }.frame(minHeight: 44)
+                Button { line.name = proposal.name } label: {
+                    Text(proposal.fromAI ? "Accept AI" : "Accept").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .accessibilityIdentifier("receipt.acceptName.\(line.id)")
+                Button { keepBillName() } label: {
+                    Text("Keep bill").frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .accessibilityIdentifier("receipt.keepBillName.\(line.id)")
+            }
+            .controlSize(.regular).font(.subheadline.weight(.semibold))
+            .frame(minHeight: 44)
         }
         .accessibilityElement(children: .contain)
     }
