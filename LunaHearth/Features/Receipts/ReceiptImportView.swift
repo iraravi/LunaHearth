@@ -38,6 +38,9 @@ struct ReceiptImportView: View {
     @State private var hiddenItemCount = 0
     /// Scanned line amounts, kept so turning "Record in Expenses" off and on again restores them.
     @State private var scannedAmounts: [String: String] = [:]
+    /// Printed item labels as scanned, so saved renames can be learned for next time.
+    @State private var scannedNames: [String: String] = [:]
+    @AppStorage(ReceiptCorrectionMemory.storageKey) private var corrections = ""
     @State private var sourceText = ""
     @State private var store = ""
     @State private var error: String?
@@ -432,16 +435,27 @@ struct ReceiptImportView: View {
         lines = itemization == .verified ? scan.lines : []
         hiddenItemCount = itemization == .verified ? 0 : scan.lines.count
         scannedAmounts = Dictionary(lines.map { ($0.id, $0.amount) }, uniquingKeysWith: { first, _ in first })
+        scannedNames = Dictionary(lines.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
+        let learned = ReceiptCorrectionMemory.decode(corrections)
         extractionMessage = scan.extractionMessage
         let savedNames = repository.groceries.map(\.name) + repository.inventory.map(\.name)
         for line in lines {
-            if let proposal = ReceiptNameRules.savedProposal(for: line, names: savedNames) ?? ReceiptNameRules.abbreviationProposal(for: line) {
+            if let name = ReceiptCorrectionMemory.rememberedName(line.name, state: learned) {
+                var proposal = ReceiptNameProposal(id: line.id, original: line.name, name: name)
+                proposal.fromCorrection = true
+                proposals[line.id] = proposal
+            } else if let proposal = ReceiptNameRules.savedProposal(for: line, names: savedNames) ?? ReceiptNameRules.abbreviationProposal(for: line) {
                 proposals[line.id] = proposal
             }
         }
         receiptImages = scan.previewImages; keepImages = false; previewIncomplete = scan.previewIncomplete
         expenseDraft.amount = ExpenseRules.receiptTotal(scan.text) ?? ""
-        expenseDraft.merchant = ReceiptPurchaseDetails.merchant(scan.text, saved: repository.shoppingStoreNames) ?? ""
+        // A store this phone has learned from an earlier receipt wins over header guessing.
+        if let remembered = ReceiptCorrectionMemory.rememberedStore(scan.text, state: learned) {
+            expenseDraft.merchant = remembered; store = remembered
+        } else {
+            expenseDraft.merchant = ReceiptPurchaseDetails.merchant(scan.text, saved: repository.shoppingStoreNames) ?? ""
+        }
         let scannedDate = ReceiptPurchaseDetails.day(scan.text).flatMap { ShoppingEntryRules.date(for: $0) }
         purchaseDateReviewed = scannedDate != nil
         expenseDraft.date = scannedDate ?? .now
@@ -501,7 +515,7 @@ struct ReceiptImportView: View {
                 let result = try await decoder.decode(inputs)
                 try Task.checkCancellation()
                 guard decodeGeneration == generation, repository.household?.id == householdID else { return }
-                for proposal in result.proposals where proposals[proposal.id]?.fromSavedItem != true && !keptBillNames.contains(proposal.id) {
+                for proposal in result.proposals where proposals[proposal.id]?.fromSavedItem != true && proposals[proposal.id]?.fromCorrection != true && !keptBillNames.contains(proposal.id) {
                     proposals[proposal.id] = proposal
                 }
                 decodeMessage = result.message
@@ -531,6 +545,14 @@ struct ReceiptImportView: View {
                 storeName: recordingExpense ? expenseDraft.merchant : store,
                 expense: recordingExpense ? expenseDraft : nil, receiptKey: key,
                 purchaseDate: purchaseDateReviewed ? expenseDraft.date : nil)
+            // Learn the confirmed store and any renamed items for the next receipt from this store.
+            let renamed = lines.filter(\.included).compactMap { line -> (printed: String, saved: String)? in
+                guard let printed = scannedNames[line.id], printed != line.name else { return nil }
+                return (printed, line.name)
+            }
+            corrections = ReceiptCorrectionMemory.encode(ReceiptCorrectionMemory.learn(text: sourceText,
+                savedStore: recordingExpense ? expenseDraft.merchant : store, renamed: renamed,
+                state: ReceiptCorrectionMemory.decode(corrections)))
             let purchaseID = ReceiptRules.groceryID(home: householdID, key: "purchase|" + key)
             if repository.purchases.contains(where: { $0.purchaseID == purchaseID }) { savedPurchaseID = purchaseID }
             if keepImages && (selected > 0 || recordingExpense) && !previewIncomplete && !receiptImages.isEmpty {

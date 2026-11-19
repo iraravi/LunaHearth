@@ -28,11 +28,54 @@ enum ReceiptPurchaseDetails {
     static func merchant(_ text: String, saved: [String] = []) -> String? {
         let bounded = String(text.prefix(40_000))
         if let known = knownStore(in: bounded, saved: saved) { return known }
-        guard let first = bounded.components(separatedBy: .newlines).first(where: { !$0.trimmingCharacters(in: .whitespaces).isEmpty })?.trimmingCharacters(in: .whitespaces),
-              first.count <= 200, first.contains(where: \.isLetter),
-              !["wholesale", "receipt", "invoice", "tax invoice"].contains(first.lowercased()),
-              !ReceiptRules.isNonProductRow(first) else { return nil }
-        return first
+        let rows = bounded.components(separatedBy: .newlines)
+            .map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }.prefix(15)
+        if let named = websiteName(in: bounded, rows: Array(rows)) { return named }
+        guard let first = rows.first(where: plausibleStoreRow) else { return nil }
+        // Leading register or logo fragments such as "13" are not part of the name.
+        let words: [String] = first.split(separator: " ").map(String.init)
+        let kept = Array(words.drop { word in !word.contains(where: \.isLetter) })
+        return kept.isEmpty ? first : kept.joined(separator: " ")
+    }
+
+    /// Show-through from the back of thermal paper and torn edges produce short fragments
+    /// ("SEBO-"); hours, phones and labels are never the store's name.
+    static func plausibleStoreRow(_ row: String) -> Bool {
+        let letters = row.filter(\.isLetter)
+        let lower = row.lowercased()
+        guard row.count <= 200, letters.count >= 4, !row.hasSuffix("-"),
+              row.split(separator: " ").contains(where: { $0.filter(\.isLetter).count >= 3 }),
+              !["wholesale", "receipt", "invoice", "tax invoice", "customer copy", "open everyday", "open daily"].contains(lower),
+              lower.range(of: #"\b(?:monday|tuesday|wednesday|thursday|friday|saturday|sunday|am\s*-|pm\b|tel|phone|fax)\b"#, options: .regularExpression) == nil,
+              row.range(of: #"\d[.,]\d{2}\b"#, options: .regularExpression) == nil, // priced lines are items
+              !ReceiptRules.isNonProductRow(row) else { return false }
+        return true
+    }
+
+    /// When the receipt prints the store's website, the header line spelling the same name wins:
+    /// "www.IndiaBazaarDFW.com" picks "INDIA BAZAAR" out of "JOAE INDIA BAZAAR ELDORADO".
+    static func websiteName(in text: String, rows: [String]) -> String? {
+        guard let regex = try? NSRegularExpression(pattern: #"(?i)(?:www\.|https?://)([a-z0-9-]{4,})\.(?:com|net|org|in|co|us|ca|uk|au|de|fr)"#) else { return nil }
+        let labels = regex.matches(in: text, range: NSRange(text.startIndex..., in: text)).compactMap { match -> String? in
+            Range(match.range(at: 1), in: text).map { text[$0].lowercased().filter(\.isLetter) }
+        }
+        var best: [Substring] = []
+        for label in Set(labels) where label.count >= 5 {
+            for row in rows.prefix(12) {
+                let words = row.split(separator: " ")
+                for start in words.indices {
+                    var joined = ""
+                    for end in start..<words.count {
+                        joined += words[end].lowercased().filter(\.isLetter)
+                        guard label.contains(joined) else { break }
+                        let run = Array(words[start...end])
+                        if joined.count >= 5, joined.count > best.map { $0.lowercased().filter(\.isLetter) }.joined().count { best = run }
+                    }
+                }
+            }
+        }
+        guard !best.isEmpty else { return nil }
+        return best.map { $0.prefix(1).uppercased() + $0.dropFirst().lowercased() }.joined(separator: " ")
     }
 
     static func day(_ text: String) -> String? {

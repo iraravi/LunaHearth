@@ -15,9 +15,11 @@ struct ReceiptNameProposal: Sendable {
     let name: String
     var fromSavedItem = false
     var fromAI = false
+    /// A name the person chose for this exact printed label on an earlier receipt.
+    var fromCorrection = false
 
     /// Where the suggestion came from, shown beside the name printed on the bill.
-    var sourceLabel: String { fromSavedItem ? "Your saved item" : fromAI ? "AI says" : "Decoded" }
+    var sourceLabel: String { fromCorrection ? "You named it" : fromSavedItem ? "Your saved item" : fromAI ? "AI says" : "Decoded" }
 }
 
 struct ReceiptNameDecoding: Sendable {
