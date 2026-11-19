@@ -9,17 +9,43 @@ enum ShoppingStoreCatalog {
     struct Store: Identifiable {
         let name: String
         let region: Region
+        /// How the chain's name is printed on receipts, when that differs from `name`.
+        /// Data for recognizing a store only; never per-store parsing rules.
+        var printedAs: [String] = []
         var id: String { name }
     }
+    private static func us(_ name: String, _ printed: String...) -> Store { Store(name: name, region: .us, printedAs: printed) }
+    private static func india(_ name: String, _ printed: String...) -> Store { Store(name: name, region: .india, printedAs: printed) }
+
     static let stores: [Store] = [
-        "Walmart", "Target", "Costco", "Sam’s Club", "Kroger", "ALDI", "Trader Joe’s",
-        "Whole Foods Market", "Safeway", "Publix", "H-E-B", "Meijer", "Wegmans",
-        "Sprouts Farmers Market", "Food Lion", "Lidl", "Albertsons", "Patel Brothers"
-    ].map { Store(name: $0, region: .us) } + [
-        "DMart", "DMart Ready", "Reliance SMART", "SMART Bazaar", "Smart Point",
-        "JioMart", "BigBasket", "Blinkit", "Zepto", "Spencer’s", "More", "Star Bazaar",
-        "Nature’s Basket", "Lulu Hypermarket"
-    ].map { Store(name: $0, region: .india) }
+        // Grocery and warehouse
+        us("Walmart", "Walmart Supercenter", "Wal-Mart"), us("Target"), us("Costco", "Costco Wholesale"),
+        us("Sam’s Club"), us("Kroger"), us("ALDI"), us("Trader Joe’s"), us("Whole Foods Market"),
+        us("Safeway"), us("Publix", "Publix Super Markets"), us("H-E-B"), us("Meijer"), us("Wegmans"),
+        us("Sprouts Farmers Market"), us("Food Lion"), us("Lidl"), us("Albertsons"), us("Tom Thumb"),
+        us("Ralphs"), us("Fred Meyer"), us("Giant Food"), us("Stop & Shop"), us("Winn-Dixie"),
+        us("BJ’s Wholesale Club", "BJ's Wholesale"),
+        // Home improvement, pharmacy and general merchandise
+        us("The Home Depot", "Home Depot"), us("Lowe’s", "Lowe's Home Centers", "Lowes Home Improvement"),
+        us("CVS Pharmacy", "CVS"), us("Walgreens"), us("Best Buy"), us("IKEA"),
+        us("Dollar General"), us("Dollar Tree"),
+        // Indian grocers in the US
+        us("Patel Brothers", "Patel Bros"), us("India Bazaar"), us("Apna Bazar")
+    ] + [
+        india("DMart", "Avenue Supermarts", "D-Mart", "D Mart"), india("DMart Ready"),
+        india("Reliance SMART", "Reliance Smart"), india("SMART Bazaar", "Reliance Smart Bazaar"),
+        india("Smart Point"), india("Reliance Fresh"), india("JioMart"), india("BigBasket", "bigbasket"),
+        india("Blinkit"), india("Zepto"), india("Swiggy Instamart", "Instamart"),
+        india("Spencer’s", "Spencer's Retail"), india("More", "More Retail", "More Supermarket"),
+        india("Star Bazaar"), india("Nature’s Basket"), india("Lulu Hypermarket"),
+        india("Ratnadeep", "Ratnadeep Supermarket"), india("Nilgiris", "The Nilgiri Dairy Farm"),
+        india("Vishal Mega Mart"), india("SPAR Hypermarket", "SPAR"), india("Big Bazaar")
+    ]
+
+    /// Every printed spelling mapped to the chain's display name (display name included).
+    static var receiptNames: [(printed: String, name: String)] {
+        stores.flatMap { store in ([store.name] + store.printedAs).map { ($0, store.name) } }
+    }
 
     static func key(_ text: String) -> String {
         text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "en_US_POSIX"))

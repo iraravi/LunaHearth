@@ -8,7 +8,11 @@ enum ReceiptPurchaseDetails {
     /// or more letters count, so short common words cannot match body text. Ambiguity returns nil.
     static func knownStore(in text: String, saved: [String]) -> String? {
         let rows = text.components(separatedBy: .newlines).map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
-        let names = Set(ShoppingStoreCatalog.stores.map(\.name) + saved).filter { !$0.isEmpty && $0.count <= 60 }
+        // Printed spellings resolve to one display name; the household's own names are used as written.
+        var display: [String: String] = [:]
+        for entry in ShoppingStoreCatalog.receiptNames { display[entry.printed] = entry.name }
+        for name in saved where display[name] == nil { display[name] = name }
+        let names = Set(display.keys).filter { !$0.isEmpty && $0.count <= 60 }
         func pattern(_ name: String, leading: Bool = false) -> String {
             let words = name.split(whereSeparator: { $0.isWhitespace }).map { word in
                 NSRegularExpression.escapedPattern(for: String(word)).replacingOccurrences(of: "’", with: "['’]?").replacingOccurrences(of: "'", with: "['’]?")
@@ -16,7 +20,16 @@ enum ReceiptPurchaseDetails {
             return (leading ? #"(?i)^[^\p{L}\p{N}]*"# : #"(?i)(?<![\p{L}\p{N}])"#) + words.joined(separator: #"\s*"#) + #"(?![\p{L}\p{N}])"#
         }
         func found(_ rows: some Sequence<String>, leading: Bool = false) -> Set<String> {
-            Set(names.filter { name in rows.contains { $0.range(of: pattern(name, leading: leading), options: .regularExpression) != nil } })
+            let printed = names.filter { name in rows.contains { $0.range(of: pattern(name, leading: leading), options: .regularExpression) != nil } }
+            // The longest printed spelling wins: "Reliance Smart Bazaar" is SMART Bazaar, not Reliance SMART.
+            let longest = printed.filter { name in
+                let key = ShoppingStoreCatalog.key(name)
+                return !printed.contains { other in
+                    let otherKey = ShoppingStoreCatalog.key(other)
+                    return otherKey.count > key.count && otherKey.contains(key)
+                }
+            }
+            return Set(longest.compactMap { display[$0] })
         }
         let header = found(rows.prefix(5), leading: true)
         if !header.isEmpty { return header.count == 1 ? header.first : nil }

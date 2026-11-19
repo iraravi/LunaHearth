@@ -115,11 +115,18 @@ struct ReceiptItemizationTests {
         #expect(scan.lines.count == 5)
         #expect(ReceiptReconciliation.check(lines: scan.lines, text: ConnectedDemo.receipt) == .verified)
     }
-    @Test func unprintedDiscountKeepsGenericReceiptHidden() {
-        // The discount row is excluded as a product, so the items exceed the subtotal.
+    @Test func couponUnderItsItemIsSubtractedAndVerified() {
+        // A negative savings row directly under one item belongs to that item (ReceiptItemDiscounts).
         let text = "SHOP\nMILK 4.00\nCOUPON MILK -1.00\nSUBTOTAL 3.00\nTOTAL 3.00"
         let scan = ReceiptRules.scan(text: text, sameLinePrices: true)
-        #expect(ReceiptReconciliation.check(lines: scan.lines, text: text) == .unverified(.mismatch))
+        #expect(scan.lines.map(\.amount) == ["3.00"])
+        #expect(ReceiptReconciliation.check(lines: scan.lines, text: text) == .verified)
+    }
+    @Test func discountWithNoClearItemStaysForReview() {
+        // Two discounts stacked under one item: never guess which applies.
+        let text = "SHOP\nMILK 4.00\nCOUPON -1.00\nCOUPON -0.50\nSUBTOTAL 2.50\nTOTAL 2.50"
+        let scan = ReceiptRules.scan(text: text, sameLinePrices: true)
+        #expect(ReceiptReconciliation.check(lines: scan.lines, text: text) != .verified)
     }
     // Regression: TestFlight 2.0.2 (84) Target receipt was hidden as a mismatch.
     private let target = """
@@ -179,10 +186,14 @@ struct ReceiptItemizationTests {
         #expect(ReceiptReconciliation.totals(wrongTax).tax == nil)
         #expect(ReceiptReconciliation.check(lines: items, text: wrongTax) == .unverified(.noPrintedTotals))
     }
-    @Test func taxRateRowsAreNotTaxAmounts() {
+    @Test func taxRateRowsAreTrustedOnlyWhenRateTimesSubtotalMatches() {
+        // "TAX 8.25% 0.33": 8.25% of 4.00 is 0.33, so the amount is the tax.
         let text = "SHOP\nMILK 4.00\nSUBTOTAL 4.00\nTAX 8.25% 0.33\nTOTAL 4.33"
-        #expect(ReceiptReconciliation.totals(text).tax == nil)
-        // Tax amount unknown, so the readable total cannot be confirmed.
-        #expect(ReceiptReconciliation.check(lines: [line("4.00")], text: text) == .unverified(.noPrintedTotals))
+        #expect(ReceiptReconciliation.totals(text).tax == 33)
+        #expect(ReceiptReconciliation.check(lines: [line("4.00")], text: text) == .verified)
+        // A rate table printing the taxable base ("TAX 8.25% 4.00") is never read as the tax.
+        let base = "SHOP\nMILK 4.00\nSUBTOTAL 4.00\nTAX 8.25% 4.00\nTOTAL 4.33"
+        #expect(ReceiptReconciliation.totals(base).tax == nil)
+        #expect(ReceiptReconciliation.check(lines: [line("4.00")], text: base) == .unverified(.noPrintedTotals))
     }
 }

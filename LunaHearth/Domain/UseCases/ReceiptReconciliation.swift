@@ -92,6 +92,12 @@ enum ReceiptReconciliation {
                 printed.hasConflictingAmounts = true
             }
         }
+        // "SALES TAX 8.25% 2.55": the % number is the rate; accept the amount only when it equals
+        // rate × subtotal to the cent, so rate tables and partial-tax lines are never misread.
+        if printed.tax == nil, rated.isEmpty, plainTaxes.isEmpty, let subtotal = printed.subtotal {
+            let percent = taxRows.compactMap { percentTax($0, subtotal: subtotal) }
+            if percent.count == 1 { printed.tax = percent.first }
+        }
         let totalEvidence = ExpenseRules.receiptTotalEvidence(text)
         printed.total = totalEvidence.amount.flatMap { try? ExpenseRules.minorUnits($0) }
         printed.hasConflictingAmounts = printed.hasConflictingAmounts || totalEvidence == .conflicting
@@ -119,6 +125,17 @@ enum ReceiptReconciliation {
         let expected = Decimal(base) * rate / 100
         let difference = expected - Decimal(amount)
         return .some(difference > -1 && difference < 1 ? amount : nil)
+    }
+
+    private static func percentTax(_ row: String, subtotal: Int) -> Int? {
+        let pattern = #"(?i)^(?:\p{L}+\s+){0,2}(?:"# + ReceiptVocabulary.alternation(ReceiptVocabulary.tax) + #")\s*[:=]?\s*(\d{1,2}(?:[.,]\d{1,5})?)\s*%\s+[₹$€£]?\s*(\d[\d,]*[.,]\d{2})\s*$"#
+        guard let regex = try? NSRegularExpression(pattern: pattern),
+              let match = regex.firstMatch(in: row, range: NSRange(row.startIndex..., in: row)),
+              let rateRange = Range(match.range(at: 1), in: row), let amountRange = Range(match.range(at: 2), in: row),
+              let rate = Decimal(string: row[rateRange].replacingOccurrences(of: ",", with: "."), locale: Locale(identifier: "en_US_POSIX")),
+              let amount = minor(String(row[amountRange])) else { return nil }
+        let difference = Decimal(subtotal) * rate / 100 - Decimal(amount)
+        return difference > -1 && difference < 1 ? amount : nil
     }
 
     /// One amount explicitly marked as a deduction ("-$1.00", "$0.33 -"), or labelled as a

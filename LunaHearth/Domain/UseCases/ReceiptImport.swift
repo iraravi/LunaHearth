@@ -129,6 +129,12 @@ enum ReceiptRules {
         ReceiptMultilineDetails.apply(text: bounded, lines: &grouped)
         ReceiptTableDetails.apply(text: bounded, lines: &grouped)
         ItemCodeReceiptDetails.apply(text: bounded, lines: &grouped)
+        // Every reader shares one name cleanup: a leading product code (UPC, SKU, DPCI) is never part of a name.
+        for index in grouped.indices {
+            let stripped = grouped[index].name.replacingOccurrences(of: #"^(?:[EA]\s+)?\d{6,}\s+"#, with: "", options: .regularExpression)
+            if stripped.rangeOfCharacter(from: .letters) != nil, stripped.count >= 2 { grouped[index].name = stripped }
+        }
+        if sameLinePrices { ReceiptItemDiscounts.apply(text: bounded, lines: &grouped) }
         return ReceiptScan(text: bounded, lines: grouped)
     }
     /// Summary, payment and identifier rows in any supported language; never products.
