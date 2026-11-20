@@ -503,11 +503,11 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(shown("On bill").waitForExistence(timeout: 5))
         XCTAssertTrue(shown("Nichols Roasted No-Salt Pistachios").exists)
         capture("Receipt-Bill-Name-Choice", app: app)
-        let accept = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'receipt.acceptName.'")).firstMatch
+        let accept = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'receipt.name.' AND identifier ENDSWITH '.accept'")).firstMatch
         XCTAssertTrue(accept.exists)
         accept.tap()
         XCTAssertTrue(app.buttons["receipt.editItem.Nichols Roasted No-Salt Pistachios"].waitForExistence(timeout: 5))
-        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'receipt.keepBillName.'")).firstMatch.exists)
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'receipt.name.' AND identifier ENDSWITH '.keep'")).firstMatch.exists)
     }
 
     func testReceiptMuttonLandscape() {

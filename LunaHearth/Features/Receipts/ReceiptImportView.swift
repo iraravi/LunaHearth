@@ -643,39 +643,11 @@ private struct ReceiptNameChoice: View {
     let proposal: ReceiptNameProposal
     let keepBillName: () -> Void
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            // Two aligned columns: the label on the left, the name on the right.
-            Grid(alignment: .leadingFirstTextBaseline, horizontalSpacing: 12, verticalSpacing: 6) {
-                GridRow {
-                    Text("On bill").font(.caption).foregroundStyle(.secondary)
-                    Text(proposal.original).font(.caption.monospaced()).foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                GridRow {
-                    Text(proposal.sourceLabel).font(.caption).foregroundStyle(.secondary)
-                    Text(proposal.name).font(.subheadline.weight(.semibold)).foregroundStyle(.primary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-            }
-            if proposal.fromSavedItem {
-                Text("Confirm it is the same product.").font(.caption2).foregroundStyle(.secondary)
-            }
-            HStack(spacing: 10) {
-                Button { line.name = proposal.name } label: {
-                    Text(proposal.fromAI ? "Accept AI" : "Accept").frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.borderedProminent)
-                .accessibilityIdentifier("receipt.acceptName.\(line.id)")
-                Button { keepBillName() } label: {
-                    Text("Keep bill").frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .accessibilityIdentifier("receipt.keepBillName.\(line.id)")
-            }
-            .controlSize(.regular).font(.subheadline.weight(.semibold))
-            .frame(minHeight: 44)
-        }
-        .accessibilityElement(children: .contain)
+        SuggestionCard(originalLabel: "On bill", original: proposal.original, suggestion: proposal.name,
+                       source: proposal.source, sourceLabel: proposal.sourceLabel,
+                       note: proposal.fromSavedItem ? "Confirm it is the same product." : nil,
+                       keepTitle: "Keep bill", accessibilityID: "receipt.name.\(line.id)",
+                       accept: { line.name = proposal.name }, keep: keepBillName)
     }
 }
 

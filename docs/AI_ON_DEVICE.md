@@ -383,3 +383,10 @@ Product decision: receipt reading contains no store-specific code. Layouts are r
 - Expense currencies widened to 25 two-decimal currencies. Whole-unit currencies (JPY, KRW) and three-decimal ones (KWD, BHD) need a minor-unit migration first.
 
 Validation: 407 unit tests pass, including synthetic India GST, German, UK, US and multilingual-label fixtures. Fixtures prove the general rules only; they do not measure real-device OCR or real receipt coverage.
+
+## Shared AI layer (3.0)
+
+- **One path to the model:** every feature calls `OnDeviceModel` (`Services/AI/OnDeviceModel.swift`). It owns the `FeatureAccess` permission check, availability, cancellation, error mapping and device-only diagnostics. A feature service keeps only its instructions, its `@Generable` output, output validation and its rule-based fallback.
+- **Failures:** `OnDeviceModel` throws `CancellationError` or `OnDeviceModelFailure(reason:)`. Services catch the failure and return their fallback; they never stringify model errors.
+- **One review card:** `SuggestionCard` (`Core/DesignSystem`) shows the original value, the suggestion and its `SuggestionSource` (You named it / Your saved item / Suggested / AI says), then Accept or Keep. Nothing changes until Accept.
+- **Priority:** the person's earlier choices beat app rules, and rules beat the model (`SuggestionSource.priority`).

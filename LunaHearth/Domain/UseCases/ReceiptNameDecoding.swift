@@ -18,8 +18,10 @@ struct ReceiptNameProposal: Sendable {
     /// A name the person chose for this exact printed label on an earlier receipt.
     var fromCorrection = false
 
+    var source: SuggestionSource { fromCorrection ? .memory : fromSavedItem ? .savedItem : fromAI ? .ai : .rule }
     /// Where the suggestion came from, shown beside the name printed on the bill.
-    var sourceLabel: String { fromCorrection ? "You named it" : fromSavedItem ? "Your saved item" : fromAI ? "AI says" : "Decoded" }
+    /// Rules on a receipt decode abbreviations, so they say "Decoded".
+    var sourceLabel: String { source == .rule ? "Decoded" : source.label }
 }
 
 struct ReceiptNameDecoding: Sendable {
