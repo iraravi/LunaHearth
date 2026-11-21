@@ -20,6 +20,8 @@ enum ReceiptMultilineDetails {
         let expected = NSDecimalNumber(decimal: weight * Decimal(unit)).doubleValue
         return abs(expected - Double(total)) <= 1.01 ? total : nil
     }
+    static func weightQuantity(of row: String) -> String? { weightParts(row).map(weightQuantity) }
+    static func countQuantity(of row: String) -> String? { parts(row).map { "\($0[0]) pieces" } }
     static let weightUnit = #"(?:pounds?|lbs?|kgs?|kilos?|kilograms?|grams?|g|oz|ounces?)"#
     private static func weightParts(_ row: String) -> [String]? {
         let money = #"(?:"# + ExpenseRules.currencyPattern + #")?\s*(\d+[.,]\d{2})"#

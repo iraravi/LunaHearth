@@ -184,7 +184,15 @@ enum ReceiptDebugReport {
 
         \(section("C. APPLE MODEL READING THE IMAGE (option 1)", model, checkText: current.text, printedIn: current.text))
           Totals for C come from OCR text, never from the model.
+
+        \(mathReader(current.text))
         """
+    }
+    /// D: the math reader on its own, so every scan shows whether one reading of the rows adds up.
+    static func mathReader(_ text: String) -> String {
+        let outcome = ReceiptSolver.solve(text: text)
+        let rows = outcome.lines.enumerated().map { "  \($0.offset + 1). \($0.element.name) | \($0.element.amount)\($0.element.quantity.isEmpty ? "" : " | \($0.element.quantity)")" }
+        return (["D. MATH READER (used when A does not add up)", "  Status: \(outcome.status) · \(outcome.note)"] + rows).joined(separator: "\n")
     }
     static func totalEvidenceSummary(_ text: String) -> String {
         switch ExpenseRules.receiptTotalEvidence(text) {

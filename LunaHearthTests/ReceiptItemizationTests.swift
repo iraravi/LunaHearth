@@ -122,11 +122,15 @@ struct ReceiptItemizationTests {
         #expect(scan.lines.map(\.amount) == ["3.00"])
         #expect(ReceiptReconciliation.check(lines: scan.lines, text: text) == .verified)
     }
-    @Test func discountWithNoClearItemStaysForReview() {
-        // Two discounts stacked under one item: never guess which applies.
+    @Test func stackedDiscountsUnderOneItemAreProvenByTheTotal() {
+        // Two coupons stacked under the only item: the total leaves exactly one reading.
         let text = "SHOP\nMILK 4.00\nCOUPON -1.00\nCOUPON -0.50\nSUBTOTAL 2.50\nTOTAL 2.50"
         let scan = ReceiptRules.scan(text: text, sameLinePrices: true)
-        #expect(ReceiptReconciliation.check(lines: scan.lines, text: text) != .verified)
+        #expect(scan.lines.map(\.amount) == ["2.50"])
+        #expect(ReceiptReconciliation.check(lines: scan.lines, text: text) == .verified)
+        // The same coupons that do not reproduce the total still hide the list.
+        let wrong = "SHOP\nMILK 4.00\nCOUPON -1.00\nCOUPON -0.50\nSUBTOTAL 2.00\nTOTAL 2.00"
+        #expect(ReceiptReconciliation.check(lines: ReceiptRules.scan(text: wrong, sameLinePrices: true).lines, text: wrong) != .verified)
     }
     // Regression: TestFlight 2.0.2 (84) Target receipt was hidden as a mismatch.
     private let target = """

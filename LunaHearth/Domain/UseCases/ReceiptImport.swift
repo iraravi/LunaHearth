@@ -136,6 +136,12 @@ enum ReceiptRules {
         }
         if sameLinePrices { ReceiptItemDiscounts.apply(text: bounded, lines: &grouped) }
         joinNameLines(sourceRows, lines: &grouped)
+        // When the line-by-line reading does not add up, the math reader gets a turn: it proposes
+        // items only when exactly one reading of the rows matches the printed totals.
+        if sameLinePrices, ReceiptReconciliation.check(lines: grouped, text: bounded) != .verified {
+            let solved = ReceiptSolver.solve(text: bounded)
+            if solved.status == .unique { return ReceiptScan(text: bounded, lines: solved.lines) }
+        }
         return ReceiptScan(text: bounded, lines: grouped)
     }
     /// A product name that wraps onto two printed rows ("RAJABOGAM PONNI BOILED RICE" above
@@ -144,21 +150,23 @@ enum ReceiptRules {
     /// Amounts never change here.
     static func joinNameLines(_ rows: [String], lines: inout [ReceiptLine]) {
         let rows = rows.map { $0.trimmingCharacters(in: .whitespaces) }
-        func plainName(_ row: String) -> Bool {
-            row.count <= 60 && row.filter(\.isLetter).count >= 4 && row.split(separator: " ").count >= 2
-                && row == row.uppercased() && !row.contains(":") && !row.contains("@") && !row.contains("*")
-                && row.range(of: #"\d[.,]\d{2}"#, options: .regularExpression) == nil
-                && row.range(of: #"(?i)/\s*(?:lb|lbs|kg)\b"#, options: .regularExpression) == nil
-                && !isNonProductRow(row) && row.range(of: excludedRow, options: .regularExpression) == nil
-        }
         for index in lines.indices {
             let name = lines[index].name
             let found = rows.indices.filter { $0 > 1 && rows[$0].hasPrefix(name) && rows[$0].range(of: pricePattern, options: .regularExpression) != nil }
-            guard found.count == 1, let row = found.first, plainName(rows[row - 1]),
+            guard found.count == 1, let row = found.first, plainNameRow(rows[row - 1]),
                   rows[row - 2].range(of: #"\d[.,]\d{2}(?!\d)|^\W*\*+\s*\p{L}+\s*\*+\W*$"#, options: .regularExpression) != nil else { continue }
             lines[index].name = rows[row - 1] + " " + name
         }
         for index in lines.indices { lines[index].name = ReceiptMultilineDetails.cleanName(lines[index].name) }
+    }
+
+    /// An unpriced all-caps row that reads like the first half of a wrapped product name.
+    static func plainNameRow(_ row: String) -> Bool {
+        row.count <= 60 && row.filter(\.isLetter).count >= 4 && row.split(separator: " ").count >= 2
+            && row == row.uppercased() && !row.contains(":") && !row.contains("@") && !row.contains("*")
+            && row.range(of: #"\d[.,]\d{2}"#, options: .regularExpression) == nil
+            && row.range(of: #"(?i)/\s*(?:lb|lbs|kg)\b"#, options: .regularExpression) == nil
+            && !isNonProductRow(row) && row.range(of: excludedRow, options: .regularExpression) == nil
     }
 
     /// Summary, payment and identifier rows in any supported language; never products.
