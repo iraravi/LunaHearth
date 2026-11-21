@@ -23,9 +23,3 @@ struct ShowFamilyCalendarIntent: AppIntent {
         .result(opensIntent: OpenURLIntent(try AppointmentLink.url(date: date ?? .now, create: false)))
     }
 }
-struct HouseholdCalendarShortcuts: AppShortcutsProvider {
-    static var appShortcuts: [AppShortcut] {
-        AppShortcut(intent: DraftAppointmentIntent(), phrases: ["Plan an appointment in \(.applicationName)"], shortTitle: "Plan appointment", systemImageName: "calendar.badge.plus")
-        AppShortcut(intent: ShowFamilyCalendarIntent(), phrases: ["Show my family calendar in \(.applicationName)"], shortTitle: "Family calendar", systemImageName: "calendar")
-    }
-}

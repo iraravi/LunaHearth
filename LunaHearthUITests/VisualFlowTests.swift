@@ -224,6 +224,30 @@ final class VisualFlowTests: XCTestCase {
         app.terminate()
     }
 
+    func testQuickAddSeveralFromOneNote() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-today"]
+        app.launch()
+        XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 15))
+        app.buttons["today.quickAdd"].tap()
+        tapVisible("quickAdd.several", app: app)
+        let note = app.textViews["capture.text"].exists ? app.textViews["capture.text"] : app.textFields["capture.text"]
+        XCTAssertTrue(note.waitForExistence(timeout: 5))
+        note.typeText("Costco Saturday, zucchini, call plumber tomorrow, $45 gas yesterday")
+        if app.buttons["Done"].firstMatch.exists { app.buttons["Done"].firstMatch.tap() }
+        let add = app.buttons["capture.add"]
+        XCTAssertTrue(add.waitForExistence(timeout: 5))
+        XCTAssertEqual(add.label, "Add 4")
+        XCTAssertEqual(app.buttons.matching(identifier: "capture.kind").count, 4)
+        capture("Quick-Add-Several-Review", app: app)
+        add.tap()
+        XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 5))
+        XCTAssertFalse(add.exists, "Both sheets close after adding")
+        tapVisible("today.living.shopping", app: app)
+        XCTAssertTrue(app.staticTexts["Zucchini"].firstMatch.waitForExistence(timeout: 5))
+        app.terminate()
+    }
+
     func testTodayPlanningRetainsSelectionDuringRotation() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--ui-testing-pantry"]

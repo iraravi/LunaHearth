@@ -16,6 +16,7 @@ struct AppRootView: View {
     @Environment(CalendarDeliveryCoordinator.self) private var calendarDelivery
     @Environment(AppointmentAlertCoordinator.self) private var appointmentAlerts
     @State private var appointmentLink: AppointmentLink?
+    @State private var captureLink: CaptureLink?
     @AppStorage("welcome.walkthrough.v1.reviewed") private var walkthroughReviewed = false
     @Binding var aiAvailability: AIAvailability
     @Environment(PublicConfigurationStore.self) private var publicStatus
@@ -102,6 +103,7 @@ struct AppRootView: View {
             NavigationStack { HouseholdSharingView().toolbar { Button("Done") { showCloudStatus = false } } }
         }
         .sheet(item: $appointmentLink) { link in AppointmentLinkView(link: link) }
+        .sheet(item: $captureLink) { link in QuickCaptureView(text: link.text) }
         .onOpenURL { url in
             if url.scheme == "lunahearth", url.host == "appointment", url.pathComponents.count == 3,
                let homeID = UUID(uuidString: url.pathComponents[1]), let eventID = UUID(uuidString: url.pathComponents[2]) {
@@ -112,6 +114,7 @@ struct AppRootView: View {
                 return
             }
             if let link = AppointmentLink(url: url) { load(); appointmentLink = link; return }
+            if let link = CaptureLink(url: url) { load(); if repository.household != nil { captureLink = link }; return }
             if HouseholdInvitationLink.url(from: url.absoluteString) != nil {
                 Task { await sharing.lookupInvitation(url.absoluteString) }; return
             }

@@ -1,7 +1,7 @@
 import Foundation
 
 enum AppFeature: String, CaseIterable, Codable, Sendable {
-    case ai, aiMeals, aiShopping, aiPantry, aiCategories, aiDuplicates, aiReceiptNames, aiPhoto, aiBriefs
+    case ai, aiMeals, aiShopping, aiPantry, aiCategories, aiDuplicates, aiReceiptNames, aiPhoto, aiBriefs, aiQuickAdd
     case receipts, receiptImport, receiptExpenses, receiptPantry, pantryPhoto, pantryTemplates
     case shoppingIdeas, shoppingAssignments, shoppingToPantry, buyAgain, mealIdeas, weeklyMeals, mealReminder
     case notesSharing, calendarExport, reminders
@@ -17,6 +17,7 @@ enum AppFeature: String, CaseIterable, Codable, Sendable {
         case .aiReceiptNames: "AI receipt names"
         case .aiPhoto: "AI photo recognition"
         case .aiBriefs: "AI summaries"
+        case .aiQuickAdd: "AI Quick Add"
         case .receipts: "Receipt scanning"
         case .receiptImport: "Receipt import"
         case .receiptExpenses: "Receipt expenses"

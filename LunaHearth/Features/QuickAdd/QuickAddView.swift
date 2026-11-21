@@ -15,6 +15,8 @@ struct QuickAddView: View {
     @State private var comparing = false
     @State private var aiMatches: Set<UUID> = []
     @State private var comparisonStatus: String?
+    @State private var capturing = false
+    @State private var addedSeveral = false
     private let comparer: any IngredientComparisonService = OnDeviceIngredientComparisonService()
     private var comparisonCandidates: [GroceryItem] {
         repository.groceries.filter { !$0.isCompleted && $0.id != draft.recordID }
@@ -66,6 +68,13 @@ struct QuickAddView: View {
                     }.accessibilityIdentifier("quickAdd.kind").disabled(draft.recordID != nil) }
                     TextField(draft.kind == .warranty ? "Provider / warranty name" : "Name or title", text: $draft.title)
                         .accessibilityIdentifier("quickAdd.title").focused($focusedField, equals: .title)
+                }
+                if !fixedKind && draft.recordID == nil {
+                    Section {
+                        Button { capturing = true } label: {
+                            Label("Add several at once", systemImage: "text.badge.plus")
+                        }.accessibilityIdentifier("quickAdd.several")
+                    } footer: { Text("Type a note like “milk, eggs, call plumber tomorrow, $45 gas” and review each item.") }
                 }
                 details
                 if appleOnlyEntry {
@@ -128,6 +137,7 @@ struct QuickAddView: View {
             .onChange(of: repository.household?.id) { _, _ in resetComparison() }
             .task { if appleDestination { await connections.refreshSources(.reminders) } }
             .saveError($error)
+            .sheet(isPresented: $capturing, onDismiss: { if addedSeveral { dismiss() } }) { QuickCaptureView { addedSeveral = true } }
             .onChange(of: focusedField) { _, field in
                 if field == .store {
                     withAnimation(reduceMotion ? nil : .default) { scroll.scrollTo("shopping.store", anchor: .top) }

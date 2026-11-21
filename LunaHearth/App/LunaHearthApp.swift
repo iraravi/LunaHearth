@@ -1,3 +1,4 @@
+import AppIntents
 import SwiftUI
 import SwiftData
 
@@ -51,6 +52,9 @@ struct LunaHearthApp: App {
             if isUITest && ProcessInfo.processInfo.arguments.contains("--ui-testing-pantry") { try UITestPantryFixture.seed(repository) }
             #endif
             _repository = State(initialValue: repository)
+            // Siri and Shortcuts write to the real store only, never the temporary recovery one.
+            let intentStore = HouseholdIntentStore(repository: storeNeedsRecovery ? nil : repository)
+            AppDependencyManager.shared.add(dependency: intentStore)
             let preferences = isUITest ? UserDefaults(suiteName: "UITest.AppleConnections.\(UUID().uuidString)") ?? .standard : .standard
             let calendarDelivery: CalendarDeliveryCoordinator
             #if DEBUG
