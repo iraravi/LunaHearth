@@ -135,8 +135,32 @@ enum ReceiptRules {
             if stripped.rangeOfCharacter(from: .letters) != nil, stripped.count >= 2 { grouped[index].name = stripped }
         }
         if sameLinePrices { ReceiptItemDiscounts.apply(text: bounded, lines: &grouped) }
+        joinNameLines(sourceRows, lines: &grouped)
         return ReceiptScan(text: bounded, lines: grouped)
     }
+    /// A product name that wraps onto two printed rows ("RAJABOGAM PONNI BOILED RICE" above
+    /// "GRAIN MARKET 20LB (Each) F $18.99"): the unpriced row directly above joins the name,
+    /// only when it sits inside the item list (the row before it holds money or a sale marker).
+    /// Amounts never change here.
+    static func joinNameLines(_ rows: [String], lines: inout [ReceiptLine]) {
+        let rows = rows.map { $0.trimmingCharacters(in: .whitespaces) }
+        func plainName(_ row: String) -> Bool {
+            row.count <= 60 && row.filter(\.isLetter).count >= 4 && row.split(separator: " ").count >= 2
+                && row == row.uppercased() && !row.contains(":") && !row.contains("@") && !row.contains("*")
+                && row.range(of: #"\d[.,]\d{2}"#, options: .regularExpression) == nil
+                && row.range(of: #"(?i)/\s*(?:lb|lbs|kg)\b"#, options: .regularExpression) == nil
+                && !isNonProductRow(row) && row.range(of: excludedRow, options: .regularExpression) == nil
+        }
+        for index in lines.indices {
+            let name = lines[index].name
+            let found = rows.indices.filter { $0 > 1 && rows[$0].hasPrefix(name) && rows[$0].range(of: pricePattern, options: .regularExpression) != nil }
+            guard found.count == 1, let row = found.first, plainName(rows[row - 1]),
+                  rows[row - 2].range(of: #"\d[.,]\d{2}(?!\d)|^\W*\*+\s*\p{L}+\s*\*+\W*$"#, options: .regularExpression) != nil else { continue }
+            lines[index].name = rows[row - 1] + " " + name
+        }
+        for index in lines.indices { lines[index].name = ReceiptMultilineDetails.cleanName(lines[index].name) }
+    }
+
     /// Summary, payment and identifier rows in any supported language; never products.
     /// Short words that are also common brand words (moms, ust, mva) are only matched as labels.
     static let excludedRow: String = {
@@ -180,7 +204,7 @@ enum ReceiptRules {
             // Contact details, promotions and unit-price calculations are not products.
             #"(?i)(?:https?://|www\.|\b[^\s@]+@[^\s@]+\.[a-z]{2,}\b)"#,
             #"(?i)^\W*(?:thank\s+you|thanks\s+for|please\s+(?:come|visit|retain|keep)|visit\s+us|survey|rewards?\s+(?:points|balance)|points\s+(?:earned|balance)|save\s+(?:up\s+to\s+)?[₹$€£\d])\b"#,
-            #"(?i)^\s*\d+(?:[.,]\d+)?\s*(?:kg|g|lb|lbs|oz|l|ml)\s*(?:@|x|×|at)\s*"#
+            #"(?i)^\s*\d+(?:[.,]\d+)?\s*(?:kg|g|lb|lbs|oz|l|ml|pounds?|kilos?|kilograms?|grams?|ounces?)\s*(?:@|x|×|at)\s*"#
         ]
         return patterns.contains { line.range(of: $0, options: .regularExpression) != nil }
     }

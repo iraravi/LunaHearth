@@ -148,6 +148,12 @@ enum ExpenseRules {
         }
         guard let selected else { return labelSeen ? .unreadable : .absent }
         // Payment evidence must agree even when the higher-priority TOTAL was readable.
+        // One bill paid with two cards prints one "Amount:" per card; together they are the total.
+        if paymentAmounts.count > 1, let total = try? minorUnits(selected),
+           paymentAmounts.compactMap({ try? minorUnits($0) }).reduce(0, +) == total,
+           paymentAmounts.count == lines.filter({ $0.range(of: labels[2], options: .regularExpression) != nil }).count {
+            return .value(selected)
+        }
         guard paymentAmounts.isEmpty || paymentAmounts == [selected] else {
             // Recover only a printed candidate corroborated by subtotal + tax.
             // Never repair a digit based on arithmetic alone or fabricate a total.
