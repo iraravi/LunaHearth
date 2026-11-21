@@ -120,6 +120,7 @@
 		5936D111383B91EB90383021 /* PantryVisualRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A1CE5CA2F89284B70188346 /* PantryVisualRules.swift */; };
 		5946F7A54C486BE03E583E52 /* PantryPhotoImport.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA786DB87D3F0288696A08E1 /* PantryPhotoImport.swift */; };
 		59D40E76C3036B520C89BEF0 /* ReceiptNameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D42D54EC6DE58854899590AC /* ReceiptNameTests.swift */; };
+		5A325BBD3E427C6E2CBDF313 /* HouseholdSmartsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F028B8D07B09CE8CA4840E7 /* HouseholdSmartsTests.swift */; };
 		5A9057CBF2D693C186C9F072 /* PantryHingeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B2EE8D6A21CD9906E4A24F3 /* PantryHingeState.swift */; };
 		5B2204C003852ED61C870859 /* CalendarDeliveryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D0EC0B527C95CE96B0D674 /* CalendarDeliveryTests.swift */; };
 		5CE9EC87924F9B632FF4E74C /* LocalStoreConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90AC97FE46236E6CC68E1B6B /* LocalStoreConfiguration.swift */; };
@@ -237,6 +238,7 @@
 		ABBCA5F264AC36A8172E147E /* EntryDraftMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D9355F07F2B131A4EF30284 /* EntryDraftMapping.swift */; };
 		ABBECA127D3D04F52C35CD8F /* InventoryRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A9EF9F63E6F1DCC6CFD2CAA /* InventoryRules.swift */; };
 		AC153DB9C64A906BCE620431 /* HouseholdRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 714ABA35B1BFA3729BEE68DC /* HouseholdRules.swift */; };
+		AE28E445C71291673D2CC435 /* HouseholdSmarts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDE7945C21275440F3835E2 /* HouseholdSmarts.swift */; };
 		B0C37F79FEE9A44AA8105997 /* CloudKitBackupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD6AE3E56E55884D4698462C /* CloudKitBackupService.swift */; };
 		B0EBB529DCC40674DCEBCF05 /* AssignedShopping.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57C08FD1E21AECF953ACDBD /* AssignedShopping.swift */; };
 		B194DDE8FD66CEEAA69FF041 /* ConnectionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF68D904B2557D799D0BA591 /* ConnectionsView.swift */; };
@@ -394,6 +396,7 @@
 		1D5975F020EFEE0BCA23A52C /* ReceiptDebugTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptDebugTests.swift; sourceTree = "<group>"; };
 		1DD7FD5238F39C3808170697 /* PantryTemplates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryTemplates.swift; sourceTree = "<group>"; };
 		1E68E8BDC8B78C00E720FF35 /* AIStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIStatus.swift; sourceTree = "<group>"; };
+		1F028B8D07B09CE8CA4840E7 /* HouseholdSmartsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSmartsTests.swift; sourceTree = "<group>"; };
 		20DCDB93D86989A3A80C31D5 /* LunaHearthTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = LunaHearthTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		23A0837A309232F00C2F28C7 /* AppointmentRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentRules.swift; sourceTree = "<group>"; };
 		24D317825223E1867FA85853 /* AssignmentNotificationRouteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssignmentNotificationRouteTests.swift; sourceTree = "<group>"; };
@@ -569,6 +572,7 @@
 		9C1AF83B19F0153DBCA1714A /* OnDevicePantryPhotoScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDevicePantryPhotoScanner.swift; sourceTree = "<group>"; };
 		9C6FA38C99744083AD79E204 /* GroceryToolsSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryToolsSheet.swift; sourceTree = "<group>"; };
 		9F25F716FF36ECF0B57F3211 /* OrbitingHomePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrbitingHomePreview.swift; sourceTree = "<group>"; };
+		9FDE7945C21275440F3835E2 /* HouseholdSmarts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSmarts.swift; sourceTree = "<group>"; };
 		A0397CE6C345EBC248EE0465 /* ReceiptLabelReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptLabelReview.swift; sourceTree = "<group>"; };
 		A1589196DA67B7B64404BBF7 /* HouseholdExpense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdExpense.swift; sourceTree = "<group>"; };
 		A20E4D8D6D794827A9FCD27D /* VisionReceiptScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionReceiptScanner.swift; sourceTree = "<group>"; };
@@ -1043,6 +1047,7 @@
 				CE90A1880C0547877E4A92EA /* HouseholdCleanup.swift */,
 				FC1DF160CC9C4BC66786839E /* HouseholdHelp.swift */,
 				714ABA35B1BFA3729BEE68DC /* HouseholdRules.swift */,
+				9FDE7945C21275440F3835E2 /* HouseholdSmarts.swift */,
 				50A50F2F35F5CAAD08F1F6E0 /* HouseholdSupportArticle.swift */,
 				D6BB550B1D3BEDBC727B1F51 /* IngredientMatching.swift */,
 				7A9EF9F63E6F1DCC6CFD2CAA /* InventoryRules.swift */,
@@ -1356,6 +1361,7 @@
 				15134D139FCBA1AB6354DA1B /* HouseholdHelpTests.swift */,
 				E24E64D2FD739C12599915DB /* HouseholdRulesTests.swift */,
 				411ED1CCD9AA5D7A0BFD49CA /* HouseholdSharingTests.swift */,
+				1F028B8D07B09CE8CA4840E7 /* HouseholdSmartsTests.swift */,
 				5E9E7ACE3A3C281FA5BE35F7 /* IndiaBazaarReceiptTests.swift */,
 				C88A63FE47AF2709C8C8384C /* IngredientMatchingTests.swift */,
 				27FB8F9DA42A2C5FA63484F8 /* InventoryAttentionTests.swift */,
@@ -1568,6 +1574,7 @@
 				44170EEFD95F85AD90ED68FC /* HouseholdHelpTests.swift in Sources */,
 				46588355EBE95EC07EE735C9 /* HouseholdRulesTests.swift in Sources */,
 				7411EAD6B0F15B5AC465A785 /* HouseholdSharingTests.swift in Sources */,
+				5A325BBD3E427C6E2CBDF313 /* HouseholdSmartsTests.swift in Sources */,
 				E707EACDA86B13E496A69BCD /* IndiaBazaarReceiptTests.swift in Sources */,
 				6C3DDD63525D08B56D8E38F3 /* IngredientMatchingTests.swift in Sources */,
 				54ED4452F062951689E58705 /* InventoryAttentionTests.swift in Sources */,
@@ -1723,6 +1730,7 @@
 				CC731EF9C2EF70BF401E80BA /* HouseholdSharing.swift in Sources */,
 				ED72C147FE2E3E3C5E0565C9 /* HouseholdSharingController.swift in Sources */,
 				A04165F082A09F6C5B713607 /* HouseholdSharingView.swift in Sources */,
+				AE28E445C71291673D2CC435 /* HouseholdSmarts.swift in Sources */,
 				002F56E4C4A45E00BE6CD2F2 /* HouseholdSupportArticle.swift in Sources */,
 				FE5BAF36A09F27F624524256 /* HouseholdSyncRecords.swift in Sources */,
 				EC1A2B03AB40CA2813250ADC /* HouseholdToggleStyle.swift in Sources */,
@@ -1937,7 +1945,7 @@
 				CLOUDKIT_ENVIRONMENT = Production;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 94;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -1951,7 +1959,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 3.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -2037,7 +2045,7 @@
 				CLOUDKIT_ENVIRONMENT = Development;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 94;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -2057,7 +2065,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 3.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -2124,7 +2132,7 @@
 				CLOUDKIT_ENVIRONMENT = Production;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 93;
+				CURRENT_PROJECT_VERSION = 94;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 647V74N5JV;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -2138,7 +2146,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 2.0.2;
+				MARKETING_VERSION = 3.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

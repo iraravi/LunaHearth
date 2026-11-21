@@ -1792,6 +1792,8 @@ final class VisualFlowTests: XCTestCase {
             XCTAssertTrue(item.isHittable)
             XCTAssertLessThan(item.frame.minY, app.frame.maxY - 100)
             capture("92-\(screen)-Polish-\(dark ? "Dark" : (landscape ? "Landscape" : (largeText ? "Large" : "Standard")))", app: app)
+            // Aisle order can put the item lower down; the tools sit at the top of the list.
+            for _ in 0..<6 where !app.buttons["\(screen).tools"].isHittable { app.swipeDown() }
             tapVisible("\(screen).tools", app: app)
             XCTAssertTrue(app.buttons["\(screen).organizeAI"].waitForExistence(timeout: 5))
             if dark { capture("93-\(screen)-Tools-Dark", app: app) }
@@ -1810,8 +1812,9 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap(); app.staticTexts["Shopping"].tap()
         if app.buttons["shopping.changeView"].label == "Shelves" { app.buttons["shopping.changeView"].tap() }
-        let item = app.buttons["shopping.item.Cumin seeds"]
-        XCTAssertTrue(item.waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["shopping.item.Cumin seeds"].waitForExistence(timeout: 5))
+        // Items follow the store's aisles, so check whichever comes first.
+        let item = app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'shopping.item.'")).firstMatch
         XCTAssertLessThan(item.frame.minY, app.frame.maxY - 100, "First shopping item should begin in the initial viewport")
         XCTAssertTrue(app.buttons["shopping.add"].isHittable)
         capture(largeText ? "85-Compact-Shopping-Accessibility" : "84-Compact-Shopping", app: app)

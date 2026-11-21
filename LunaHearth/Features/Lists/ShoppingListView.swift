@@ -72,7 +72,8 @@ struct ShoppingListView: View {
                 }.listRowBackground(ShoppingTheme.surface)
             }
             ForEach(Array(Set(visibleItems.map { storeName($0) })).sorted(), id: \.self) { store in
-                let items = visibleItems.filter { storeName($0) == store }
+                // In aisle order, so the list follows a walk through the store.
+                let items = ShoppingAisle.sorted(visibleItems.filter { storeName($0) == store }, name: \.name, category: category)
                 Section {
                     if shelfView {
                         LazyVGrid(columns: typeSize.isAccessibilitySize ? [GridItem(.flexible(), alignment: .top)] : [GridItem(.adaptive(minimum: 155), spacing: 12, alignment: .top)], alignment: .leading, spacing: 12) {

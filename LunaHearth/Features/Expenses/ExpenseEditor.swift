@@ -126,8 +126,12 @@ struct ExpenseFields: View {
 }
 struct ExpenseFieldRows: View {
     @Binding var draft: ExpenseDraft
+    @Environment(LocalHouseholdRepository.self) private var repository
+    @State private var suggested: SuggestionSource?
+    @State private var picked = false
     var body: some View {
         ExpenseMerchantField(merchant: $draft.merchant)
+            .onChange(of: draft.merchant) { _, merchant in suggestCategory(merchant) }
         VStack(alignment: .leading, spacing: 6) {
             Text("Total amount").font(.caption).foregroundStyle(.secondary)
             TextField("e.g. 12.50", text: $draft.amount).keyboardType(.decimalPad)
@@ -137,8 +141,21 @@ struct ExpenseFieldRows: View {
             ForEach(ExpenseRules.currencies, id: \.self) { Text($0).tag($0) }
         }.accessibilityIdentifier("expense.currency")
         DatePicker("Purchase date", selection: $draft.date, displayedComponents: .date).accessibilityIdentifier("expense.date")
-        Picker("Category", selection: $draft.category) {
+        Picker("Category", selection: Binding(get: { draft.category }, set: { draft.category = $0; picked = true; suggested = nil })) {
             ForEach(ExpenseCategory.allCases) { Label($0.rawValue, systemImage: $0.symbol).tag($0) }
         }.accessibilityIdentifier("expense.category")
+        if let suggested {
+            Label(suggested == .memory ? "Chosen from your past expenses here" : "Suggested from the name", systemImage: "wand.and.sparkles")
+                .font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("expense.categorySuggestion")
+        }
+    }
+
+    /// Fills the category while it is still the default or our own earlier guess; a choice
+    /// the person made is never replaced.
+    private func suggestCategory(_ merchant: String) {
+        guard !picked, draft.category == .other || suggested != nil else { return }
+        if let guess = ExpenseInsights.suggestedCategory(for: merchant, history: repository.expenseReportItems) {
+            draft.category = guess.category; suggested = guess.source
+        } else if suggested != nil { draft.category = .other; suggested = nil }
     }
 }

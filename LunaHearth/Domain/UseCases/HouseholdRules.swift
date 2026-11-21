@@ -50,6 +50,8 @@ struct EntryDraft: Identifiable {
     var quantityUnit: ShoppingUnit = .custom
     var shoppingDate: Date = ShoppingEntryRules.tomorrow()
     var allowDuplicateShoppingItem = false
+    /// Tasks only: a `TaskRepeat.rule`.
+    var recurrenceRule: String?
 
     func validate() throws {
         _ = try HouseholdRules.requiredName(title)

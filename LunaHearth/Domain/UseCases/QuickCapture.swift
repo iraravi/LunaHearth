@@ -40,6 +40,9 @@ struct QuickCaptureItem: Identifiable, Sendable, Equatable {
     /// The phrase this item came from, shown so the person can judge the reading.
     var original: String
     var included = true
+    /// A household member named in the note ("Ravi: take out trash", "…, Ravi").
+    var memberName = ""
+    var repeatRule: TaskRepeat?
     /// Why the item starts unchecked, e.g. "Already on your list".
     var note: String?
 }
@@ -71,34 +74,68 @@ enum QuickCaptureRules {
 
     // MARK: Parsing
 
-    static func parse(_ text: String, now: Date = .now, calendar: Calendar = .current, savedStores: [String] = []) -> [QuickCaptureItem] {
+    static func parse(_ text: String, now: Date = .now, calendar: Calendar = .current, savedStores: [String] = [], memberNames: [String] = []) -> [QuickCaptureItem] {
         var storeContext = "", storeDate: Date?
         var items: [QuickCaptureItem] = []
-        for piece in pieces(text) {
-            if let item = expense(piece, now: now, calendar: calendar) { items.append(item); continue }
+        for original in pieces(text) {
+            // "…, Ravi" on its own assigns the item before it.
+            if let name = memberNames.first(where: { $0.caseInsensitiveCompare(original) == .orderedSame }) {
+                if var last = items.popLast() { if last.kind != .expense { last.memberName = name }; items.append(last) }
+                continue
+            }
+            if let item = expense(original, now: now, calendar: calendar) { items.append(item); continue }
+            let (member, piece) = assignee(original, names: memberNames)
+            if let repeating = TaskRepeat.read(piece, now: now, calendar: calendar) {
+                let when = extractDate(repeating.rest, now: now, calendar: calendar, past: false)
+                let title = taskTitle(when.rest) ?? tidy(when.rest)
+                guard title.contains(where: \.isLetter) else { continue }
+                items.append(QuickCaptureItem(kind: .task, title: title, date: when.date ?? repeating.firstDue, hasTime: when.hasTime,
+                                              original: original, memberName: member, repeatRule: repeating.repeat))
+                continue
+            }
+            let before = items.count
+            defer { if items.count > before, !member.isEmpty { items[items.count - 1].memberName = member } }
             let when = extractDate(piece, now: now, calendar: calendar, past: false)
             if let store = store(named: when.rest, saved: savedStores) {
                 storeContext = store; storeDate = when.date
                 if let date = when.date {
-                    items.append(QuickCaptureItem(kind: .event, title: "\(store) trip", date: date, hasTime: when.hasTime, store: store, original: piece))
+                    items.append(QuickCaptureItem(kind: .event, title: "\(store) trip", date: date, hasTime: when.hasTime, store: store, original: original))
                 }
                 continue
             }
             let lower = when.rest.lowercased()
             if let date = when.date, isEvent(lower) {
-                items.append(QuickCaptureItem(kind: .event, title: tidy(when.rest), date: date, hasTime: when.hasTime, original: piece))
+                items.append(QuickCaptureItem(kind: .event, title: tidy(when.rest), date: date, hasTime: when.hasTime, original: original))
             } else if let task = taskTitle(when.rest) {
-                items.append(QuickCaptureItem(kind: .task, title: task, date: when.date, hasTime: when.hasTime, original: piece))
+                items.append(QuickCaptureItem(kind: .task, title: task, date: when.date, hasTime: when.hasTime, original: original))
             } else if isEvent(lower) || containsWord(lower, "due") {
                 // An appointment without a day still needs doing; a dated "due" is a task.
-                items.append(QuickCaptureItem(kind: .task, title: tidy(when.rest), date: when.date, hasTime: when.hasTime, original: piece))
+                items.append(QuickCaptureItem(kind: .task, title: tidy(when.rest), date: when.date, hasTime: when.hasTime, original: original))
             } else {
                 let (quantity, name) = quantityAndName(shoppingName(when.rest))
                 guard name.contains(where: \.isLetter) else { continue }
-                items.append(QuickCaptureItem(kind: .shopping, title: tidy(name), date: when.date ?? storeDate, quantity: quantity, store: storeContext, original: piece))
+                items.append(QuickCaptureItem(kind: .shopping, title: tidy(name), date: when.date ?? storeDate, quantity: quantity, store: storeContext, original: original))
             }
         }
         return items.filter { !$0.title.isEmpty }
+    }
+
+    // MARK: People
+
+    /// "Ravi: take out trash", "ask Ravi to call the plumber", "call the plumber for Ravi".
+    /// A trailing "for Ravi" only counts on chores, so "cake for Ravi" stays a shopping item.
+    static func assignee(_ piece: String, names: [String]) -> (String, String) {
+        for name in names.sorted(by: { $0.count > $1.count }) where name.count >= 2 {
+            let escaped = NSRegularExpression.escapedPattern(for: name)
+            if let range = piece.range(of: #"^(?:ask\s+)?"# + escaped + #"\s*(?::|-|,|\s+(?:to|should|will|can|needs\s+to|has\s+to|must))\s+"#, options: [.regularExpression, .caseInsensitive]) {
+                return (name, String(piece[range.upperBound...]))
+            }
+            if let range = piece.range(of: #"\s+(?:for|by)\s+"# + escaped + #"$"#, options: [.regularExpression, .caseInsensitive]) {
+                let rest = String(piece[..<range.lowerBound])
+                if taskTitle(rest) != nil || isEvent(rest.lowercased()) { return (name, rest) }
+            }
+        }
+        return ("", piece)
     }
 
     // MARK: Expenses
@@ -326,22 +363,23 @@ enum QuickCaptureRules {
 
 extension QuickCaptureItem {
     /// The household entry this item saves as. Expenses use `expenseDraft` instead.
-    func entryDraft(now: Date = .now, calendar: Calendar = .current) -> EntryDraft? {
+    func entryDraft(now: Date = .now, calendar: Calendar = .current, memberID: UUID? = nil) -> EntryDraft? {
         let name = title.trimmingCharacters(in: .whitespacesAndNewlines)
         switch kind {
         case .shopping:
-            var draft = EntryDraft(kind: .grocery, title: name, quantity: quantity, storeName: store, quantityUnit: .custom)
+            var draft = EntryDraft(kind: .grocery, title: name, memberID: memberID, quantity: quantity, storeName: store, quantityUnit: .custom)
             if let date, date >= calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: now)) ?? now {
                 draft.neededLater = true; draft.shoppingDate = date
             }
             return draft
         case .task:
-            var draft = EntryDraft(kind: .task, title: name)
+            var draft = EntryDraft(kind: .task, title: name, memberID: memberID)
             if let date { draft.hasDate = true; draft.date = date }
+            draft.recurrenceRule = repeatRule?.rule
             return draft
         case .event:
             let start = hasTime ? (date ?? now) : calendar.date(bySettingHour: 9, minute: 0, second: 0, of: date ?? now) ?? now
-            return EntryDraft(kind: .event, title: name, date: start, endDate: start.addingTimeInterval(3600))
+            return EntryDraft(kind: .event, title: name, date: start, endDate: start.addingTimeInterval(3600), memberID: memberID)
         case .expense:
             return nil
         }
@@ -366,6 +404,8 @@ extension QuickCaptureItem {
             parts.append(category.rawValue)
         }
         if !quantity.isEmpty { parts.append(quantity) }
+        if let repeatRule { parts.append(repeatRule.label) }
+        if !memberName.isEmpty { parts.append(memberName) }
         if !store.isEmpty && kind == .shopping { parts.append(store) }
         if let date {
             parts.append(hasTime ? date.formatted(.dateTime.weekday(.abbreviated).hour().minute()) : date.formatted(.dateTime.weekday(.abbreviated).month(.abbreviated).day()))

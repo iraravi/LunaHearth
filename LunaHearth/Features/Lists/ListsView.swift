@@ -104,7 +104,12 @@ private struct HouseholdPlanningListView: View {
                 Toggle("Show completed", isOn: $showCompleted)
                 let tasks = repository.tasks.filter { showCompleted || !$0.isCompleted }
                 if tasks.isEmpty { empty }
-                ForEach(tasks) { TaskRow(task: $0) }
+                ForEach(TaskUrgency.grouped(tasks, due: \.dueAt, completed: \.isCompleted, title: \.title, now: .now), id: \.0) { urgency, group in
+                    Text(urgency.title).font(.subheadline.weight(.semibold))
+                        .foregroundStyle(urgency == .overdue ? AppTheme.accent : .secondary)
+                        .accessibilityAddTraits(.isHeader).accessibilityIdentifier("tasks.group.\(urgency.title)")
+                    ForEach(group) { TaskRow(task: $0) }
+                }
             } else {
                 DatePicker("Day", selection: $selectedDay, displayedComponents: .date)
                 let meals = repository.meals(on: selectedDay)
@@ -145,6 +150,9 @@ struct TaskRow: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(task.title).strikethrough(task.isCompleted)
                     Text(repository.memberName(task.assignedMemberID)).font(.caption).foregroundStyle(.secondary)
+                    if let repeating = TaskRepeat(rule: task.recurrenceRule) {
+                        Label(repeating.label, systemImage: "repeat").font(.caption).foregroundStyle(.secondary)
+                    }
                     if let due = task.dueAt {
                         Text("\(due < Calendar.current.startOfDay(for: .now) && !task.isCompleted ? "Overdue · " : "Due ")\(due.formatted(date: .abbreviated, time: .omitted))")
                             .font(.caption).foregroundStyle(.secondary)

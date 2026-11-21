@@ -8,7 +8,7 @@ extension EntryDraft {
     }
     static func editing(_ task: HouseholdTask) -> EntryDraft {
         EntryDraft(kind: .task, title: task.title, date: task.dueAt ?? .now, hasDate: task.dueAt != nil,
-                   memberID: task.assignedMemberID, recordID: task.id)
+                   memberID: task.assignedMemberID, recordID: task.id, recurrenceRule: task.recurrenceRule)
     }
     static func editing(_ item: GroceryItem) -> EntryDraft {
         EntryDraft(kind: .grocery, title: item.name, memberID: item.assignedMemberID, parentID: item.relatedAssetID, quantity: item.quantityAmount ?? item.quantityText ?? "", storeName: item.storeName ?? "", neededLater: item.neededLater == true, recordID: item.id, quantityUnit: item.quantityUnit.flatMap(ShoppingUnit.init(rawValue:)) ?? .custom, shoppingDate: item.plannedDay.flatMap { ShoppingEntryRules.date(for: $0) } ?? ShoppingEntryRules.tomorrow())

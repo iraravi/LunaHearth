@@ -247,6 +247,14 @@ struct QuickAddView: View {
             Section {
                 Toggle(draft.kind == .warranty ? "Expiration date" : "Due date", isOn: $draft.hasDate)
                 if draft.hasDate { DatePicker("Date", selection: $draft.date, displayedComponents: .date) }
+                if draft.kind == .task && !appleOnlyEntry {
+                    Picker("Repeat", selection: $draft.recurrenceRule) {
+                        Text("Never").tag(nil as String?)
+                        ForEach(repeatChoices) { Text($0.label).tag(Optional($0.rule)) }
+                    }.accessibilityIdentifier("task.repeat")
+                }
+            } footer: {
+                if draft.kind == .task && draft.recurrenceRule != nil { Text("When you complete it, the next one is added.") }
             }
         }
         if (draft.kind == .task && !appleOnlyEntry) || draft.kind == .event {
@@ -348,7 +356,19 @@ struct QuickAddView: View {
         }
     }
 
+    private var repeatChoices: [TaskRepeat] {
+        let current = TaskRepeat(rule: draft.recurrenceRule)
+        return TaskRepeat.presets + (current.map { TaskRepeat.presets.contains($0) ? [] : [$0] } ?? [])
+    }
+
     private func save() {
+        // "2 dozen eggs" typed as the name becomes the amount and the item.
+        if draft.kind == .grocery && draft.recordID == nil && !appleOnlyEntry && draft.quantity.trimmingCharacters(in: .whitespaces).isEmpty {
+            let (quantity, name) = QuickCaptureRules.quantityAndName(draft.title)
+            if !quantity.isEmpty && name.contains(where: \.isLetter) {
+                draft.title = QuickCaptureRules.tidy(name); draft.quantity = quantity; draft.quantityUnit = .custom
+            }
+        }
         if appleOnlyEntry {
             guard let list = connections.list(for: purpose) else { return }
             saving = true

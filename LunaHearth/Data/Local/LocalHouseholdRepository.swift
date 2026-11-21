@@ -261,7 +261,7 @@ final class LocalHouseholdRepository: HouseholdRepository {
                                            endAt: draft.endDate, assignedMemberID: draft.memberID, notes: draft.notes))
             case .task:
                 let task = HouseholdTask(householdID: id, title: title, dueAt: draft.hasDate ? draft.date : nil,
-                                         assignedMemberID: draft.memberID)
+                                         assignedMemberID: draft.memberID, recurrenceRule: TaskRepeat(rule: draft.recurrenceRule)?.rule)
                 context.insert(task)
                 if let settings = reminderDeliverySettings, settings.enabled {
                     context.insert(ReminderDeliveryLink(taskID: task.id, householdID: id, listID: settings.listID))
@@ -306,7 +306,7 @@ final class LocalHouseholdRepository: HouseholdRepository {
         case .task:
             guard let item = tasks.first(where: { $0.id == recordID }) else { throw HouseholdValidation.invalidReference }
             item.title = title; item.dueAt = draft.hasDate ? draft.date : nil
-            item.assignedMemberID = draft.memberID; item.modifiedAt = .now
+            item.assignedMemberID = draft.memberID; item.recurrenceRule = TaskRepeat(rule: draft.recurrenceRule)?.rule; item.modifiedAt = .now
         case .grocery:
             guard let item = groceries.first(where: { $0.id == recordID }) else { throw HouseholdValidation.invalidReference }
             item.name = title; try applyShoppingDetails(draft, to: item)
@@ -371,9 +371,23 @@ final class LocalHouseholdRepository: HouseholdRepository {
         }
     }
 
-    func toggle(_ task: HouseholdTask) throws {
+    func toggle(_ task: HouseholdTask, now: Date = .now, calendar: Calendar = .current) throws {
         guard tasks.contains(where: { $0.id == task.id }) else { throw HouseholdValidation.invalidReference }
-        try commit { task.isCompleted.toggle(); task.modifiedAt = .now }
+        try commit {
+            task.isCompleted.toggle(); task.modifiedAt = .now
+            // Completing a repeating task adds the next one once. The ID is derived from this task,
+            // so two devices completing it at the same time still sync to a single next task.
+            guard task.isCompleted, let repeating = TaskRepeat(rule: task.recurrenceRule) else { return }
+            let nextID = ReceiptRules.groceryID(home: task.householdID, key: "task-repeat|\(task.id.uuidString)")
+            guard try context.fetch(FetchDescriptor<HouseholdTask>(predicate: #Predicate { $0.id == nextID })).isEmpty else { return }
+            let next = HouseholdTask(id: nextID, householdID: task.householdID, title: task.title,
+                                     dueAt: repeating.nextDue(after: task.dueAt, completedAt: now, calendar: calendar),
+                                     assignedMemberID: task.assignedMemberID, recurrenceRule: repeating.rule, relatedAssetID: task.relatedAssetID)
+            context.insert(next)
+            if let settings = reminderDeliverySettings, settings.enabled {
+                context.insert(ReminderDeliveryLink(taskID: next.id, householdID: task.householdID, listID: settings.listID))
+            }
+        }
     }
 
     func toggle(_ grocery: GroceryItem) throws {

@@ -63,14 +63,21 @@ struct AddTaskIntent: AppIntent {
 
     @MainActor func perform() async throws -> some IntentResult & ProvidesDialog {
         let repository = try store.home()
-        let reading = QuickCaptureRules.extractDate(task, now: .now, calendar: .current, past: false)
+        let (member, spoken) = QuickCaptureRules.assignee(task, names: repository.members.map(\.displayName))
+        let repeating = TaskRepeat.read(spoken, now: .now, calendar: .current)
+        let reading = QuickCaptureRules.extractDate(repeating?.rest ?? spoken, now: .now, calendar: .current, past: false)
         let title = QuickCaptureRules.taskTitle(reading.rest) ?? QuickCaptureRules.tidy(reading.rest)
         guard title.contains(where: \.isLetter) else { throw HouseholdIntentError.invalid("Say what needs doing.") }
         var draft = EntryDraft(kind: .task, title: title)
-        if let date = due ?? reading.date { draft.hasDate = true; draft.date = date }
+        if let date = due ?? reading.date ?? repeating?.firstDue { draft.hasDate = true; draft.date = date }
+        draft.recurrenceRule = repeating?.repeat.rule
+        let people = repository.members.filter { $0.displayName.caseInsensitiveCompare(member) == .orderedSame }
+        if people.count == 1 { draft.memberID = people[0].id }
         do { try repository.add(draft) } catch { throw HouseholdIntentError.invalid(userFacingError(error)) }
         let when = draft.hasDate ? ", due \(draft.date.formatted(.dateTime.weekday(.wide).month().day()))" : ""
-        return .result(dialog: "Added “\(title)”\(when).")
+        let who = draft.memberID.map { _ in " for \(member)" } ?? ""
+        let again = repeating.map { ", \($0.repeat.label.lowercased())" } ?? ""
+        return .result(dialog: "Added “\(title)”\(who)\(when)\(again).")
     }
 }
 

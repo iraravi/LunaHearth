@@ -22,6 +22,12 @@ struct ExpensesView: View {
     private var history: [ExpenseReportItem] {
         report.items.filter { (category == nil || $0.category == category) && (search.isEmpty || $0.merchant.localizedStandardContains(search) || $0.notes.localizedStandardContains(search)) }
     }
+    private var duplicates: Set<UUID> { ExpenseInsights.possibleDuplicates(report.items) }
+    private var insight: String? {
+        ExpenseInsights.monthSentence(report, previous: ExpenseRules.summary(repository.expenseReportItems, month: ExpenseRules.offset(month, by: -1), currency: currency),
+                                      previousLabel: ExpenseRules.monthLabel(ExpenseRules.offset(month, by: -1)).components(separatedBy: " ").first ?? "last month",
+                                      inProgress: month == ExpenseRules.month(.now))
+    }
     private var trend: [ExpenseMonthSummary] {
         (-5...0).map { ExpenseRules.summary(repository.expenseReportItems, month: ExpenseRules.offset(month, by: $0), currency: currency) }
     }
@@ -101,6 +107,10 @@ struct ExpensesView: View {
                 Image(systemName: "chart.bar.xaxis").font(.system(size: 38, weight: .light))
                     .foregroundStyle(ExpenseTheme.accent).accessibilityHidden(true)
             }
+            if let insight {
+                Label(insight, systemImage: "lightbulb").font(.subheadline)
+                    .accessibilityIdentifier("expenses.insight")
+            }
             if report.refunded > 0 {
                 Divider()
                 LabeledContent("Refunds", value: ExpenseRules.money(report.refunded, currency: currency))
@@ -177,6 +187,11 @@ struct ExpensesView: View {
                                 Text((entry.isRefund ? "−" : "") + ExpenseRules.money(entry.amount, currency: currency)).font(.headline)
                             }
                             if entry.isRefund { Text("Refund").font(.caption.weight(.semibold)).foregroundStyle(ExpenseTheme.accent) }
+                            if duplicates.contains(entry.id) {
+                                Label("Possible duplicate · same amount and payee", systemImage: "exclamationmark.2")
+                                    .font(.caption.weight(.semibold)).foregroundStyle(ExpenseTheme.accent)
+                                    .accessibilityIdentifier("expenses.duplicate")
+                            }
                         }
                         if !typeSize.isAccessibilitySize { Spacer(minLength: 8) }
                         if !typeSize.isAccessibilitySize {

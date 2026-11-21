@@ -84,7 +84,7 @@ struct QuickCaptureView: View {
     /// Offline reading on every change; AI results are replaced as soon as the note is edited.
     private func reread() {
         status = nil
-        items = annotated(QuickCaptureRules.parse(text, savedStores: repository.shoppingStoreNames))
+        items = annotated(QuickCaptureRules.parse(text, savedStores: repository.shoppingStoreNames, memberNames: repository.members.map(\.displayName)))
     }
 
     /// Shopping already on the list starts unchecked instead of creating a duplicate.
@@ -107,7 +107,7 @@ struct QuickCaptureView: View {
         for item in included {
             do {
                 if let draft = item.expenseDraft(defaultCurrency: currency) { try repository.saveExpense(draft) }
-                else if let draft = item.entryDraft() { try repository.add(draft) }
+                else if let draft = item.entryDraft(memberID: memberID(item.memberName)) { try repository.add(draft) }
             } catch {
                 failed.append(item); firstError = firstError ?? userFacingError(error)
             }
@@ -117,6 +117,13 @@ struct QuickCaptureView: View {
         let failedIDs = Set(failed.map(\.id))
         items = items.filter { failedIDs.contains($0.id) }
         error = "\(failed.count == 1 ? "1 item" : "\(failed.count) items") couldn’t be added. \(firstError)"
+    }
+
+    /// A name only counts when it matches exactly one person in this home.
+    private func memberID(_ name: String) -> UUID? {
+        guard !name.isEmpty else { return nil }
+        let matches = repository.members.filter { $0.displayName.caseInsensitiveCompare(name) == .orderedSame }
+        return matches.count == 1 ? matches[0].id : nil
     }
 
     /// Expenses default to the currency this household uses most.
