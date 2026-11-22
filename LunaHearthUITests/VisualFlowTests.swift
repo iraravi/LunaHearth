@@ -896,7 +896,7 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Home"].firstMatch.tap()
         tapVisible("home.meals", app: app)
-        tapVisible("Plan a meal myself", app: app)
+        tapVisible("meals.addManually", app: app)
         let title = app.textFields["quickAdd.title"]
         XCTAssertTrue(title.waitForExistence(timeout: 5))
         title.tap(); title.typeText("Rice dinner")
@@ -1640,9 +1640,11 @@ final class VisualFlowTests: XCTestCase {
         app.launch(); createHousehold(app)
         tapVisible("today.section.shopping", app: app)
         XCTAssertTrue(app.staticTexts["No shopping needed now. Later items stay on your list."].exists)
+        // Summarize opens the overview itself; tapping its header again would close it.
         tapVisible("today.summarize", app: app)
-        tapVisible("Household overview", app: app)
-        XCTAssertEqual(app.staticTexts["today.briefText"].label, "Nothing needs attention in your saved lists today.")
+        let brief = app.staticTexts["today.briefText"]
+        XCTAssertTrue(brief.waitForExistence(timeout: 5))
+        XCTAssertEqual(brief.label, "Nothing needs attention in your saved lists today.")
         app.buttons["today.quickAdd"].tap()
         XCTAssertTrue(app.textFields["quickAdd.title"].waitForExistence(timeout: 5))
     }
@@ -2037,7 +2039,11 @@ final class VisualFlowTests: XCTestCase {
         let ready = NSPredicate(format: "enabled == true")
         expectation(for: ready, evaluatedWith: confirm)
         waitForExpectations(timeout: 30)
-        confirm.tap()
+        tapReceiptSave(app)
+        let withPantry = app.buttons["receipt.saveWithInventory"].firstMatch
+        let withoutPantry = app.buttons["receipt.saveWithoutInventory"].firstMatch
+        XCTAssertTrue(withPantry.waitForExistence(timeout: 5) || withoutPantry.exists)
+        (withPantry.exists ? withPantry : withoutPantry).tap()
         XCTAssertTrue(app.descendants(matching: .any)["receipt.success"].firstMatch.waitForExistence(timeout: 10))
         app.buttons["Done"].firstMatch.tap()
         for _ in 0..<4 {
@@ -2708,9 +2714,11 @@ final class VisualFlowTests: XCTestCase {
         app.buttons["Upload and enable sync"].tap()
         XCTAssertTrue(app.staticTexts["sharing.status"].waitForExistence(timeout: 5))
         XCTAssertTrue(app.staticTexts["sharing.status"].label.contains("unavailable"))
-        app.tabBars.buttons["Home"].tap()
-        app.buttons["Quick Add"].tap()
+        app.tabBars.buttons["Today"].tap()
+        app.buttons["today.quickAdd"].tap()
         saveEntry("Still works offline", app: app)
+        XCTAssertTrue(app.buttons["today.quickAdd"].waitForExistence(timeout: 5))
+        app.tabBars.buttons["Home"].tap()
         app.staticTexts["Reminders"].tap()
         XCTAssertTrue(app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Still works offline")).firstMatch.waitForExistence(timeout: 5))
     }
@@ -2911,10 +2919,16 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertTrue(export.isEnabled)
         capture("Encrypted-Backup-Dark", app: app)
         export.tap()
+        // The system Files picker: older iOS shows Cancel, newer shows a back arrow and Save.
         let cancel = app.buttons["Cancel"].firstMatch
-        XCTAssertTrue(cancel.waitForExistence(timeout: 15))
+        let pickerSave = app.buttons["DOCPicker.actionButton"].firstMatch
+        XCTAssertTrue(pickerSave.waitForExistence(timeout: 15) || cancel.exists)
         capture("Encrypted-Backup-Files-Export", app: app)
-        cancel.tap()
+        if cancel.exists { cancel.tap() } else {
+            // Swipe the sheet away so nothing is saved.
+            app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.08))
+                .press(forDuration: 0.1, thenDragTo: app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.95)))
+        }
         XCTAssertTrue(export.waitForExistence(timeout: 5))
         XCTAssertFalse(export.isEnabled)
         app.terminate()
@@ -3026,7 +3040,8 @@ final class VisualFlowTests: XCTestCase {
         tapVisible("home.inventory", app: app)
         XCTAssertTrue(app.buttons["inventory.scanReceipt"].waitForExistence(timeout: 5))
         XCTAssertFalse(app.descendants(matching: .any)["inventory.virtual"].firstMatch.exists)
-        XCTAssertFalse(app.buttons["inventory.viewMode"].exists)
+        // Regular phones offer the Virtual kitchen as an optional button; the list stays the default.
+        XCTAssertTrue(app.buttons["inventory.viewMode"].exists)
         app.terminate()
     }
 
