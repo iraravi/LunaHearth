@@ -35,7 +35,8 @@ struct ReceiptImportView: View {
     @State private var lines: [ReceiptLine] = []
     /// Scanned items are proposed only when they add up to the receipt's printed totals.
     @State private var itemization: ReceiptItemization = .verified
-    @State private var hiddenItemCount = 0
+    /// Item sum against the printed subtotal or total, when the scanned items are not verified.
+    @State private var uncheckedGap: (items: Int, printed: Int)?
     /// Scanned line amounts, kept so turning "Record in Expenses" off and on again restores them.
     @State private var scannedAmounts: [String: String] = [:]
     /// Printed item labels as scanned, so saved renames can be learned for next time.
@@ -223,7 +224,7 @@ struct ReceiptImportView: View {
                         Section {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text("Review your purchase").font(.title2.bold())
-                                Text(itemization == .verified ? "Check the total. Choose what goes into your pantry." : "Check the store, date and total.").font(.subheadline).foregroundStyle(.secondary)
+                                Text(itemization == .verified ? "Check the total. Choose what goes into your pantry." : lines.isEmpty ? "Check the store, date and total." : "Check the total, then tick the items that match the receipt.").font(.subheadline).foregroundStyle(.secondary)
                                 if let extractionMessage, itemization == .verified { Text(extractionMessage).font(.caption).foregroundStyle(.secondary).accessibilityIdentifier("receipt.extractionStatus") }
                                 if !lines.isEmpty {
                                 HStack {
@@ -262,7 +263,7 @@ struct ReceiptImportView: View {
                         }
                         if case .unverified(let gap) = itemization {
                             Section {
-                                Label("Items not listed", systemImage: "list.bullet.rectangle")
+                                Label(lines.isEmpty ? "Items not listed" : "Items not checked", systemImage: lines.isEmpty ? "list.bullet.rectangle" : "exclamationmark.triangle")
                                     .font(.headline)
                                 Text(itemizationMessage(gap))
                                     .font(.subheadline).foregroundStyle(.secondary)
@@ -430,10 +431,11 @@ struct ReceiptImportView: View {
         cancelDecoding(); proposals = [:]; keptBillNames = []; decodeMessage = nil
         sourceText = scan.text
         itemization = ReceiptReconciliation.check(lines: scan.lines, text: scan.text)
-        // Unverified proposals are hidden, not shown with warnings: a wrong price or a
-        // non-product row is worse than a blank list the user can fill in themselves.
-        lines = itemization == .verified ? scan.lines : []
-        hiddenItemCount = itemization == .verified ? 0 : scan.lines.count
+        // Items that don't add up to the printed totals are still shown, but unticked and
+        // flagged: the user picks the ones that are right. Nothing is saved without a tick.
+        lines = scan.lines
+        uncheckedGap = itemization == .verified ? nil : ReceiptReconciliation.difference(lines: scan.lines, text: scan.text)
+        if itemization != .verified { for index in lines.indices { lines[index].included = false } }
         scannedAmounts = Dictionary(lines.map { ($0.id, $0.amount) }, uniquingKeysWith: { first, _ in first })
         scannedNames = Dictionary(lines.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
         let learned = ReceiptCorrectionMemory.decode(corrections)
@@ -494,14 +496,20 @@ struct ReceiptImportView: View {
         decodeTask?.cancel(); decodeGeneration = UUID(); decoding = false
     }
     private func itemizationMessage(_ gap: ReceiptItemizationGap) -> String {
-        let reason = switch gap {
-        case .noItems: "No item lines were clear on this receipt."
-        case .uncertainAmounts: "Some item prices or discounts could not be read clearly."
-        case .noPrintedTotals: "The receipt's totals are unclear or conflicting, so we couldn't check the items."
-        case .mismatch: "The items we read don't add up to the receipt's printed subtotal."
+        if lines.isEmpty {
+            return "No item lines were clear on this receipt. You can still save the expense, and add pantry items yourself with Add a missed item."
         }
-        let found = hiddenItemCount > 0 ? " To avoid guessing, the \(hiddenItemCount) lines we read aren't listed." : ""
-        return reason + found + " You can still save the expense, and add pantry items yourself with Add a missed item."
+        let reason: String
+        if let uncheckedGap, uncheckedGap.items != uncheckedGap.printed {
+            reason = "These items add up to \(ExpenseRules.money(uncheckedGap.items, currency: expenseDraft.currency)), but the receipt says \(ExpenseRules.money(uncheckedGap.printed, currency: expenseDraft.currency)), so a price or item may be misread or missing."
+        } else {
+            reason = switch gap {
+            case .uncertainAmounts: "Some item prices or discounts could not be read clearly."
+            case .noPrintedTotals: "The receipt's totals are unclear, so we couldn't check these items."
+            case .mismatch, .noItems: "These items don't add up to the receipt's printed total."
+            }
+        }
+        return reason + " Compare them with the receipt, fix any wrong line, and tick the ones to keep. The expense total comes from the receipt either way."
     }
     private func decodeNames() {
         cancelDecoding()
@@ -623,6 +631,10 @@ private struct ReceiptItemOverview: View {
                         .multilineTextAlignment(.leading).frame(maxWidth: .infinity, alignment: .leading)
                     Text(status).font(.caption).foregroundStyle(needsReview ? Color.orange : Color.secondary)
                     if !line.quantity.isEmpty { Text(line.quantity).font(.caption).foregroundStyle(.secondary) }
+                    if let scanned = line.correctedFrom, scanned != line.amount {
+                        Label("Read as \(scanned), fixed to match the receipt total", systemImage: "wand.and.sparkles")
+                            .font(.caption).foregroundStyle(.orange).accessibilityIdentifier("receipt.corrected.\(line.id)")
+                    }
                 }
                 Spacer(minLength: 4)
                 if !line.amount.isEmpty { Text(line.amount).font(.subheadline.monospacedDigit()).foregroundStyle(.primary) }

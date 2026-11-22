@@ -117,7 +117,7 @@ enum ReceiptDebugReport {
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"
         let rows = scan.text.components(separatedBy: .newlines).enumerated().map { "[\($0.offset)] \($0.element)" }.joined(separator: "\n")
         let items = scan.lines.enumerated().map { index, line in
-            "\(index + 1). \(line.name) | amount=\(line.amount.isEmpty ? "unknown" : line.amount) | quantity=\(line.quantity) | amountNeedsReview=\(line.amountNeedsReview || line.amount.isEmpty)"
+            "\(index + 1). \(line.name) | amount=\(line.amount.isEmpty ? "unknown" : line.amount) | quantity=\(line.quantity) | amountNeedsReview=\(line.amountNeedsReview || line.amount.isEmpty)\(line.correctedFrom.map { " | correctedFrom=\($0)" } ?? "")"
         }.joined(separator: "\n")
         return """
         INTERNAL RECEIPT DEBUG · \(version) (\(build))

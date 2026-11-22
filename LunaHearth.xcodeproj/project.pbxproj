@@ -83,6 +83,7 @@
 		31A33FDD2AE74C230F36B0AA /* ReceiptPurchaseDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE6099272ABE89CD297BADB /* ReceiptPurchaseDetails.swift */; };
 		32ED6F3589C2C7ADFC51E9CA /* BackupCodec.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAC52613164D3C16FBA81E6 /* BackupCodec.swift */; };
 		32F7C3DA1282A7A4BD9F6080 /* InvitationHandoffTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C1A47C332451E044B90C2A6 /* InvitationHandoffTests.swift */; };
+		33AD4F7D427701DADCD42EE3 /* ReceiptDigitCorrectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFDA97639703CFD73EC0D31 /* ReceiptDigitCorrectionTests.swift */; };
 		343BED74E8D6E33EF85B714D /* ReminderDeliveryRecords.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C036A2FFF3B154A904DDCA9 /* ReminderDeliveryRecords.swift */; };
 		34F043390AB67E2A408E8B5E /* MoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3068B15D7E5F4D76EAD9419B /* MoreView.swift */; };
 		361540D3502DBD5560CFD3F1 /* AppointmentRules.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A0837A309232F00C2F28C7 /* AppointmentRules.swift */; };
@@ -287,6 +288,7 @@
 		D57B70BE97CCA74B711ECBCF /* DocumentStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739AFCFA57BA1D3321A7153D /* DocumentStorageService.swift */; };
 		D650A2BEE7AF7AF7DE7F652E /* AssignmentNotificationRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BCC23EF9042B47786A40D5 /* AssignmentNotificationRoute.swift */; };
 		D7F58B2489631ECD33BDDF6C /* ReceiptTableDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A524B6ACCA9608A5FB8649E3 /* ReceiptTableDetails.swift */; };
+		D861C4B13158B684D876361F /* ReceiptDigitCorrection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62752C2831E7D75B7C73AB93 /* ReceiptDigitCorrection.swift */; };
 		D8A8B411AD7CF6651A923C07 /* HomeLayoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28021456D9AA2DC73B82E9A4 /* HomeLayoutView.swift */; };
 		DA06DC44CAAF75DA76B499F1 /* CloudSharingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 015E6D9F026408296CB068CD /* CloudSharingSheet.swift */; };
 		DA8447B35D0206E7EE0E620A /* PlanningModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40EA514CA22E8A6622CDA822 /* PlanningModels.swift */; };
@@ -410,6 +412,7 @@
 		27FB8F9DA42A2C5FA63484F8 /* InventoryAttentionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InventoryAttentionTests.swift; sourceTree = "<group>"; };
 		28021456D9AA2DC73B82E9A4 /* HomeLayoutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeLayoutView.swift; sourceTree = "<group>"; };
 		28D4D56698AFA7988A7C56EA /* PortableBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortableBackup.swift; sourceTree = "<group>"; };
+		2AFDA97639703CFD73EC0D31 /* ReceiptDigitCorrectionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptDigitCorrectionTests.swift; sourceTree = "<group>"; };
 		2BA2C7E44A2888564E51BD30 /* HearthGlass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HearthGlass.swift; sourceTree = "<group>"; };
 		2BD776A9835D3925C60ADD93 /* ConnectedDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDemoTests.swift; sourceTree = "<group>"; };
 		2F7C24C82B970210B2E59705 /* LocalHouseholdRepository+Cooking.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalHouseholdRepository+Cooking.swift"; sourceTree = "<group>"; };
@@ -497,6 +500,7 @@
 		5EF59064DF83502F3E59BC13 /* SuggestionSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuggestionSourceTests.swift; sourceTree = "<group>"; };
 		5F33A4CA06524D0F5E14ADFC /* TodayWorkspaceSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayWorkspaceSection.swift; sourceTree = "<group>"; };
 		60125751633E42A7090F2C8F /* ShoppingStoreCatalogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingStoreCatalogTests.swift; sourceTree = "<group>"; };
+		62752C2831E7D75B7C73AB93 /* ReceiptDigitCorrection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptDigitCorrection.swift; sourceTree = "<group>"; };
 		62A488E3B8B1A7789D47B757 /* ShoppingEntryRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingEntryRules.swift; sourceTree = "<group>"; };
 		63F1C4F4EB062FD171762A0C /* ReminderDelivery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDelivery.swift; sourceTree = "<group>"; };
 		640B3558D5656FE54E6FCFA1 /* HouseholdSharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSharing.swift; sourceTree = "<group>"; };
@@ -1069,6 +1073,7 @@
 				3D68F51B571C9F47D3099BD9 /* ReceiptAbbreviations.swift */,
 				47083DAC854DC38402EB42E1 /* ReceiptColumns.swift */,
 				A3988E38C9903439CF1568FA /* ReceiptCorrectionMemory.swift */,
+				62752C2831E7D75B7C73AB93 /* ReceiptDigitCorrection.swift */,
 				E19D39D3756672C2DD53BF55 /* ReceiptExtraction.swift */,
 				54DE82FBA9BD7C50E26E2170 /* ReceiptImageProposals.swift */,
 				5E1EBD8AFA3D24F3EF672F7C /* ReceiptImageStorage.swift */,
@@ -1392,6 +1397,7 @@
 				DCE0D7CAFCF5123DAD7D349D /* ReceiptCorrectionMemoryTests.swift */,
 				3AB730065D2B5E9805291E52 /* ReceiptCountryFormatTests.swift */,
 				1D5975F020EFEE0BCA23A52C /* ReceiptDebugTests.swift */,
+				2AFDA97639703CFD73EC0D31 /* ReceiptDigitCorrectionTests.swift */,
 				761262E75E20BF286B63E000 /* ReceiptExpenseOnlyTests.swift */,
 				13D71927031C874EF1924D52 /* ReceiptExtractionTests.swift */,
 				99E588FE8C4A1D4D2B8D822C /* ReceiptImageProposalTests.swift */,
@@ -1607,6 +1613,7 @@
 				8D26BD4FE34BD5A3AE870C46 /* ReceiptCorrectionMemoryTests.swift in Sources */,
 				92382B1B3AEAD9616CA2DA8D /* ReceiptCountryFormatTests.swift in Sources */,
 				FA4B67E75CCD8B0B0F9E5605 /* ReceiptDebugTests.swift in Sources */,
+				33AD4F7D427701DADCD42EE3 /* ReceiptDigitCorrectionTests.swift in Sources */,
 				828F5C9385ACB6ED3798567C /* ReceiptExpenseOnlyTests.swift in Sources */,
 				B4D21D247A4905D7B1F6C293 /* ReceiptExtractionTests.swift in Sources */,
 				A091E840AA24D7B3A05F1FF3 /* ReceiptImageProposalTests.swift in Sources */,
@@ -1837,6 +1844,7 @@
 				9A69110B6706FAC689134542 /* ReceiptColumns.swift in Sources */,
 				0DEEC3D0F46DFD8667F19274 /* ReceiptCorrectionMemory.swift in Sources */,
 				4A3ECA7FF3FACDB4F5E91923 /* ReceiptDebugView.swift in Sources */,
+				D861C4B13158B684D876361F /* ReceiptDigitCorrection.swift in Sources */,
 				9796B401EC01E771E9334130 /* ReceiptExperimentService.swift in Sources */,
 				569F055FB9E060C7708D7952 /* ReceiptExtraction.swift in Sources */,
 				F42650AE2591B67DB65E22FB /* ReceiptImageProposals.swift in Sources */,

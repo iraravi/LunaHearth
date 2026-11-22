@@ -57,8 +57,22 @@ enum ReceiptReconciliation {
         // already include tax, so they add up to the amount charged. The printed tax rows are
         // then a breakdown, not an addition.
         if let total = printed.total, sum == total { return .verified }
+        // A misread subtotal: items plus the printed tax make the printed total exactly, and the
+        // subtotal is one digit away from the item sum. Two printed numbers outvote the third.
+        if let subtotal = printed.subtotal, let total = printed.total, let tax = printed.tax, tax > 0,
+           sum - printed.discounts + tax == total, ReceiptDigitCorrection.oneDigitApart(sum, subtotal) { return .verified }
         // A readable subtotal or total that the items do not reproduce is a mismatch.
         return printed.subtotal != nil || printed.total != nil ? .unverified(.mismatch) : .unverified(.noPrintedTotals)
+    }
+
+    /// What the readable item amounts add up to against the printed subtotal (or total), so an
+    /// unchecked list can say how far off it is. Nil when there is nothing to compare.
+    static func difference(lines: [ReceiptLine], text: String) -> (items: Int, printed: Int)? {
+        let amounts = lines.compactMap { try? ExpenseRules.minorUnits($0.amount) }
+        guard !amounts.isEmpty else { return nil }
+        let printed = totals(text)
+        guard let target = printed.subtotal ?? printed.total else { return nil }
+        return (amounts.reduce(0, +), target)
     }
 
     static func totals(_ text: String) -> ReceiptPrintedTotals {

@@ -35,6 +35,8 @@ struct ReceiptLine: Identifiable, Sendable {
     var confirmedNewPurchase = false
     /// Explicit review choice; never merge into an existing pack when true.
     var keepSeparatePack = false
+    /// The amount as scanned, when it was corrected by one digit to match the printed totals.
+    var correctedFrom: String?
 }
 
 enum ReceiptImportError: LocalizedError {
@@ -142,6 +144,8 @@ enum ReceiptRules {
             let solved = ReceiptSolver.solve(text: bounded)
             if solved.status == .unique { return ReceiptScan(text: bounded, lines: solved.lines) }
         }
+        // Last, one misread digit may be fixed when the printed totals prove exactly which one.
+        if let corrected = ReceiptDigitCorrection.correct(grouped, text: bounded) { return ReceiptScan(text: bounded, lines: corrected) }
         return ReceiptScan(text: bounded, lines: grouped)
     }
     /// A product name that wraps onto two printed rows ("RAJABOGAM PONNI BOILED RICE" above
