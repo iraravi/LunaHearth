@@ -16,13 +16,27 @@ import UserNotifications
     }
     nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         if response.notification.request.identifier.hasPrefix("appointment.") { await openAppointment(response.notification.request.identifier); return }
-        if response.notification.request.identifier.hasPrefix("meal.prep.") { await openPreparation(response.notification.request.identifier); return }
+        if response.notification.request.identifier.hasPrefix("meal.prep.") {
+            let identifier = response.notification.request.identifier
+            switch response.actionIdentifier {
+            case MealPrepReminder.doneAction: await completePreparation(identifier)
+            case MealPrepReminder.snoozeAction: await MealPrepReminder.snooze(identifier)
+            default: await openPreparation(identifier)
+            }
+            return
+        }
         if response.notification.request.identifier == "meal.planning.daily" { await openMealIdeas(); return }
         guard let route = AssignmentNotificationRoute(identifier: response.notification.request.identifier) else { return }
         await openPersonalShopping(route)
     }
     private func openAppointment(_ identifier: String) { appointmentID = identifier.split(separator: ".").last.flatMap { UUID(uuidString: String($0)) }; showAppointment = true }
-    private func openPreparation(_ identifier: String) { preparationTaskID = identifier.split(separator: ".").last.flatMap { UUID(uuidString: String($0)) }; showMealPreparation = true }
+    private func openPreparation(_ identifier: String) { preparationTaskID = MealPrepReminder.taskID(in: identifier); showMealPreparation = true }
+    private func completePreparation(_ identifier: String) {
+        guard let id = MealPrepReminder.taskID(in: identifier) else { return }
+        completeTask?(id)
+    }
+    /// Marks a task done from a notification button without opening the app.
+    var completeTask: (@MainActor (UUID) -> Void)?
     private func openMealIdeas() { showMealIdeas = true }
     private func openPersonalShopping(_ route: AssignmentNotificationRoute) async {
         assignmentRoute = route
@@ -58,6 +72,7 @@ import UserNotifications
     override init() {
         super.init()
         UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().setNotificationCategories([MealPrepReminder.notificationCategory])
         observation = NotificationCenter.default.publisher(for: SharingSceneDelegate.invitationNotification).sink { [weak self] notification in
             if let metadata = notification.object as? CKShare.Metadata {
                 Task { @MainActor in self?.invitationMetadata = metadata }

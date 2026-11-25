@@ -288,7 +288,7 @@ struct ReceiptImportView: View {
                                     } else {
                                         Button("Decode names with AI again", systemImage: "sparkles") { decodeNames() }
                                             .frame(minHeight: 44).accessibilityIdentifier("receipt.decodeNames")
-                                            .disabled(busy || !lines.contains(where: \.included))
+                                            .disabled(busy || !lines.contains(where: { !repository.receiptLineImported($0.id) }))
                                     }
                                 }
                                 Text(decodeMessage ?? "Each item shows the name on the bill and the suggested name. Accept the suggestion or keep the bill name.")
@@ -477,8 +477,9 @@ struct ReceiptImportView: View {
             if inventory.count == 1 { lines[index].inventoryID = inventory.first?.id }
             if repository.receiptLineImported(lines[index].id) { lines[index].included = false }
         }
-        // Decode bill names with on-device AI automatically when this phone supports it.
-        if lines.contains(where: \.included), aiAvailability.showsAIActions,
+        // Decode bill names with on-device AI automatically when this phone supports it. Unticked
+        // lines (a receipt that doesn't add up) are decoded too, so ticking one shows its clean name.
+        if lines.contains(where: { !repository.receiptLineImported($0.id) }), aiAvailability.showsAIActions,
            publicStatus.configuration?.allows(.aiReceiptNames) ?? true { decodeNames() }
     }
     /// Suggestions that can still be applied to an unchanged, included, unsaved line.
@@ -514,7 +515,7 @@ struct ReceiptImportView: View {
     private func decodeNames() {
         cancelDecoding()
         let generation = decodeGeneration
-        let inputs = lines.filter { line in line.included && !repository.receiptLineImported(line.id) }
+        let inputs = lines.filter { line in !repository.receiptLineImported(line.id) }
             .map { ReceiptNameInput(id: $0.id, name: $0.name) }
         // Keep offline and saved-name suggestions; AI may replace offline ones with a better name.
         decoding = true; decodeMessage = nil

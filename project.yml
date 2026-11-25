@@ -3,6 +3,7 @@ options:
   bundleIdPrefix: com.neuralluna
   deploymentTarget:
     iOS: "18.0"
+    watchOS: "11.0"
   createIntermediateGroups: true
 configs:
   Debug: debug
@@ -34,6 +35,7 @@ targets:
     platform: iOS
     sources:
       - path: LunaHearth
+      - path: Shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth
@@ -42,11 +44,43 @@ targets:
         PRODUCT_NAME: LunaHearth
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: NO
-    dependencies: []
+    dependencies:
+      - target: LunaHearthWatch
     scheme:
       testTargets:
         - LunaHearthTests
         - LunaHearthUITests
+  LunaHearthWatch:
+    type: application
+    platform: watchOS
+    sources:
+      - path: LunaHearthWatch
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth.watchkitapp
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Nam Illam
+        INFOPLIST_KEY_WKApplication: YES
+        INFOPLIST_KEY_WKCompanionAppBundleIdentifier: com.neuralluna.lunahearth
+        INFOPLIST_KEY_WKRunsIndependentlyOfCompanionApp: NO
+        CODE_SIGN_ENTITLEMENTS: LunaHearthWatch/Resources/LunaHearthWatch.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - target: LunaHearthWatchWidgets
+  LunaHearthWatchWidgets:
+    type: app-extension
+    platform: watchOS
+    sources:
+      - path: LunaHearthWatchWidgets
+      - path: Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth.watchkitapp.widgets
+        INFOPLIST_FILE: LunaHearthWatchWidgets/Resources/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        CODE_SIGN_ENTITLEMENTS: LunaHearthWatchWidgets/Resources/LunaHearthWatchWidgets.entitlements
+        SKIP_INSTALL: YES
   LunaHearthTests:
     type: bundle.unit-test
     platform: iOS

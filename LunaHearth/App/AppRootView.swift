@@ -134,7 +134,8 @@ struct AppRootView: View {
         .alert("Task unavailable", isPresented: $linkUnavailable) {
             Button("OK", role: .cancel) {}
         } message: { Text("This task isn't in the household stored on this device.") }
-        .onChange(of: scenePhase) { _, phase in if phase == .active { load(); connections.foreground() } }
+        .onChange(of: scenePhase) { _, phase in if phase == .active { load(); connections.foreground(); PhoneWatchConnector.shared.push() } }
+        .onChange(of: repository.writeRevision) { _, _ in PhoneWatchConnector.shared.push() }
         .environment(publicStatus)
         .environment(\.aiAvailability, (publicStatus.configuration?.allows(.ai) ?? true) ? aiAvailability : .unavailable)
     }

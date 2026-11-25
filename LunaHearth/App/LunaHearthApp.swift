@@ -55,6 +55,8 @@ struct LunaHearthApp: App {
             // Siri and Shortcuts write to the real store only, never the temporary recovery one.
             let intentStore = HouseholdIntentStore(repository: storeNeedsRecovery ? nil : repository)
             AppDependencyManager.shared.add(dependency: intentStore)
+            // The watch reads and writes the real store only.
+            PhoneWatchConnector.shared.start(repository: storeNeedsRecovery ? nil : repository)
             let preferences = isUITest ? UserDefaults(suiteName: "UITest.AppleConnections.\(UUID().uuidString)") ?? .standard : .standard
             let calendarDelivery: CalendarDeliveryCoordinator
             #if DEBUG
@@ -93,6 +95,13 @@ struct LunaHearthApp: App {
                 await personal.refresh(repository)
                 await appointmentAlerts.refresh(repository)
                 await calendarDelivery.run(repository)
+                PhoneWatchConnector.shared.push()
+            }
+            sharingDelegate.completeTask = { id in
+                guard !unavailable else { return }
+                try? repository.reload()
+                if let task = repository.tasks.first(where: { $0.id == id }), !task.isCompleted { try? repository.toggle(task) }
+                PhoneWatchConnector.shared.push()
             }
         } catch {
             fatalError("Unable to initialize the local store.")
