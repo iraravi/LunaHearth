@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 /// Watch face complications and Smart Stack cards. They read the snapshot the watch app
-/// saved in the shared app group; they never talk to the iPhone themselves.
+/// saved in the shared keychain group; they never talk to the iPhone themselves.
 struct HomeEntry: TimelineEntry {
     let date: Date
     let snapshot: WatchSnapshot
@@ -26,8 +26,7 @@ struct HomeProvider: TimelineProvider {
         completion(Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(3600))))
     }
     static func stored() -> WatchSnapshot {
-        UserDefaults(suiteName: WatchLink.appGroup)?.data(forKey: WatchLink.storedSnapshotKey)
-            .flatMap { try? WatchSnapshot.decoded($0) } ?? .empty
+        WatchSharedSnapshot.load() ?? .empty
     }
 }
 

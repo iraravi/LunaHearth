@@ -11,9 +11,9 @@ import WidgetKit
     private let defaults: UserDefaults
 
     override init() {
-        let defaults = UserDefaults(suiteName: WatchLink.appGroup) ?? .standard
+        let defaults = UserDefaults.standard
         self.defaults = defaults
-        snapshot = defaults.data(forKey: WatchLink.storedSnapshotKey).flatMap { try? WatchSnapshot.decoded($0) } ?? .empty
+        snapshot = WatchSharedSnapshot.load() ?? .empty
         pending = (defaults.array(forKey: WatchLink.pendingActionsKey) as? [Data] ?? []).compactMap { try? WatchAction.decoded($0) }
         super.init()
     }
@@ -78,7 +78,7 @@ import WidgetKit
     }
 
     private func save() {
-        if let data = try? snapshot.encoded() { defaults.set(data, forKey: WatchLink.storedSnapshotKey) }
+        WatchSharedSnapshot.save(snapshot)
         defaults.set(pending.compactMap { try? $0.encoded() }, forKey: WatchLink.pendingActionsKey)
     }
 }

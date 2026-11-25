@@ -86,13 +86,46 @@ struct WatchAction: Codable, Sendable, Equatable, Identifiable {
     static func decoded(_ data: Data) throws -> WatchAction { try WatchLink.decoder.decode(WatchAction.self, from: data) }
 }
 
+#if os(watchOS)
+import Security
+
+/// The watch app saves the latest snapshot here; its widgets read it.
+enum WatchSharedSnapshot {
+    private static let service = "com.neuralluna.lunahearth.watch.snapshot"
+    private static var query: [String: Any] {
+        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
+         kSecAttrAccount as String: "snapshot", kSecAttrAccessGroup as String: WatchLink.sharedKeychainGroup]
+    }
+
+    static func save(_ snapshot: WatchSnapshot) {
+        guard let data = try? snapshot.encoded() else { return }
+        let update: [String: Any] = [kSecValueData as String: data]
+        if SecItemUpdate(query as CFDictionary, update as CFDictionary) == errSecItemNotFound {
+            var add = query
+            add[kSecValueData as String] = data
+            add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            SecItemAdd(add as CFDictionary, nil)
+        }
+    }
+
+    static func load() -> WatchSnapshot? {
+        var request = query
+        request[kSecReturnData as String] = true
+        request[kSecMatchLimit as String] = kSecMatchLimitOne
+        var result: CFTypeRef?
+        guard SecItemCopyMatching(request as CFDictionary, &result) == errSecSuccess, let data = result as? Data else { return nil }
+        return try? WatchSnapshot.decoded(data)
+    }
+}
+#endif
+
 enum WatchLink {
     /// Keys in WatchConnectivity dictionaries.
     static let snapshotKey = "snapshot"
     static let actionKey = "action"
-    /// App group shared by the watch app and its widgets.
-    static let appGroup = "group.com.neuralluna.lunahearth.watch"
-    static let storedSnapshotKey = "watch.snapshot.v1"
+    /// Keychain group shared by the watch app and its widgets (team prefix + suffix). Every
+    /// provisioning profile for the team allows it, so no App Group registration is needed.
+    static let sharedKeychainGroup = "647V74N5JV.com.neuralluna.lunahearth.watch"
     static let pendingActionsKey = "watch.pendingActions.v1"
     /// Longest text accepted from the watch.
     static let maxAddLength = 300

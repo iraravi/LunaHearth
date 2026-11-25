@@ -17,7 +17,7 @@ settings:
     CODE_SIGN_STYLE: Automatic
     CLOUDKIT_ENVIRONMENT: Development
     APS_ENVIRONMENT: development
-    CURRENT_PROJECT_VERSION: 96
+    CURRENT_PROJECT_VERSION: 97
     MARKETING_VERSION: 3.0
   configs:
     Debug:
