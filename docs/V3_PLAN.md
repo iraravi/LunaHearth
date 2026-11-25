@@ -48,3 +48,9 @@ Companion app (needs the iPhone app), watchOS 11+.
 3. Shopping, Tasks, Expenses intelligence (one TestFlight build each)
 4. Watch app target, sync, widgets
 5. Polish, screenshots, 3.0 submission
+
+## Status (2026-11-24)
+
+- Steps 1–3 shipped in TestFlight builds 94–96.
+- Step 4 done in build 97: Watch app, sync, widgets, meal prep notification actions. See `docs/WATCH_APP.md`. Not yet tried on a real watch.
+- Step 5: 3.0 App Store text drafted in `docs/release/nam-illam-app-store/en-US-3.0.json`; screenshots in `docs/release/nam-illam-app-store/screenshots-3.0/`. Checklist in `docs/release/nam-illam-app-store/SUBMISSION-3.0.md`.

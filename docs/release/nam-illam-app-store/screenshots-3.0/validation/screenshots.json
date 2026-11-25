@@ -1,0 +1,122 @@
+[
+  {
+    "file": "screenshots/ipad-13/Store-01-Today.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "3a363c21cf1d5c6eaa426c2178afb667936ddebbe056ecab14b343f8f9a7eaef",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-02-Home.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "698f77f7aefda2d9d6affcece0a37d998389abea08529107f0e6b2c132393cab",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-03-Shopping.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "b924e6646241c7e8da9bc07eb3d607cefdee03c7e9c3a9f8d76b673d7e2e089b",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-04-Pantry.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "2972126c5af834607ce3efce13141dedfd16599ba19e7ce863fbd00094ece96d",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-05-Calendar.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "c53d4a33de2cef1e98390dd5bce99bedd967f3aa2ef24db8804797175af4aa0d",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/ipad-13/Store-06-Expenses.png",
+    "pixels": [
+      2064,
+      2752
+    ],
+    "sha256": "48bc0b4f4417ba6322ff87fa39a5c836701318297e3f6defecf877941690fa4a",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/ipad.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-01-Today.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "b8636760949fb81f9abedd3ff6140bec8932436eb0cf820956e227fcf614ace8",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-02-Home.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "8c1edadff6918c86b3ba38b21098143f3a0af3f94bc98e18e9155c096836b2f5",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-03-Shopping.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "8e4a34e7c5814478c71ccfb75a64fcda8f4107bde97a70739b80ac72c836ac7a",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-04-Pantry.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "da23a87160aaae9f651bb06c3b9eaa858690ed5763f3d8d2ededbb20bc8ca422",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-05-Calendar.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "37398e51d404fd6d595cd4db38be2c150a7361abc095795a43cd00cac680a0ae",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/phone.xcresult",
+    "sample_data": true
+  },
+  {
+    "file": "screenshots/iphone-6.9/Store-06-Expenses.png",
+    "pixels": [
+      1320,
+      2868
+    ],
+    "sha256": "e0e3175d5d4c1cb4b66373233b9de2b3970162c14d454e051b3dccdd97b2a27e",
+    "source_result": "/private/tmp/claude-501/-Users-ira-Documents-Project-LunaHearth/ff619d4b-15f7-4382-a2d3-dd8f40c2ed1c/scratchpad/store-3.0/phone.xcresult",
+    "sample_data": true
+  }
+]

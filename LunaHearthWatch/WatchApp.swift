@@ -22,13 +22,23 @@ enum WatchTheme {
 
 struct WatchRootView: View {
     @Environment(WatchStore.self) private var store
+    @State private var page = Self.firstPage
 
     var body: some View {
-        TabView {
-            NavigationStack { WatchShoppingView() }
-            NavigationStack { WatchTasksView() }
+        TabView(selection: $page) {
+            NavigationStack { WatchShoppingView() }.tag(0)
+            NavigationStack { WatchTasksView() }.tag(1)
         }
         .tabViewStyle(.verticalPage)
+    }
+
+    /// Screenshots can open on the tasks page; the app itself always starts on shopping.
+    private static var firstPage: Int {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("--watch-tasks") ? 1 : 0
+        #else
+        0
+        #endif
     }
 }
 
