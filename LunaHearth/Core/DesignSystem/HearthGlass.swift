@@ -65,6 +65,35 @@ private struct HearthOpaqueButtonStyle: ButtonStyle {
     }
 }
 
+/// A round 44-point icon button. System glass and bordered styles pad the label, so a label
+/// framed at 44 points grows to about 68 by 58; this keeps the control at the touch target.
+private struct HearthIconButtonStyle: ButtonStyle {
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.colorSchemeContrast) private var contrast
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        let label = configuration.label
+            .labelStyle(.iconOnly)
+            .fontWeight(.semibold)
+            .frame(width: 44, height: 44)
+            .contentShape(Circle())
+            .opacity(configuration.isPressed ? 0.6 : 1)
+        if #available(iOS 26, *), colorScheme != .dark, !reduceTransparency, contrast != .increased {
+            label.foregroundStyle(isEnabled ? AnyShapeStyle(.tint) : AnyShapeStyle(AppTheme.muted))
+                .glassEffect(.regular.interactive(), in: Circle())
+        } else {
+            label.foregroundStyle(isEnabled ? AppTheme.ink : AppTheme.muted)
+                .background(Circle().fill(AppTheme.secondarySurface))
+                .overlay {
+                    Circle().strokeBorder(AppTheme.ink.opacity(contrast == .increased ? 0.65 : 0.30), lineWidth: contrast == .increased ? 2 : 1)
+                        .allowsHitTesting(false)
+                }
+        }
+    }
+}
+
 private struct HearthNavigationMaterial: ViewModifier {
     let fallback: Color
     let placement: ToolbarPlacement
@@ -82,6 +111,11 @@ private struct HearthNavigationMaterial: ViewModifier {
 extension View {
     func hearthGlassButton(prominent: Bool = false, glassInLight: Bool = true) -> some View {
         modifier(HearthGlassButton(prominent: prominent, glassInLight: glassInLight))
+    }
+
+    /// Icon-only round button at exactly the 44-point touch target, in glass or the opaque dark style.
+    func hearthIconButton() -> some View {
+        buttonStyle(HearthIconButtonStyle())
     }
 
     func hearthNavigationMaterial(_ fallback: Color, for placement: ToolbarPlacement) -> some View {

@@ -65,16 +65,15 @@ struct CalendarAgendaView: View {
                                     .font(.subheadline).foregroundStyle(.secondary)
                             }.frame(maxWidth: .infinity, alignment: .leading)
                             Button { withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2)) { showingMonth.toggle() } } label: {
-                                Image(systemName: "calendar").frame(width: 44, height: 44)
-
-                            }.hearthGlassButton().accessibilityLabel("Choose date").accessibilityIdentifier("calendar.month")
+                                Image(systemName: "calendar")
+                            }.hearthIconButton().accessibilityLabel("Choose date").accessibilityIdentifier("calendar.month")
                         }
                         HearthGlassControls { HStack(spacing: 12) {
-                            Button { shiftDay(-1) } label: { Label("Previous", systemImage: "chevron.left").labelStyle(.iconOnly).frame(width: 44, height: 44) }
-                                .accessibilityIdentifier("calendar.previous")
+                            Button { shiftDay(-1) } label: { Label("Previous", systemImage: "chevron.left") }
+                                .hearthIconButton().accessibilityIdentifier("calendar.previous")
                             Button("Today") { selectedDate = .now }.frame(minHeight: 44).accessibilityIdentifier("calendar.today")
-                            Button { shiftDay(1) } label: { Label("Next", systemImage: "chevron.right").labelStyle(.iconOnly).frame(width: 44, height: 44) }
-                                .accessibilityIdentifier("calendar.next")
+                            Button { shiftDay(1) } label: { Label("Next", systemImage: "chevron.right") }
+                                .hearthIconButton().accessibilityIdentifier("calendar.next")
                             Spacer()
                         }.hearthGlassButton() }
                         if showingMonth { monthPicker.frame(maxWidth: 420) }
