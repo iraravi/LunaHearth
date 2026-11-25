@@ -295,6 +295,7 @@
 		D4824D0D0A4D985662DA3F6B /* OnDevicePantrySuggestionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB6FF548FF818690A6152A13 /* OnDevicePantrySuggestionService.swift */; };
 		D5371A48C9C93E65A86167BE /* CloudKitPublicConfigurationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BCF375162E91FB48A8E4940 /* CloudKitPublicConfigurationService.swift */; };
 		D57B70BE97CCA74B711ECBCF /* DocumentStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 739AFCFA57BA1D3321A7153D /* DocumentStorageService.swift */; };
+		D5CBEAC3785F0A3203726D3D /* WatchFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35522D9453054CF9FD572642 /* WatchFlowTests.swift */; };
 		D650A2BEE7AF7AF7DE7F652E /* AssignmentNotificationRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53BCC23EF9042B47786A40D5 /* AssignmentNotificationRoute.swift */; };
 		D7F58B2489631ECD33BDDF6C /* ReceiptTableDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = A524B6ACCA9608A5FB8649E3 /* ReceiptTableDetails.swift */; };
 		D861C4B13158B684D876361F /* ReceiptDigitCorrection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62752C2831E7D75B7C73AB93 /* ReceiptDigitCorrection.swift */; };
@@ -375,6 +376,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 94F308873A3AC7A413B85A51;
 			remoteInfo = LunaHearthWatchWidgets;
+		};
+		C6F4B8C8B006C99153E460BB /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F21FD1C81D7542759559F798 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 79A89BECD831836D1B000D67;
+			remoteInfo = LunaHearthWatch;
 		};
 		FF7B4B41C6A3B01F19B05AC6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -480,6 +488,7 @@
 		318F155F8335229694131EB2 /* PantryQuantityInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryQuantityInput.swift; sourceTree = "<group>"; };
 		3217099408699023C1666237 /* FeatureIllustration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureIllustration.swift; sourceTree = "<group>"; };
 		3400F6ED5E73E209DF1E9991 /* ShoppingShelfCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingShelfCard.swift; sourceTree = "<group>"; };
+		35522D9453054CF9FD572642 /* WatchFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchFlowTests.swift; sourceTree = "<group>"; };
 		35A555BD249FC0D095DBC3E1 /* PantryAutoCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryAutoCategorizer.swift; sourceTree = "<group>"; };
 		395C282EAE99A369B5CC374A /* ShoppingEntryRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingEntryRulesTests.swift; sourceTree = "<group>"; };
 		39C5C6E22BAFD1AF1008474F /* LocalHouseholdRepository+PortableBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalHouseholdRepository+PortableBackup.swift"; sourceTree = "<group>"; };
@@ -681,6 +690,7 @@
 		BB078FBF31485807E11B1B25 /* ExistingInventoryPurchasePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExistingInventoryPurchasePicker.swift; sourceTree = "<group>"; };
 		BB410BC686EE0B479B4278AC /* AppleConnections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleConnections.swift; sourceTree = "<group>"; };
 		BC030D09EBE34A483AD0D4B2 /* CalendarExportSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarExportSheet.swift; sourceTree = "<group>"; };
+		BD21DB124C2BB77054565A66 /* LunaHearthWatchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LunaHearthWatchUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFD042B01FF789E2CF28EFBA /* DangerZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DangerZoneView.swift; sourceTree = "<group>"; };
 		C335998282FEDA8F08DC1DD1 /* ConnectedDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedDemoView.swift; sourceTree = "<group>"; };
 		C37A476647536CB37D908008 /* HouseholdSyncRecords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdSyncRecords.swift; sourceTree = "<group>"; };
@@ -780,6 +790,7 @@
 				20DCDB93D86989A3A80C31D5 /* LunaHearthTests.xctest */,
 				0B21FA71EC7D0800691F1255 /* LunaHearthUITests.xctest */,
 				50085D093DA9F23C19BCA761 /* LunaHearthWatch.app */,
+				BD21DB124C2BB77054565A66 /* LunaHearthWatchUITests.xctest */,
 				20C1D1197E40D2481D832BE4 /* LunaHearthWatchWidgets.appex */,
 			);
 			name = Products;
@@ -1077,6 +1088,14 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		555D995943B26DDB78AF0956 /* LunaHearthWatchUITests */ = {
+			isa = PBXGroup;
+			children = (
+				35522D9453054CF9FD572642 /* WatchFlowTests.swift */,
+			);
+			path = LunaHearthWatchUITests;
+			sourceTree = "<group>";
+		};
 		573B1ACCCB607D881E389B93 /* CloudKit */ = {
 			isa = PBXGroup;
 			children = (
@@ -1241,6 +1260,7 @@
 				EA856952196620A47B98879A /* LunaHearthTests */,
 				A96F9ADB4B733F7DFB97EFCE /* LunaHearthUITests */,
 				171E7AB80D7DB7EE77A611B5 /* LunaHearthWatch */,
+				555D995943B26DDB78AF0956 /* LunaHearthWatchUITests */,
 				0F44D877CF8ABBEF4D7118A4 /* LunaHearthWatchWidgets */,
 				E4A245D6D0824E89CDAB2C5E /* Shared */,
 				0C0C16E31B7F9FD1CB8DD083 /* Products */,
@@ -1581,6 +1601,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1605334D5FFEE54434662DEA /* LunaHearthWatchUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C692B56CA8D1858A138970C /* Build configuration list for PBXNativeTarget "LunaHearthWatchUITests" */;
+			buildPhases = (
+				8DC7B2B3BFF581462D00B37F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				866F70CAC04CAB4F3429D1A6 /* PBXTargetDependency */,
+			);
+			name = LunaHearthWatchUITests;
+			packageProductDependencies = (
+			);
+			productName = LunaHearthWatchUITests;
+			productReference = BD21DB124C2BB77054565A66 /* LunaHearthWatchUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		79A89BECD831836D1B000D67 /* LunaHearthWatch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = D7E06C69E8821D1167DDB0EF /* Build configuration list for PBXNativeTarget "LunaHearthWatch" */;
@@ -1683,6 +1721,11 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					1605334D5FFEE54434662DEA = {
+						DevelopmentTeam = 647V74N5JV;
+						ProvisioningStyle = Automatic;
+						TestTargetID = 79A89BECD831836D1B000D67;
+					};
 					79A89BECD831836D1B000D67 = {
 						DevelopmentTeam = 647V74N5JV;
 						ProvisioningStyle = Automatic;
@@ -1725,6 +1768,7 @@
 				94F308873A3AC7A413B85A51 /* LunaHearthWatchWidgets */,
 				C85AF0767F867099ED8F7C1A /* LunaHearthTests */,
 				CA2B4BD1AC3F5F02AD28865D /* LunaHearthUITests */,
+				1605334D5FFEE54434662DEA /* LunaHearthWatchUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -1750,6 +1794,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		8DC7B2B3BFF581462D00B37F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5CBEAC3785F0A3203726D3D /* WatchFlowTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8DC8E8C5F5A9B0FF19E3A327 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2143,6 +2195,11 @@
 			target = 79A89BECD831836D1B000D67 /* LunaHearthWatch */;
 			targetProxy = FF7B4B41C6A3B01F19B05AC6 /* PBXContainerItemProxy */;
 		};
+		866F70CAC04CAB4F3429D1A6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 79A89BECD831836D1B000D67 /* LunaHearthWatch */;
+			targetProxy = C6F4B8C8B006C99153E460BB /* PBXContainerItemProxy */;
+		};
 		9340BE58D496D81E3F9B08E3 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 94737C25A61647DB1454D72D /* LunaHearth */;
@@ -2355,6 +2412,24 @@
 			};
 			name = Debug;
 		};
+		4FCBBAA6B8C1E3E2A6F9EADE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth.watchuitests;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = LunaHearthWatch;
+			};
+			name = Release;
+		};
 		5BA61C489EC7D4B8AE7F8566 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2558,6 +2633,24 @@
 			};
 			name = Internal;
 		};
+		A3779E41246F57094F344CB2 /* Internal */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth.watchuitests;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = LunaHearthWatch;
+			};
+			name = Internal;
+		};
 		AED6C93CDF3F49A0B02C59A2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2594,6 +2687,24 @@
 			};
 			name = Release;
 		};
+		E977D39D3B18BFF16ABC1815 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.neuralluna.lunahearth.watchuitests;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				TEST_TARGET_NAME = LunaHearthWatch;
+			};
+			name = Debug;
+		};
 		F7329D552C95AEF97199B42F /* Internal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2621,6 +2732,16 @@
 				8D75489399DADD0C8C2A1A16 /* Debug */,
 				5EA8F1965C92659AC601D844 /* Internal */,
 				2020420C1C050BE7B70311F7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3C692B56CA8D1858A138970C /* Build configuration list for PBXNativeTarget "LunaHearthWatchUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E977D39D3B18BFF16ABC1815 /* Debug */,
+				A3779E41246F57094F344CB2 /* Internal */,
+				4FCBBAA6B8C1E3E2A6F9EADE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -104,8 +104,27 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth.uitests
         GENERATE_INFOPLIST_FILE: YES
         TEST_TARGET_NAME: LunaHearth
+  LunaHearthWatchUITests:
+    type: bundle.ui-testing
+    platform: watchOS
+    sources:
+      - path: LunaHearthWatchUITests
+    dependencies:
+      - target: LunaHearthWatch
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.neuralluna.lunahearth.watchuitests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: LunaHearthWatch
 
 schemes:
+  LunaHearthWatch:
+    build:
+      targets:
+        LunaHearthWatch: all
+    test:
+      targets:
+        - LunaHearthWatchUITests
   LunaHearthInternal:
     build:
       targets:
