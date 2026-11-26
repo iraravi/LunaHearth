@@ -126,4 +126,49 @@ struct CostcoReceiptTests {
         let withoutCodes = ReceiptRules.scan(text: "MARKET\nMILK 10.00\nMILK 10.00")
         #expect(withoutCodes.lines.first?.quantity.isEmpty == true)
     }
+
+    /// Build 98 debug text (sanitized): the same item printed twice, one copy with a decimal
+    /// comma and an accented tax letter, and a coupon row with a stray mark after its code.
+    @Test func damagedPunctuationKeepsRepeatedItemAndCoupon() throws {
+        let text = """
+        COSTCO
+        -WHOLESALE
+        ***START OF PRE-SCANNED ITEMS*********
+        1996645 METHOD BODY 4,97 AÍ
+        1996645 METHOD BODY 4.97 A
+        2034323 HOLIDAY BOWL 8.99 A
+        0000401809Ś / 2034323 2.00-A
+        E 1169942 GINGER BEER 16.59 A
+        E 0000398961 /1169942 5.00-A
+        E 776948 STARBK COCOA 14.89
+        E 0000400865 / 776948 3.00-
+        ***END OF PRE-SCANNED ITEMS***
+        TOTAL NUMBER OF PRE-SCANNED ITEMS 5
+        SUBTOTAL 40.41
+        TAX 2.35
+        **** TOTAL 42716
+        APPROVED - Purchase
+        AMOUNT: $42.76
+        Visa 42.76
+        CHANGE 0.00
+        TAX PLAN A 8.250% 2.35
+        TOTAL NUMBER OF ITEMS SOLD = 5
+        INSTANT SAVINGS $ 10.00
+        """
+        let scan = ReceiptRules.scan(text: text, sameLinePrices: true)
+        let byName = Dictionary(uniqueKeysWithValues: scan.lines.map { ($0.name, $0) })
+        #expect(byName["METHOD BODY"]?.amount == "9.94")
+        #expect(byName["METHOD BODY"]?.quantity == "2 pieces")
+        #expect(byName["HOLIDAY BOWL"]?.amount == "6.99")
+        #expect(byName["GINGER BEER"]?.amount == "11.59")
+        #expect(byName["STARBK COCOA"]?.amount == "11.89")
+        #expect(scan.lines.count == 4)
+        #expect(ReceiptReconciliation.check(lines: scan.lines, text: text) == .verified)
+    }
+    @Test func punctuationRepairNeverTouchesDigits() {
+        #expect(ItemCodeReceiptDetails.repaired("0000401809Ś / 2034323 2.00-A") == "0000401809 / 2034323 2.00-A")
+        #expect(ItemCodeReceiptDetails.repaired("1996645 METHOD BODY 4,97 AÍ") == "1996645 METHOD BODY 4.97 A")
+        #expect(ItemCodeReceiptDetails.repaired("1996645 TV 1,234.56 A") == "1996645 TV 1,234.56 A")
+        #expect(ItemCodeReceiptDetails.repaired("E 776948 STARBK COCOA 14.89") == "E 776948 STARBK COCOA 14.89")
+    }
 }

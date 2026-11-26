@@ -36,6 +36,19 @@ enum ItemCodeReceiptDetails {
         return rows[..<boundary].joined(separator: "\n")
     }
 
+    /// Undoes OCR damage that only touches punctuation, never digits or letters of a name:
+    /// a stray mark glued to a coupon's own code ("0000401809Ś / 2034323 2.00-A"), a decimal
+    /// comma in the price ("4,97") and an accent or extra mark on the tax letter ("4.97 AÍ").
+    /// The amount digits stay exactly as printed, and the printed totals still decide later
+    /// whether any amount is shown.
+    static func repaired(_ raw: String) -> String {
+        var row = raw.trimmingCharacters(in: .whitespaces)
+        row = row.replacingOccurrences(of: #"^((?:[EA]\s+)?[0-9A-Z]{4,})[^\s/0-9A-Za-z]{1,2}(?=\s*/)"#, with: "$1", options: .regularExpression)
+        row = row.replacingOccurrences(of: #"(?<![\d.,])(\d{1,6}),(\d{2})(?=\s*[-−]?\s*[A-Za-z]?[^\s\d]?$)"#, with: "$1.$2", options: .regularExpression)
+        row = row.replacingOccurrences(of: #"(\d\.\d{2}[-−]?)\s*([A-Za-z])[^\s\dA-Za-z]$"#, with: "$1 $2", options: .regularExpression)
+        return row
+    }
+
     private static func packLabel(_ name: String) -> String {
         name.replacingOccurrences(of: #"^A(?=LB\b)"#, with: "4", options: .regularExpression)
     }
@@ -61,7 +74,7 @@ enum ItemCodeReceiptDetails {
         }
         let sourceRows = productSection(String(text.prefix(40_000))).components(separatedBy: .newlines)
         for (rowIndex, raw) in sourceRows.enumerated() {
-            let row = raw.trimmingCharacters(in: .whitespaces)
+            let row = repaired(raw)
             if let part = captures(#"^(?:[EA]\s+)?[0-9A-Z]{4,}\s+/\s*(\d{4,})\s+(\d{1,6}\.\d{2})[-−]\s*[\p{L}]?\s*$"#, row),
                let amount = try? ExpenseRules.minorUnits(part[1]) {
                 discounts[part[0], default: 0] += amount
@@ -78,7 +91,7 @@ enum ItemCodeReceiptDetails {
                 } else { items[key] = Item(name: name, count: 1, total: amount, aliases: [name]) }
             } else if let part = captures(#"^(?:[EA]\s+)?([A-Z][0-9]{3,})\s+([\p{L}][\p{L}0-9 &.'/-]*?)\s+(\d{1,6}\.\d{2})\s*[A-Za-z]?$"#, row),
                       rowIndex + 1 < sourceRows.count,
-                      let coupon = captures(#"^(?:[EA]\s+)?[0-9A-Z]{4,}\s+/\s*(\d{4,})\s+(\d+\.\d{2})[-−]\s*[\p{L}]?\s*$"#, sourceRows[rowIndex + 1].trimmingCharacters(in: .whitespaces)),
+                      let coupon = captures(#"^(?:[EA]\s+)?[0-9A-Z]{4,}\s+/\s*(\d{4,})\s+(\d+\.\d{2})[-−]\s*[\p{L}]?\s*$"#, repaired(sourceRows[rowIndex + 1])),
                       part[0].count == coupon[0].count, part[0].dropFirst() == coupon[0].dropFirst(),
                       items[coupon[0]] == nil,
                       let amount = try? ExpenseRules.minorUnits(part[2]),
