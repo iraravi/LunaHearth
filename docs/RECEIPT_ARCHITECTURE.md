@@ -3,8 +3,18 @@
 Receipts from thousands of stores are read without any per-store code. Store knowledge is **data**; layouts are **general patterns**; every result is **checked against the printed totals** before items are shown.
 
 ```
-OCR text (Vision, on device)
+Photo ── ReceiptReader (all on device; stops at the first reading that adds up)
+   │       1. layout reader (Vision RecognizeDocumentsRequest, iOS 26+): table rows keep name + price together
+   │       2. plain OCR (VNRecognizeTextRequest, spelling correction OFF: codes and prices stay literal)
+   │       3. spelling-corrected OCR (the pre-3.0 reading, last resort)
+   │       ReceiptReadingChoice: adds up > one-tap fix available > closest to the printed subtotal
+   │       4. nothing adds up, one page, iOS 27 model that reads images: OnDeviceReceiptImageReader
+   │          proposes items; kept only if they add up to OCR's printed totals AND every amount is
+   │          printed or made from printed numbers (ReceiptModelReadingCheck)
    │
+OCR text
+   │
+   ├─ Clean-up ─── ReceiptOCRCleanup: look-alike letters, stray marks, "4,97" decimal commas
    ├─ Store name ── ShoppingStoreCatalog (data: chains + printed spellings)
    │                → learned store fingerprints (ReceiptCorrectionMemory, on this phone)
    │                → header heuristics (website match, junk-line filter)
@@ -40,4 +50,6 @@ OCR text (Vision, on device)
 ## Tests
 
 - `ReceiptLayoutPatternTests`: US and Indian layout patterns reconstructed from public descriptions (fictional stores, no personal data). Replace with real receipts as they arrive.
+- `ReceiptReadingChoiceTests`: which reading wins, and that an AI reading with an invented price is rejected. `ReceiptReaderImageTests` runs the real Vision readers on the demo receipt photo.
+- `ReceiptCorpus/`: real receipts (personal details removed) checked on every test run.
 - Real-receipt tests: Costco, H-E-B, India Bazaar, Target and others in `LunaHearthTests/Receipt*Tests.swift`.

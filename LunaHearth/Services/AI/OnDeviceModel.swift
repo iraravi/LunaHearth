@@ -1,5 +1,6 @@
 import Foundation
 import FoundationModels
+import CoreGraphics
 
 /// Why a model request produced nothing usable. Already recorded in `AIRequestDiagnostics`.
 struct OnDeviceModelFailure: Error, Sendable {
@@ -44,6 +45,27 @@ enum OnDeviceModel {
             try await LanguageModelSession(instructions: instructions).respond(to: prompt).content
                 .trimmingCharacters(in: .whitespacesAndNewlines)
         }
+    }
+
+    /// Structured generation from one image. Throws `CancellationError` or `OnDeviceModelFailure`.
+    /// The image is untrusted data like every other input; callers validate the output against OCR.
+    @available(iOS 27.0, *)
+    static func generate<Output: Generable & Sendable>(_ type: Output.Type, feature: AppFeature, instructions: String,
+                                                       request: String, image: CGImage) async throws -> Output {
+        try await run(feature) {
+            try await LanguageModelSession(model: SystemLanguageModel.default, instructions: instructions)
+                .respond(generating: Output.self) {
+                    request
+                    Attachment(image)
+                }.content
+        }
+    }
+
+    /// Whether the system model can read images on this device right now.
+    @available(iOS 27.0, *)
+    static var readsImages: Bool {
+        guard case .available = SystemLanguageModel.default.availability else { return false }
+        return SystemLanguageModel.default.capabilities.contains(.vision)
     }
 
     static func json(_ value: some Encodable) throws -> String {

@@ -169,21 +169,14 @@ struct ReceiptImportView: View {
                 guard !value.isEmpty else { return }
                 cancelDecoding()
                 scanSession.start(operation: {
-                    let scanner = VisionReceiptScanner()
-                    var pages: [String] = []
-                    var previews: [Data] = []
+                    var images: [Data] = []
                     for photo in value {
                         try Task.checkCancellation()
                         guard let data = try await photo.loadTransferable(type: Data.self) else { throw ReceiptImportError.unreadable }
                         guard data.count <= 20_000_000 else { throw ReceiptImportError.tooLarge }
-                        pages.append(try await scanner.scan(imageData: data).text)
-                        if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
+                        images.append(data)
                     }
-                    try Task.checkCancellation()
-                    var result = try await OnDeviceReceiptExtractionService().extract(text: pages.joined(separator: "\n"))
-                    result.previewImages = previews
-                    result.previewIncomplete = previews.count != pages.count
-                    return result
+                    return try await read(images)
                 }, completed: { scan in apply(scan); photos = [] },
                    failed: { message in error = message; photos = [] })
     }
@@ -413,20 +406,12 @@ struct ReceiptImportView: View {
         cancelDecoding()
         scanSession.start(operation: {
             let encoder = ReceiptCameraEncoder()
-            let scanner = VisionReceiptScanner()
-            var pages: [String] = []
-                    var previews: [Data] = []
+            var data: [Data] = []
             for image in images {
                 try Task.checkCancellation()
-                let data = try await encoder.encode(image)
-                pages.append(try await scanner.scan(imageData: data).text)
-                        if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
+                data.append(try await encoder.encode(image))
             }
-            try Task.checkCancellation()
-            var result = try await OnDeviceReceiptExtractionService().extract(text: pages.joined(separator: "\n"))
-                    result.previewImages = previews
-                    result.previewIncomplete = previews.count != pages.count
-                    return result
+            return try await read(data)
         }, completed: { apply($0) }, failed: { error = $0 })
     }
     private func startScan(_ images: [Data]) {
@@ -435,20 +420,16 @@ struct ReceiptImportView: View {
                           completed: { apply($0) }, failed: { error = $0 })
     }
     private func read(_ images: [Data]) async throws -> ReceiptScan {
-        // Each attempt owns its scanner so cancelled Vision work cannot queue a retry behind it.
-        let scanner = VisionReceiptScanner()
-        var pages: [String] = []
-                    var previews: [Data] = []
+        // Each attempt owns its reader so cancelled Vision work cannot queue a retry behind it.
+        var result = try await ReceiptReader().read(pages: images)
+        var previews: [Data] = []
         for data in images {
             try Task.checkCancellation()
-            pages.append(try await scanner.scan(imageData: data).text)
-                        if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
+            if let preview = try? await imageStorage.compress(data) { previews.append(preview) }
         }
-        try Task.checkCancellation()
-        var result = try await OnDeviceReceiptExtractionService().extract(text: pages.joined(separator: "\n"))
-                    result.previewImages = previews
-                    result.previewIncomplete = previews.count != pages.count
-                    return result
+        result.previewImages = previews
+        result.previewIncomplete = previews.count != images.count
+        return result
     }
     private func apply(_ scan: ReceiptScan) {
         cancelDecoding(); proposals = [:]; keptBillNames = []; decodeMessage = nil

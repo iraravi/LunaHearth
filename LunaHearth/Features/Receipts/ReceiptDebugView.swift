@@ -73,13 +73,10 @@ struct ReceiptDebugView: View {
 
     /// Shipping pipeline first, then the debug-only readers on the same photos for comparison.
     private func run(_ pages: [Data]) async throws -> ReceiptScan {
-        let scanner = VisionReceiptScanner()
-        var texts: [String] = []
-        for page in pages {
-            try Task.checkCancellation()
-            texts.append(try await scanner.scan(imageData: page).text)
-        }
-        var scan = try await extract(texts.joined(separator: "\n"))
+        var pending = ReceiptScan(text: "", lines: [], extractionMessage: "Reading with the layout reader and OCR…")
+        pending.debugOutput = "No reading yet."
+        report = ReceiptDebugReport.make(pending)
+        var scan = try await ReceiptReader().read(pages: pages)
         report = ReceiptDebugReport.make(scan) + "\n\nEXPERIMENTS RUNNING… (document recognition, then Apple model with image)"
         let lab = ReceiptExperimentService()
         let document = await lab.documentRecognition(pages: pages)
@@ -88,14 +85,6 @@ struct ReceiptDebugView: View {
         try Task.checkCancellation()
         scan.experimentOutput = ReceiptDebugReport.experiments(current: scan, document: document, model: model)
         return scan
-    }
-
-    private func extract(_ text: String) async throws -> ReceiptScan {
-        // Keep OCR visible if model generation is cancelled or reaches the watchdog.
-        var pending = ReceiptScan(text: text, lines: [], extractionMessage: "OCR completed. AI pending; no final items yet.")
-        pending.debugOutput = "No structured AI output yet."
-        report = ReceiptDebugReport.make(pending)
-        return try await OnDeviceReceiptExtractionService().extract(text: text)
     }
 
     private func begin(_ operation: @escaping @MainActor () async throws -> ReceiptScan) {
