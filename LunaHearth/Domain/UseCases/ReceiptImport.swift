@@ -61,7 +61,8 @@ enum ReceiptRules {
     ///   line amount. Production scans enable it because `ReceiptReconciliation` hides any item
     ///   list whose amounts do not reproduce the printed subtotal/total.
     static func scan(text: String, sameLinePrices: Bool = false) -> ReceiptScan {
-        let bounded = String(text.prefix(40_000))
+        // Camera misreads of punctuation are repaired once, before every reader below.
+        let bounded = ReceiptOCRCleanup.clean(String(text.prefix(40_000)))
         let normalized = bounded.lowercased().split(whereSeparator: \.isWhitespace).joined(separator: " ")
         let fingerprint = hash(normalized)
         var lines: [ReceiptLine] = []

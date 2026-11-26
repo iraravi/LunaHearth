@@ -36,17 +36,9 @@ enum ItemCodeReceiptDetails {
         return rows[..<boundary].joined(separator: "\n")
     }
 
-    /// Undoes OCR damage that only touches punctuation, never digits or letters of a name:
-    /// a stray mark glued to a coupon's own code ("0000401809Ś / 2034323 2.00-A"), a decimal
-    /// comma in the price ("4,97") and an accent or extra mark on the tax letter ("4.97 AÍ").
-    /// The amount digits stay exactly as printed, and the printed totals still decide later
-    /// whether any amount is shown.
+    /// Item-code rows go through the shared clean-up too, in case this runs on raw text.
     static func repaired(_ raw: String) -> String {
-        var row = raw.trimmingCharacters(in: .whitespaces)
-        row = row.replacingOccurrences(of: #"^((?:[EA]\s+)?[0-9A-Z]{4,})[^\s/0-9A-Za-z]{1,2}(?=\s*/)"#, with: "$1", options: .regularExpression)
-        row = row.replacingOccurrences(of: #"(?<![\d.,])(\d{1,6}),(\d{2})(?=\s*[-−]?\s*[A-Za-z]?[^\s\d]?$)"#, with: "$1.$2", options: .regularExpression)
-        row = row.replacingOccurrences(of: #"(\d\.\d{2}[-−]?)\s*([A-Za-z])[^\s\dA-Za-z]$"#, with: "$1 $2", options: .regularExpression)
-        return row
+        ReceiptOCRCleanup.row(raw.trimmingCharacters(in: .whitespaces))
     }
 
     private static func packLabel(_ name: String) -> String {

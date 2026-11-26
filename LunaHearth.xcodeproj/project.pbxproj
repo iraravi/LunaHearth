@@ -19,6 +19,7 @@
 		05393A6BC53397178FDB0D99 /* BugScanRegressionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FE4FD93632743D902F16804 /* BugScanRegressionTests.swift */; };
 		05582CD3047E64A1A78B4B02 /* ExistingInventoryPurchasePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB078FBF31485807E11B1B25 /* ExistingInventoryPurchasePicker.swift */; };
 		070A98F3D0EED4DC9EF813ED /* PantryPhotoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13EFE6CB71F837A8A38845FC /* PantryPhotoTests.swift */; };
+		081D4BB2E8F9CB7813B104A2 /* ReceiptCorpusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6AE793D70E1634848179D37 /* ReceiptCorpusTests.swift */; };
 		084FF27582A91546541989CF /* TodayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99AA8484EC2670204C2CC384 /* TodayView.swift */; };
 		0862D9DABB4165DA9A62D06D /* PantryPhotoTestFixture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0914B79D9CD0E045843CCB11 /* PantryPhotoTestFixture.swift */; };
 		087525287EF0B8284AC0D547 /* MealIdeasView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EDA2FC621502C112932F8A97 /* MealIdeasView.swift */; };
@@ -35,6 +36,7 @@
 		0D494AA65442C82D48C05B42 /* PublicConfigurationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8526360FD0D0A8FD5544BB1 /* PublicConfigurationStore.swift */; };
 		0DE6002ECDF1725A538C52E4 /* MealSuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 418613D46BEC8F7FEBE8CED1 /* MealSuggestions.swift */; };
 		0DEEC3D0F46DFD8667F19274 /* ReceiptCorrectionMemory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3988E38C9903439CF1568FA /* ReceiptCorrectionMemory.swift */; };
+		0E337F5867551AAD611639BE /* ReceiptGapHintTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8C02918DED9C9637BCEFB0E /* ReceiptGapHintTests.swift */; };
 		0F05B49DFF41E7590441B2F9 /* CalendarDayPeriod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D2EAEE2C876AB201596FD2B /* CalendarDayPeriod.swift */; };
 		0F23C9DCE06F1930830822EA /* ReceiptSourceOwnershipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A2F135CC67E9FC3AE66A1A2 /* ReceiptSourceOwnershipTests.swift */; };
 		0F690BCC89A1310170C86FC0 /* OnDeviceReceiptExtractionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 665691005D061B01EFE6E4C8 /* OnDeviceReceiptExtractionService.swift */; };
@@ -61,6 +63,7 @@
 		1BBE195C38746DBB6AE2C4CD /* ReminderDeliveryCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9DD2CB7BB7ADC6EADDD289 /* ReminderDeliveryCoordinator.swift */; };
 		1C21208F168D42D3278A8F4E /* ExpensesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9CEC94CF602748AFE18EA8E /* ExpensesView.swift */; };
 		1C8BCD1EECCF40CB7EFE9D97 /* PrivateFoundationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4251EFF23DB940BC7F8435E5 /* PrivateFoundationTests.swift */; };
+		1D7F13CB081AB8CC92D257BF /* india-bazaar-two-each.txt in Resources */ = {isa = PBXBuildFile; fileRef = 352BD92EDC5A03DBAE11AD3A /* india-bazaar-two-each.txt */; };
 		1DC2CFA990D2628C3B391762 /* InvitationSendSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883CBDBB4B2308273AFBA6DF /* InvitationSendSheet.swift */; };
 		1E3E77CB1C1554A13DB76428 /* ApplePlanning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92FACEC6B6880E8CD67EF00D /* ApplePlanning.swift */; };
 		1E7F4525D3F07C96699185CD /* ShoppingSuggestionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CD271BD2A9ED8372780D387 /* ShoppingSuggestionsTests.swift */; };
@@ -119,6 +122,7 @@
 		4FD479FD06D5243C8841F51D /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1ADF75FCE825963446D8EBF /* AppRootView.swift */; };
 		50A1F27E121F106DC54D1E12 /* ReceiptImageViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46B6096B791DA1244BF64CA /* ReceiptImageViewer.swift */; };
 		50B183410897080FB0516DD5 /* QuickCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D462D1A53886B8564A18B6C8 /* QuickCaptureView.swift */; };
+		51AB494A48651DBA35C2F7D4 /* india-bazaar-weighed-produce.txt in Resources */ = {isa = PBXBuildFile; fileRef = D08EE9D9E4EAC9BB2A1134B7 /* india-bazaar-weighed-produce.txt */; };
 		52AFCF511D76DC42734897F2 /* FamilyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30700781CE253206DAE048A6 /* FamilyView.swift */; };
 		54C06C0F4024708F2E3809BC /* AppointmentLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67201B0B9D32306EEDD7093E /* AppointmentLink.swift */; };
 		54E37B683384C4448DC9AFB9 /* ItemCodeReceiptDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB237943290938136EE4C17A /* ItemCodeReceiptDetails.swift */; };
@@ -137,6 +141,7 @@
 		5F3E3F8D54E6A9F89C867565 /* OnDeviceIngredientComparisonService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84B808C2508984FA5834496 /* OnDeviceIngredientComparisonService.swift */; };
 		5F8DA56CE1891A84380A3CCD /* HowItWorksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72910D54B652745EBA5D5CB /* HowItWorksView.swift */; };
 		60BD2068C52B27EC036E760B /* GroceryOrganizationControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8524DCEA47E714E3CD84FE07 /* GroceryOrganizationControls.swift */; };
+		60C4AA4B410FF8D2E647D448 /* ReceiptOCRCleanup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04F4E18EA6B772FA280D7DC3 /* ReceiptOCRCleanup.swift */; };
 		613998DB88685E8CC59340D5 /* PantryHingeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8C9A7DFA0BFFB3D7FA518D /* PantryHingeTests.swift */; };
 		62ECB2C6B00FBA52EF095A7B /* CalendarDayPeriodTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08A2D057D100F02487FB0CE7 /* CalendarDayPeriodTests.swift */; };
 		63EAE2363D9F428CFC991456 /* HomeDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47F8F5A1D4EAFB40AEA1FDB5 /* HomeDashboardView.swift */; };
@@ -160,6 +165,7 @@
 		703ACF4E917527A72DCAB97D /* TodayLivingHome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47FB040DE7C2F4958A0C3F53 /* TodayLivingHome.swift */; };
 		70BBB6658BA2DAA32B06EB18 /* PantryAutoCategorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A555BD249FC0D095DBC3E1 /* PantryAutoCategorizer.swift */; };
 		70C3D508E92D964F0FE55109 /* WatchApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81243E8D26103BA77F0DA9AC /* WatchApp.swift */; };
+		70FFF2CB498EA9B1FD7038E7 /* ReceiptGapHints.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCE6486AB44397B54C2156E6 /* ReceiptGapHints.swift */; };
 		714DCFF966BB5F86B8DA0D5A /* ExpenseMerchantField.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3D006DAD0DA85BD7946EC4E /* ExpenseMerchantField.swift */; };
 		7411EAD6B0F15B5AC465A785 /* HouseholdSharingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 411ED1CCD9AA5D7A0BFD49CA /* HouseholdSharingTests.swift */; };
 		741709E709792120F3E8D682 /* ReceiptAbbreviations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D68F51B571C9F47D3099BD9 /* ReceiptAbbreviations.swift */; };
@@ -256,6 +262,7 @@
 		B3FF801E350F00499EEF76EF /* AIRequestDiagnostics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 687213F7872579A6F628FBF4 /* AIRequestDiagnostics.swift */; };
 		B4D21D247A4905D7B1F6C293 /* ReceiptExtractionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13D71927031C874EF1924D52 /* ReceiptExtractionTests.swift */; };
 		B50D22709AA4D5BBFF846854 /* TodayPriorities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F87CC2256AC1D9C2B4981F5 /* TodayPriorities.swift */; };
+		B60DBC16EF443622C4247A11 /* costco-damaged-punctuation.txt in Resources */ = {isa = PBXBuildFile; fileRef = FC49B8061A472DC4C915583F /* costco-damaged-punctuation.txt */; };
 		B683364334E1A467134E545A /* GroceryPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B59AC5C1A5D2DA44B42C7E78 /* GroceryPerformanceTests.swift */; };
 		B768FE8AF2F503D91FFE5CF9 /* MealCookingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1152F566014C0889336BC25B /* MealCookingTests.swift */; };
 		B7F4611DB5C27FCD7BB5568E /* WatchLinkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AFBA005473A54795F3614FB /* WatchLinkTests.swift */; };
@@ -423,6 +430,7 @@
 		013B86CA7498C733A418A26A /* AppointmentAlerts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppointmentAlerts.swift; sourceTree = "<group>"; };
 		015E6D9F026408296CB068CD /* CloudSharingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSharingSheet.swift; sourceTree = "<group>"; };
 		04C3600B3CA1EC9EA34F9C46 /* CalendarDeliverySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDeliverySettingsView.swift; sourceTree = "<group>"; };
+		04F4E18EA6B772FA280D7DC3 /* ReceiptOCRCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptOCRCleanup.swift; sourceTree = "<group>"; };
 		06C52AAEBCB7478DA5D0A4C5 /* TodayStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodayStyle.swift; sourceTree = "<group>"; };
 		06CDAED74AD95F35D1824CB4 /* UITestCalendarDelivery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestCalendarDelivery.swift; sourceTree = "<group>"; };
 		07A3E6873A3C3B94D50FBE5C /* SharingAppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharingAppDelegate.swift; sourceTree = "<group>"; };
@@ -488,6 +496,7 @@
 		318F155F8335229694131EB2 /* PantryQuantityInput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryQuantityInput.swift; sourceTree = "<group>"; };
 		3217099408699023C1666237 /* FeatureIllustration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureIllustration.swift; sourceTree = "<group>"; };
 		3400F6ED5E73E209DF1E9991 /* ShoppingShelfCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingShelfCard.swift; sourceTree = "<group>"; };
+		352BD92EDC5A03DBAE11AD3A /* india-bazaar-two-each.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "india-bazaar-two-each.txt"; sourceTree = "<group>"; };
 		35522D9453054CF9FD572642 /* WatchFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchFlowTests.swift; sourceTree = "<group>"; };
 		35A555BD249FC0D095DBC3E1 /* PantryAutoCategorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PantryAutoCategorizer.swift; sourceTree = "<group>"; };
 		395C282EAE99A369B5CC374A /* ShoppingEntryRulesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingEntryRulesTests.swift; sourceTree = "<group>"; };
@@ -684,6 +693,7 @@
 		B56C13F538A7C4167C77521B /* MealPlansView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealPlansView.swift; sourceTree = "<group>"; };
 		B59AC5C1A5D2DA44B42C7E78 /* GroceryPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroceryPerformanceTests.swift; sourceTree = "<group>"; };
 		B667347D180927239EB8956F /* FamilyWeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FamilyWeekView.swift; sourceTree = "<group>"; };
+		B6AE793D70E1634848179D37 /* ReceiptCorpusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptCorpusTests.swift; sourceTree = "<group>"; };
 		B6B192D504560491BB1F554C /* ReceiptTableDetailsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptTableDetailsTests.swift; sourceTree = "<group>"; };
 		B6E68F125D1E493F6F88FBF4 /* HouseholdIntelligenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdIntelligenceService.swift; sourceTree = "<group>"; };
 		B8EE55E577E87A2E8AB82940 /* ReceiptReconciliation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptReconciliation.swift; sourceTree = "<group>"; };
@@ -709,6 +719,7 @@
 		CE90A1880C0547877E4A92EA /* HouseholdCleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdCleanup.swift; sourceTree = "<group>"; };
 		CFE6099272ABE89CD297BADB /* ReceiptPurchaseDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptPurchaseDetails.swift; sourceTree = "<group>"; };
 		D00CD81E41A41CB852608326 /* WatchSnapshotRules.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSnapshotRules.swift; sourceTree = "<group>"; };
+		D08EE9D9E4EAC9BB2A1134B7 /* india-bazaar-weighed-produce.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "india-bazaar-weighed-produce.txt"; sourceTree = "<group>"; };
 		D0C37E5ECEAF58BEE3A34D6A /* PortableBackupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortableBackupView.swift; sourceTree = "<group>"; };
 		D14C2F9D2CB0CFB948E525F1 /* MealSuggestionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealSuggestionTests.swift; sourceTree = "<group>"; };
 		D2FBFF7BAE37A194E8CFCD26 /* HouseholdHelpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdHelpView.swift; sourceTree = "<group>"; };
@@ -749,6 +760,7 @@
 		E72910D54B652745EBA5D5CB /* HowItWorksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HowItWorksView.swift; sourceTree = "<group>"; };
 		E77588B10B761083909DE97F /* LocalHouseholdRepository+Cleanup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalHouseholdRepository+Cleanup.swift"; sourceTree = "<group>"; };
 		E84B808C2508984FA5834496 /* OnDeviceIngredientComparisonService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnDeviceIngredientComparisonService.swift; sourceTree = "<group>"; };
+		E8C02918DED9C9637BCEFB0E /* ReceiptGapHintTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptGapHintTests.swift; sourceTree = "<group>"; };
 		E9CEC94CF602748AFE18EA8E /* ExpensesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpensesView.swift; sourceTree = "<group>"; };
 		EA12B43F9569E4BD609AFC3E /* NamedHouseholdInvitationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamedHouseholdInvitationView.swift; sourceTree = "<group>"; };
 		EA8EB1F74D5FFB058EDE0FA6 /* ShoppingFormStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingFormStyle.swift; sourceTree = "<group>"; };
@@ -770,6 +782,8 @@
 		F8526360FD0D0A8FD5544BB1 /* PublicConfigurationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PublicConfigurationStore.swift; sourceTree = "<group>"; };
 		FC1DF160CC9C4BC66786839E /* HouseholdHelp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HouseholdHelp.swift; sourceTree = "<group>"; };
 		FC34E6AFA31B93D3390E3A11 /* RestockQuantity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestockQuantity.swift; sourceTree = "<group>"; };
+		FC49B8061A472DC4C915583F /* costco-damaged-punctuation.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "costco-damaged-punctuation.txt"; sourceTree = "<group>"; };
+		FCE6486AB44397B54C2156E6 /* ReceiptGapHints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceiptGapHints.swift; sourceTree = "<group>"; };
 		FE640D027A02F8D1E80DD7C5 /* WatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchStore.swift; sourceTree = "<group>"; };
 		FEF5E1E115157B099BEF887E /* ReminderDeliveryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderDeliveryTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1197,6 +1211,7 @@
 				A3988E38C9903439CF1568FA /* ReceiptCorrectionMemory.swift */,
 				62752C2831E7D75B7C73AB93 /* ReceiptDigitCorrection.swift */,
 				E19D39D3756672C2DD53BF55 /* ReceiptExtraction.swift */,
+				FCE6486AB44397B54C2156E6 /* ReceiptGapHints.swift */,
 				54DE82FBA9BD7C50E26E2170 /* ReceiptImageProposals.swift */,
 				5E1EBD8AFA3D24F3EF672F7C /* ReceiptImageStorage.swift */,
 				16BE01B6E986B26FE18D92F8 /* ReceiptImport.swift */,
@@ -1204,6 +1219,7 @@
 				A0397CE6C345EBC248EE0465 /* ReceiptLabelReview.swift */,
 				A568260CA0635D095B493EFB /* ReceiptMultilineDetails.swift */,
 				4769772E49F9CD4B8516B625 /* ReceiptNameDecoding.swift */,
+				04F4E18EA6B772FA280D7DC3 /* ReceiptOCRCleanup.swift */,
 				CFE6099272ABE89CD297BADB /* ReceiptPurchaseDetails.swift */,
 				836AA8053C474EC52CA1F82E /* ReceiptPurchaseMatching.swift */,
 				B8EE55E577E87A2E8AB82940 /* ReceiptReconciliation.swift */,
@@ -1399,6 +1415,16 @@
 			path = PantryPhoto;
 			sourceTree = "<group>";
 		};
+		B2FFEFB90F18E827A55019A1 /* ReceiptCorpus */ = {
+			isa = PBXGroup;
+			children = (
+				FC49B8061A472DC4C915583F /* costco-damaged-punctuation.txt */,
+				352BD92EDC5A03DBAE11AD3A /* india-bazaar-two-each.txt */,
+				D08EE9D9E4EAC9BB2A1134B7 /* india-bazaar-weighed-produce.txt */,
+			);
+			path = ReceiptCorpus;
+			sourceTree = "<group>";
+		};
 		B926FFAA6DB0C7FA68988C7C /* Sharing */ = {
 			isa = PBXGroup;
 			children = (
@@ -1546,12 +1572,14 @@
 				AA22D6CAE216978078181687 /* PurchaseHistoryTests.swift */,
 				3C18FAAECA6CCB93F4C2496B /* QuickCaptureTests.swift */,
 				4725765730F60EA116C1DD0B /* ReceiptConflictingTotalsTests.swift */,
+				B6AE793D70E1634848179D37 /* ReceiptCorpusTests.swift */,
 				DCE0D7CAFCF5123DAD7D349D /* ReceiptCorrectionMemoryTests.swift */,
 				3AB730065D2B5E9805291E52 /* ReceiptCountryFormatTests.swift */,
 				1D5975F020EFEE0BCA23A52C /* ReceiptDebugTests.swift */,
 				2AFDA97639703CFD73EC0D31 /* ReceiptDigitCorrectionTests.swift */,
 				761262E75E20BF286B63E000 /* ReceiptExpenseOnlyTests.swift */,
 				13D71927031C874EF1924D52 /* ReceiptExtractionTests.swift */,
+				E8C02918DED9C9637BCEFB0E /* ReceiptGapHintTests.swift */,
 				99E588FE8C4A1D4D2B8D822C /* ReceiptImageProposalTests.swift */,
 				D524BF76ABE1C9F354AEFE3C /* ReceiptImageTests.swift */,
 				1B709BBC91F5AFC33CEE2ACB /* ReceiptImportTests.swift */,
@@ -1583,6 +1611,7 @@
 				567530B0949225691D3DFA71 /* VirtualPantryTests.swift */,
 				8AFBA005473A54795F3614FB /* WatchLinkTests.swift */,
 				75D6899FF16CEE4FDFCE1863 /* WeeklyMealTests.swift */,
+				B2FFEFB90F18E827A55019A1 /* ReceiptCorpus */,
 			);
 			path = LunaHearthTests;
 			sourceTree = "<group>";
@@ -1681,6 +1710,7 @@
 			buildConfigurationList = 171B40C63CEFFF1D53AC5046 /* Build configuration list for PBXNativeTarget "LunaHearthTests" */;
 			buildPhases = (
 				9043CF5414A33E3C4AC57E2D /* Sources */,
+				42DC1120E789179457F0083B /* Resources */,
 			);
 			buildRules = (
 			);
@@ -1774,6 +1804,16 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		42DC1120E789179457F0083B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B60DBC16EF443622C4247A11 /* costco-damaged-punctuation.txt in Resources */,
+				1D7F13CB081AB8CC92D257BF /* india-bazaar-two-each.txt in Resources */,
+				51AB494A48651DBA35C2F7D4 /* india-bazaar-weighed-produce.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7B65C8C144D12C998B660BE7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1862,12 +1902,14 @@
 				F86A331188A0F2F7771CC248 /* PurchaseHistoryTests.swift in Sources */,
 				A24D1B25DD9D423BB8F84899 /* QuickCaptureTests.swift in Sources */,
 				226AFF1C3EE5BB7F47889A70 /* ReceiptConflictingTotalsTests.swift in Sources */,
+				081D4BB2E8F9CB7813B104A2 /* ReceiptCorpusTests.swift in Sources */,
 				8D26BD4FE34BD5A3AE870C46 /* ReceiptCorrectionMemoryTests.swift in Sources */,
 				92382B1B3AEAD9616CA2DA8D /* ReceiptCountryFormatTests.swift in Sources */,
 				FA4B67E75CCD8B0B0F9E5605 /* ReceiptDebugTests.swift in Sources */,
 				33AD4F7D427701DADCD42EE3 /* ReceiptDigitCorrectionTests.swift in Sources */,
 				828F5C9385ACB6ED3798567C /* ReceiptExpenseOnlyTests.swift in Sources */,
 				B4D21D247A4905D7B1F6C293 /* ReceiptExtractionTests.swift in Sources */,
+				0E337F5867551AAD611639BE /* ReceiptGapHintTests.swift in Sources */,
 				A091E840AA24D7B3A05F1FF3 /* ReceiptImageProposalTests.swift in Sources */,
 				93F13519EBF323E4C9442BDB /* ReceiptImageTests.swift in Sources */,
 				A876080495ACF84633613FC6 /* ReceiptImportTests.swift in Sources */,
@@ -2101,6 +2143,7 @@
 				D861C4B13158B684D876361F /* ReceiptDigitCorrection.swift in Sources */,
 				9796B401EC01E771E9334130 /* ReceiptExperimentService.swift in Sources */,
 				569F055FB9E060C7708D7952 /* ReceiptExtraction.swift in Sources */,
+				70FFF2CB498EA9B1FD7038E7 /* ReceiptGapHints.swift in Sources */,
 				F42650AE2591B67DB65E22FB /* ReceiptImageProposals.swift in Sources */,
 				5D6AE6C679C1A5195C240FE1 /* ReceiptImageStorage.swift in Sources */,
 				50A1F27E121F106DC54D1E12 /* ReceiptImageViewer.swift in Sources */,
@@ -2110,6 +2153,7 @@
 				4E027F1D198D4A273DAD11ED /* ReceiptLabelReview.swift in Sources */,
 				D0AFC5394515D19DC35245AF /* ReceiptMultilineDetails.swift in Sources */,
 				1795B5C0BDE46001A0AAA9D9 /* ReceiptNameDecoding.swift in Sources */,
+				60C4AA4B410FF8D2E647D448 /* ReceiptOCRCleanup.swift in Sources */,
 				31A33FDD2AE74C230F36B0AA /* ReceiptPurchaseDetails.swift in Sources */,
 				89B25932F2C336EF26FD994A /* ReceiptPurchaseMatching.swift in Sources */,
 				92F054C0CF1D81A0E458CBA5 /* ReceiptReconciliation.swift in Sources */,

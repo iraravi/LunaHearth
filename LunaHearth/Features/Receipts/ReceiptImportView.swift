@@ -37,6 +37,8 @@ struct ReceiptImportView: View {
     @State private var itemization: ReceiptItemization = .verified
     /// Item sum against the printed subtotal or total, when the scanned items are not verified.
     @State private var uncheckedGap: (items: Int, printed: Int)?
+    /// Receipt rows that would make unchecked items add up (a missed row or discount).
+    @State private var gapHints: [ReceiptGapHint] = []
     /// Scanned line amounts, kept so turning "Record in Expenses" off and on again restores them.
     @State private var scannedAmounts: [String: String] = [:]
     /// Printed item labels as scanned, so saved renames can be learned for next time.
@@ -110,6 +112,14 @@ struct ReceiptImportView: View {
                     }
                     if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-abbreviated") {
                         apply(ReceiptRules.scan(text: "H-E-B\nNICHOLS RSTD NO-SALT PIST F 8.80\nTOTAL 8.80", sameLinePrices: true))
+                        return
+                    }
+                    if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-gap") {
+                        // Build 98's Costco reading: one Method Body and no Holiday Bowl coupon.
+                        let text = "COSTCO\n1996645 METHOD BODY 4.97 A\n1996645 METHOD BODY 4.97 A\n2034323 HOLIDAY BOWL 8.99 A\n0000401809 / 2034323 2.00-A\nE 1169942 GINGER BEER 16.59 A\nE 0000398961 /1169942 5.00-A\nE 776948 STARBK COCOA 14.89\nE 0000400865 / 776948 3.00-\nSUBTOTAL 40.41\nTAX 2.35\nTOTAL 42.76"
+                        let misread = [("METHOD BODY", "4.97"), ("HOLIDAY BOWL", "8.99"), ("GINGER BEER", "11.59"), ("STARBK COCOA", "11.89")]
+                            .enumerated().map { ReceiptLine(id: "gap\($0.offset)", name: $0.element.0, quantity: "1 piece", amount: $0.element.1) }
+                        apply(ReceiptScan(text: text, lines: misread))
                         return
                     }
                     if ProcessInfo.processInfo.arguments.contains("--ui-testing-receipt-mutton") {
@@ -268,6 +278,19 @@ struct ReceiptImportView: View {
                                 Text(itemizationMessage(gap))
                                     .font(.subheadline).foregroundStyle(.secondary)
                             }.accessibilityElement(children: .combine).accessibilityIdentifier("receipt.itemsNotVerified")
+                            if !gapHints.isEmpty {
+                                Section {
+                                    ForEach(gapHints) { hint in
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            Text(hintTitle(hint)).font(.subheadline.weight(.semibold))
+                                            Text(hint.row).font(.caption.monospaced()).foregroundStyle(.secondary)
+                                        }.accessibilityElement(children: .combine)
+                                    }
+                                    Button(gapHints.count == 1 ? "Fix it" : "Fix both", systemImage: "wand.and.stars") { applyGapHints() }
+                                        .frame(minHeight: 44).accessibilityIdentifier("receipt.applyGapHints")
+                                } header: { Text("This makes it add up") }
+                                  footer: { Text("Found on your receipt. Check it against the paper before saving.") }
+                            }
                         } else if lines.isEmpty {
                             Section { Text("Text was found, but no priced item lines were clear. Read the original text and add a line below, or try another photo.") }
                         }
@@ -436,6 +459,7 @@ struct ReceiptImportView: View {
         lines = scan.lines
         uncheckedGap = itemization == .verified ? nil : ReceiptReconciliation.difference(lines: scan.lines, text: scan.text)
         if itemization != .verified { for index in lines.indices { lines[index].included = false } }
+        gapHints = itemization == .verified ? [] : ReceiptGapHints.hints(lines: scan.lines, text: scan.text)
         scannedAmounts = Dictionary(lines.map { ($0.id, $0.amount) }, uniquingKeysWith: { first, _ in first })
         scannedNames = Dictionary(lines.map { ($0.id, $0.name) }, uniquingKeysWith: { first, _ in first })
         let learned = ReceiptCorrectionMemory.decode(corrections)
@@ -495,6 +519,34 @@ struct ReceiptImportView: View {
     }
     private func cancelDecoding() {
         decodeTask?.cancel(); decodeGeneration = UUID(); decoding = false
+    }
+    private func hintTitle(_ hint: ReceiptGapHint) -> String {
+        switch hint.kind {
+        case .missedItem(let name, let amount):
+            "Not counted: \(name), \(ExpenseRules.money(amount, currency: expenseDraft.currency))"
+        case .missedDiscount(let amount, let lineID):
+            "Discount not taken off: −\(ExpenseRules.money(amount, currency: expenseDraft.currency))\(lines.first { $0.id == lineID }.map { " from \($0.name)" } ?? "")"
+        }
+    }
+    /// Applies the rows that make the items add up, then checks the list again. A list that now
+    /// matches the printed totals is ticked like any verified receipt.
+    private func applyGapHints() {
+        var working = lines
+        for index in working.indices { working[index].amount = scannedAmounts[working[index].id] ?? working[index].amount }
+        let before = Set(working.map(\.id))
+        for hint in gapHints { ReceiptGapHints.apply(hint, to: &working, idSeed: sourceText) }
+        for index in working.indices where !before.contains(working[index].id) { working[index].addToInventory = false }
+        for line in working { scannedAmounts[line.id] = line.amount }
+        itemization = ReceiptReconciliation.check(lines: working, text: sourceText)
+        gapHints = []
+        if itemization == .verified {
+            uncheckedGap = nil
+            for index in working.indices where !repository.receiptLineImported(working[index].id) { working[index].included = true }
+        } else {
+            uncheckedGap = ReceiptReconciliation.difference(lines: working, text: sourceText)
+        }
+        if !recordingExpense { for index in working.indices { working[index].amount = "" } }
+        lines = working
     }
     private func itemizationMessage(_ gap: ReceiptItemizationGap) -> String {
         if lines.isEmpty {

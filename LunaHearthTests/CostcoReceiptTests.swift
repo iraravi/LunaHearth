@@ -172,3 +172,27 @@ struct CostcoReceiptTests {
         #expect(ItemCodeReceiptDetails.repaired("E 776948 STARBK COCOA 14.89") == "E 776948 STARBK COCOA 14.89")
     }
 }
+
+struct ReceiptMisreadTests {
+    @Test func cleanupRepairsPunctuationOnly() {
+        #expect(ReceiptOCRCleanup.row("1996645 METHOD BODY 4.97 А") == "1996645 METHOD BODY 4.97 A")
+        #expect(ReceiptOCRCleanup.row("MILK 4. 97") == "MILK 4.97")
+        #expect(ReceiptOCRCleanup.row("ХЛЕБ 45,00") == "ХЛЕБ 45.00") // real Cyrillic stays Cyrillic
+        #expect(ReceiptOCRCleanup.row("TOTAL 1,234.56") == "TOTAL 1,234.56")
+        #expect(ReceiptOCRCleanup.row("Thank You!") == "Thank You!")
+    }
+    @Test func mathReaderCountsItemCodeCoupons() {
+        let text = "COSTCO\n2034323 HOLIDAY BOWL 8.99 A\n0000401809 / 2034323 2.00-A\nE 776948 STARBK COCOA 14.89\nSUBTOTAL 21.88\nTAX 0.00\nTOTAL 21.88"
+        let outcome = ReceiptSolver.solve(text: text)
+        #expect(outcome.status == .unique)
+        #expect(outcome.lines.first { $0.name.contains("HOLIDAY") }?.amount == "6.99")
+    }
+    @Test func mathReaderTriesDigitLookAlikesOnlyWhenTheyAddUp() {
+        let text = "FRESH MART\nBANANAS 1O.99\nMILK 3.49\nSUBTOTAL 14.48\nTOTAL 14.48"
+        let outcome = ReceiptSolver.solve(text: text)
+        #expect(outcome.status == .unique)
+        #expect(outcome.lines.first { $0.name == "BANANAS" }?.amount == "10.99")
+        // When the fixed reading still doesn't add up, nothing is proposed.
+        #expect(ReceiptSolver.solve(text: "FRESH MART\nBANANAS 1O.99\nMILK 3.49\nSUBTOTAL 20.00\nTOTAL 20.00").status != .unique)
+    }
+}

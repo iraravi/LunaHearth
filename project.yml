@@ -86,6 +86,7 @@ targets:
     platform: iOS
     sources:
       - path: LunaHearthTests
+        excludes: ["ReceiptCorpus/README.md"]
     dependencies:
       - target: LunaHearth
     settings:

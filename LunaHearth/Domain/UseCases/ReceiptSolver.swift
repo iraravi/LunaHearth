@@ -52,6 +52,12 @@ enum ReceiptSolver {
             return .calc(amount: amount, quantity: ReceiptMultilineDetails.weightQuantity(of: row) ?? "", verified: true)
         }
         if let amount = ReceiptItemDiscounts.discountAmount(row) { return .discount(amount: amount, explicit: true) }
+        // A coupon that names the item code it applies to ("0000401809 / 2034323 2.00-A").
+        if let match = row.range(of: #"^(?:[EA]\s+)?[0-9A-Z]{4,}\s*/\s*\d{4,}\s+\d{1,6}\.\d{2}\s*[-−]\s*[A-Za-z]?$"#, options: .regularExpression),
+           let value = row[match].range(of: #"\d{1,6}\.\d{2}(?=\s*[-−])"#, options: .regularExpression),
+           let amount = try? ExpenseRules.minorUnits(String(row[value])), amount > 0 {
+            return .discount(amount: amount, explicit: true)
+        }
         if let amount = bareAmount(row) { return .bare(amount: amount) }
         let price = row.range(of: ReceiptRules.pricePattern, options: .regularExpression)
         let amount = price.flatMap { amountValue(String(row[$0])) }
@@ -100,8 +106,23 @@ enum ReceiptSolver {
 
     // MARK: Search
 
+    /// Reads the receipt as printed (after the shared clean-up). When no single reading adds up,
+    /// tries once more with letters a camera reads in place of digits ("1O.99"); that reading is
+    /// kept only when it adds up, in exactly one way, to the printed totals.
     static func solve(text: String) -> Outcome {
-        let bounded = String(text.prefix(40_000))
+        let cleaned = ReceiptOCRCleanup.clean(String(text.prefix(40_000)))
+        let first = solveRows(text: cleaned)
+        guard first.status != .unique, first.status != .notApplicable else { return first }
+        let digits = ReceiptOCRCleanup.digitLookAlikes(cleaned)
+        guard digits != cleaned else { return first }
+        var second = solveRows(text: digits)
+        guard second.status == .unique else { return first }
+        second.note += " Read letters in prices as digits (O as 0, S as 5, l as 1, B as 8)."
+        return second
+    }
+
+    private static func solveRows(text: String) -> Outcome {
+        let bounded = text
         let section = ItemCodeReceiptDetails.productSection(bounded).components(separatedBy: .newlines)
         let printed = ReceiptReconciliation.totals(bounded)
         guard !printed.hasConflictingAmounts else { return Outcome(status: .notApplicable, note: "Printed totals disagree with each other.") }

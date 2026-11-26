@@ -1,0 +1,63 @@
+#! verified
+#! item RAJABOGAM PONNI BOILED RICE | 15.99
+#! item KARELA | 1.18
+#! item PERSIMMON | 1.77
+#! item CILANTRO | 0.49
+#! item DUDHI | 1.96
+#! item WHITE POTATO | 0.81
+#! item FLAT VALOR | 2.26
+#! item OKRA | 6.46
+#! item SNAKE GOURD | 5.45
+INDIA BAZAAR
+The People's Store
+OPEN EVERYDAY
+Monday - Friday: 8:00 AM - 11:00 PM
+Saturday - Sunday: 7:00 AM - 11:00 PM
+INDIA BAZAAR ELDORADO
+14339 Eldorado Pkwy,
+FRISCO, TX 75035
+POS Terminal Name: Eldorado POS 2
+***Sale***
+RAJABOGAM PONNI BOILED RICE
+GRAIN MARKET 20LB (Each) F $18.99
+=> Discounts: GM rajabogham ponni b... -$3.00
+KARELA /LB
+1.190 Pound @ $0.99/Pound F $1.18
+Temporary price $0.99, You saved $1.00
+PERSIMMON FRUIT /LB
+1.190 Pound @ $1.49/Pound F $1.77
+CILANTRO EA (Each) F $0.49
+DUDHI /LB
+1.980 Pound @ $0.99/Pound F $1.96
+Temporary price $0.99, You saved $0.50
+WHITE POTATO /LB
+0.630 Pound @ $1.29/Pound F $0.81
+FLAT VALOR /LB
+1.520 Pound @ $1.49/Pound F $2.26
+Temporary price $1.49, You saved $2.00
+OKRA /LB
+2.160 Pound @ $2.99/Pound F $6.46
+SNAKE GOURD /LB
+2.740 Pound @ $1.99/Pound F $5.45
+SUB TOTAL $36.37
+AMOUNT DUE $36.37
+Visa AUTIRIS $5.00
+Visa $31.37
+Amount: $5.00
+Amount: $31.37
+Application label: VISA CREDIT
+Customer Copy
+11/20/2026 8:47:12 PMł
+Items count: 9
+You saved: $8.22
+Return or exchange of unopened items can be made
+with original receipt within 14 days from the date of
+purchase. A store credit without the original receipt will
+be issued. Exceptions may apply. Some items may fall
+under the category of non-returnable products like
+vegetables, fruits, frozen foods, tobacco, utensils, dairy
+products, non-food items, opened items/ not in original
+packing. To read the full terms of return policy please
+visit www.IndiaBazaarDFW.com/return. India Bazaar
+reserves the right to change the terms mentioned above
+without giving prior notice to anyone.

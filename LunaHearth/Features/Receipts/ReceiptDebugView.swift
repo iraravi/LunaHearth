@@ -137,7 +137,7 @@ enum ReceiptDebugReport {
         Date: \(ReceiptPurchaseDetails.day(scan.text) ?? "needs review")
         Total: \(ExpenseRules.receiptTotal(scan.text) ?? "needs review")
 
-        ITEMIZATION CHECK (public builds list items only when verified)
+        ITEMIZATION CHECK (items that don't add up are listed unticked)
         \(itemizationSummary(scan))
 
         MAIN SCREEN PREVIEW
@@ -205,12 +205,12 @@ enum ReceiptDebugReport {
 
     static func mainScreenSummary(_ scan: ReceiptScan) -> String {
         let result = ReceiptReconciliation.check(lines: scan.lines, text: scan.text)
-        let count = result == .verified ? scan.lines.count : 0
+        let hints = result == .verified ? [] : ReceiptGapHints.hints(lines: scan.lines, text: scan.text)
+        let hintRows = hints.map { "  Fix offered: \($0.row)" }.joined(separator: "\n")
         return """
-        Visible scanned items: \(count)
-        \(result == .verified ? "Items can be reviewed before saving." : "Expense-only fallback; scanned items are hidden. Add items manually if needed.")
+        Visible scanned items: \(scan.lines.count) (\(result == .verified ? "ticked; they add up" : "unticked; they don't add up"))
+        \(result == .verified ? "Items can be reviewed before saving." : hints.isEmpty ? "No single fix found; the person compares rows with the receipt." : "One-tap fix offered:\n" + hintRows)
         Store, date, currency and total require user review before saving an expense.
-        Main screen can keep the receipt image with explicit opt-in, even without items.
         This debug screen saves no expense, products or receipt image.
         """
     }

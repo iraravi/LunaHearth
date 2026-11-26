@@ -534,6 +534,24 @@ final class VisualFlowTests: XCTestCase {
         XCTAssertFalse(app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'receipt.name.' AND identifier ENDSWITH '.keep'")).firstMatch.exists)
     }
 
+    func testReceiptGapFixMakesItemsAddUp() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--ui-testing-pantry", "--ui-testing-receipt", "--ui-testing-receipt-gap"]
+        app.launch()
+        XCTAssertTrue(app.buttons["Home"].firstMatch.waitForExistence(timeout: 10))
+        app.buttons["Home"].firstMatch.tap(); tapVisible("home.inventory", app: app)
+        tapVisible("inventory.scanReceipt", app: app)
+        XCTAssertTrue(app.buttons["receipt.confirm"].waitForExistence(timeout: 5))
+        let fix = app.buttons["receipt.applyGapHints"]
+        for _ in 0..<4 where !fix.isHittable { app.swipeUp() }
+        XCTAssertTrue(fix.waitForExistence(timeout: 5))
+        capture("Receipt-Gap-Fix", app: app)
+        fix.tap()
+        XCTAssertFalse(app.descendants(matching: .any)["receipt.itemsNotVerified"].waitForExistence(timeout: 2))
+        XCTAssertFalse(fix.exists)
+        capture("Receipt-Gap-Fixed", app: app)
+    }
+
     func testReceiptMuttonLandscape() {
         XCUIDevice.shared.orientation = .landscapeLeft
         defer { XCUIDevice.shared.orientation = .portrait }

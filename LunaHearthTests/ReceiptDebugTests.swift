@@ -17,8 +17,7 @@ struct ReceiptDebugTests {
         let report = ReceiptDebugReport.make(scan)
         #expect(report.contains("Total evidence: conflicting"))
         #expect(report.contains("Conflicting printed amounts: yes"))
-        #expect(report.contains("Visible scanned items: 0"))
-        #expect(report.contains("Expense-only fallback"))
+        #expect(report.contains("Visible scanned items: 1 (unticked; they don't add up)"))
         #expect(report.contains("RAW ITEM CANDIDATES (1)"))
         #expect(report.contains("Milk | amount=4.00"))
         #expect(report.contains("This debug screen saves no expense, products or receipt image."))
@@ -26,13 +25,13 @@ struct ReceiptDebugTests {
 
     @Test func debugPreviewMatchesAcceptedMainScreenItemsAndMissingTotals() {
         let scan = ReceiptRules.scan(text: "SHOP\nMilk 4.00\nSUBTOTAL 4.00\nTOTAL 4.00", sameLinePrices: true)
-        #expect(ReceiptDebugReport.make(scan).contains("Visible scanned items: 1"))
+        #expect(ReceiptDebugReport.make(scan).contains("Visible scanned items: 1 (ticked; they add up)"))
         #expect(ReceiptDebugReport.totalEvidenceSummary(scan.text) == "readable proposal: 4.00")
         #expect(ReceiptDebugReport.totalEvidenceSummary("SHOP") == "absent — enter total manually")
         #expect(ReceiptDebugReport.totalEvidenceSummary("TOTAL unclear") == "unreadable — compare with receipt")
         var unknown = scan
         unknown.lines[0].amountNeedsReview = true
-        #expect(ReceiptDebugReport.make(unknown).contains("Visible scanned items: 0"))
+        #expect(ReceiptDebugReport.make(unknown).contains("Visible scanned items: 1 (unticked; they don't add up)"))
     }
 
     @Test func reportShowsBothRejectedAIAndFallbackWithoutSavingRecords() {
