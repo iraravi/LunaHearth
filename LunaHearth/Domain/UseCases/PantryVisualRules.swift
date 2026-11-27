@@ -1,7 +1,7 @@
 import Foundation
 
 enum PantryCategory: String, CaseIterable, Identifiable, Codable, Sendable {
-    case grains, pulses, spices, produce, chilled, meat, essentials, other
+    case grains, pulses, spices, produce, chilled, meat, essentials, household, other
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -12,6 +12,7 @@ enum PantryCategory: String, CaseIterable, Identifiable, Codable, Sendable {
         case .chilled: "Dairy & eggs"
         case .meat: "Meat & seafood"
         case .essentials: "Everyday essentials"
+        case .household: "Household & cleaning"
         case .other: "Other items"
         }
     }
@@ -24,6 +25,7 @@ enum PantryCategory: String, CaseIterable, Identifiable, Codable, Sendable {
         case .chilled: "🥛"
         case .meat: "🥩"
         case .essentials: "🫙"
+        case .household: "🧼"
         case .other: "📦"
         }
     }
@@ -48,6 +50,9 @@ enum PantryVisualRules {
     }
     static func category(_ name: String) -> PantryCategory {
         let words = visualWords(name)
+        // Common non-food words only, as the offline fallback. On-device AI places other brands
+        // and products, and anyone can mark an item as not food in its editor.
+        if !words.isDisjoint(with: ["soap", "detergent", "shampoo", "conditioner", "toothpaste", "toothbrush", "mouthwash", "deodorant", "bleach", "cleaner", "disinfectant", "sanitizer", "laundry", "tissue", "tissues", "towels", "napkins", "wipes", "diaper", "diapers", "foil", "trash", "garbage", "sponge", "sponges", "lotion", "batteries"]) { return .household }
         // More specific preparations take precedence over their source ingredient.
         if !words.isDisjoint(with: ["oil", "ghee", "sugar", "jaggery", "salt", "tea", "coffee", "honey", "sauce", "vinegar", "water", "juice", "stock", "broth", "bouillon", "ketchup", "jam", "mayonnaise", "mayo", "soda", "syrup", "pickle", "chutney", "spread", "dressing"]) { return .essentials }
         if !words.isDisjoint(with: ["flour", "rice", "pasta", "oats", "rava", "ragi", "bread", "atta", "besan", "poha", "quinoa", "millet", "noodles", "cereal", "granola", "tortilla", "tortillas", "bagel", "bun", "buns", "roti", "chapati", "naan", "spaghetti", "macaroni", "couscous", "semolina"]) { return .grains }
@@ -108,7 +113,8 @@ struct PantryCategorySuggestion: Sendable { let index: Int; let category: Pantry
 /// On-device AI categories remembered on this phone, keyed by ingredient identity.
 /// Visual only: never changes duplicate checks, pantry identity or synced household records.
 enum PantryCategoryMemory {
-    static let storageKey = "pantry.categories.v1"
+    /// v2 added the household category, so every name is asked about once more.
+    static let storageKey = "pantry.categories.v2"
     static let maximumEntries = 600
 
     static func decode(_ stored: String) -> [String: PantryCategory] {
@@ -124,6 +130,17 @@ enum PantryCategoryMemory {
             guard !key.isEmpty, PantryVisualRules.category(name) == .other, memory[key] == nil, seen.insert(key).inserted else { return nil }
             return name.trimmingCharacters(in: .whitespacesAndNewlines)
         }.sorted().prefix(limit).map { $0 }
+    }
+
+    /// A person's choice from the item editor: household marks it not food; clearing it asks again.
+    static func setHousehold(_ name: String, _ household: Bool, stored: String) -> String {
+        var all = (try? JSONDecoder().decode([String: String].self, from: Data(stored.utf8))) ?? [:]
+        let key = IngredientMatching.key(name)
+        guard !key.isEmpty else { return stored }
+        if household { all[key] = PantryCategory.household.rawValue }
+        else if all[key] == PantryCategory.household.rawValue { all[key] = PantryCategory.other.rawValue }
+        guard let data = try? JSONEncoder().encode(all) else { return stored }
+        return String(decoding: data, as: UTF8.self)
     }
 
     /// Stores every asked name, so "other" answers are not asked again on every change.
@@ -143,8 +160,15 @@ enum PantryCategoryMemory {
 extension PantryVisualRules {
     /// Word list first; remembered on-device AI category when the word list has no answer.
     static func category(_ name: String, memory: [String: PantryCategory]) -> PantryCategory {
+        let remembered = memory[IngredientMatching.key(name)]
+        // "Not food" chosen by a person wins over the word list.
+        if remembered == .household { return .household }
         let known = category(name)
-        return known == .other ? memory[IngredientMatching.key(name)] ?? .other : known
+        return known == .other ? remembered ?? .other : known
+    }
+    /// Meal ideas only consider names that are not household products.
+    static func isFood(_ name: String, memory: [String: PantryCategory]) -> Bool {
+        category(name, memory: memory) != .household
     }
     static func icon(_ name: String, memory: [String: PantryCategory]) -> String {
         icon(name, category: category(name, memory: memory))

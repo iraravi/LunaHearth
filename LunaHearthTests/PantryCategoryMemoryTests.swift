@@ -32,3 +32,28 @@ struct PantryCategoryMemoryTests {
         #expect(PantryCategoryMemory.decode("not json").isEmpty)
     }
 }
+
+struct PantryHouseholdCategoryTests {
+    @Test func commonNonFoodWordsAreHouseholdOffline() {
+        #expect(PantryVisualRules.category("Dish soap") == .household)
+        #expect(PantryVisualRules.category("Paper towels") == .household)
+        #expect(PantryVisualRules.category("Basmati rice") == .grains)
+    }
+
+    @Test func aiOrPersonCanMarkABrandAsNotFood() {
+        // "Method body" has no word the offline list knows; the AI answer or the editor toggle places it.
+        #expect(PantryVisualRules.isFood("Method body", memory: [:]))
+        let stored = PantryCategoryMemory.setHousehold("Method body", true, stored: "")
+        let memory = PantryCategoryMemory.decode(stored)
+        #expect(!PantryVisualRules.isFood("Method body", memory: memory))
+        let cleared = PantryCategoryMemory.decode(PantryCategoryMemory.setHousehold("Method body", false, stored: stored))
+        #expect(PantryVisualRules.isFood("Method body", memory: cleared))
+    }
+
+    @Test func personsNotFoodChoiceBeatsTheWordList() {
+        // "Coconut oil" reads as essentials, but someone bought it as hair oil.
+        let memory = PantryCategoryMemory.decode(PantryCategoryMemory.setHousehold("Coconut oil", true, stored: ""))
+        #expect(PantryVisualRules.category("Coconut oil", memory: memory) == .household)
+        #expect(PantryVisualRules.category("Coconut oil", memory: [:]) == .essentials)
+    }
+}

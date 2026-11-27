@@ -65,6 +65,7 @@ struct WeeklyMealPlannerView: View {
 }
 
 struct WeeklyMealDraftView: View {
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     @Environment(LocalHouseholdRepository.self) private var repository
     @Environment(\.dismiss) private var dismiss
     let start: Date
@@ -144,7 +145,8 @@ struct WeeklyMealDraftView: View {
         let home = homeID
         let token = generationID
         let today = HouseholdDay(.now).key
-        let packs = repository.inventory.filter { !$0.isUsedUp && ($0.expiryDay.map { $0 >= today } ?? true) }.sorted { ($0.expiryDay ?? "9999") < ($1.expiryDay ?? "9999") }
+        let memory = PantryCategoryMemory.decode(categoryMemory)
+        let packs = repository.inventory.filter { !$0.isUsedUp && PantryVisualRules.isFood($0.name, memory: memory) && ($0.expiryDay.map { $0 >= today } ?? true) }.sorted { ($0.expiryDay ?? "9999") < ($1.expiryDay ?? "9999") }
         let names = packs.map(\.name)
         let expiring = packs.filter { $0.expiryDay != nil }.map(\.name)
         generation = Task {

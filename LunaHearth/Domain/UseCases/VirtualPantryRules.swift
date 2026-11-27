@@ -21,7 +21,7 @@ enum VirtualPantryRules {
         switch PantryVisualRules.category(name) {
         case .produce, .chilled, .meat: return .fridge
         case .grains, .pulses, .spices, .essentials: return .cupboard
-        case .other: return .other
+        case .household, .other: return .other
         }
     }
     /// Top contact surfaces measured from the bundled artwork, not item center positions.

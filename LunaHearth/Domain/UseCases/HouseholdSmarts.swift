@@ -133,7 +133,8 @@ enum ShoppingAisle {
         case .pulses: 4
         case .spices: 5
         case .essentials: 6
-        case .other: 7
+        case .household: 7
+        case .other: 8
         }
     }
 

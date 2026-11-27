@@ -25,8 +25,10 @@ struct MealIdeasView: View {
     private let service: any MealSuggestionService = OnDeviceMealSuggestionService()
     private let reminders: any MealPlanningReminderService = MealPlanningReminder()
     private var accent: Color { Color(red: 0.8, green: 0.18, blue: 0.12) }
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     private var names: [String] {
-        repository.inventory.filter { MealSuggestionRules.available(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay, plannedDay: HouseholdDay(day).key) }.map(\.name).sorted()
+        let memory = PantryCategoryMemory.decode(categoryMemory)
+        return repository.inventory.filter { MealSuggestionRules.available(isUsedUp: $0.isUsedUp, expiryDay: $0.expiryDay, plannedDay: HouseholdDay(day).key) && PantryVisualRules.isFood($0.name, memory: memory) }.map(\.name).sorted()
     }
     var body: some View {
         ScrollViewReader { scroll in

@@ -244,6 +244,8 @@ struct InventoryEditor: View {
     @State private var checking = false
     @State private var aiMatches: Set<UUID> = []
     @State private var aiStatus: String?
+    @State private var notFood = false
+    @AppStorage(PantryCategoryMemory.storageKey) private var categoryMemory = ""
     private let comparison: any IngredientComparisonService = OnDeviceIngredientComparisonService()
     private var candidates: [InventoryItem] { repository.inventory.filter { !$0.isUsedUp && $0.id != item?.id } }
     private var matches: [InventoryItem] {
@@ -262,6 +264,8 @@ struct InventoryEditor: View {
                     TextField("Item name (required)", text: $draft.name).focused($focused, equals: .name).accessibilityIdentifier("inventory.name")
                     Toggle("Running low", isOn: $draft.isLowStock).accessibilityIdentifier("inventory.lowStock")
                     Text("Mark this when supplies are low. Restocking clears it; stock use is reviewed when you cook.").font(.caption).foregroundStyle(InventoryTheme.muted)
+                    Toggle("Not food", isOn: $notFood).accessibilityIdentifier("inventory.notFood")
+                    Text("Soap, cleaning, toiletries and other household items. Meal ideas leave these out.").font(.caption).foregroundStyle(InventoryTheme.muted)
                 }.listRowBackground(InventoryTheme.surface)
                 Section {
                     HStack {
@@ -337,10 +341,12 @@ struct InventoryEditor: View {
                     ToolbarItem(placement: .cancellationAction) { Button("Cancel") { dismiss() } }
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Save") {
-                            do { try repository.saveInventory(draft, editing: item?.id, allowSeparatePack: separatePack); dismiss() } catch { self.error = error.localizedDescription }
+                            do { try repository.saveInventory(draft, editing: item?.id, allowSeparatePack: separatePack)
+                                categoryMemory = PantryCategoryMemory.setHousehold(draft.name, notFood, stored: categoryMemory); dismiss() } catch { self.error = error.localizedDescription }
                         }.disabled(draft.name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || (!matches.isEmpty && !separatePack)).accessibilityIdentifier("inventory.save")
                     }
                 }
+                .onAppear { notFood = item.map { PantryVisualRules.category($0.name, memory: PantryCategoryMemory.decode(categoryMemory)) == .household } ?? false }
                 .onChange(of: draft.name) { _, _ in checking = false; aiMatches = []; aiStatus = nil; separatePack = false }
                 .task(id: checking) {
                     guard checking else { return }
